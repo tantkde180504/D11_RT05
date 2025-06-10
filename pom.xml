@@ -78,6 +78,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>com.mycompany.Application</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
