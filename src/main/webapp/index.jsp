@@ -19,7 +19,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <small><i class="fas fa-phone me-2"></i>Hotline: 0349999943 (8h-20h)</small>
+                    <small><i class="fas fa-phone me-2"></i>Hotline: 0385546145 (8h-20h)</small>
                 </div>
                 <div class="col-md-6 text-end">
                     <div class="social-links">
@@ -181,7 +181,7 @@
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <img src="<%=request.getContextPath()%>/img/Banner3.jpg" class="d-block w-100" alt="Banner 3"
+                                <img src="<%=request.getContextPath()%>/img/sale.png" class="d-block w-100" alt="Banner 3"
                                      onerror="this.src='https://via.placeholder.com/800x400/cc0066/ffffff?text=Special+Sale'">
                                 <div class="carousel-caption">
                                     <h3 class="banner-title">Special Sale Event</h3>
@@ -200,10 +200,10 @@
                 <div class="col-lg-3">
                     <div class="side-banners">
                         <div class="side-banner mb-3">
-                            <img src="https://via.placeholder.com/300x200/ff6600/ffffff?text=Sale+50%" class="img-fluid rounded" alt="Sale Banner">
+                            <img src="<%=request.getContextPath()%>/img/sale.png" class="img-fluid rounded" alt="Sale Banner">
                         </div>
                         <div class="side-banner">
-                            <img src="https://via.placeholder.com/300x200/006600/ffffff?text=New+Arrivals" class="img-fluid rounded" alt="New Arrivals">
+                            <img src="<%=request.getContextPath()%>/img/New.jpg" class="img-fluid rounded" alt="New Arrivals">
                         </div>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
                         <div class="category-item">
                             <a href="#" class="category-link">
                                 <div class="category-icon">
-                                    <img src="https://via.placeholder.com/80x80/cccccc/666666?text=HG" alt="High Grade">
+                                    <img src="<%=request.getContextPath()%>/img/coll_2.jpg" alt="High Grade">
                                 </div>
                                 <span class="category-name">High Grade</span>
                             </a>
@@ -228,7 +228,7 @@
                         <div class="category-item">
                             <a href="#" class="category-link">
                                 <div class="category-icon">
-                                    <img src="https://via.placeholder.com/80x80/cccccc/666666?text=RG" alt="Real Grade">
+                                    <img src="<%=request.getContextPath()%>/img/coll_4.jpg" alt="Real Grade">
                                 </div>
                                 <span class="category-name">Real Grade</span>
                             </a>
@@ -236,7 +236,7 @@
                         <div class="category-item">
                             <a href="#" class="category-link">
                                 <div class="category-icon">
-                                    <img src="https://via.placeholder.com/80x80/cccccc/666666?text=MG" alt="Master Grade">
+                                    <img src="<%=request.getContextPath()%>/img/coll_3.jpg" alt="Master Grade">
                                 </div>
                                 <span class="category-name">Master Grade</span>
                             </a>
@@ -244,7 +244,7 @@
                         <div class="category-item">
                             <a href="#" class="category-link">
                                 <div class="category-icon">
-                                    <img src="https://via.placeholder.com/80x80/cccccc/666666?text=PG" alt="Perfect Grade">
+                                    <img src="<%=request.getContextPath()%>/img/coll_5.jpg" alt="Perfect Grade">
                                 </div>
                                 <span class="category-name">Perfect Grade</span>
                             </a>
@@ -252,7 +252,7 @@
                         <div class="category-item">
                             <a href="#" class="category-link">
                                 <div class="category-icon">
-                                    <img src="https://via.placeholder.com/80x80/cccccc/666666?text=MB" alt="Metal Build">
+                                    <img src="<%=request.getContextPath()%>/img/coll_1.jpg" alt="Metal Build">
                                 </div>
                                 <span class="category-name">Metal Build</span>
                             </a>
@@ -260,7 +260,7 @@
                         <div class="category-item">
                             <a href="#" class="category-link">
                                 <div class="category-icon">
-                                    <img src="https://via.placeholder.com/80x80/cccccc/666666?text=SD" alt="Super Deformed">
+                                    <img src="<%=request.getContextPath()%>/img/coll_11.jpg" alt="Super Deformed">
                                 </div>
                                 <span class="category-name">Super Deformed</span>
                             </a>
@@ -525,11 +525,11 @@
                             <div class="store-info">
                                 <div class="info-item mb-2">
                                     <i class="fas fa-map-marker-alt me-2"></i>
-                                    <span>163 Đường B3, Phường Hưng Phú, Quận Cái Răng, TP Cần Thơ</span>
+                                    <span>59 Lê Đình Diên, Cẩm Lệ, Đà Nẵng</span>
                                 </div>
                                 <div class="info-item mb-2">
                                     <i class="fas fa-phone me-2"></i>
-                                    <a href="tel:0349999943" class="text-white">0349999943 (8h-20h)</a>
+                                    <a href="tel:0385546145" class="text-white">0385546145 (8h-20h)</a>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-envelope me-2"></i>
