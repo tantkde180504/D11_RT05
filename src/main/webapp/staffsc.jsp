@@ -32,12 +32,11 @@
                         <div class="dropdown">
                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle me-2"></i>Tài khoản
-                            </button>
-                            <ul class="dropdown-menu">
+                            </button>                            <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="logout"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="index.jsp"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
                             </ul>
                         </div>
                     </div>
@@ -153,11 +152,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4">
+                </div>                <div class="col-lg-4">
                     <div class="staff-card">
                         <h5><i class="fas fa-chart-pie me-2 text-primary"></i>Thống kê hôm nay</h5>
-                        <canvas id="dailyStatsChart" width="300" height="200"></canvas>
+                        <div class="chart-container" style="position: relative; height: 200px; width: 100%;">
+                            <canvas id="dailyStatsChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
