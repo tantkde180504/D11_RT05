@@ -36,7 +36,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     
-    // Login form validation
+    // Handle exclusive checkbox selection for user roles
+    const isAdminCheckbox = document.getElementById('isAdmin');
+    const isStaffCheckbox = document.getElementById('isStaff');
+    
+    if (isAdminCheckbox && isStaffCheckbox) {
+        isAdminCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                isStaffCheckbox.checked = false;
+            }
+        });
+        
+        isStaffCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                isAdminCheckbox.checked = false;
+            }
+        });
+    }
+      // Login form validation
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -44,9 +61,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const isAdmin = document.getElementById('isAdmin').checked;
+            const isStaff = document.getElementById('isStaff').checked;
             
             if (!email || !password) {
                 showAlert('Vui lòng điền đầy đủ thông tin!', 'danger');
+                return;
+            }
+            
+            if (isAdmin && isStaff) {
+                showAlert('Vui lòng chỉ chọn một loại quyền đăng nhập!', 'warning');
                 return;
             }
             
@@ -63,18 +86,30 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simulate API call
             setTimeout(() => {
                 // Here you would normally send the request to your server
-                console.log('Login attempt:', { email, password, isAdmin });
+                console.log('Login attempt:', { email, password, isAdmin, isStaff });
                 
                 // Store login info
                 if (typeof(Storage) !== "undefined") {
                     if (isAdmin) {
                         localStorage.setItem('isAdmin', 'true');
-                        window.location.href = 'dashboard.jsp';
+                        localStorage.setItem('userRole', 'admin');
+                        showAlert('Đăng nhập Admin thành công!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.jsp';
+                        }, 1000);
+                    } else if (isStaff) {
+                        localStorage.setItem('isStaff', 'true');
+                        localStorage.setItem('userRole', 'staff');
+                        localStorage.setItem('staffName', email.split('@')[0]); // Use part before @ as staff name
+                        showAlert('Đăng nhập Staff thành công!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'staffsc.jsp';
+                        }, 1000);
                     } else {
-                        // Set user as logged in
+                        // Regular user login
                         const userName = email.split('@')[0]; // Use part before @ as username
                         setUserLoggedIn(userName, email);
-                        
+                        showAlert('Đăng nhập thành công!', 'success');
                         setTimeout(() => {
                             window.location.href = 'index.jsp';
                         }, 1000);

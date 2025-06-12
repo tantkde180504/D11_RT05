@@ -29,6 +29,8 @@
     padding: 20px;
     margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 200;
 }
 
 .staff-nav {
@@ -39,6 +41,8 @@
     padding: 15px;
     margin-bottom: 30px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
 }
 
 .staff-nav .nav-link {
@@ -456,6 +460,23 @@
         height: 50px;
         font-size: 1.2rem;
     }
+    
+    /* Chart responsive adjustments */
+    .chart-container {
+        height: 180px !important;
+    }
+    
+    /* Header dropdown adjustments for mobile */
+    .staff-header .col-md-6:last-child {
+        text-align: center !important;
+        margin-top: 15px;
+    }
+    
+    .dropdown-menu {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        margin-top: 10px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -615,4 +636,73 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--staff-secondary);
+}
+
+/* Fix for canvas container */
+.chart-container {
+    position: relative !important;
+    height: 200px !important;
+    width: 100% !important;
+    max-height: 200px !important;
+    overflow: hidden;
+}
+
+.chart-container canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+.staff-card canvas {
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 300px !important;
+}
+
+#dailyStatsChart {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 200px !important;
+}
+
+/* Dropdown z-index fix */
+.dropdown {
+    position: relative;
+    z-index: 300;
+}
+
+.dropdown-menu {
+    z-index: 1050 !important;
+    position: absolute !important;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 10px 0;
+    margin-top: 8px;
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background: var(--staff-primary);
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Ensure header dropdowns are above nav */
+.staff-header .dropdown {
+    z-index: 1000;
+}
+
+.staff-header .dropdown-menu {
+    z-index: 1050 !important;
 }
