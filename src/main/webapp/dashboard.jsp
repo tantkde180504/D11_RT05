@@ -645,48 +645,98 @@
                     </div>
 
                     <!-- Employees Management Tab -->
-                    <div class="tab-pane fade" id="employees">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Quản lý nhân viên</h1>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                                <i class="fas fa-plus"></i> Thêm nhân viên mới
-                            </button>
-                        </div>
+                    <!-- Tab: Quản lý nhân viên -->
+<div class="tab-pane fade" id="employees">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Quản lý nhân viên</h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+            <i class="fas fa-plus"></i> Thêm nhân viên mới
+        </button>
+    </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tên</th>
-                                        <th>Email</th>
-                                        <th>Chức vụ</th>
-                                        <th>Ngày vào làm</th>
-                                        <th>Trạng thái</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Nguyễn Văn A</td>
-                                        <td>nguyenvana@74gundam.com</td>
-                                        <td>Quản lý</td>
-                                        <td>01/01/2023</td>
-                                        <td><span class="badge bg-success">Hoạt động</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Chức vụ</th>
+                    <th>Ngày sinh</th>
+                    <th>Ngày vào làm</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="staff" items="${staffList}">
+                    <tr>
+                        <td>${staff.id}</td>
+                        <td>${staff.fullName}</td>
+                        <td>${staff.email}</td>
+                        <td>${staff.position}</td>
+                        <td>${staff.birthDate}</td>
+                        <td>${staff.startDate}</td>
+                        <td>
+                            <span class="badge ${staff.status == 'Hoạt động' ? 'bg-success' : 'bg-warning'}">
+                                ${staff.status}
+                            </span>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal thêm nhân viên -->
+<div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="${pageContext.request.contextPath}/admin/staffs/create" method="post">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="addStaffModalLabel">+ Thêm nhân viên mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label>Họ tên:</label>
+                            <input name="fullName" type="text" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Email:</label>
+                            <input name="email" type="email" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Chức vụ:</label>
+                            <input name="position" type="text" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Ngày sinh:</label>
+                            <input name="birthDate" type="date" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Ngày vào làm:</label>
+                            <input name="startDate" type="date" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Trạng thái:</label>
+                            <select name="status" class="form-select">
+                                <option value="Hoạt động">Hoạt động</option>
+                                <option value="Ngưng hoạt động">Ngưng hoạt động</option>
+                            </select>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">Lưu nhân viên</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
                     <!-- Customers Management Tab -->
                     <div class="tab-pane fade" id="customers">

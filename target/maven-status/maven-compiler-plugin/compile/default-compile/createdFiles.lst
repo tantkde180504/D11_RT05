@@ -1,2 +1,5 @@
-com\mycompany\gundamhobby\resources\JakartaEE10Resource.class
-com\mycompany\gundamhobby\JakartaRestConfiguration.class
+controller\StaffController.class
+entity\Staff.class
+repository\StaffRepository.class
+service\FakeStaffService.class
+service\StaffService.class
