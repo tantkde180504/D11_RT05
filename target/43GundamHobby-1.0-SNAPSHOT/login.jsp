@@ -77,12 +77,20 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        
-                                        <div class="mb-3">
+                                          <div class="mb-3">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="isAdmin" name="isAdmin">
                                                 <label class="form-check-label" for="isAdmin">
                                                     Đăng nhập với quyền Admin
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="isStaff" name="isStaff">
+                                                <label class="form-check-label" for="isStaff">
+                                                    Đăng nhập với quyền Staff
                                                 </label>
                                             </div>
                                         </div>
@@ -98,10 +106,6 @@
                                         </div>
                                         
                                         <div class="social-login">
-                                            <button type="button" class="btn btn-outline-primary w-100 mb-2">
-                                                <i class="fab fa-facebook-f me-2"></i>
-                                                Đăng nhập với Facebook
-                                            </button>
                                             <button type="button" class="btn btn-outline-danger w-100">
                                                 <i class="fab fa-google me-2"></i>
                                                 Đăng nhập với Google

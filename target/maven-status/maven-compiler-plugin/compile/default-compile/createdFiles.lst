@@ -1,2 +1,3 @@
-com\mycompany\gundamhobby\resources\JakartaEE10Resource.class
 com\mycompany\gundamhobby\JakartaRestConfiguration.class
+com\mycompany\Application.class
+com\mycompany\gundamhobby\resources\JakartaEE10Resource.class

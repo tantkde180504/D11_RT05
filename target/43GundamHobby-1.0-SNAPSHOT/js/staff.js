@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initKeyboardShortcuts();
     initRealTimeUpdates();
     initTooltips();
+    initDropdownFix();
     showKeyboardShortcutsHint();
 });
 
@@ -37,6 +38,14 @@ function initTabSwitching() {
 function initChart() {
     const ctx = document.getElementById('dailyStatsChart');
     if (ctx) {
+        // Ensure the canvas container has proper dimensions
+        const container = ctx.closest('.chart-container');
+        if (container) {
+            container.style.position = 'relative';
+            container.style.height = '200px';
+            container.style.width = '100%';
+        }
+        
         new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -52,8 +61,18 @@ function initChart() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: {
+                                size: 11
+                            }
+                        }
                     }
+                },
+                layout: {
+                    padding: 10
                 }
             }
         });
@@ -233,6 +252,45 @@ function initTooltips() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+}
+
+// Fix dropdown positioning
+function initDropdownFix() {
+    // Ensure dropdown menus have proper z-index and positioning
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        if (button && menu) {
+            button.addEventListener('click', function() {
+                // Ensure the dropdown is positioned correctly
+                setTimeout(() => {
+                    const rect = button.getBoundingClientRect();
+                    const nav = document.querySelector('.staff-nav');
+                    const navRect = nav ? nav.getBoundingClientRect() : null;
+                    
+                    // If dropdown would be behind nav, adjust z-index
+                    if (navRect && rect.bottom > navRect.top) {
+                        menu.style.zIndex = '1051';
+                    }
+                }, 10);
+            });
+        }
+    });
+    
+    // Handle window resize for chart
+    window.addEventListener('resize', function() {
+        const chartContainer = document.querySelector('.chart-container');
+        if (chartContainer) {
+            // Force chart redraw on resize
+            const chart = Chart.getChart('dailyStatsChart');
+            if (chart) {
+                chart.resize();
+            }
+        }
     });
 }
 
