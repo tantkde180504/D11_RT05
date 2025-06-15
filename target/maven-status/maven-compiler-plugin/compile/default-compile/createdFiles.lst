@@ -1,2 +1,7 @@
-com\mycompany\gundamhobby\resources\JakartaEE10Resource.class
+com\mycompany\gundamhobby\service\OrderService.class
+com\mycompany\gundamhobby\controller\OrderController.class
 com\mycompany\gundamhobby\JakartaRestConfiguration.class
+com\mycompany\gundamhobby\repository\OrderRepository.class
+com\mycompany\Application.class
+com\mycompany\gundamhobby\resources\JakartaEE10Resource.class
+com\mycompany\gundamhobby\model\Order.class

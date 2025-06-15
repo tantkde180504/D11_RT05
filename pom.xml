@@ -36,19 +36,59 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <!-- SQL Server JDBC Driver for Azure SQL Database -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Azure Storage SDK -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>12.25.1</version>
+        </dependency>
+        <!-- Azure Identity for authentication -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+            <version>1.11.2</version>
+        </dependency>
+        <!-- Azure Key Vault Secrets -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-security-keyvault-secrets</artifactId>
+            <version>4.7.2</version>
+        </dependency>
+        <!-- Spring Boot Actuator for health checks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+  <groupId>org.apache.tomcat.embed</groupId>
+  <artifactId>tomcat-embed-jasper</artifactId>
+</dependency>
+
     </dependencies>
 
     <build>
