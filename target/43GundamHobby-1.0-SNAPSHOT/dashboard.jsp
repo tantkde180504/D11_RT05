@@ -960,15 +960,7 @@
                     }
                 }
             });
-        });
-
-        // Admin functions
-        function logout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                window.location.href = '<%=request.getContextPath()%>/login.jsp';
-            }
-        }
-
+        });        // Admin functions
         function editProduct(id) {
             alert('Chức năng chỉnh sửa sản phẩm #' + id);
         }
@@ -998,7 +990,16 @@
                     link.classList.remove('active');
                 });
                 this.classList.add('active');
-            });
+            });        });
+    </script>
+    
+    <!-- Auth script for logout functionality -->
+    <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+    
+    <script>
+        // Check admin access on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPageAccess('ADMIN');
         });
     </script>
 </body>
