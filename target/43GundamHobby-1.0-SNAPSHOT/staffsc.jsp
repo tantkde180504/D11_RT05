@@ -36,7 +36,7 @@
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="index.jsp"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
                             </ul>
                         </div>
                     </div>
@@ -1239,11 +1239,17 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Scripts -->
+    </div>    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/staff.js"></script>
+    <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+    
+    <script>
+        // Check staff access on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPageAccess('STAFF');
+        });
+    </script>
 </body>
 </html>
