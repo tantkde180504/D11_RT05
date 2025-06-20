@@ -1,78 +1,150 @@
-<!-- filepath: c:\Users\ROG STRIX\Documents\RT05\D11_RT05\src\main\webapp\cart.jsp -->
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*, com.mycompany.CartItem" %>
+<%
+    // Lấy cartItems từ model (Spring Controller truyền qua request attribute)
+    List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
+    if (cartItems == null) cartItems = new ArrayList<>();
+    double grandTotal = 0;
+%>
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Giỏ hàng của bạn</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Giỏ hàng | LTStore Hobby</title>
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container py-5">
-        <h2 class="mb-4 text-center"><i class="fas fa-shopping-cart me-2"></i>Giỏ hàng</h2>
-        <div class="row">
-            <div class="col-lg-8">
-                <form>
-                    <table class="table cart-table align-middle border">
-                        <thead class="table-light">
-                            <tr>
-                                <th></th>
-                                <th>Sản phẩm</th>
-                                <th>Đơn giá</th>
-                                <th>Số lượng</th>
-                                <th>Thành tiền</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Dữ liệu mẫu, thay bằng dữ liệu động sau -->
-                            <tr>
-                                <td>
-                                    <img src="https://via.placeholder.com/70x70/cccccc/666666?text=RG+RX-78" alt="RG RX-78-2 Gundam">
-                                </td>
-                                <td>
-                                    <a href="#" class="text-decoration-none text-dark fw-semibold">RG RX-78-2 Gundam</a>
-                                </td>
-                                <td>650.000₫</td>
-                                <td style="max-width:100px;">
-                                    <input type="number" class="form-control" value="1" min="1">
-                                </td>
-                                <td>650.000₫</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Hết dữ liệu mẫu -->
-                        </tbody>
-                    </table>
-                    <div class="d-flex justify-content-between cart-actions mt-3">
-                        <a href="index.jsp" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Tiếp tục mua hàng</a>
-                        <button type="submit" class="btn btn-outline-primary">Cập nhật giỏ hàng</button>
-                    </div>
-                </form>
-            </div>
-            <div class="col-lg-4">
-                <div class="cart-summary shadow-sm">
-                    <h5 class="mb-3">Tổng đơn hàng</h5>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tạm tính:</span>
-                        <span>650.000₫</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Phí vận chuyển:</span>
-                        <span>Miễn phí</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-4">
-                        <span class="fw-bold">Tổng cộng:</span>
-                        <span class="fw-bold fs-5 text-danger">650.000₫</span>
-                    </div>
-                    <a href="payment.jsp" class="btn btn-danger w-100 mb-2">Thanh toán</a>
-                    <a href="index.jsp" class="btn btn-outline-secondary w-100">Tiếp tục mua hàng</a>
-                </div>
-            </div>
+<div class="cart-container">
+    <div class="cart-title">Giỏ hàng của bạn</div>
+    <form action="UpdateCartServlet" method="post">
+        <table class="cart-table" width="100%">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng</th>
+                    <th>Xóa</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% for (CartItem item : cartItems) {
+                double total = item.getPrice() * item.getQuantity();
+                grandTotal += total;
+            %>
+                <tr>
+                    <td><img class="cart-img" src="<%=item.getImageUrl()%>" alt="<%=item.getProductName()%>"></td>
+                    <td style="text-align:left; font-weight:500;"> <%=item.getProductName()%> </td>
+                    <td><%=String.format("%,.0f", item.getPrice())%>₫</td>
+                    <td>
+                        <button class="qty-btn" type="submit" name="action" value="decrease-<%=item.getProductId()%>">-</button>
+                        <input class="qty-input" type="text" name="quantity-<%=item.getProductId()%>" value="<%=item.getQuantity()%>" readonly>
+                        <button class="qty-btn" type="submit" name="action" value="increase-<%=item.getProductId()%>">+</button>
+                    </td>
+                    <td><%=String.format("%,.0f", total)%>₫</td>
+                    <td>
+                        <button class="remove-btn" type="submit" name="action" value="remove-<%=item.getProductId()%>">Xóa</button>
+                    </td>
+                </tr>
+            <% } %>
+            <% if (cartItems.isEmpty()) { %>
+                <tr>
+                    <td colspan="6">Giỏ hàng của bạn đang trống.</td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </form>
+    <div class="cart-summary">
+        <strong>Tổng cộng: <%=String.format("%,.0f", grandTotal)%>₫</strong>
+    </div>
+    <div style="text-align:right; margin-top:20px;">
+        <form action="CheckoutServlet" method="post">
+            <button class="checkout-btn" type="submit" <%=cartItems.isEmpty() ? "disabled" : ""%>>Thanh toán</button>
+        </form>
+    </div>
+    <div class="cart-info-boxes">
+        <div class="cart-info-box">
+            <div class="cart-info-title">Vận chuyển miễn phí</div>
+            <div class="cart-info-desc">Hóa đơn thanh toán toàn bộ</div>
+        </div>
+        <div class="cart-info-box">
+            <div class="cart-info-title">Bảo hành bổ sung</div>
+            <div class="cart-info-desc">Nếu sản phẩm trùng hoặc thiếu</div>
+        </div>
+        <div class="cart-info-box">
+            <div class="cart-info-title">100% Hoàn tiền</div>
+            <div class="cart-info-desc">Nếu hãng ngừng sản xuất</div>
+        </div>
+        <div class="cart-info-box">
+            <div class="cart-info-title">Hotline</div>
+            <div class="cart-info-desc cart-hotline">0343970667</div>
         </div>
     </div>
+    <div class="cart-policy-links">
+        <a href="https://ltstorehobby.com/chinh-sach" target="_blank">Chính sách bảo mật</a> |
+        <a href="https://ltstorehobby.com/chinh-sach" target="_blank">Chính sách vận chuyển</a> |
+        <a href="https://ltstorehobby.com/chinh-sach" target="_blank">Chính sách đổi trả</a> |
+        <a href="https://ltstorehobby.com/dieu-khoan" target="_blank">Quy định sử dụng</a>
+    </div>
+    <div class="cart-policy-links" style="margin-top:10px;">
+        <a href="https://www.facebook.com/LTSTORE24/" target="_blank">Facebook</a> |
+        <a href="https://shope.ee/7pS5Ry0Zv9" target="_blank">Shopee</a> |
+        <a href="#" target="_blank">Tiktok</a>
+    </div>
+    <div class="cart-payment-icons" style="margin-top:18px;">
+        <img src="img/sale.png" alt="Payment 1">
+        <img src="img/logo.png" alt="Payment 2">
+        <!-- Thêm các icon thanh toán khác nếu có -->
+    </div>
+    <div class="cart-footer">
+        © Bản quyền thuộc về LTStore | Cung cấp bởi Sapo
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function formatCurrency(num) {
+        return num.toLocaleString('vi-VN', {style: 'decimal', maximumFractionDigits: 0}) + '₫';
+    }
+    function renderCart(cartItems, grandTotal) {
+        const tbody = document.querySelector('.cart-table tbody');
+        let html = '';
+        if (cartItems.length === 0) {
+            html = `<tr><td colspan="6">Giỏ hàng của bạn đang trống.</td></tr>`;
+        } else {
+            cartItems.forEach(item => {
+                const total = item.price * item.quantity;
+                html += `<tr>
+                    <td><img class="cart-img" src="${'$'}{item.imageUrl}" alt="${'$'}{item.productName}"></td>
+                    <td style="text-align:left; font-weight:500;">${'$'}{item.productName}</td>
+                    <td>${'$'}{formatCurrency(item.price)}</td>
+                    <td>
+                        <button class="qty-btn" data-action="decrease" data-id="${'$'}{item.productId}">-</button>
+                        <input class="qty-input" type="text" value="${'$'}{item.quantity}" readonly>
+                        <button class="qty-btn" data-action="increase" data-id="${'$'}{item.productId}">+</button>
+                    </td>
+                    <td>${'$'}{formatCurrency(total)}</td>
+                    <td><button class="remove-btn" data-action="remove" data-id="${'$'}{item.productId}">Xóa</button></td>
+                </tr>`;
+            });
+        }
+        tbody.innerHTML = html;
+        document.querySelector('.cart-summary strong').textContent = 'Tổng cộng: ' + formatCurrency(grandTotal);
+        document.querySelector('.checkout-btn').disabled = cartItems.length === 0;
+    }
+    fetch('/api/cart')
+        .then(res => {
+            if (res.status === 401) return {cartItems: [], grandTotal: 0};
+            return res.json();
+        })
+        .then(data => {
+            renderCart(data.cartItems || [], data.grandTotal || 0);
+        })
+        .catch(() => {
+            renderCart([], 0);
+        });
+});
+</script>
 </body>
 </html>
