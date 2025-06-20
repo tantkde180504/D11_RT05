@@ -376,73 +376,44 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <img src="https://via.placeholder.com/50x50" alt="Product" class="rounded">
-                                </td>
-                                <td>
-                                    <strong>RG Strike Freedom Gundam</strong><br>
-                                    <small class="text-muted">Bandai</small>
-                                </td>
-                                <td>RG-001</td>
-                                <td>Real Grade</td>
-                                <td><strong>25</strong></td>
-                                <td><span class="status-badge status-completed">Còn hàng</span></td>
-                                <td>850,000₫</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateStockModal">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <img src="https://via.placeholder.com/50x50" alt="Product" class="rounded">
-                                </td>
-                                <td>
-                                    <strong>MG Barbatos</strong><br>
-                                    <small class="text-muted">Bandai</small>
-                                </td>
-                                <td>MG-002</td>
-                                <td>Master Grade</td>
-                                <td><strong>5</strong></td>
-                                <td><span class="status-badge status-pending">Sắp hết</span></td>
-                                <td>1,200,000₫</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateStockModal">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <img src="https://via.placeholder.com/50x50" alt="Product" class="rounded">
-                                </td>
-                                <td>
-                                    <strong>PG Unicorn Gundam</strong><br>
-                                    <small class="text-muted">Bandai</small>
-                                </td>
-                                <td>PG-003</td>
-                                <td>Perfect Grade</td>
-                                <td><strong>0</strong></td>
-                                <td><span class="status-badge status-rejected">Hết hàng</span></td>
-                                <td>4,500,000₫</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateStockModal">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
+                            <c:forEach var="product" items="${products}">
+                                <tr>
+                                    <td>
+                                        <img src="${product.imageUrl}" alt="Product" class="rounded" width="50" height="50">
+                                    </td>
+                                    <td>
+                                        <strong>${product.name}</strong><br>
+                                        <small class="text-muted">${product.brand}</small>
+                                    </td>
+                                    <td>SP-${product.id}</td> <!-- Giả lập SKU từ id -->
+                                    <td>${product.grade}</td>
+                                    <td><strong>${product.quantity}</strong></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${product.quantity == 0}">
+                                                <span class="status-badge status-rejected">Hết hàng</span>
+                                            </c:when>
+                                            <c:when test="${product.quantity < 10}">
+                                                <span class="status-badge status-pending">Sắp hết</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="status-badge status-completed">Còn hàng</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>${product.price}₫</td>
+                                    <td>
+                                        <form action="/staff/inventory/update" method="post" class="d-flex">
+                                            <input type="hidden" name="id" value="${product.id}" />
+                                            <input type="number" name="quantity" value="${product.quantity}" class="form-control form-control-sm me-1" min="0" style="width: 70px;" />
+                                            <button type="submit" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-save"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>                        
                     </table>
                 </div>
             </div>

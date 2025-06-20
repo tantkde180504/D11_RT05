@@ -1,0 +1,8 @@
+com/mycompany/gundamhobby/resources/JakartaEE10Resource.class
+com/mycompany/config/WebConfig.class
+com/mycompany/TestController.class
+com/mycompany/DatabaseTestController.class
+com/mycompany/HomeController.class
+com/mycompany/LoginController.class
+com/mycompany/gundamhobby/JakartaRestConfiguration.class
+com/mycompany/Application.class
