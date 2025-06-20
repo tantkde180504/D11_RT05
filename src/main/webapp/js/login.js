@@ -36,51 +36,94 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     
-    // Login form validation
+    // Handle exclusive checkbox selection for user roles
+    const isAdminCheckbox = document.getElementById('isAdmin');
+    const isStaffCheckbox = document.getElementById('isStaff');
+    
+    if (isAdminCheckbox && isStaffCheckbox) {
+        isAdminCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                isStaffCheckbox.checked = false;
+            }
+        });
+        
+        isStaffCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                isAdminCheckbox.checked = false;
+            }
+        });
+    }
+      // Login form validation
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const isAdmin = document.getElementById('isAdmin').checked;
-            
+            const isStaff = document.getElementById('isStaff').checked;
             if (!email || !password) {
                 showAlert('Vui lòng điền đầy đủ thông tin!', 'danger');
                 return;
             }
-            
+            if (isAdmin && isStaff) {
+                showAlert('Vui lòng chỉ chọn một loại quyền đăng nhập!', 'warning');
+                return;
+            }
             if (!isValidEmail(email)) {
                 showAlert('Email không hợp lệ!', 'danger');
                 return;
             }
-            
-            // Show loading state
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             submitBtn.classList.add('loading');
-            submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Here you would normally send the request to your server
-                console.log('Login attempt:', { email, password, isAdmin });
+            submitBtn.disabled = true;            // Gửi request đến backend kiểm tra tài khoản
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
                 
-                // Store login info
-                if (typeof(Storage) !== "undefined") {
-                    if (isAdmin) {
-                        localStorage.setItem('isAdmin', 'true');
-                        window.location.href = 'dashboard.jsp';
-                    } else {
-                        // Set user as logged in
-                        const userName = email.split('@')[0]; // Use part before @ as username
-                        setUserLoggedIn(userName, email);
+                if (data.success === true) {
+                    // Lưu thông tin user
+                    setUserLoggedIn(data.fullName, email);
+                    localStorage.setItem('userRole', data.role);
+                    
+                    // Hiển thị thông báo thành công
+                    const roleText = getRoleDisplayName(data.role);
+                    showAlert(`🎉 Đăng nhập thành công! Chào mừng ${data.fullName} (${roleText})`, 'success');
+                    
+                    // Chuyển trang dựa theo role
+                    setTimeout(() => {
+                        const role = data.role ? data.role.toUpperCase() : '';
+                        let targetPage = '';
                         
-                        setTimeout(() => {
-                            window.location.href = 'index.jsp';
-                        }, 1000);
-                    }
+                        if (role === 'ADMIN') {
+                            targetPage = '/dashboard.jsp';
+                        } else if (role === 'STAFF') {
+                            targetPage = '/staffsc.jsp';
+                        } else {
+                            targetPage = '/index.jsp';
+                        }
+                        
+                        console.log('Redirecting to:', targetPage);
+                        window.location.href = targetPage;
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Sai email hoặc mật khẩu!', 'danger');
                 }
-            }, 1500);
+            })
+            .catch(() => {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                showAlert('Lỗi kết nối máy chủ!', 'danger');
+            });
         });
     }
     
@@ -143,8 +186,22 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Get role display name in Vietnamese
+function getRoleDisplayName(role) {
+    switch(role ? role.toUpperCase() : '') {
+        case 'ADMIN':
+            return 'Quản trị viên';
+        case 'STAFF':
+            return 'Nhân viên';
+        case 'CUSTOMER':
+            return 'Khách hàng';
+        default:
+            return 'Người dùng';
+    }
+}
+
 // Show alert messages
-function showAlert(message, type) {
+function showAlert(message, type, duration = 5000) {
     // Remove existing alerts
     const existingAlerts = document.querySelectorAll('.alert');
     existingAlerts.forEach(alert => alert.remove());
@@ -159,14 +216,20 @@ function showAlert(message, type) {
     
     // Insert alert at the top of the form
     const form = document.querySelector('.login-form-section') || document.querySelector('.register-form-section');
-    form.insertBefore(alertDiv, form.firstChild);
-    
-    // Auto dismiss after 5 seconds
-    setTimeout(() => {
-        if (alertDiv && alertDiv.parentNode) {
-            alertDiv.remove();
-        }
-    }, 5000);
+    if (form) {
+        form.insertBefore(alertDiv, form.firstChild);
+    } else {
+        // Fallback: insert at top of body
+        document.body.insertBefore(alertDiv, document.body.firstChild);
+    }
+      // Auto dismiss after specified duration
+    if (duration > 0) {
+        setTimeout(() => {
+            if (alertDiv && alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, duration);
+    }
 }
 
 // Social login handlers
@@ -206,3 +269,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Sau khi đăng nhập thành công, lưu thông tin vào localStorage để profile.jsp hiển thị đúng
+function setUserLoggedIn(name, email) {
+    localStorage.setItem('userName', name);
+    localStorage.setItem('userEmail', email);
+}

@@ -643,99 +643,184 @@
                             </div>
                         </div>
                     </div>
+                    <script>
+  document.querySelector("#addStaffForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-                    <!-- Employees Management Tab -->
-                    <!-- Tab: Quản lý nhân viên -->
+    const data = {
+      firstName: document.querySelector('input[name="firstName"]').value,
+      lastName: document.querySelector('input[name="lastName"]').value,
+      email: document.querySelector('input[name="email"]').value,
+      password: document.querySelector('input[name="password"]').value,
+      phone: document.querySelector('input[name="phone"]').value,
+      dateOfBirth: document.querySelector('input[name="dateOfBirth"]').value,
+      gender: document.querySelector('select[name="gender"]').value,
+      address: document.querySelector('input[name="address"]').value
+    };
+
+    fetch("/api/staffs/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+    .then(res => {
+      if (!res.ok) throw res;
+      return res.json();
+    })
+    .then(result => {
+      alert("✅ Tạo nhân viên thành công!");
+      location.reload();
+    })
+    .catch(err => {
+      err.text().then(msg => alert("❌ Lỗi: " + msg));
+    });
+  });
+</script>
+
+
+                    
+<!-- Employees Management Tab -->
 <div class="tab-pane fade" id="employees">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Quản lý nhân viên</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
-            <i class="fas fa-plus"></i> Thêm nhân viên mới
-        </button>
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="page-title">
+                <i class="fas fa-users-cog me-2"></i>Quản lý nhân viên
+            </h1>
+            <button type="button" class="btn btn-admin-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+                <i class="fas fa-plus me-2"></i>Thêm nhân viên mới
+            </button>
+        </div>
+        <p class="text-muted mb-0">Danh sách tất cả nhân viên hệ thống</p>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Họ tên</th>
-                    <th>Email</th>
-                    <th>Chức vụ</th>
-                    <th>Ngày sinh</th>
-                    <th>Ngày vào làm</th>
-                    <th>Trạng thái</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="staff" items="${staffList}">
+    <div class="admin-table">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td>${staff.id}</td>
-                        <td>${staff.fullName}</td>
-                        <td>${staff.email}</td>
-                        <td>${staff.position}</td>
-                        <td>${staff.birthDate}</td>
-                        <td>${staff.startDate}</td>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Chức vụ</th>
+                        <th>Ngày vào làm</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Nguyễn Văn A</td>
+                        <td>nguyenvana@74gundam.com</td>
+                        <td>Quản lý</td>
+                        <td>01/01/2023</td>
+                        <td><span class="badge bg-success">Hoạt động</span></td>
                         <td>
-                            <span class="badge ${staff.status == 'Hoạt động' ? 'bg-success' : 'bg-warning'}">
-                                ${staff.status}
-                            </span>
+                            <button class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Modal thêm nhân viên -->
-<div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form action="${pageContext.request.contextPath}/admin/staffs/create" method="post">
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title" id="addStaffModalLabel">+ Thêm nhân viên mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label>Họ tên:</label>
-                            <input name="fullName" type="text" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Email:</label>
-                            <input name="email" type="email" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Chức vụ:</label>
-                            <input name="position" type="text" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Ngày sinh:</label>
-                            <input name="birthDate" type="date" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Ngày vào làm:</label>
-                            <input name="startDate" type="date" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Trạng thái:</label>
-                            <select name="status" class="form-select">
-                                <option value="Hoạt động">Hoạt động</option>
-                                <option value="Ngưng hoạt động">Ngưng hoạt động</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-warning">Lưu nhân viên</button>
-                </div>
-            </form>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+                   <!-- Modal Thêm Nhân Viên -->
+<div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Thêm nhân viên mới</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <form id="addStaffForm">
+        <div class="modal-body">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label>Họ</label>
+              <input type="text" name="firstName" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label>Tên</label>
+              <input type="text" name="lastName" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label>Email</label>
+              <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label>Mật khẩu</label>
+              <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="col-6">
+              <label>Số điện thoại</label>
+              <input type="text" name="phone" class="form-control">
+            </div>
+            <div class="col-6">
+              <label>Ngày sinh</label>
+              <input type="date" name="dateOfBirth" class="form-control">
+            </div>
+            <div class="col-6">
+              <label>Giới tính</label>
+              <select name="gender" class="form-control">
+                <option value="MALE">Nam</option>
+                <option value="FEMALE">Nữ</option>
+                <option value="OTHER">Khác</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>Địa chỉ</label>
+              <input type="text" name="address" class="form-control">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu nhân viên</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelector("#addStaffForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const data = {
+      firstName: document.querySelector('input[name="firstName"]').value,
+      lastName: document.querySelector('input[name="lastName"]').value,
+      email: document.querySelector('input[name="email"]').value,
+      password: document.querySelector('input[name="password"]').value,
+      phone: document.querySelector('input[name="phone"]').value,
+      dateOfBirth: document.querySelector('input[name="dateOfBirth"]').value,
+      gender: document.querySelector('select[name="gender"]').value,
+      address: document.querySelector('input[name="address"]').value
+    };
+
+    fetch("/api/staffs/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+    .then(res => {
+      if (!res.ok) throw res;
+      return res.json();
+    })
+    .then(result => {
+      alert("✅ Tạo nhân viên thành công!");
+      location.reload();
+    })
+    .catch(err => {
+      err.text().then(msg => alert("❌ Lỗi: " + msg));
+    });
+  });
+</script>
 
 
                     <!-- Customers Management Tab -->
@@ -1010,15 +1095,7 @@
                     }
                 }
             });
-        });
-
-        // Admin functions
-        function logout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                window.location.href = '<%=request.getContextPath()%>/login.jsp';
-            }
-        }
-
+        });        // Admin functions
         function editProduct(id) {
             alert('Chức năng chỉnh sửa sản phẩm #' + id);
         }
@@ -1048,7 +1125,16 @@
                     link.classList.remove('active');
                 });
                 this.classList.add('active');
-            });
+            });        });
+    </script>
+    
+    <!-- Auth script for logout functionality -->
+    <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+    
+    <script>
+        // Check admin access on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPageAccess('ADMIN');
         });
     </script>
 </body>
