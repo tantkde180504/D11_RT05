@@ -9,29 +9,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar bg-dark text-white py-2">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <small><i class="fas fa-phone me-2"></i>Hotline: 0385546145 (8h-20h)</small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="social-links">
-                        <a href="#" class="text-white me-2"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-white me-2"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="text-white me-2"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Header -->
     <header class="bg-white shadow-sm sticky-top">
         <div class="container">
@@ -65,8 +51,21 @@
                                     <span>Tài khoản</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                    <li id="guestLoginOption"><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                         <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                    </a></li>
+                                    <li id="userMenu" style="display:none;">
+                                        <span class="dropdown-item disabled"><i class="fas fa-user me-2"></i>Xin chào, <span id="userName">User</span></span>
+                                    </li>
+                                    <li id="userAccountOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
+                                        <i class="fas fa-id-card me-2"></i>Thông tin tài khoản
+                                    </a></li>
+                                    <li id="userOrdersOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp" onclick="document.getElementById('profileOrdersTab').click();return false;">
+                                        <i class="fas fa-box me-2"></i>Đơn hàng của bạn
+                                    </a></li>
+                                    <li id="userDivider" style="display:none;"><hr class="dropdown-divider"></li>
+                                    <li id="userLogoutOption" style="display:none;"><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                     </a></li>
                                     <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
                                         <i class="fas fa-user-plus me-2"></i>Đăng ký
@@ -85,69 +84,58 @@
                 </div>
             </div>
         </div>
-    </header>    <!-- Navigation -->
-    <nav class="main-nav bg-primary">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="nav-list d-flex justify-content-center w-100">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="<%=request.getContextPath()%>/">
-                                    <i class="fas fa-home me-2"></i>Trang chủ
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                    <i class="fas fa-robot me-2"></i>Gundam Bandai
-                                </a>
-                                <ul class="dropdown-menu mega-menu">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <h6 class="dropdown-header">Grade Series</h6>
-                                                <li><a class="dropdown-item" href="#">High Grade (HG)</a></li>
-                                                <li><a class="dropdown-item" href="#">Real Grade (RG)</a></li>
-                                                <li><a class="dropdown-item" href="#">Master Grade (MG)</a></li>
-                                                <li><a class="dropdown-item" href="#">Perfect Grade (PG)</a></li>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h6 class="dropdown-header">Special Series</h6>
-                                                <li><a class="dropdown-item" href="#">Metal Build</a></li>
-                                                <li><a class="dropdown-item" href="#">Super Deformed (SD)</a></li>
-                                                <li><a class="dropdown-item" href="#">Full Mechanics</a></li>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <i class="fas fa-shopping-bag me-2"></i>Hàng Pre-Order
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                    <i class="fas fa-tools me-2"></i>Dụng cụ & Phụ kiện
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Dụng cụ lắp ráp</a></li>
-                                    <li><a class="dropdown-item" href="#">Sơn mô hình</a></li>
-                                    <li><a class="dropdown-item" href="#">Base & Stand</a></li>
-                                    <li><a class="dropdown-item" href="#">Decal & Sticker</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <i class="fas fa-envelope me-2"></i>Liên hệ
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+    </header>    <!-- Navigation Bar giống anhobbystore.com -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-0 position-relative">
+        <div class="container position-relative">
+            <!-- Nút danh mục sản phẩm -->
+            <div class="d-none d-lg-block position-relative">
+                <button class="btn btn-outline-primary fw-bold px-4 py-2 me-3" id="categoryBtn" type="button">
+                    <i class="fas fa-bars me-2"></i> DANH MỤC SẢN PHẨM
+                </button>
+                <div class="category-popup shadow" id="categoryPopup">
+                    <div class="category-item">Gundam Bandai</div>
+                    <div class="category-item">Mô hình Trung</div>
+                    <div class="category-item">Metal Build - Diecast</div>
+                    <div class="category-item">Dụng cụ - Tool</div>
+                    <div class="category-item">Phụ kiện - Base</div>
+                    <div class="category-item">Mô hình Dragon Ball</div>
+                    <div class="category-item">Sơn - Decal</div>
                 </div>
+            </div>
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="<%=request.getContextPath()%>/all-products.jsp">Tất cả sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="#">HÀNG MỚI VỀ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="#">HÀNG PRE-ORDER</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="phukienDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            PHỤ KIỆN & MÔ HÌNH
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="phukienDropdown">
+                            <li><a class="dropdown-item" href="#">Dụng cụ - Tool</a></li>
+                            <li><a class="dropdown-item" href="#">Phụ kiện - Base</a></li>
+                            <li><a class="dropdown-item" href="#">Mô hình Dragon Ball</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="bandaiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            BANDAI
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="bandaiDropdown">
+                            <li><a class="dropdown-item" href="#">High Grade (HG)</a></li>
+                            <li><a class="dropdown-item" href="#">Master Grade (MG)</a></li>
+                            <li><a class="dropdown-item" href="#">Real Grade (RG)</a></li>
+                            <li><a class="dropdown-item" href="#">Perfect Grade (PG)</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -285,13 +273,13 @@
                     <div class="product-card">
                         <div class="product-image">
                             <img src="https://via.placeholder.com/250x250/cccccc/666666?text=RG+RX-78" class="img-fluid" alt="RG RX-78-2">
-                            <div class="product-badges">
+                            <div class="product-badges>
                                 <span class="badge bg-success">Mới</span>
                             </div>
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
+                                <a href="<%=request.getContextPath()%>/product-detail.jsp" class="btn btn-outline-light btn-sm">
                                     <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -316,9 +304,9 @@
                                 <span class="badge bg-danger">Hot</span>
                             </div>
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
+                                <a href="<%=request.getContextPath()%>/product-detail.jsp" class="btn btn-outline-light btn-sm">
                                     <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -338,9 +326,9 @@
                         <div class="product-image">
                             <img src="https://via.placeholder.com/250x250/cccccc/666666?text=HG+Strike" class="img-fluid" alt="HG Strike Freedom">
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
+                                <a href="<%=request.getContextPath()%>/product-detail.jsp" class="btn btn-outline-light btn-sm">
                                     <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -363,9 +351,9 @@
                                 <span class="badge bg-warning">Premium</span>
                             </div>
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
+                                <a href="<%=request.getContextPath()%>/product-detail.jsp" class="btn btn-outline-light btn-sm">
                                     <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -388,9 +376,9 @@
                                 <span class="badge bg-success">Mới</span>
                             </div>
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
+                                <a href="<%=request.getContextPath()%>/product-detail.jsp" class="btn btn-outline-light btn-sm">
                                     <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -410,9 +398,9 @@
                         <div class="product-image">
                             <img src="https://via.placeholder.com/250x250/cccccc/666666?text=MG+Destiny" class="img-fluid" alt="MG Destiny">
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
+                                <a href="<%=request.getContextPath()%>/product-detail.jsp" class="btn btn-outline-light btn-sm">
                                     <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="product-info">
@@ -689,6 +677,75 @@
                 }, 2000);
             });
         });
+
+        // Category popup functionality
+        const categoryBtn = document.getElementById('categoryBtn');
+        const categoryPopup = document.getElementById('categoryPopup');
+
+        categoryBtn.addEventListener('click', () => {
+            categoryPopup.classList.toggle('show');
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!categoryBtn.contains(e.target) && !categoryPopup.contains(e.target)) {
+                categoryPopup.classList.remove('show');
+            }
+        });
+
+    // Hiện/ẩn popup danh mục sản phẩm
+    document.addEventListener('DOMContentLoaded', function() {
+        var btn = document.getElementById('categoryBtn');
+        var popup = document.getElementById('categoryPopup');
+        if (btn && popup) {
+            btn.addEventListener('mouseenter', function() {
+                popup.classList.add('show');
+            });
+            btn.addEventListener('mouseleave', function() {
+                setTimeout(function(){
+                    if (!popup.matches(':hover')) popup.classList.remove('show');
+                }, 100);
+            });
+            popup.addEventListener('mouseenter', function() {
+                popup.classList.add('show');
+            });
+            popup.addEventListener('mouseleave', function() {
+                popup.classList.remove('show');
+            });
+            // Mobile: click để toggle
+            btn.addEventListener('click', function(e) {
+                if (window.innerWidth < 992) {
+                    popup.classList.toggle('show');
+                }
+            });
+            // Click ngoài để ẩn
+            document.addEventListener('click', function(e) {
+                if (!btn.contains(e.target) && !popup.contains(e.target)) {
+                    popup.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    function printInvoice(orderId) {
+        var id = orderId.replace(/\D/g, '');
+        if (!id) {
+            alert('Mã đơn hàng không hợp lệ!');
+            return;
+        }
+        fetch('http://localhost:8081/orders/' + id + '/invoice')
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP status ' + res.status);
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Hóa đơn cho đơn hàng #' + data.orderId + ':\n\n' + data.invoice);
+                } else {
+                    alert('Không tìm thấy đơn hàng hoặc lỗi khi in hóa đơn.');
+                }
+            })
+            .catch((err) => alert('Lỗi kết nối server!\n' + err));
+    }
     </script>
 </body>
 </html>

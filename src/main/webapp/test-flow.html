@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Flow - 43 Gundam Hobby</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="text-center mb-0">
+                            <i class="fas fa-robot me-2"></i>
+                            Test Login Flow - 43 Gundam Hobby
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="mb-4">🎯 Hướng dẫn test chức năng đăng nhập và đăng xuất:</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3 border-success">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0"><i class="fas fa-crown me-2"></i>ADMIN</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Email:</strong> admin@gundam.com</p>
+                                        <p><strong>Password:</strong> admin123</p>
+                                        <p><strong>Trang đến:</strong> dashboard.jsp</p>
+                                        <a href="/login.jsp" class="btn btn-success btn-sm">Test Admin</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card mb-3 border-warning">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="mb-0"><i class="fas fa-user-tie me-2"></i>STAFF</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Email:</strong> staff@gundam.com</p>
+                                        <p><strong>Password:</strong> staff123</p>
+                                        <p><strong>Trang đến:</strong> staffsc.jsp</p>
+                                        <a href="/login.jsp" class="btn btn-warning btn-sm">Test Staff</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3 border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0"><i class="fas fa-user me-2"></i>CUSTOMER</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Email:</strong> customer@gundam.com</p>
+                                        <p><strong>Password:</strong> customer123</p>
+                                        <p><strong>Trang đến:</strong> index.jsp (trang chủ)</p>
+                                        <a href="/login.jsp" class="btn btn-info btn-sm">Test Customer</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card mb-3 border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0"><i class="fas fa-home me-2"></i>TRANG CHỦ</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Truy cập:</strong> Trang chủ</p>
+                                        <p><strong>Không cần:</strong> Đăng nhập</p>
+                                        <p><strong>URL:</strong> / hoặc /index.jsp</p>
+                                        <a href="/" class="btn btn-primary btn-sm">Trang chủ</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-4">
+                            <h6><i class="fas fa-info-circle me-2"></i>Chức năng đăng xuất:</h6>
+                            <ul class="mb-0">
+                                <li>✅ <strong>Dashboard (Admin):</strong> Nhấn nút "Đăng xuất" ở header → Confirm → Trở về trang chủ</li>
+                                <li>✅ <strong>Staff page:</strong> Menu dropdown → "Đăng xuất" → Confirm → Trở về trang chủ</li>
+                                <li>✅ <strong>Xóa session:</strong> Tự động xóa userName, userRole, userEmail khỏi localStorage</li>
+                                <li>✅ <strong>Thông báo:</strong> Hiển thị "Đã đăng xuất thành công!"</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-check-circle me-2"></i>Flow test được đề xuất:</h6>
+                            <ol class="mb-0">
+                                <li>Đăng nhập admin → vào dashboard.jsp → đăng xuất → về trang chủ</li>
+                                <li>Đăng nhập staff → vào staffsc.jsp → đăng xuất → về trang chủ</li>
+                                <li>Đăng nhập customer → vào index.jsp</li>
+                                <li>Kiểm tra localStorage đã bị xóa sau khi đăng xuất</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <a href="/login.jsp" class="btn btn-lg btn-primary me-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Bắt đầu test Login
+                            </a>
+                            <a href="/" class="btn btn-lg btn-secondary">
+                                <i class="fas fa-home me-2"></i>Về trang chủ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

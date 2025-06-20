@@ -36,7 +36,7 @@
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="index.jsp"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
                             </ul>
                         </div>
                     </div>
@@ -558,43 +558,16 @@
                                 <td><span class="status-badge status-pending">Chờ xác nhận</span></td>
                                 <td>15/03/2024</td>
                                 <td>
-    <!-- Nút xác nhận -->
-    <button class="btn btn-sm btn-success me-1" title="Xác nhận">
-        <i class="fas fa-check"></i>
-    </button>
-
-    <!-- Nút cập nhật -->
-    <button class="btn btn-sm btn-warning me-1" title="Cập nhật">
-        <i class="fas fa-edit"></i>
-    </button>
-
-    <!-- Nút xem chi tiết -->
-    <button class="btn btn-sm btn-info me-1" data-bs-toggle="modal" data-bs-target="#orderDetailModal">
-        <i class="fas fa-eye"></i>
-    </button>
-
-    <!-- Nút in hóa đơn -->
-    <form action="${pageContext.request.contextPath}/staff/invoice/${order.orderId}" method="get" class="d-inline">
-        <button type="submit" class="btn btn-sm btn-outline-secondary me-1" title="In hóa đơn">
-            <i class="fas fa-print"></i>
-        </button>
-    </form>
-
-    <!-- Nút hủy đơn -->
-    <form action="${pageContext.request.contextPath}/staff/orders/cancel/${order.orderId}" method="post" class="d-inline">
-        <button type="submit" class="btn btn-sm btn-danger me-1" title="Hủy đơn" onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không?')">
-            <i class="fas fa-times"></i>
-        </button>
-    </form>
-
-    <!-- Nút xử lý đổi trả -->
-    <form action="${pageContext.request.contextPath}/staff/orders/return/${order.orderId}" method="post" class="d-inline">
-        <button type="submit" class="btn btn-sm btn-secondary" title="Xử lý đổi trả">
-            <i class="fas fa-undo"></i>
-        </button>
-    </form>
-</td>
-
+                                    <button class="btn btn-sm btn-success me-1" title="Xác nhận">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning me-1" title="Cập nhật">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#orderDetailModal">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
                             </tr>
                             <tr>
                                 <td><strong>#ORD002</strong></td>
@@ -1266,11 +1239,17 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Scripts -->
+    </div>    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/staff.js"></script>
+    <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+    
+    <script>
+        // Check staff access on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPageAccess('STAFF');
+        });
+    </script>
 </body>
 </html>

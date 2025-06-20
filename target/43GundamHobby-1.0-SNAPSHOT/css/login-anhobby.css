@@ -1,0 +1,99 @@
+/* Login Page Styles for 43 Gundam Hobby - giống anhobbystore.com */
+.login-page {
+    background: #f7f7fa;
+}
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login-logo {
+    margin-bottom: 18px;
+}
+.login-logo img {
+    max-height: 70px;
+}
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 18px;
+    text-align: center;
+}
+.login-form-box {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    padding: 32px 28px 24px 28px;
+    max-width: 400px;
+    width: 100%;
+}
+.form-label {
+    font-weight: 500;
+}
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(255,102,0,0.10);
+}
+.forgot-password-link {
+    color: var(--primary-color);
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+.btn-login {
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 30px;
+    padding: 10px 0;
+    font-size: 1.1rem;
+    margin-top: 8px;
+}
+.btn-login:hover {
+    background: #e55a00;
+}
+.login-divider {
+    text-align: center;
+    margin: 18px 0 12px 0;
+    color: #bbb;
+    font-size: 0.95rem;
+    position: relative;
+}
+.login-divider:before, .login-divider:after {
+    content: '';
+    display: inline-block;
+    width: 40%;
+    height: 1px;
+    background: #eee;
+    vertical-align: middle;
+    margin: 0 8px;
+}
+.social-login-btn {
+    width: 100%;
+    border-radius: 30px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+.register-link {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 1rem;
+}
+.register-link a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+.register-link a:hover {
+    text-decoration: underline;
+}
+@media (max-width: 576px) {
+    .login-form-box {
+        padding: 18px 6px 12px 6px;
+    }
+}
