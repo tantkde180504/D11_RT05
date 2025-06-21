@@ -1,13 +1,17 @@
 package com.mycompany;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 
-@Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findByUserId(Long userId);
     Cart findByUserIdAndProductId(Long userId, Long productId);
-    void deleteByUserIdAndProductId(Long userId, Long productId);
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Cart c WHERE c.userId = :userId AND c.productId = :productId")
+    void deleteByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
 }

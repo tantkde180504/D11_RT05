@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, com.mycompany.CartItem" %>
 <%
-    // Lấy cartItems từ model (Spring Controller truyền qua request attribute)
     List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
     if (cartItems == null) cartItems = new ArrayList<>();
     double grandTotal = 0;
@@ -16,52 +15,28 @@
 <body>
 <div class="cart-container">
     <div class="cart-title">Giỏ hàng của bạn</div>
-    <form action="UpdateCartServlet" method="post">
-        <table class="cart-table" width="100%">
-            <thead>
-                <tr>
-                    <th>Ảnh</th>
-                    <th>Sản phẩm</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Tổng</th>
-                    <th>Xóa</th>
-                </tr>
-            </thead>
-            <tbody>
-            <% for (CartItem item : cartItems) {
-                double total = item.getPrice() * item.getQuantity();
-                grandTotal += total;
-            %>
-                <tr>
-                    <td><img class="cart-img" src="<%=item.getImageUrl()%>" alt="<%=item.getProductName()%>"></td>
-                    <td style="text-align:left; font-weight:500;"> <%=item.getProductName()%> </td>
-                    <td><%=String.format("%,.0f", item.getPrice())%>₫</td>
-                    <td>
-                        <button class="qty-btn" type="submit" name="action" value="decrease-<%=item.getProductId()%>">-</button>
-                        <input class="qty-input" type="text" name="quantity-<%=item.getProductId()%>" value="<%=item.getQuantity()%>" readonly>
-                        <button class="qty-btn" type="submit" name="action" value="increase-<%=item.getProductId()%>">+</button>
-                    </td>
-                    <td><%=String.format("%,.0f", total)%>₫</td>
-                    <td>
-                        <button class="remove-btn" type="submit" name="action" value="remove-<%=item.getProductId()%>">Xóa</button>
-                    </td>
-                </tr>
-            <% } %>
-            <% if (cartItems.isEmpty()) { %>
-                <tr>
-                    <td colspan="6">Giỏ hàng của bạn đang trống.</td>
-                </tr>
-            <% } %>
-            </tbody>
-        </table>
-    </form>
+    <table class="cart-table" width="100%">
+        <thead>
+            <tr>
+                <th>Ảnh</th>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tổng</th>
+                <th>Xóa</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
     <div class="cart-summary">
-        <strong>Tổng cộng: <%=String.format("%,.0f", grandTotal)%>₫</strong>
+        <strong>Tổng cộng: 0₫</strong>
     </div>
-    <div style="text-align:right; margin-top:20px;">
-        <form action="CheckoutServlet" method="post">
-            <button class="checkout-btn" type="submit" <%=cartItems.isEmpty() ? "disabled" : ""%>>Thanh toán</button>
+    <div style="display:flex; justify-content:space-between; margin-top:20px; gap:10px;">
+        <a href="/" class="btn back-btn" style="background:#ccc; color:#222;">Quay về trang chủ</a>
+        <button class="btn update-btn" id="updateCartBtn">Cập nhật giỏ hàng</button>
+        <form action="CheckoutServlet" method="post" style="display:inline;">
+            <button class="checkout-btn" type="submit">Thanh toán</button>
         </form>
     </div>
     <div class="cart-info-boxes">
@@ -103,36 +78,50 @@
     </div>
 </div>
 <script>
+let cartData = [];
+
+function formatCurrency(num) {
+    return num.toLocaleString('vi-VN', {style: 'decimal', maximumFractionDigits: 0}) + '₫';
+}
+
+function renderCart(cartItems, grandTotal) {
+    cartData = cartItems.map(item => ({...item}));
+    const tbody = document.querySelector('.cart-table tbody');
+    let html = '';
+    if (cartItems.length === 0) {
+        html = `<tr><td colspan="6">Giỏ hàng của bạn đang trống.</td></tr>`;
+    } else {
+        cartItems.forEach(item => {
+            const total = item.price * item.quantity;
+            html += `<tr>
+                <td><img class="cart-img" src="${'$'}{item.imageUrl}" alt="${'$'}{item.productName}"></td>
+                <td style="text-align:left; font-weight:500;">${'$'}{item.productName}</td>
+                <td>${'$'}{formatCurrency(item.price)}</td>
+                <td>
+                    <button class="qty-btn" type="button" data-action="decrease" data-id="${'$'}{item.productId}">-</button>
+                    <input class="qty-input" type="text" value="${'$'}{item.quantity}" readonly data-id="${'$'}{item.productId}">
+                    <button class="qty-btn" type="button" data-action="increase" data-id="${'$'}{item.productId}">+</button>
+                </td>
+                <td>${'$'}{formatCurrency(total)}</td>
+                <td><button class="remove-btn" type="button" data-action="remove" data-id="${'$'}{item.productId}">Xóa</button></td>
+            </tr>`;
+        });
+    }
+    tbody.innerHTML = html;
+    document.querySelector('.cart-summary strong').textContent = 'Tổng cộng: ' + formatCurrency(grandTotal);
+    document.querySelector('.checkout-btn').disabled = cartItems.length === 0;
+}
+
+function recalcGrandTotal() {
+    let total = 0;
+    cartData.forEach(item => {
+        total += item.price * item.quantity;
+    });
+    document.querySelector('.cart-summary strong').textContent = 'Tổng cộng: ' + formatCurrency(total);
+    document.querySelector('.checkout-btn').disabled = cartData.length === 0;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    function formatCurrency(num) {
-        return num.toLocaleString('vi-VN', {style: 'decimal', maximumFractionDigits: 0}) + '₫';
-    }
-    function renderCart(cartItems, grandTotal) {
-        const tbody = document.querySelector('.cart-table tbody');
-        let html = '';
-        if (cartItems.length === 0) {
-            html = `<tr><td colspan="6">Giỏ hàng của bạn đang trống.</td></tr>`;
-        } else {
-            cartItems.forEach(item => {
-                const total = item.price * item.quantity;
-                html += `<tr>
-                    <td><img class="cart-img" src="${'$'}{item.imageUrl}" alt="${'$'}{item.productName}"></td>
-                    <td style="text-align:left; font-weight:500;">${'$'}{item.productName}</td>
-                    <td>${'$'}{formatCurrency(item.price)}</td>
-                    <td>
-                        <button class="qty-btn" data-action="decrease" data-id="${'$'}{item.productId}">-</button>
-                        <input class="qty-input" type="text" value="${'$'}{item.quantity}" readonly>
-                        <button class="qty-btn" data-action="increase" data-id="${'$'}{item.productId}">+</button>
-                    </td>
-                    <td>${'$'}{formatCurrency(total)}</td>
-                    <td><button class="remove-btn" data-action="remove" data-id="${'$'}{item.productId}">Xóa</button></td>
-                </tr>`;
-            });
-        }
-        tbody.innerHTML = html;
-        document.querySelector('.cart-summary strong').textContent = 'Tổng cộng: ' + formatCurrency(grandTotal);
-        document.querySelector('.checkout-btn').disabled = cartItems.length === 0;
-    }
     fetch('/api/cart')
         .then(res => {
             if (res.status === 401) return {cartItems: [], grandTotal: 0};
@@ -144,6 +133,69 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(() => {
             renderCart([], 0);
         });
+
+    document.querySelector('.cart-table').addEventListener('click', function(e) {
+        const btn = e.target;
+        if (btn.classList.contains('qty-btn')) {
+            const id = parseInt(btn.getAttribute('data-id'));
+            const action = btn.getAttribute('data-action');
+            const item = cartData.find(i => i.productId === id);
+            if (!item) return;
+            if (action === 'increase') item.quantity++;
+            if (action === 'decrease') {
+                if (item.quantity > 1) item.quantity--;
+            }
+            renderCart(cartData, cartData.reduce((sum, i) => sum + i.price * i.quantity, 0));
+        }
+        if (btn.classList.contains('remove-btn')) {
+            const id = parseInt(btn.getAttribute('data-id'));
+            // Gọi API xóa sản phẩm khỏi DB
+            fetch('/api/cart/remove', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({productId: id})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Sau khi xóa thành công, reload lại cart từ server
+                    fetch('/api/cart')
+                        .then(res => res.json())
+                        .then(newData => {
+                            renderCart(newData.cartItems || [], newData.grandTotal || 0);
+                        });
+                } else {
+                    alert('Không thể xóa sản phẩm khỏi giỏ hàng!');
+                }
+            })
+            .catch(() => {
+                alert('Có lỗi khi xóa sản phẩm!');
+            });
+        }
+    });
+
+    document.getElementById('updateCartBtn').addEventListener('click', function() {
+        // Debug: log cartData trước khi gửi lên server
+        console.log('Cart data gửi lên server:', cartData);
+        fetch('/api/cart/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({items: cartData.map(i => ({productId: i.productId, quantity: i.quantity}))})
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Sau khi cập nhật thành công, reload lại cart từ server để đảm bảo đồng bộ
+            fetch('/api/cart')
+                .then(res => res.json())
+                .then(newData => {
+                    renderCart(newData.cartItems || [], newData.grandTotal || 0);
+                    alert('Cập nhật giỏ hàng thành công!');
+                });
+        })
+        .catch(() => {
+            alert('Có lỗi khi cập nhật giỏ hàng!');
+        });
+    });
 });
 </script>
 </body>
