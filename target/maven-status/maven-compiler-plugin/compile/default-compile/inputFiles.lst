@@ -1,9 +1,12 @@
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\config\WebConfig.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\entity\Staff.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\repository\StaffRepository.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\HomeController.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\User.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\UserRepository.java
-C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\gundamhobby\resources\JakartaRestConfiguration.java
-C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\gundamhobby\resources\JakartaEE10Resource.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\service\StaffService.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\service\StaffServiceImpl.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\StaffDTO.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\UserServiceImpl.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\LoginController.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\Application.java
@@ -11,4 +14,6 @@ C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\Secur
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\TestController.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\UserController.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\UserService.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\controller\StaffController.java
+C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\service\FakeStaffService.java
 C:\Users\toan2\Desktop\Project_SWP391\D11_RT05\src\main\java\com\mycompany\DatabaseTestController.java

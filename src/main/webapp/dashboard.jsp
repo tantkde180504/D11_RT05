@@ -644,42 +644,43 @@
                         </div>
                     </div>
                     <script>
-  document.querySelector("#addStaffForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const data = {
-      firstName: document.querySelector('input[name="firstName"]').value,
-      lastName: document.querySelector('input[name="lastName"]').value,
-      email: document.querySelector('input[name="email"]').value,
-      password: document.querySelector('input[name="password"]').value,
-      phone: document.querySelector('input[name="phone"]').value,
-      dateOfBirth: document.querySelector('input[name="dateOfBirth"]').value,
-      gender: document.querySelector('select[name="gender"]').value,
-      address: document.querySelector('input[name="address"]').value
-    };
-
-    fetch("/api/staffs/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    })
-    .then(res => {
-      if (!res.ok) throw res;
-      return res.json();
-    })
-    .then(result => {
-      alert("✅ Tạo nhân viên thành công!");
-      location.reload();
-    })
-    .catch(err => {
-      err.text().then(msg => alert("❌ Lỗi: " + msg));
-    });
-  });
-</script>
-
-
+  
                     
 <!-- Employees Management Tab -->
+// document.querySelector("#addStaffForm").addEventListener("submit", function(e) {
+//     e.preventDefault();
+
+//     const data = {
+//       firstName: document.querySelector('input[name="firstName"]').value,
+//       lastName: document.querySelector('input[name="lastName"]').value,
+//       email: document.querySelector('input[name="email"]').value,
+//       password: document.querySelector('input[name="password"]').value,
+//       phone: document.querySelector('input[name="phone"]').value,
+//       dateOfBirth: document.querySelector('input[name="dateOfBirth"]').value,
+//       gender: document.querySelector('select[name="gender"]').value,
+//       address: document.querySelector('input[name="address"]').value
+//     };
+
+//     fetch("/api/staffs/create", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(data)
+//     })
+//     .then(res => {
+//       if (!res.ok) throw res;
+//       return res.json();
+//     })
+//     .then(result => {
+//       alert("✅ Tạo nhân viên thành công!");
+//       location.reload();
+//     })
+//     .catch(err => {
+//       err.text().then(msg => alert("❌ Lỗi: " + msg));
+//     });
+//   });
+// </script>
+
+
 <div class="tab-pane fade" id="employees">
     <div class="page-header">
         <div class="d-flex justify-content-between align-items-center">
@@ -707,30 +708,15 @@
                         <th>Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>nguyenvana@74gundam.com</td>
-                        <td>Quản lý</td>
-                        <td>01/01/2023</td>
-                        <td><span class="badge bg-success">Hoạt động</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                <tbody id="staffTableBody">
+                    <!-- Dữ liệu render bằng JavaScript -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-                   <!-- Modal Thêm Nhân Viên -->
+<!-- Modal Thêm Nhân Viên -->
 <div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -788,39 +774,103 @@
   </div>
 </div>
 
-<script>
-  document.querySelector("#addStaffForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+<!-- <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector("#addStaffForm");
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
 
-    const data = {
-      firstName: document.querySelector('input[name="firstName"]').value,
-      lastName: document.querySelector('input[name="lastName"]').value,
-      email: document.querySelector('input[name="email"]').value,
-      password: document.querySelector('input[name="password"]').value,
-      phone: document.querySelector('input[name="phone"]').value,
-      dateOfBirth: document.querySelector('input[name="dateOfBirth"]').value,
-      gender: document.querySelector('select[name="gender"]').value,
-      address: document.querySelector('input[name="address"]').value
-    };
+      const data = {
+        firstName: form.querySelector('input[name="firstName"]').value,
+        lastName: form.querySelector('input[name="lastName"]').value,
+        email: form.querySelector('input[name="email"]').value,
+        password: form.querySelector('input[name="password"]').value,
+        phone: form.querySelector('input[name="phone"]').value,
+        dateOfBirth: form.querySelector('input[name="dateOfBirth"]').value,
+        gender: form.querySelector('select[name="gender"]').value,
+        address: form.querySelector('input[name="address"]').value
+      };
 
-    fetch("/api/staffs/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    })
+      fetch("/api/staffs/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .then(result => {
+        alert("✅ Tạo nhân viên thành công!");
+        const roleLabel = result.role === "STAFF" ? "Nhân viên" : result.role;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${result.id}</td>
+          <td>${result.firstName} ${result.lastName}</td>
+          <td>${result.email}</td>
+          <td>${roleLabel}</td>
+          <td>${result.createdAtFormatted || ""}</td>
+          <td><span class="badge bg-success">Hoạt động</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        document.querySelector("#staffTableBody").appendChild(row);
+        form.reset();
+        bootstrap.Modal.getInstance(document.getElementById("addStaffModal")).hide();
+      })
+      .catch(err => {
+        if (err.text) {
+          err.text().then(msg => alert("❌ Lỗi: " + msg));
+        } else {
+          alert("❌ Lỗi không xác định khi tạo nhân viên.");
+          console.error(err);
+        }
+      });
+    });
+  }
+
+  loadStaffList();
+});
+
+function loadStaffList() {
+  fetch("/api/staffs/list")
     .then(res => {
-      if (!res.ok) throw res;
+      if (!res.ok) throw new Error("Lỗi HTTP");
       return res.json();
     })
-    .then(result => {
-      alert("✅ Tạo nhân viên thành công!");
-      location.reload();
+    .then(data => {
+      const tbody = document.getElementById("staffTableBody");
+      tbody.innerHTML = "";
+      data.forEach(staff => {
+        const fullName = `${staff.firstName} ${staff.lastName}`;
+        const joinDate = staff.createdAtFormatted || "";
+        const row = `
+          <tr>
+            <td>${staff.id}</td>
+            <td>${fullName}</td>
+            <td>${staff.email}</td>
+            <td>Nhân viên</td>
+            <td>${joinDate}</td>
+            <td><span class="badge bg-success">Hoạt động</span></td>
+            <td>
+              <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
     })
     .catch(err => {
-      err.text().then(msg => alert("❌ Lỗi: " + msg));
+      console.error("❌ Lỗi khi tải danh sách nhân viên:", err);
+      alert("Không thể tải danh sách nhân viên. Kiểm tra API /api/staffs/list hoặc xem log backend.");
     });
-  });
-</script>
+}
+</script> -->
+
 
 
                     <!-- Customers Management Tab -->
@@ -1136,6 +1186,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkPageAccess('ADMIN');
         });
+        
     </script>
+    <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
+  
 </body>
 </html>

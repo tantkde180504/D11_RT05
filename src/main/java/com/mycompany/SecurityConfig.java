@@ -10,17 +10,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityConfig {
 
-    // ✅ Cho phép truy cập mọi URL mà không bị redirect
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-            .csrf().disable()
-            .formLogin().disable(); // Tắt trang /login mặc định
+        http = http.csrf(csrf -> csrf.disable());
+        http = http.formLogin(form -> form.disable());
+        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
     }
 
-    // ✅ Bean passwordEncoder cần thiết cho UserServiceImpl
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
