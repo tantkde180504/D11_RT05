@@ -35,7 +35,7 @@
     <div style="display:flex; justify-content:space-between; margin-top:20px; gap:10px;">
         <a href="/" class="btn back-btn" style="background:#ccc; color:#222;">Quay về trang chủ</a>
         <button class="btn update-btn" id="updateCartBtn">Cập nhật giỏ hàng</button>
-        <form action="CheckoutServlet" method="post" style="display:inline;">
+        <form action="payment.jsp" method="post" style="display:inline;">
             <button class="checkout-btn" type="submit">Thanh toán</button>
         </form>
     </div>

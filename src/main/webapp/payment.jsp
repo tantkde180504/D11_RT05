@@ -32,10 +32,6 @@
                             <input type="text" class="form-control" placeholder="Nhập địa chỉ nhận hàng" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" placeholder="Nhập email (nếu có)">
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">Ghi chú đơn hàng</label>
                             <textarea class="form-control" rows="3" placeholder="Ghi chú thêm (nếu có)"></textarea>
                         </div>
@@ -72,23 +68,8 @@
             <div class="col-lg-5">
                 <div class="order-summary shadow-sm mb-4">
                     <h5 class="mb-3"><i class="fas fa-list-ul me-2"></i>Đơn hàng của bạn</h5>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>RG RX-78-2 Gundam x 1</span>
-                        <span>650.000₫</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="fw-bold">Tạm tính</span>
-                        <span class="fw-bold">650.000₫</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Phí vận chuyển</span>
-                        <span>Miễn phí</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="fw-bold text-danger">Tổng cộng</span>
-                        <span class="fw-bold fs-5 text-danger">650.000₫</span>
+                    <div id="order-summary-list">
+                        <div class="text-muted">Đang tải giỏ hàng...</div>
                     </div>
                 </div>
                 <a href="cart.jsp" class="btn btn-outline-secondary w-100"><i class="fas fa-arrow-left me-1"></i>Quay lại giỏ hàng</a>
@@ -130,11 +111,89 @@ document.addEventListener('DOMContentLoaded', function() {
     bankRadio.addEventListener('change', toggleQR);
     toggleQR();
 
-    checkoutForm.addEventListener('submit', function(e) {
+    checkoutForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
+        // Lấy dữ liệu form
+        const fullName = checkoutForm.querySelector('input[placeholder="Nhập họ và tên"]').value.trim();
+        const phone = checkoutForm.querySelector('input[placeholder="Nhập số điện thoại"]').value.trim();
+        const address = checkoutForm.querySelector('input[placeholder="Nhập địa chỉ nhận hàng"]').value.trim();
+        const note = checkoutForm.querySelector('textarea').value.trim();
+        const paymentMethod = bankRadio.checked ? 'VNPAY' : 'COD';
+
+        // Gửi dữ liệu lên backend (KHÔNG gửi cartItems)
+        const payload = {
+            fullName, phone, address, note, paymentMethod
+        };
+        fetch('/api/payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            } else {
+                alert(data.message || 'Đặt hàng thất bại!');
+            }
+        })
+        .catch(() => alert('Lỗi kết nối máy chủ!'));
     });
+
+    // Render order summary
+    async function renderOrderSummary() {
+        const orderSummaryList = document.getElementById('order-summary-list');
+        let cartItems = [];
+        let grandTotal = 0;
+        // Ưu tiên lấy cart từ localStorage nếu có
+        if (localStorage.getItem('cartItems')) {
+            try {
+                cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                grandTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            } catch (e) { cartItems = []; grandTotal = 0; }
+        } else {
+            // Nếu không có localStorage thì lấy từ API
+            try {
+                const resp = await fetch('/api/cart', { headers: { 'Accept': 'application/json' } });
+                const data = await resp.json();
+                if (data.success) {
+                    cartItems = data.cartItems;
+                    grandTotal = data.grandTotal;
+                }
+            } catch (err) {}
+        }
+        if (!cartItems.length) {
+            orderSummaryList.innerHTML = '<div class="text-danger">Giỏ hàng trống!</div>';
+            return;
+        }
+        let html = '';
+        cartItems.forEach(item => {
+            html += '<div class="d-flex justify-content-between mb-2">'
+                + '<span>' + (item.productName || item.name) + ' x ' + item.quantity + '</span>'
+                + '<span>' + formatCurrency(item.price * item.quantity) + '₫</span>'
+                + '</div>';
+        });
+        html += '<hr>';
+        html += '<div class="d-flex justify-content-between mb-2">'
+            + '<span class="fw-bold">Tạm tính</span>'
+            + '<span class="fw-bold">' + formatCurrency(grandTotal) + '₫</span>'
+            + '</div>';
+        html += '<div class="d-flex justify-content-between mb-2">'
+            + '<span>Phí vận chuyển</span>'
+            + '<span>Miễn phí</span>'
+            + '</div>';
+        html += '<hr>';
+        html += '<div class="d-flex justify-content-between mb-2">'
+            + '<span class="fw-bold text-danger">Tổng cộng</span>'
+            + '<span class="fw-bold fs-5 text-danger">' + formatCurrency(grandTotal) + '₫</span>'
+            + '</div>';
+        orderSummaryList.innerHTML = html;
+    }
+    function formatCurrency(num) {
+        return num.toLocaleString('vi-VN');
+    }
+    renderOrderSummary();
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
