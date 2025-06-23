@@ -375,44 +375,8 @@
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <c:forEach var="product" items="${products}">
-                                <tr>
-                                    <td>
-                                        <img src="${product.imageUrl}" alt="Product" class="rounded" width="50" height="50">
-                                    </td>
-                                    <td>
-                                        <strong>${product.name}</strong><br>
-                                        <small class="text-muted">${product.brand}</small>
-                                    </td>
-                                    <td>SP-${product.id}</td> <!-- Giả lập SKU từ id -->
-                                    <td>${product.grade}</td>
-                                    <td><strong>${product.quantity}</strong></td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${product.quantity == 0}">
-                                                <span class="status-badge status-rejected">Hết hàng</span>
-                                            </c:when>
-                                            <c:when test="${product.quantity < 10}">
-                                                <span class="status-badge status-pending">Sắp hết</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="status-badge status-completed">Còn hàng</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>${product.price}₫</td>
-                                    <td>
-                                        <form action="/staff/inventory/update" method="post" class="d-flex">
-                                            <input type="hidden" name="id" value="${product.id}" />
-                                            <input type="number" name="quantity" value="${product.quantity}" class="form-control form-control-sm me-1" min="0" style="width: 70px;" />
-                                            <button type="submit" class="btn btn-sm btn-warning">
-                                                <i class="fas fa-save"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </c:forEach>
+                        <tbody id="inventory-body">
+                            <!-- Dữ liệu sẽ được tải từ API bằng JavaScript -->
                         </tbody>                        
                     </table>
                 </div>

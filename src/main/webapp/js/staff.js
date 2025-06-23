@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
     initDropdownFix();
     showKeyboardShortcutsHint();
+    loadInventoryFromAPI();
 });
 
 // Tab switching functionality
@@ -30,6 +31,10 @@ function initTabSwitching() {
             // Show corresponding tab content
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
+            if (tabId === 'inventory') {
+                loadInventoryFromAPI();
+            }
+            
         });
     });
 }
@@ -610,3 +615,50 @@ window.toggleDarkMode = toggleDarkMode;
 window.handleQuickCall = handleQuickCall;
 window.handleQuickNote = handleQuickNote;
 window.notificationManager = notificationManager;
+function loadInventoryFromAPI() {
+    fetch('/api/products/inventory') // ← endpoint từ backend Spring Boot
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#inventory-body');
+            tbody.innerHTML = ''; // Xóa dữ liệu cũ
+
+            data.forEach(p => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${p.imageUrl}" width="50" height="50" class="rounded" alt=""></td>
+                    <td><strong>${p.name}</strong><br><small class="text-muted">${p.brand}</small></td>
+                    <td>${p.id}</td>
+                    <td>${p.category}</td>
+                    <td><strong>${p.stockQuantity}</strong></td>
+                    <td><span class="status-badge ${getStockStatus(p.stockQuantity)}">${getStockLabel(p.stockQuantity)}</span></td>
+                    <td>${formatCurrency(p.price)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-1" title="Cập nhật"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-info" title="Chi tiết"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        })
+        .catch(err => {
+            console.error('Lỗi tải tồn kho:', err);
+            showErrorMessage('Không thể tải dữ liệu tồn kho từ máy chủ');
+        });
+}
+
+function getStockStatus(stock) {
+    if (stock === 0) return 'status-rejected';
+    if (stock <= 5) return 'status-pending';
+    return 'status-completed';
+}
+
+function getStockLabel(stock) {
+    if (stock === 0) return 'Hết hàng';
+    if (stock <= 5) return 'Sắp hết';
+    return 'Còn hàng';
+}
+
+function formatCurrency(price) {
+    return price.toLocaleString('vi-VN') + '₫';
+}
