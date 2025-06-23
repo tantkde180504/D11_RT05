@@ -13,23 +13,23 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "orders")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_number", nullable = false, unique = true)
+    @Column(name = "order_number")
     private String orderNumber;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    @Column(nullable = false)
     private String status;
 
-    @Column(name = "shipping_address", nullable = false)
+    @Column(name = "shipping_address")
     private String shippingAddress;
 
     @Column(name = "shipping_phone")
@@ -44,53 +44,87 @@ public class Order {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    @Column(name = "shipped_date")
-    private LocalDateTime shippedDate;
+    // === GETTERS ===
 
-    @Column(name = "delivered_date")
-    private LocalDateTime deliveredDate;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "notes")
-    private String notes;
+    public String getOrderNumber() {
+        return orderNumber;
+    }
 
-    // Getter & Setter cho tất cả các trường
+    public Long getUserId() {
+        return userId;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
 
-    public String getOrderNumber() { return orderNumber; }
-    public void setOrderNumber(String orderNumber) { this.orderNumber = orderNumber; }
+    public String getStatus() {
+        return status;
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
 
-    public BigDecimal getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
+    public String getShippingPhone() {
+        return shippingPhone;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getShippingName() {
+        return shippingName;
+    }
 
-    public String getShippingAddress() { return shippingAddress; }
-    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
 
-    public String getShippingPhone() { return shippingPhone; }
-    public void setShippingPhone(String shippingPhone) { this.shippingPhone = shippingPhone; }
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
 
-    public String getShippingName() { return shippingName; }
-    public void setShippingName(String shippingName) { this.shippingName = shippingName; }
+    // === SETTERS ===
 
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDateTime getOrderDate() { return orderDate; }
-    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-    public LocalDateTime getShippedDate() { return shippedDate; }
-    public void setShippedDate(LocalDateTime shippedDate) { this.shippedDate = shippedDate; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-    public LocalDateTime getDeliveredDate() { return deliveredDate; }
-    public void setDeliveredDate(LocalDateTime deliveredDate) { this.deliveredDate = deliveredDate; }
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public void setShippingPhone(String shippingPhone) {
+        this.shippingPhone = shippingPhone;
+    }
+
+    public void setShippingName(String shippingName) {
+        this.shippingName = shippingName;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
 }

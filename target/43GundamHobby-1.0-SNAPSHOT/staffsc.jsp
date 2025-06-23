@@ -518,81 +518,44 @@
             </div>
         </div>
 
-        <!-- Orders Tab -->
-        <div id="orders" class="tab-content">
-            <div class="staff-card">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5><i class="fas fa-shopping-cart me-2 text-success"></i>Quản lý đơn hàng</h5>                    <div class="d-flex gap-2">
-                        <select class="form-select auto-width">
-                            <option>Tất cả trạng thái</option>
-                            <option>Chờ xác nhận</option>
-                            <option>Đang xử lý</option>
-                            <option>Đang giao</option>
-                            <option>Hoàn thành</option>
-                        </select>
-                        <button class="btn btn-primary action-btn" data-bs-toggle="modal" data-bs-target="#orderModal">
-                            <i class="fas fa-plus me-2"></i>Tạo đơn hàng
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-responsive table-modern">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Mã đơn hàng</th>
-                                <th>Khách hàng</th>
-                                <th>Sản phẩm</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày đặt</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>#ORD001</strong></td>
-                                <td>Nguyễn Văn A</td>
-                                <td>RG Strike Freedom + Tools</td>
-                                <td><strong>950,000₫</strong></td>
-                                <td><span class="status-badge status-pending">Chờ xác nhận</span></td>
-                                <td>15/03/2024</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success me-1" title="Xác nhận">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning me-1" title="Cập nhật">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#orderDetailModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#ORD002</strong></td>
-                                <td>Trần Thị B</td>
-                                <td>MG Barbatos</td>
-                                <td><strong>1,200,000₫</strong></td>
-                                <td><span class="status-badge status-processing">Đang xử lý</span></td>
-                                <td>14/03/2024</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success me-1" title="Xác nhận">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning me-1" title="Cập nhật">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#orderDetailModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<!-- Orders Tab -->
+<div id="orders" class="tab-content">
+    <div class="staff-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5><i class="fas fa-shopping-cart me-2 text-success"></i>Quản lý đơn hàng</h5>
+            <div class="d-flex gap-2">
+                <select id="order-status-filter" class="form-select auto-width" onchange="loadOrdersFromAPI()">
+                    <option value="ALL">Tất cả trạng thái</option>
+                    <option value="PENDING">Chờ xác nhận</option>
+                    <option value="CONFIRMED">Đã xác nhận</option>
+                    <option value="PROCESSING">Đang xử lý</option>
+                    <option value="SHIPPING">Đang giao</option>
+                    <option value="DELIVERED">Hoàn thành</option>
+                </select>
+                <button class="btn btn-primary action-btn" data-bs-toggle="modal" data-bs-target="#orderModal">
+                    <i class="fas fa-plus me-2"></i>Tạo đơn hàng
+                </button>
             </div>
         </div>
+
+        <div class="table-responsive table-modern">
+            <table class="table table-hover" id="orders-table">
+                <thead>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Sản phẩm</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày đặt</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-body">
+            </table>
+        </div>
+    </div>
+</div>
 
         <!-- Support Tab -->
         <div id="support" class="tab-content">
@@ -1251,5 +1214,7 @@
             checkPageAccess('STAFF');
         });
     </script>
+    <script src="js/staff.js"></script>
 </body>
 </html>
+

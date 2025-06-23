@@ -725,27 +725,6 @@
             });
         }
     });
-
-    function printInvoice(orderId) {
-        var id = orderId.replace(/\D/g, '');
-        if (!id) {
-            alert('Mã đơn hàng không hợp lệ!');
-            return;
-        }
-        fetch('http://localhost:8081/orders/' + id + '/invoice')
-            .then(res => {
-                if (!res.ok) throw new Error('HTTP status ' + res.status);
-                return res.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert('Hóa đơn cho đơn hàng #' + data.orderId + ':\n\n' + data.invoice);
-                } else {
-                    alert('Không tìm thấy đơn hàng hoặc lỗi khi in hóa đơn.');
-                }
-            })
-            .catch((err) => alert('Lỗi kết nối server!\n' + err));
-    }
     </script>
 </body>
 </html>

@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <scope>runtime</scope>
+            <version>12.6.1.jre11</version>
         </dependency>
         <!-- Azure Storage SDK -->
         <dependency>
@@ -56,6 +56,11 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
             <version>1.11.2</version>
+        </dependency>
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- Azure Key Vault Secrets -->
         <dependency>
@@ -77,8 +82,15 @@
             <artifactId>tomcat-embed-jasper</artifactId>
         </dependency>
         <dependency>
-            <groupId>jakarta.servlet.jsp.jstl</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>3.1.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>

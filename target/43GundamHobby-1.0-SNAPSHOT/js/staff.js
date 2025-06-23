@@ -30,9 +30,18 @@ function initTabSwitching() {
             // Show corresponding tab content
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
+
+            // ✅ Gọi API khi đổi tab
+            if (tabId === 'inventory') {
+                loadInventoryFromAPI();
+            }
+            if (tabId === 'orders') {
+                loadOrdersFromAPI(); // ✅ BỔ SUNG DÒNG NÀY
+            }
         });
     });
 }
+
 
 // Initialize Chart
 function initChart() {
@@ -610,3 +619,47 @@ window.toggleDarkMode = toggleDarkMode;
 window.handleQuickCall = handleQuickCall;
 window.handleQuickNote = handleQuickNote;
 window.notificationManager = notificationManager;
+
+window.notificationManager = notificationManager;
+function loadOrdersFromAPI() {
+    const status = document.getElementById('order-status-filter')?.value || 'ALL';
+    fetch(`/api/orders?status=${status}`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('orders-body');
+            tbody.innerHTML = '';
+
+            data.forEach(o => {
+                const productList = o.productNames?.join('<br>') || '';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>#${o.orderNumber}</strong></td>
+                    <td>${o.shippingName}</td>
+                    <td>${productList}</td>
+                    <td><strong>${formatCurrency(o.totalAmount)}</strong></td>
+                    <td><span class="status-badge">${o.status}</span></td>
+                    <td>${o.orderDate}</td>
+                    <td>
+                        ${o.status === 'PENDING' ? `
+                        <form method="post" action="/staff/orders/confirm" style="display:inline;" onsubmit="return confirm('Xác nhận đơn hàng này?')">
+                            <input type="hidden" name="orderId" value="${o.id}">
+                            <button class="btn btn-sm btn-success me-1"><i class="fas fa-check"></i></button>
+                        </form>` : ''}
+                        <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(err => {
+            console.error('Lỗi khi load đơn hàng:', err);
+            showErrorMessage('Không thể tải đơn hàng từ máy chủ');
+        });
+}
+
+function formatCurrency(price) {
+    return Number(price).toLocaleString('vi-VN') + '₫';
+}
+
+
