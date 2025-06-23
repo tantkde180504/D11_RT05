@@ -640,14 +640,13 @@ function loadOrdersFromAPI() {
                     <td><span class="status-badge">${o.status}</span></td>
                     <td>${o.orderDate}</td>
                     <td>
-                        ${o.status === 'PENDING' ? `
-                        <form method="post" action="/staff/orders/confirm" style="display:inline;" onsubmit="return confirm('Xác nhận đơn hàng này?')">
-                            <input type="hidden" name="orderId" value="${o.id}">
-                            <button class="btn btn-sm btn-success me-1"><i class="fas fa-check"></i></button>
-                        </form>` : ''}
-                        <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
-                    </td>
+    ${o.status === 'PENDING' ? `
+    <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
+        <i class="fas fa-check"></i>
+    </button>` : ''}
+    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
+</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -660,6 +659,28 @@ function loadOrdersFromAPI() {
 
 function formatCurrency(price) {
     return Number(price).toLocaleString('vi-VN') + '₫';
+}
+function confirmOrder(orderId) {
+    if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
+
+    fetch('/api/orders/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `orderId=${orderId}`
+})
+.then(res => {
+    if (!res.ok) return res.text().then(text => { throw new Error(text); });
+    return res.text();
+})
+.then(msg => {
+    showSuccessMessage(msg);
+    loadOrdersFromAPI();
+})
+.catch(err => {
+    console.error('Xác nhận lỗi:', err.message);
+    showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
+});
+
 }
 
 
