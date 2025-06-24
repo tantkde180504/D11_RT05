@@ -8,7 +8,7 @@ const testAccounts = [
         password: "admin123",
         role: "ADMIN",
         name: "Admin User",
-        targetPage: "dashboard.jsp"
+        targetPage: "/"
     },
     {
         email: "staff@gundamhobby.com", 

@@ -54,17 +54,17 @@
                                     <li id="guestLoginOption"><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                         <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                     </a></li>
-                                    <li id="userMenu" style="display:none;">
+                                    <li id="userMenu" class="d-none">
                                         <span class="dropdown-item disabled"><i class="fas fa-user me-2"></i>Xin chào, <span id="userName">User</span></span>
                                     </li>
-                                    <li id="userAccountOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
+                                    <li id="userAccountOption" class="d-none"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
                                         <i class="fas fa-id-card me-2"></i>Thông tin tài khoản
                                     </a></li>
-                                    <li id="userOrdersOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp" onclick="document.getElementById('profileOrdersTab').click();return false;">
+                                    <li id="userOrdersOption" class="d-none"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp" onclick="document.getElementById('profileOrdersTab').click();return false;">
                                         <i class="fas fa-box me-2"></i>Đơn hàng của bạn
                                     </a></li>
-                                    <li id="userDivider" style="display:none;"><hr class="dropdown-divider"></li>
-                                    <li id="userLogoutOption" style="display:none;"><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                    <li id="userDivider" class="d-none"><hr class="dropdown-divider"></li>
+                                    <li id="userLogoutOption" class="d-none"><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
                                         <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                     </a></li>
                                     <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
@@ -138,17 +138,16 @@
                 </ul>
             </div>
         </div>
-    </nav>        <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
+    </nav>        <div class="container d-flex flex-column align-items-center justify-content-center min-height-70vh">
         <div class="login-title mt-4">Đăng nhập tài khoản</div>
           <!-- Test Data Info -->
-        <div class="alert alert-info mb-3" style="max-width: 500px;">
+        <div class="alert alert-info mb-3 login-info-box">
             <strong>Test login endpoint:</strong><br>
             Endpoint: /api/login đã sẵn sàng<br>
             Sử dụng email/password từ database SQL Server Azure để login<br>
             <small>Role sẽ được chuyển hướng: ADMIN → dashboard.jsp, STAFF → staffsc.jsp, CUSTOMER → index.jsp</small>
         </div>
-        
-        <div class="login-form-box mx-auto">
+          <div class="login-form-box mx-auto" id="login-form">
             <form id="loginForm" action="/api/login" method="post" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
@@ -164,13 +163,20 @@
                 <button type="submit" class="btn btn-login w-100">Đăng nhập</button>
             </form>
             <div class="login-divider">Hoặc đăng nhập bằng</div>
-            <button type="button" class="btn btn-outline-danger social-login-btn"><i class="fab fa-google me-2"></i>Google</button>
+            <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-in-btn">
+                <i class="fab fa-google me-2"></i>Google
+            </button>
             <div class="register-link">
                 Bạn chưa có tài khoản? <a href="<%=request.getContextPath()%>/register.jsp">Đăng ký tại đây</a>
             </div>
         </div>
+        
+        <!-- User Info Display (hidden by default) -->
+        <div id="user-info" class="login-form-box mx-auto d-none">
+            <!-- Content will be populated by JavaScript -->
+        </div>
     </div>
-    <footer class="bg-white text-center py-3 mt-5 border-top" style="font-size:0.97rem; color:#888;">
+    <footer class="bg-white text-center py-3 mt-5 border-top footer-small">
         <div class="container">
             <div class="mb-1">
                 © 2025 43 Gundam Hobby. All rights reserved.
@@ -181,8 +187,8 @@
                 <span class="me-3">Hotline: <a href="tel:0349999943" class="text-primary text-decoration-none">0349 999 943</a></span>
                 <a href="mailto:43gundamhobby@gmail.com" class="text-muted text-decoration-none">43gundamhobby@gmail.com</a>
             </div>
-        </div>    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        </div>    </footer>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/login-simple.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
 </body>
 </html>

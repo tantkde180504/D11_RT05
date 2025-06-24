@@ -155,7 +155,7 @@
                 </div>                <div class="col-lg-4">
                     <div class="staff-card">
                         <h5><i class="fas fa-chart-pie me-2 text-primary"></i>Thống kê hôm nay</h5>
-                        <div class="chart-container" style="position: relative; height: 200px; width: 100%;">
+                        <div class="chart-container">
                             <canvas id="dailyStatsChart"></canvas>
                         </div>
                     </div>

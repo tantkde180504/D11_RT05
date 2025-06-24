@@ -12,320 +12,30 @@
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Admin Dashboard Specific Styles */
-        :root {
-            --admin-primary: #ff6600;
-            --admin-secondary: #0066cc;
-            --admin-dark: #333333;
-            --admin-light: #f8f9fa;
-            --admin-white: #ffffff;
-            --admin-border: #e9ecef;
-            --admin-success: #28a745;
-            --admin-warning: #ffc107;
-            --admin-danger: #dc3545;
-            --admin-info: #17a2b8;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--admin-light);
-        }
-
-        /* Admin Header */
-        .admin-header {
-            background: linear-gradient(135deg, var(--admin-dark) 0%, #555555 100%);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-bottom: 3px solid var(--admin-primary);
-        }
-
-        .admin-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--admin-white) !important;
-            text-decoration: none;
-        }
-
-        .admin-brand i {
-            color: var(--admin-primary);
-            margin-right: 0.5rem;
-        }
-
-        .admin-nav-link {
-            color: #cccccc !important;
-            font-weight: 500;
-            padding: 0.75rem 1rem !important;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            margin: 0 0.25rem;
-        }
-
-        .admin-nav-link:hover {
-            background-color: rgba(255, 102, 0, 0.2);
-            color: var(--admin-white) !important;
-        }
-
-        /* Sidebar */
-        .admin-sidebar {
-            background-color: var(--admin-white);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            border-right: 1px solid var(--admin-border);
-            min-height: calc(100vh - 76px);
-        }
-
-        .sidebar-nav {
-            padding: 1.5rem 0;
-        }
-
-        .sidebar-nav .nav-link {
-            color: var(--admin-dark);
-            padding: 1rem 1.5rem;
-            border-radius: 0;
-            border-left: 3px solid transparent;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-bottom: 0.25rem;
-        }
-
-        .sidebar-nav .nav-link:hover {
-            background-color: rgba(255, 102, 0, 0.1);
-            border-left-color: var(--admin-primary);
-            color: var(--admin-primary);
-        }
-
-        .sidebar-nav .nav-link.active {
-            background-color: rgba(255, 102, 0, 0.15);
-            border-left-color: var(--admin-primary);
-            color: var(--admin-primary);
-            font-weight: 600;
-        }
-
-        .sidebar-nav .nav-link i {
-            width: 20px;
-            margin-right: 0.75rem;
-        }
-
-        /* Main Content */
-        .admin-main {
-            background-color: var(--admin-light);
-            min-height: calc(100vh - 76px);
-            padding: 2rem;
-        }
-
-        /* Page Headers */
-        .page-header {
-            background: linear-gradient(135deg, var(--admin-white) 0%, #f8f9fa 100%);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--admin-primary);
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--admin-dark);
-            margin: 0;
-        }
-
-        /* Statistics Cards */
-        .stat-card {
-            background: var(--admin-white);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: none;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-card-body {
-            padding: 2rem;
-            position: relative;
-        }
-
-        .stat-card.primary { border-left: 4px solid var(--admin-primary); }
-        .stat-card.success { border-left: 4px solid var(--admin-success); }
-        .stat-card.info { border-left: 4px solid var(--admin-info); }
-        .stat-card.warning { border-left: 4px solid var(--admin-warning); }
-
-        .stat-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--admin-dark);
-            margin: 0;
-        }
-
-        .stat-icon {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            font-size: 2.5rem;
-            opacity: 0.3;
-        }
-
-        /* Chart Cards */
-        .chart-card {
-            background: var(--admin-white);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border: none;
-            overflow: hidden;
-        }
-
-        .chart-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--admin-border);
-        }
-
-        .chart-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--admin-dark);
-            margin: 0;
-        }
-
-        /* Tables */
-        .admin-table {
-            background: var(--admin-white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .admin-table .table {
-            margin: 0;
-        }
-
-        .admin-table .table thead th {
-            background: linear-gradient(135deg, var(--admin-dark) 0%, #555555 100%);
-            color: var(--admin-white);
-            font-weight: 600;
-            border: none;
-            padding: 1rem;
-        }
-
-        .admin-table .table tbody td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-color: var(--admin-border);
-        }
-
-        .admin-table .table tbody tr:hover {
-            background-color: rgba(255, 102, 0, 0.05);
-        }
-
-        /* Buttons */
-        .btn-admin-primary {
-            background: linear-gradient(135deg, var(--admin-primary) 0%, #e55a00 100%);
-            border: none;
-            color: var(--admin-white);
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-admin-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
-            color: var(--admin-white);
-        }
-
-        .btn-sm {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 6px;
-        }
-
-        /* Badges */
-        .badge {
-            font-size: 0.75rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-weight: 600;
-        }
-
-        /* Modals */
-        .modal-content {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--admin-primary) 0%, #e55a00 100%);
-            color: var(--admin-white);
-            border-radius: 12px 12px 0 0;
-            border: none;
-        }
-
-        .modal-title {
-            font-weight: 600;
-        }
-
-        .btn-close {
-            filter: invert(1);
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-footer {
-            border: none;
-            padding: 1rem 2rem 2rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 991.98px) {
-            .admin-main {
-                padding: 1rem;
-            }
-            
-            .page-header {
-                padding: 1.5rem;
-            }
-            
-            .stat-card-body {
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <!-- Admin Header -->
+<body class="dashboard-body"><!-- Admin Header -->
     <nav class="navbar navbar-expand-lg navbar-dark admin-header">
         <div class="container-fluid">
             <a class="admin-brand" href="#">
                 <i class="fas fa-shield-alt"></i> Admin Panel - 43 Gundam Hobby
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link admin-nav-link" href="<%=request.getContextPath()%>/">
-                    <i class="fas fa-home me-2"></i>Về trang chủ
-                </a>
-                <a class="nav-link admin-nav-link" href="#" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                </a>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <!-- User Info for OAuth -->
+                <div id="nav-user-info" class="d-none"></div>
+                
+                <!-- Default navigation -->
+                <div id="default-nav-items">
+                    <a class="nav-link admin-nav-link" href="<%=request.getContextPath()%>/">
+                        <i class="fas fa-home me-2"></i>Về trang chủ
+                    </a>
+                    <a class="nav-link admin-nav-link" href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                    </a>
+                </div>
             </div>
         </div>
-    </nav>    <div class="container-fluid">
+    </nav><div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
@@ -992,9 +702,9 @@
                 this.classList.add('active');
             });        });
     </script>
-    
-    <!-- Auth script for logout functionality -->
+      <!-- Auth script for logout functionality -->
     <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
     
     <script>
         // Check admin access on page load

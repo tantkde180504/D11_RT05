@@ -18,6 +18,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Success notification for OAuth login -->
+    <div id="oauth-success-notification" class="alert alert-success alert-dismissible fade oauth-notification">
+        <strong>🎉 Đăng nhập thành công!</strong>
+        <p class="mb-0" id="welcome-message">Chào mừng bạn quay trở lại!</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
     <!-- Header -->
     <header class="bg-white shadow-sm sticky-top">
         <div class="container">
@@ -40,37 +47,29 @@
                             </div>
                         </form>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-4">
+                </div>                <div class="col-lg-4 col-md-4">
                     <div class="header-actions d-flex justify-content-end align-items-center">
                         <div class="account-menu me-3">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                   id="accountDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span>Tài khoản</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li id="guestLoginOption"><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                    </a></li>
-                                    <li id="userMenu" style="display:none;">
-                                        <span class="dropdown-item disabled"><i class="fas fa-user me-2"></i>Xin chào, <span id="userName">User</span></span>
-                                    </li>
-                                    <li id="userAccountOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
-                                        <i class="fas fa-id-card me-2"></i>Thông tin tài khoản
-                                    </a></li>
-                                    <li id="userOrdersOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp" onclick="document.getElementById('profileOrdersTab').click();return false;">
-                                        <i class="fas fa-box me-2"></i>Đơn hàng của bạn
-                                    </a></li>
-                                    <li id="userDivider" style="display:none;"><hr class="dropdown-divider"></li>
-                                    <li id="userLogoutOption" style="display:none;"><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                    </a></li>
-                                </ul>
+                            <!-- User Info (visible when logged in) -->
+                            <div id="nav-user-info" class="d-none"></div>
+                            
+                            <!-- Login Button (visible when not logged in) -->
+                            <div id="nav-login-btn">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        <span>Tài khoản</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
+                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                        </a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="cart-btn">
@@ -138,14 +137,14 @@
                 </ul>
             </div>
         </div>
-    </nav>
-
-    <!-- Hero Banner -->
+    </nav>    <!-- Hero Banner - CAROUSEL CỐ ĐỊNH - KHÔNG ĐƯỢC THAY ĐỔI BỞI JAVASCRIPT -->
+    <!-- DO NOT MODIFY: This carousel is protected and should remain static -->
     <section class="hero-banner py-4">
         <div class="container">
             <div class="row">
                 <div class="col-lg-9">
-                    <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
+                    <!-- PROTECTED CAROUSEL: heroCarousel - DO NOT TOUCH -->
+                    <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-protected="true">
                         <div class="carousel-indicators">
                             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
                             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
@@ -153,7 +152,7 @@
                         </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="<%=request.getContextPath()%>/img/Banner1.jpg" class="d-block w-100" alt="Banner 1" 
+                                <img src="<%=request.getContextPath()%>/img/Banner2.jpg" class="d-block w-100" alt="Banner 1" 
                                      onerror="this.src='https://via.placeholder.com/800x400/ff6600/ffffff?text=GUNPLA+45th+Anniversary'">
                                 <div class="carousel-caption">
                                     <h3 class="banner-title">GUNPLA 45th Anniversary</h3>
@@ -161,7 +160,7 @@
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <img src="<%=request.getContextPath()%>/img/Banner2.jpg" class="d-block w-100" alt="Banner 2"
+                                <img src="<%=request.getContextPath()%>/img/Banner1.jpg" class="d-block w-100" alt="Banner 2"
                                      onerror="this.src='https://via.placeholder.com/800x400/0066cc/ffffff?text=Gundam+Base+Tour'">
                                 <div class="carousel-caption">
                                     <h3 class="banner-title">The Gundam Base World Tour 2025</h3>
@@ -184,6 +183,7 @@
                             <span class="carousel-control-next-icon"></span>
                         </button>
                     </div>
+                    <!-- END PROTECTED CAROUSEL -->
                 </div>
                 <div class="col-lg-3">
                     <div class="side-banners">
@@ -722,9 +722,84 @@
                 if (!btn.contains(e.target) && !popup.contains(e.target)) {
                     popup.classList.remove('show');
                 }
-            });
-        }
-    });
+            });        }
+    });    </script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>    <script>
+        // Force check login status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, checking login status...');
+            
+            // Wait a bit to ensure all elements are rendered
+            setTimeout(() => {
+                console.log('Checking for nav elements...');
+                const navUserInfo = document.getElementById('nav-user-info');
+                const navLoginBtn = document.getElementById('nav-login-btn');
+                console.log('nav-user-info element found:', navUserInfo);
+                console.log('nav-login-btn element found:', navLoginBtn);
+                
+                if (window.googleOAuthHandler) {
+                    console.log('GoogleOAuthHandler found, checking login status...');
+                    window.googleOAuthHandler.checkLoginStatus();
+                } else {
+                    console.log('GoogleOAuthHandler not found, waiting...');
+                    setTimeout(() => {
+                        if (window.googleOAuthHandler) {
+                            console.log('GoogleOAuthHandler found after delay, checking login status...');
+                            window.googleOAuthHandler.checkLoginStatus();                        } else {
+                            console.log('GoogleOAuthHandler still not found after delay');
+                        }
+                    }, 500);
+                }
+            }, 100);
+            
+            // Fallback: Manual check after longer delay
+            setTimeout(() => {
+                console.log('=== FALLBACK CHECK ===');
+                const navUserInfo = document.getElementById('nav-user-info');
+                const navLoginBtn = document.getElementById('nav-login-btn');
+                
+                if (navUserInfo && navUserInfo.style.display === 'none') {
+                    console.log('nav-user-info still hidden, checking session manually...');
+                    
+                    // Manual fetch to check login status
+                    fetch('/oauth2/user-info', {
+                        method: 'GET',
+                        credentials: 'same-origin'
+                    })
+                    .then(response => response.json())                    .then(data => {
+                        console.log('Fallback check result:', data);
+                        if (data.isLoggedIn && window.googleOAuthHandler) {
+                            console.log('User is logged in, forcing UI update...');
+                            window.googleOAuthHandler.updateNavbar(data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fallback check error:', error);
+                    });
+                }            }, 2000);
+        });
+    </script>
+    
+    <!-- Carousel Protection Script - Load FIRST to protect carousel -->
+    <script src="<%=request.getContextPath()%>/js/carousel-protection.js"></script>
+    
+    <!-- Product Manager - Load AFTER carousel protection -->
+    <script src="<%=request.getContextPath()%>/js/product-manager.js"></script>
+    
+    <!-- Verify carousel integrity after all scripts loaded -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (window.checkCarouselIntegrity) {
+                    const isIntact = window.checkCarouselIntegrity();
+                    if (!isIntact) {
+                        console.error('❌ CẢNH BÁO: Carousel có thể đã bị thay đổi!');
+                    } else {
+                        console.log('✅ Carousel vẫn nguyên vẹn và được bảo vệ');
+                    }
+                }
+            }, 500);
+        });
     </script>
 </body>
 </html>
