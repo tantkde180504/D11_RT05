@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<43GundamHobby>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.mycompany.Application",
+            "projectName": "43GundamHobby",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

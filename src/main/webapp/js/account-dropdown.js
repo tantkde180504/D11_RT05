@@ -55,26 +55,38 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkUserLoginStatus = checkUserLoginStatus;
 });
 
-// User logout function
+// User logout function - cập nhật để hỗ trợ OAuth2
 function userLogout() {
     if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-        // Clear user session data
-        localStorage.removeItem('userLoggedIn');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
-        sessionStorage.clear();
-        
-        // Update dropdown to guest mode
-        showGuestMenu();
-        
-        // Optional: Show success message
-        showNotification('Đăng xuất thành công!', 'success');
-        
-        // Optional: Redirect to home page
-        setTimeout(() => {
-            window.location.href = '/index.jsp';
-        }, 1000);
+        // Gọi API logout của Spring Security OAuth2
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(() => {
+            // Clear user session data
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Show success message
+            showNotification('Đăng xuất thành công!', 'success');
+            
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        }).catch(error => {
+            console.error('Logout error:', error);
+            // Fallback: redirect về trang chủ dù có lỗi
+            window.location.href = '/';
+        });
     }
+}
+
+// Global logout function để sử dụng từ mọi nơi
+function logoutUser() {
+    userLogout();
 }
 
 // Notification function

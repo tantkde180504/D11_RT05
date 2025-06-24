@@ -58,13 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => {
                         const role = data.role ? data.role.toUpperCase() : '';
                         let targetPage = '';
-                        
-                        if (role === 'ADMIN') {
-                            targetPage = '/dashboard.jsp';
+                          if (role === 'ADMIN') {
+                            targetPage = '/';
                         } else if (role === 'STAFF') {
-                            targetPage = '/staffsc.jsp';
+                            targetPage = '/';
                         } else {
-                            targetPage = '/index.jsp';
+                            targetPage = '/';
                         }
                         
                         console.log('Redirecting to:', targetPage);

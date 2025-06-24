@@ -6,30 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thông tin khách hàng - 43 Gundam Hobby</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
-    <style>
-        .profile-sidebar {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            padding: 24px 0;
-        }
-        .profile-sidebar .nav-link.active {
-            background: #f0f0f0;
-            font-weight: 500;
-        }
-        .profile-content {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            padding: 32px;
-            min-height: 400px;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
 </head>
-<body style="background:#f8f9fa;">
-    <header class="bg-white shadow-sm sticky-top">
+<body class="profile-body">    <header class="bg-white shadow-sm sticky-top">
         <div class="container">
             <div class="row align-items-center py-3">
                 <div class="col-md-3">
@@ -39,14 +18,53 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-6">
                     <nav class="navbar navbar-expand-lg">
-                        <ul class="navbar-nav ms-auto">
+                        <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link" href="<%=request.getContextPath()%>/">Trang chủ</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<%=request.getContextPath()%>/all-products.jsp">Sản phẩm</a>
+                            </li>
                         </ul>
                     </nav>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <%
+                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                            String userName = (String) session.getAttribute("userName");
+                            String userPicture = (String) session.getAttribute("userPicture");
+                            String loginType = (String) session.getAttribute("loginType");
+                            
+                            if (isLoggedIn != null && isLoggedIn) {
+                        %>
+                            <!-- User logged in -->
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle text-decoration-none d-flex align-items-center" data-bs-toggle="dropdown">
+                                    <% if (userPicture != null && !userPicture.isEmpty()) { %>
+                                        <img src="<%= userPicture %>" alt="Avatar" class="rounded-circle me-2 avatar-32">
+                                    <% } else { %>
+                                        <i class="fas fa-user-circle me-2 user-icon-32"></i>
+                                    <% } %>
+                                    <span class="text-dark">Xin chào, <%= userName != null ? userName : "User" %></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end z-index-1050">
+                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                </ul>
+                            </div>
+                        <%
+                            } else {
+                        %>
+                            <!-- User not logged in -->
+                            <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-outline-primary">Đăng nhập</a>
+                        <%
+                            }
+                        %>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,57 +72,192 @@
     <main class="container my-5">
         <div class="row">
             <div class="col-md-3">
-                <div class="profile-sidebar">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-user-circle fa-3x text-primary mb-2"></i>
-                        <h5 id="profileUserName">Xin chào, User</h5>
+                <div class="profile-sidebar">                    <div class="text-center mb-4">
+                        <img id="profileUserAvatar" src="/img/default-avatar.png" alt="Avatar" class="rounded-circle mb-2 avatar-80">
+                        <h5 id="profileUserName">Đang tải...</h5>
+                        <small id="profileUserEmail" class="text-muted">Đang tải...</small>
                     </div>
                     <nav class="nav flex-column">
                         <a class="nav-link active" href="#" id="profileInfoTab"><i class="fas fa-user me-2"></i>Thông tin tài khoản</a>
                         <a class="nav-link" href="#" id="profileOrdersTab"><i class="fas fa-box me-2"></i>Đơn hàng của bạn</a>
                         <a class="nav-link" href="#" id="profilePasswordTab"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a>
                         <a class="nav-link" href="#" id="profileAddressTab"><i class="fas fa-map-marker-alt me-2"></i>Sổ địa chỉ <span class="badge bg-secondary ms-1">0</span></a>
-                        <a class="nav-link text-danger" href="#" onclick="userLogout()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a>
+                        <a class="nav-link text-danger" href="#" id="profileLogoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a>
                     </nav>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div class="profile-content" id="profileContent">
+            <div class="col-md-9">                <div class="profile-content" id="profileContent">
                     <!-- Nội dung từng tab sẽ được hiển thị ở đây -->
-                    <h4>Thông tin tài khoản</h4>
-                    <p>Email: <span id="profileUserEmail">user@email.com</span></p>
-                    <p>Họ tên: <span id="profileUserFullName">User</span></p>
+                    <div id="profileInfoContent">
+                        <h4><i class="fas fa-user-circle me-2"></i>Thông tin tài khoản</h4>
+                        <div class="row mt-4">
+                            <div class="col-md-8">
+                                <div class="info-section">
+                                    <h6 class="text-muted mb-3">Thông tin cá nhân</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Họ tên:</strong></div>
+                                        <div class="col-sm-8" id="displayUserName">Đang tải...</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Email:</strong></div>
+                                        <div class="col-sm-8" id="displayUserEmail">Đang tải...</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Vai trò:</strong></div>
+                                        <div class="col-sm-8" id="displayUserRole">Đang tải...</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Đăng nhập bằng:</strong></div>
+                                        <div class="col-sm-8" id="displayLoginType">Đang tải...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="avatar-section">
+                                    <img id="displayUserAvatar" src="/img/default-avatar.png" alt="Avatar" class="rounded-circle mb-3 avatar-120">
+                                    <div class="mt-2">
+                                        <small class="text-muted">Ảnh đại diện từ Google</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </main>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/account-dropdown.js"></script>
     <script>
-        // Hiển thị tên và email người dùng từ session (ưu tiên session, fallback localStorage)
+        // Hiển thị thông tin người dùng từ session
         document.addEventListener('DOMContentLoaded', function() {
-            let name = '<%= session.getAttribute("userName") != null ? session.getAttribute("userName") : "User" %>';
-            let email = '<%= session.getAttribute("userEmail") != null ? session.getAttribute("userEmail") : "user@email.com" %>';
-            // Nếu không có trong session, fallback localStorage (giữ lại logic cũ)
-            if (!name || name === 'null') name = localStorage.getItem('userName') || 'User';
-            if (!email || email === 'null') email = localStorage.getItem('userEmail') || 'user@email.com';
-            document.getElementById('profileUserName').textContent = 'Xin chào, ' + name;
-            document.getElementById('profileUserEmail').textContent = email;
-            document.getElementById('profileUserFullName').textContent = name;
+            // Lấy thông tin từ session JSP
+            const userName = '<%= session.getAttribute("userName") != null ? session.getAttribute("userName") : "" %>';
+            const userEmail = '<%= session.getAttribute("userEmail") != null ? session.getAttribute("userEmail") : "" %>';
+            const userPicture = '<%= session.getAttribute("userPicture") != null ? session.getAttribute("userPicture") : "" %>';
+            const userRole = '<%= session.getAttribute("userRole") != null ? session.getAttribute("userRole") : "CUSTOMER" %>';
+            const loginType = '<%= session.getAttribute("loginType") != null ? session.getAttribute("loginType") : "local" %>';
+            
+            // Cập nhật thông tin trong sidebar
+            if (userName && userName !== 'null' && userName !== '') {
+                document.getElementById('profileUserName').textContent = 'Xin chào, ' + userName;
+                document.getElementById('displayUserName').textContent = userName;
+            } else {
+                document.getElementById('profileUserName').textContent = 'Chưa đăng nhập';
+                document.getElementById('displayUserName').textContent = 'Chưa có thông tin';
+            }
+            
+            if (userEmail && userEmail !== 'null' && userEmail !== '') {
+                document.getElementById('profileUserEmail').textContent = userEmail;
+                document.getElementById('displayUserEmail').textContent = userEmail;
+            } else {
+                document.getElementById('profileUserEmail').textContent = 'Chưa có email';
+                document.getElementById('displayUserEmail').textContent = 'Chưa có thông tin';
+            }
+            
+            // Cập nhật avatar
+            if (userPicture && userPicture !== 'null' && userPicture !== '') {
+                document.getElementById('profileUserAvatar').src = userPicture;
+                document.getElementById('displayUserAvatar').src = userPicture;
+            }
+            
+            // Cập nhật role
+            let roleText = userRole;
+            if (userRole === 'CUSTOMER') roleText = 'Khách hàng';
+            else if (userRole === 'ADMIN') roleText = 'Quản trị viên';
+            else if (userRole === 'STAFF') roleText = 'Nhân viên';
+            document.getElementById('displayUserRole').textContent = roleText;
+            
+            // Cập nhật login type
+            let loginTypeText = loginType;
+            if (loginType === 'google') loginTypeText = 'Google OAuth';
+            else if (loginType === 'local') loginTypeText = 'Tài khoản nội bộ';
+            document.getElementById('displayLoginType').textContent = loginTypeText;
         });
-        // Tab switching (có thể mở rộng sau)
-        document.getElementById('profileInfoTab').onclick = function() {
-            document.getElementById('profileContent').innerHTML = `<h4>Thông tin tài khoản</h4><p>Email: <span id='profileUserEmail'>${localStorage.getItem('userEmail')||'user@email.com'}</span></p><p>Họ tên: <span id='profileUserFullName'>${localStorage.getItem('userName')||'User'}</span></p>`;
+        
+        // Xử lý tab switching
+        document.getElementById('profileInfoTab').onclick = function(e) {
+            e.preventDefault();
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Show profile info content (đã có sẵn)
+            const profileContent = document.getElementById('profileContent');
+            profileContent.innerHTML = document.getElementById('profileInfoContent').outerHTML;
         };
-        document.getElementById('profileOrdersTab').onclick = function() {
-            document.getElementById('profileContent').innerHTML = `<h4>Đơn hàng của bạn</h4><p>Bạn chưa có đơn hàng nào.</p>`;
+        
+        document.getElementById('profileOrdersTab').onclick = function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+            
+            document.getElementById('profileContent').innerHTML = `
+                <h4><i class="fas fa-box me-2"></i>Đơn hàng của bạn</h4>
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Bạn chưa có đơn hàng nào. <a href="/" class="alert-link">Khám phá sản phẩm ngay!</a>
+                </div>
+            `;
         };
-        document.getElementById('profilePasswordTab').onclick = function() {
-            document.getElementById('profileContent').innerHTML = `<h4>Đổi mật khẩu</h4><p>Chức năng này sẽ được cập nhật sau.</p>`;
+        
+        document.getElementById('profilePasswordTab').onclick = function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+            
+            document.getElementById('profileContent').innerHTML = `
+                <h4><i class="fas fa-key me-2"></i>Đổi mật khẩu</h4>
+                <div class="alert alert-warning mt-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Chức năng này sẽ được cập nhật trong phiên bản tiếp theo.
+                </div>
+            `;
         };
-        document.getElementById('profileAddressTab').onclick = function() {
-            document.getElementById('profileContent').innerHTML = `<h4>Sổ địa chỉ</h4><p>Bạn chưa có địa chỉ nào.</p>`;
+        
+        document.getElementById('profileAddressTab').onclick = function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+            
+            document.getElementById('profileContent').innerHTML = `
+                <h4><i class="fas fa-map-marker-alt me-2"></i>Sổ địa chỉ</h4>
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Bạn chưa có địa chỉ nào được lưu.
+                </div>
+            `;
         };
+        
+        // Xử lý đăng xuất
+        document.getElementById('profileLogoutBtn').onclick = function(e) {
+            e.preventDefault();
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                logoutUser();
+            }
+        };
+        
+        // Function đăng xuất
+        function logoutUser() {
+            // Gọi API logout của Spring Security OAuth2
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }).then(() => {
+                // Clear session storage
+                sessionStorage.clear();
+                localStorage.clear();
+                
+                // Redirect về trang chủ
+                window.location.href = '/';
+            }).catch(error => {
+                console.error('Logout error:', error);
+                // Fallback: redirect về trang chủ dù có lỗi
+                window.location.href = '/';
+            });
+        }
     </script>
 </body>
 </html>

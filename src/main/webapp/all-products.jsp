@@ -13,17 +13,7 @@
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        .product-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.12); transform: translateY(-2px); }
-        .product-img { object-fit: cover; height: 220px; }
-        .filter-title { font-weight: 600; font-size: 1.1rem; margin-top: 1.5rem; }
-        .breadcrumb { background: none; }
-        .price { color: #E55A00; font-weight: bold; font-size: 1.1rem; }
-        .old-price { text-decoration: line-through; color: #888; font-size: 0.95em; }
-        .discount-badge { background: #E55A00; color: #fff; font-size: 0.85em; border-radius: 6px; padding: 2px 8px; }
-    </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
@@ -48,38 +38,55 @@
                             </div>
                         </form>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-4">
+                </div>                <div class="col-lg-4 col-md-4">
                     <div class="header-actions d-flex justify-content-end align-items-center">
                         <div class="account-menu me-3">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                   id="accountDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span>Tài khoản</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li id="guestLoginOption"><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                    </a></li>
-                                    <li id="userMenu" style="display:none;">
-                                        <span class="dropdown-item disabled"><i class="fas fa-user me-2"></i>Xin chào, <span id="userName">User</span></span>
-                                    </li>
-                                    <li id="userAccountOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
-                                        <i class="fas fa-id-card me-2"></i>Thông tin tài khoản
-                                    </a></li>
-                                    <li id="userOrdersOption" style="display:none;"><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp" onclick="document.getElementById('profileOrdersTab').click();return false;">
-                                        <i class="fas fa-box me-2"></i>Đơn hàng của bạn
-                                    </a></li>
-                                    <li id="userDivider" style="display:none;"><hr class="dropdown-divider"></li>
-                                    <li id="userLogoutOption" style="display:none;"><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                    </a></li>
-                                </ul>
-                            </div>
+                            <%
+                                Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                String userName = (String) session.getAttribute("userName");
+                                String userPicture = (String) session.getAttribute("userPicture");
+                                String loginType = (String) session.getAttribute("loginType");
+                                
+                                if (isLoggedIn != null && isLoggedIn) {
+                            %>
+                                <!-- User logged in -->
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle text-decoration-none d-flex align-items-center" data-bs-toggle="dropdown">
+                                        <% if (userPicture != null && !userPicture.isEmpty()) { %>
+                                            <img src="<%= userPicture %>" alt="Avatar" class="rounded-circle me-2 avatar-32">
+                                        <% } else { %>
+                                            <i class="fas fa-user-circle me-2 user-icon-32"></i>
+                                        <% } %>
+                                        <span class="text-dark">Xin chào, <%= userName != null ? userName : "User" %></span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end z-index-1050">
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                    </ul>
+                                </div>
+                            <%
+                                } else {
+                            %>
+                                <!-- User not logged in -->
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        <span>Tài khoản</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
+                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            <%
+                                }
+                            %>
                         </div>
                         <div class="cart-btn">
                             <a href="#" class="btn btn-primary">
@@ -236,11 +243,11 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="filterPG">
                             <label class="form-check-label" for="filterPG">Perfect Grade (PG)</label>
-                        </div>
-                        <div class="filter-title">Khoảng giá</div>
-                        <input type="range" class="form-range" min="0" max="5000000" step="50000">
+                        </div>                        <div class="filter-title">Khoảng giá</div>
+                        <input type="range" class="form-range" min="0" max="5000000" step="50000" id="priceRange" value="5000000">
                         <div class="d-flex justify-content-between small">
-                            <span>0₫</span><span>5.000.000₫+</span>
+                            <span>0₫</span>
+                            <span id="maxPriceDisplay">5.000.000₫+</span>
                         </div>
                         <div class="filter-title">Thương hiệu</div>
                         <div class="form-check">
@@ -257,17 +264,24 @@
             <!-- Lưới sản phẩm -->
             <section class="col-lg-9">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h1 class="h4 fw-bold mb-0">Tất cả sản phẩm</h1>
-                    <select class="form-select w-auto">
-                        <option>Sắp xếp: Mới nhất</option>
-                        <option>Giá tăng dần</option>
-                        <option>Giá giảm dần</option>
-                        <option>Bán chạy</option>
+                    <h1 class="h4 fw-bold mb-0">Tất cả sản phẩm</h1>                    <select class="form-select w-auto" id="sortSelect">
+                        <option value="latest">Sắp xếp: Mới nhất</option>
+                        <option value="price_asc">Giá tăng dần</option>
+                        <option value="price_desc">Giá giảm dần</option>
+                        <option value="popular">Bán chạy</option>
                     </select>
-                </div>
-                <div class="row g-3">
-                    <!-- Sản phẩm mẫu, thay bằng dữ liệu động nếu có -->
-                    <div class="col-6 col-md-4 col-lg-3">
+                </div>                <div class="row g-3" id="products-grid">
+                    <!-- Sản phẩm sẽ được load động từ database qua JavaScript -->
+                    <!-- Loading placeholder -->
+                    <div class="col-12 text-center" id="products-loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tải sản phẩm...</span>
+                        </div>
+                        <p class="mt-2">Đang tải sản phẩm từ database...</p>
+                    </div>
+                    
+                    <!-- Fallback: Sản phẩm mẫu static (sẽ bị thay thế bởi dữ liệu động) -->
+                    <div class="col-6 col-md-4 col-lg-3 fallback-product">
                         <div class="card product-card h-100 border-0 shadow-sm">
                             <img src="img/coll_1.jpg" class="card-img-top product-img" alt="Gundam 1">
                             <div class="card-body p-2">
@@ -279,7 +293,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-4 col-lg-3">
+                    <div class="col-6 col-md-4 col-lg-3 fallback-product">
                         <div class="card product-card h-100 border-0 shadow-sm">
                             <img src="img/coll_2.jpg" class="card-img-top product-img" alt="Gundam 2">
                             <div class="card-body p-2">
@@ -293,7 +307,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-4 col-lg-3">
+                    <div class="col-6 col-md-4 col-lg-3 fallback-product">
                         <div class="card product-card h-100 border-0 shadow-sm">
                             <img src="img/coll_3.jpg" class="card-img-top product-img" alt="Gundam 3">
                             <div class="card-body p-2">
@@ -305,7 +319,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-4 col-lg-3">
+                    <div class="col-6 col-md-4 col-lg-3 fallback-product">
                         <div class="card product-card h-100 border-0 shadow-sm">
                             <img src="img/coll_4.jpg" class="card-img-top product-img" alt="Gundam 4">
                             <div class="card-body p-2">
@@ -319,7 +333,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Thêm nhiều sản phẩm khác tại đây -->
                 </div>
                 <!-- Phân trang -->
                 <nav class="mt-4 d-flex justify-content-center">
@@ -470,10 +483,36 @@
     <!-- Back to Top Button -->
     <button class="back-to-top" id="backToTop">
         <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </button>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- All Products Dynamic Manager -->
+    <script src="<%=request.getContextPath()%>/js/all-products-manager.js"></script>
+    
     <script>
+    // Function đăng xuất cho OAuth2
+    function logoutUser() {
+        if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+            // Gọi API logout của Spring Security OAuth2
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }).then(() => {
+                // Clear session storage
+                sessionStorage.clear();
+                localStorage.clear();
+                
+                // Redirect về trang chủ
+                window.location.href = '/';
+            }).catch(error => {
+                console.error('Logout error:', error);
+                // Fallback: redirect về trang chủ dù có lỗi
+                window.location.href = '/';
+            });
+        }
+    }
+    
     // Hiện/ẩn popup danh mục sản phẩm
     document.addEventListener('DOMContentLoaded', function() {
         var btn = document.getElementById('categoryBtn');
@@ -506,6 +545,40 @@
                 }
             });
         }
+        
+        // Real-time price range display update
+        const priceRange = document.getElementById('priceRange');
+        const maxPriceDisplay = document.getElementById('maxPriceDisplay');
+        if (priceRange && maxPriceDisplay) {
+            priceRange.addEventListener('input', function(e) {
+                const value = parseInt(e.target.value);
+                if (value >= 5000000) {
+                    maxPriceDisplay.textContent = '5.000.000₫+';
+                } else {
+                    maxPriceDisplay.textContent = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(value);
+                }
+            });
+        }
+        
+        // Hide loading placeholder when products are loaded
+        setTimeout(function() {
+            const loadingElement = document.getElementById('products-loading');
+            const fallbackProducts = document.querySelectorAll('.fallback-product');
+            
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+            
+            // Hide fallback products after dynamic loading
+            if (window.allProductsManager && window.allProductsManager.allProducts.length > 0) {
+                fallbackProducts.forEach(product => {
+                    product.style.display = 'none';
+                });
+            }
+        }, 2000);
     });
     </script>
 </body>
