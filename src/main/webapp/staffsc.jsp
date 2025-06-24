@@ -552,10 +552,13 @@
                     </tr>
                 </thead>
                 <tbody id="orders-body">
+                    <!-- Dữ liệu sẽ được render bằng JavaScript -->
+                </tbody>
             </table>
         </div>
     </div>
 </div>
+
 
         <!-- Support Tab -->
         <div id="support" class="tab-content">
