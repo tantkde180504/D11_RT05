@@ -101,4 +101,73 @@ public class PaymentController {
             return ResponseEntity.status(500).body(resp);
         }
     }
+
+    @GetMapping("/orders/history")
+    public ResponseEntity<?> getOrderHistory(@SessionAttribute(name = "userId", required = false) Long userId) {
+        if (userId == null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", false);
+            resp.put("message", "Bạn chưa đăng nhập!");
+            return ResponseEntity.status(401).body(resp);
+        }
+        List<Order> orders = orderRepository.findByUserIdOrderByOrderDateDesc(userId);
+        // Chuẩn bị dữ liệu trả về gồm: order info + list sản phẩm (tên, ảnh)
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Order order : orders) {
+            Map<String, Object> o = new HashMap<>();
+            o.put("id", order.getId());
+            o.put("orderNumber", order.getOrderNumber());
+            o.put("orderDate", order.getOrderDate());
+            o.put("status", order.getStatus());
+            o.put("totalAmount", order.getTotalAmount());
+            // Lấy sản phẩm đầu tiên (nếu có)
+            List<OrderItem> items = order.getOrderItems();
+            if (items != null && !items.isEmpty()) {
+                OrderItem first = items.get(0);
+                Map<String, Object> productInfo = new HashMap<>();
+                productInfo.put("name", first.getProduct().getName());
+                productInfo.put("image", first.getProduct().getImageUrl()); // cần có trường imageUrl trong Product
+                o.put("firstProduct", productInfo);
+            } else {
+                o.put("firstProduct", null);
+            }
+            result.add(o);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/orders/{orderId}/cancel")
+    @Transactional
+    public ResponseEntity<?> cancelOrder(@SessionAttribute(name = "userId", required = false) Long userId,
+                                         @PathVariable Long orderId) {
+        Map<String, Object> resp = new HashMap<>();
+        if (userId == null) {
+            resp.put("success", false);
+            resp.put("message", "Bạn chưa đăng nhập!");
+            return ResponseEntity.status(401).body(resp);
+        }
+        Optional<Order> optOrder = orderRepository.findById(orderId);
+        if (optOrder.isEmpty()) {
+            resp.put("success", false);
+            resp.put("message", "Không tìm thấy đơn hàng!");
+            return ResponseEntity.ok(resp);
+        }
+        Order order = optOrder.get();
+        if (!order.getUserId().equals(userId)) {
+            resp.put("success", false);
+            resp.put("message", "Bạn không có quyền hủy đơn này!");
+            return ResponseEntity.ok(resp);
+        }
+        String status = order.getStatus();
+        if (status.equals("PENDING") || status.equals("CONFIRMED") || status.equals("PROCESSING")) {
+            order.setStatus("CANCELLED");
+            orderRepository.save(order);
+            resp.put("success", true);
+            resp.put("message", "Đã hủy đơn hàng thành công!");
+        } else {
+            resp.put("success", false);
+            resp.put("message", "Đơn hàng đã chuyển sang trạng thái vận chuyển/giao hàng, không thể hủy!");
+        }
+        return ResponseEntity.ok(resp);
+    }
 }

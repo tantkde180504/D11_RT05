@@ -73,11 +73,17 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="cart-btn">
+                        <div class="cart-btn me-2">
                             <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 <span class="cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                            </a>
+                        </div>
+                        <div class="order-history-btn">
+                            <a href="order-history.jsp" class="btn btn-outline-secondary">
+                                <i class="fas fa-history me-1"></i>
+                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
                             </a>
                         </div>
                     </div>

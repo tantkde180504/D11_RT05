@@ -89,7 +89,7 @@
                     <p class="mb-4">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được ghi nhận.</p>
                     <div class="d-grid gap-2">
                         <a href="index.jsp" class="btn btn-primary">Quay về trang chủ</a>
-                        <a href="order.jsp" class="btn btn-outline-secondary">Đơn hàng</a>
+                        <a href="order-history.jsp" class="btn btn-outline-secondary">Đơn hàng</a>
                     </div>
                 </div>
             </div>
