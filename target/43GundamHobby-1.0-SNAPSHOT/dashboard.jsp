@@ -710,6 +710,7 @@
                 </thead>
                 <tbody id="staffTableBody">
                     <!-- Dữ liệu render bằng JavaScript -->
+                    
                 </tbody>
             </table>
         </div>
@@ -773,103 +774,45 @@
     </div>
   </div>
 </div>
+<!-- Modal Chỉnh sửa Nhân Viên -->
+<div class="modal fade" id="editStaffModal" tabindex="-1" aria-labelledby="editStaffModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="editStaffModalLabel">Chỉnh sửa nhân viên</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- ✅ ĐÃ THÊM DÒNG BẮT BUỘC -->
+        <input type="hidden" id="editId">
 
-<!-- <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.querySelector("#addStaffForm");
-  if (form) {
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
+        <div class="mb-3">
+          <label for="editFirstName">Họ</label>
+          <input type="text" class="form-control" id="editFirstName" required>
+        </div>
 
-      const data = {
-        firstName: form.querySelector('input[name="firstName"]').value,
-        lastName: form.querySelector('input[name="lastName"]').value,
-        email: form.querySelector('input[name="email"]').value,
-        password: form.querySelector('input[name="password"]').value,
-        phone: form.querySelector('input[name="phone"]').value,
-        dateOfBirth: form.querySelector('input[name="dateOfBirth"]').value,
-        gender: form.querySelector('select[name="gender"]').value,
-        address: form.querySelector('input[name="address"]').value
-      };
+        <div class="mb-3">
+          <label for="editLastName">Tên</label>
+          <input type="text" class="form-control" id="editLastName" required>
+        </div>
 
-      fetch("/api/staffs/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(res => {
-        if (!res.ok) throw res;
-        return res.json();
-      })
-      .then(result => {
-        alert("✅ Tạo nhân viên thành công!");
-        const roleLabel = result.role === "STAFF" ? "Nhân viên" : result.role;
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${result.id}</td>
-          <td>${result.firstName} ${result.lastName}</td>
-          <td>${result.email}</td>
-          <td>${roleLabel}</td>
-          <td>${result.createdAtFormatted || ""}</td>
-          <td><span class="badge bg-success">Hoạt động</span></td>
-          <td>
-            <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-          </td>
-        `;
-        document.querySelector("#staffTableBody").appendChild(row);
-        form.reset();
-        bootstrap.Modal.getInstance(document.getElementById("addStaffModal")).hide();
-      })
-      .catch(err => {
-        if (err.text) {
-          err.text().then(msg => alert("❌ Lỗi: " + msg));
-        } else {
-          alert("❌ Lỗi không xác định khi tạo nhân viên.");
-          console.error(err);
-        }
-      });
-    });
-  }
+        <div class="mb-3">
+          <label for="editEmail">Email</label>
+          <input type="email" class="form-control" id="editEmail" required>
+        </div>
+      </div>
 
-  loadStaffList();
-});
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-success" onclick="saveStaffUpdate()">Lưu</button>
+      </div>
 
-function loadStaffList() {
-  fetch("/api/staffs/list")
-    .then(res => {
-      if (!res.ok) throw new Error("Lỗi HTTP");
-      return res.json();
-    })
-    .then(data => {
-      const tbody = document.getElementById("staffTableBody");
-      tbody.innerHTML = "";
-      data.forEach(staff => {
-        const fullName = `${staff.firstName} ${staff.lastName}`;
-        const joinDate = staff.createdAtFormatted || "";
-        const row = `
-          <tr>
-            <td>${staff.id}</td>
-            <td>${fullName}</td>
-            <td>${staff.email}</td>
-            <td>Nhân viên</td>
-            <td>${joinDate}</td>
-            <td><span class="badge bg-success">Hoạt động</span></td>
-            <td>
-              <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
-              <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", row);
-      });
-    })
-    .catch(err => {
-      console.error("❌ Lỗi khi tải danh sách nhân viên:", err);
-      alert("Không thể tải danh sách nhân viên. Kiểm tra API /api/staffs/list hoặc xem log backend.");
-    });
-}
-</script> -->
+    </div>
+  </div>
+</div>
+
 
 
 
@@ -1186,7 +1129,135 @@ function loadStaffList() {
         document.addEventListener('DOMContentLoaded', function() {
             checkPageAccess('ADMIN');
         });
+        
     </script>
-    <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
+   <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
+
+<script>
+window.openEditModal = function(id) {
+  console.log("🟢 Gọi openEditModal với ID:", id);
+
+  if (!id) {
+    alert("❌ Không có ID nhân viên được truyền vào!");
+    return;
+  }
+
+  fetch(`/api/staffs/${id}`)
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("❌ Không tìm thấy nhân viên với ID: " + id);
+      }
+      return res.json();
+    })
+    .then(data => {
+      console.log("📦 Data nhận được từ API:", data);
+
+      if (!data.id) {
+        alert("❌ API không trả về dữ liệu hợp lệ.");
+        return;
+      }
+
+      document.getElementById("editId").value = data.id;
+      document.getElementById("editFirstName").value = data.firstName || "";
+      document.getElementById("editLastName").value = data.lastName || "";
+      document.getElementById("editEmail").value = data.email || "";
+
+      new bootstrap.Modal(document.getElementById("editStaffModal")).show();
+    })
+    .catch(err => {
+      console.error("❌ Lỗi khi lấy dữ liệu nhân viên:", err);
+      alert("Không thể tải dữ liệu nhân viên.");
+    });
+};
+
+
+window.saveStaffUpdate = function() {
+  const id = document.getElementById("editId").value;
+  const data = {
+    firstName: document.getElementById("editFirstName").value,
+    lastName: document.getElementById("editLastName").value,
+    email: document.getElementById("editEmail").value
+  };
+
+  // ✅ Log để kiểm tra trước khi gửi
+  console.log("🟢 Gửi cập nhật nhân viên ID:", id);
+  console.log("📤 Dữ liệu gửi:", data);
+
+  fetch(`/api/staffs/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(res => {
+    if (res.ok) {
+      alert("✅ Cập nhật thành công!");
+      location.reload();
+    } else {
+      return res.text().then(text => {
+        console.error("❌ Lỗi khi cập nhật:", text);
+        alert("❌ Lỗi khi cập nhật: " + text);
+      });
+    }
+  })
+  .catch(err => {
+    console.error("❌ Lỗi fetch:", err);
+    alert("Lỗi kết nối đến server. Vui lòng thử lại.");
+  });
+};
+
+window.deleteStaff = function(id) {
+  if (confirm("Bạn có chắc chắn muốn xoá nhân viên này?")) {
+    fetch(`/api/staffs/${id}`, {
+      method: 'DELETE'
+    }).then(res => {
+      if (res.ok) {
+        alert("Xoá thành công!");
+        location.reload();
+      } else {
+        alert("Xoá thất bại!");
+      }
+    });
+  }
+};
+
+fetch("/api/staffs/list")
+  .then(res => res.json())
+  .then(data => {
+    let html = '';
+    data.forEach(staff => {
+    console.log("🔁 staff:", staff);
+      if (!staff.id || isNaN(staff.id)) {
+        console.warn("⚠️ Không render dòng nhân viên vì id không hợp lệ:", staff);
+        return; // Bỏ qua dòng này
+      }
+      const formattedDate = staff.createdAt
+        ? new Date(staff.createdAt).toLocaleDateString()
+        : '';
+
+      html += `
+        <tr>
+          <td>${staff.id}</td>
+          <td>${staff.firstName} ${staff.lastName}</td>
+          <td>${staff.email}</td>
+          <td>${staff.role || 'Nhân viên'}</td>
+          <td>${formattedDate}</td>
+          <td><span class="badge bg-success">Hoạt động</span></td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="openEditModal(${staff.id})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteStaff(${staff.id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+    document.getElementById("staffTableBody").innerHTML = html;
+  });
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

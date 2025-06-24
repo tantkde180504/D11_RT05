@@ -1,7 +1,6 @@
 package com.mycompany;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,20 +12,37 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
     public User createStaffAccount(User user) {
-        if (user == null || user.getEmail() == null || user.getPassword() == null) {
-            throw new IllegalArgumentException("Thông tin nhân viên không hợp lệ.");
+        // Validate all required fields
+        if (user == null ||
+            user.getEmail() == null || user.getEmail().trim().isEmpty() ||
+            user.getPassword() == null || user.getPassword().trim().isEmpty() ||
+            user.getFirstName() == null || user.getFirstName().trim().isEmpty() ||
+            user.getLastName() == null || user.getLastName().trim().isEmpty() ||
+            user.getPhone() == null || user.getPhone().trim().isEmpty() ||
+            user.getDateOfBirth() == null ||
+            user.getGender() == null || user.getGender().trim().isEmpty() ||
+            user.getAddress() == null || user.getAddress().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập đầy đủ tất cả các trường bắt buộc.");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email đã tồn tại.");
+            throw new RuntimeException("Email đã tồn tại. Vui lòng dùng email khác.");
+        }
+        if (userRepository.existsByPhone(user.getPhone())) {
+            throw new RuntimeException("Số điện thoại đã tồn tại. Vui lòng dùng số khác.");
+        }
+        // Nếu vừa trùng tên vừa trùng email hoặc vừa trùng tên vừa trùng số điện thoại
+        if (userRepository.existsByFirstNameAndLastNameAndEmail(user.getFirstName(), user.getLastName(), user.getEmail())) {
+            throw new RuntimeException("Tên và email đã tồn tại cùng nhau. Vui lòng đổi email hoặc tên.");
+        }
+        if (userRepository.existsByFirstNameAndLastNameAndPhone(user.getFirstName(), user.getLastName(), user.getPhone())) {
+            throw new RuntimeException("Tên và số điện thoại đã tồn tại cùng nhau. Vui lòng đổi số hoặc tên.");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Đã bỏ mã hóa mật khẩu, không cần PasswordEncoder nữa
+        // user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("STAFF");
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
@@ -37,5 +53,50 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllStaffs() {
         return userRepository.findByRole("STAFF");
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public boolean updateStaff(Long id, StaffDTO dto) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) return false;
+
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+        return true;
+    }
+
+    @Override
+    public boolean deleteStaff(Long id) {
+        System.out.println("\uD83D\uDDD1 Gọi xóa nhân viên ID = " + id);
+
+        // Kiểm tra tồn tại và đúng role STAFF
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            System.out.println("\u26A0\uFE0F Nhân viên không tồn tại trong DB!");
+            return false;
+        }
+        if (!"STAFF".equalsIgnoreCase(user.getRole())) {
+            System.out.println("\u26A0\uFE0F Không phải nhân viên STAFF, không được phép xoá!");
+            return false;
+        }
+
+        try {
+            userRepository.deleteById(id);
+            System.out.println("\u2705 Đã xoá nhân viên ID = " + id);
+            return true;
+        } catch (Exception e) {
+            System.out.println("\u274C Lỗi khi xoá nhân viên: " + e.getMessage());
+            e.printStackTrace(); // Thêm log chi tiết lỗi
+            return false;
+        }
     }
 }

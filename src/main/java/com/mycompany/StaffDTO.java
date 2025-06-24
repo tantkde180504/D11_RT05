@@ -6,27 +6,26 @@ import java.util.Locale;
 
 public class StaffDTO {
 
-    private long id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String role;
     private Date createdAt;
 
-    // ✅ Trường hiển thị ngày định dạng sẵn
+    // ✅ Trường hiển thị ngày định dạng sẵn (fix Locale deprecated)
     public String getCreatedAtFormatted() {
         if (createdAt == null) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("vi", "VN"));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("vi-VN"));
         return sdf.format(createdAt);
     }
 
     // --- Getters & Setters chuẩn ---
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    // ✅ Sửa lại cho đúng kiểu long
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
