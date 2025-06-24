@@ -1,0 +1,19 @@
+# Mac system files
+.DS_Store
+
+# Maven build folder
+target/
+
+# Build artifacts
+*.class
+*.log
+
+# IDE settings
+.vscode/
+.idea/
+*.iml
+
+# OS junk
+Thumbs.db
+Desktop.ini
+
