@@ -706,3 +706,11 @@
 .staff-header .dropdown-menu {
     z-index: 1050 !important;
 }
+.modal-modern {
+    z-index: 1060 !important; /* cao hơn .modal-backdrop mặc định là 1050 */
+  }
+  
+  .modal-backdrop {
+    z-index: 1050 !important;
+  }
+  
