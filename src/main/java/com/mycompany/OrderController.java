@@ -20,7 +20,7 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
-    // ✅ API: Lấy danh sách đơn hàng (tùy chọn lọc theo trạng thái)
+    // ✅ API: Lấy danh sách đơn hàng (optionally lọc theo trạng thái)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Order> getOrders(@RequestParam(value = "status", required = false) String status) {
         if (status != null && !status.equalsIgnoreCase("ALL")) {
@@ -29,7 +29,7 @@ public class OrderController {
         return orderRepository.findAllByOrderByOrderDateDesc();
     }
 
-    // ✅ API: Xác nhận đơn hàng (từ PENDING sang CONFIRMED)
+    // ✅ API: Cập nhật trạng thái đơn hàng từ PENDING → CONFIRMED
     @PostMapping("/confirm")
     @Transactional
     public ResponseEntity<String> confirmOrder(@RequestParam Long orderId) {
@@ -42,29 +42,22 @@ public class OrderController {
         }
     }
 
-    // ✅ API: Cập nhật trạng thái bất kỳ (DELIVERED, SHIPPING, PROCESSING,...)
+    // ✅ API: Cập nhật trạng thái đơn hàng bất kỳ
     @PostMapping("/update-status")
     @Transactional
     public ResponseEntity<String> updateOrderStatus(@RequestParam Long orderId,
                                                     @RequestParam String status) {
-        int updatedRows = orderRepository.updateOrderStatus(orderId, status.toUpperCase());
-        if (updatedRows > 0) {
-            return ResponseEntity.ok("✅ Cập nhật trạng thái đơn hàng thành công: " + status.toUpperCase());
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("❌ Không thể cập nhật trạng thái đơn hàng.");
-        }
-    }
-
-    // ✅ API: Lấy chi tiết đơn hàng theo ID
-    @GetMapping("/detail")
-    public ResponseEntity<?> getOrderDetail(@RequestParam Long orderId) {
-        Order order = orderRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            return ResponseEntity.ok(order);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("❌ Không tìm thấy đơn hàng với ID: " + orderId);
+        try {
+            int updated = orderRepository.updateOrderStatus(orderId, status);
+            if (updated > 0) {
+                return ResponseEntity.ok("✅ Đã cập nhật trạng thái đơn hàng thành công");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("❌ Không tìm thấy đơn hàng để cập nhật");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("❌ Lỗi hệ thống: " + e.getMessage());
         }
     }
 }

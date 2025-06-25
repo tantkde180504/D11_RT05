@@ -12,22 +12,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // ✅ Lấy toàn bộ đơn hàng theo thời gian giảm dần
+    // Lấy toàn bộ đơn hàng theo thời gian giảm dần
     List<Order> findAllByOrderByOrderDateDesc();
 
-    // ✅ Lọc theo trạng thái đơn hàng (ví dụ: PENDING, CONFIRMED...)
+    // Lọc theo trạng thái đơn hàng
     List<Order> findByStatusOrderByOrderDateDesc(String status);
 
-    // ✅ Cập nhật trạng thái đơn hàng từ PENDING sang CONFIRMED
+    // ✅ Cập nhật trạng thái đơn hàng từ PENDING → CONFIRMED
     @Modifying
     @Transactional
     @Query("UPDATE Order o SET o.status = 'CONFIRMED' WHERE o.id = :orderId AND o.status = 'PENDING'")
     int confirmOrderById(@Param("orderId") Long orderId);
 
-    // ✅ Cập nhật linh hoạt sang bất kỳ trạng thái nào
+    // ✅ Cập nhật trạng thái đơn hàng bất kỳ
     @Modifying
     @Transactional
-    @Query("UPDATE Order o SET o.status = :newStatus WHERE o.id = :orderId")
-    int updateOrderStatus(@Param("orderId") Long orderId, @Param("newStatus") String newStatus);
-}
+    @Query("UPDATE Order o SET o.status = :status WHERE o.id = :orderId")
+    int updateOrderStatus(@Param("orderId") Long orderId, @Param("status") String status);
 
+    // Tìm theo userId và mã đơn
+    Order findByUserIdAndOrderNumber(Long userId, String orderNumber);
+}

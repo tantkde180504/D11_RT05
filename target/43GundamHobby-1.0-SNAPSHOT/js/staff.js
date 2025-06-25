@@ -536,9 +536,18 @@ function addActionButtons() {
 }
 
 // Initialize action buttons when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(addActionButtons, 100);
+document.addEventListener("DOMContentLoaded", () => {
+    const s = document.querySelector("#order-status");
+    if (!s) return;
+    const status = s.textContent.trim().toUpperCase();
+    if (status === "PENDING") s.className = "badge bg-secondary";
+    else if (status === "CONFIRMED") s.className = "badge bg-primary";
+    else if (status === "PROCESSING") s.className = "badge bg-warning text-dark";
+    else if (status === "SHIPPING") s.className = "badge bg-info text-dark";
+    else if (status === "DELIVERED") s.className = "badge bg-success";
+    else s.className = "badge bg-dark";
 });
+
 
 // Quick action handlers
 function handleQuickCall() {
@@ -682,5 +691,4 @@ function confirmOrder(orderId) {
 });
 
 }
-
 

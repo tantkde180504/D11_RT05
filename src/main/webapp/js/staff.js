@@ -1,5 +1,6 @@
 // Staff Dashboard JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all functionality
     initTabSwitching();
     initChart();
     initSearchFunctionality();
@@ -11,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
     initDropdownFix();
     showKeyboardShortcutsHint();
-    loadOrdersFromAPI(); // 🔁 Load orders when page loads
 });
 
 // Tab switching functionality
@@ -19,12 +19,25 @@ function initTabSwitching() {
     document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            // Remove active class from all links and contents
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked link
             this.classList.add('active');
+            
+            // Show corresponding tab content
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
-            if (tabId === 'orders') loadOrdersFromAPI();
+
+            // ✅ Gọi API khi đổi tab
+            if (tabId === 'inventory') {
+                loadInventoryFromAPI();
+            }
+            if (tabId === 'orders') {
+                loadOrdersFromAPI(); // ✅ BỔ SUNG DÒNG NÀY
+            }
         });
     });
 }
@@ -617,7 +630,7 @@ function loadOrdersFromAPI() {
             tbody.innerHTML = '';
 
             data.forEach(o => {
-                const productList = o.productNames?.join('<br>') || '(chưa có)';
+                const productList = o.productNames?.join('<br>') || '';
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><strong>#${o.orderNumber}</strong></td>
@@ -627,17 +640,15 @@ function loadOrdersFromAPI() {
                     <td><span class="status-badge">${o.status}</span></td>
                     <td>${o.orderDate}</td>
                     <td>
-                        ${o.status === 'PENDING' ? `
-                            <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
-                                <i class="fas fa-check"></i>
-                            </button>` : ''}
-                        <button class="btn btn-sm btn-warning me-1" onclick="updateOrderStatus(${o.id}, 'SHIPPING')">
-                            <i class="fas fa-shipping-fast"></i>
-                        </button>
-                        <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </td>
+    ${o.status === 'PENDING' ? `
+    <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
+        <i class="fas fa-check"></i>
+    </button>` : ''}
+    <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
+    <i class="fas fa-edit"></i>
+</button>
+    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
+</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -648,58 +659,57 @@ function loadOrdersFromAPI() {
         });
 }
 
-
 function formatCurrency(price) {
     return Number(price).toLocaleString('vi-VN') + '₫';
 }
 function confirmOrder(orderId) {
     if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
-    fetch('/api/orders/confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `orderId=${orderId}`
-    })
-    .then(res => res.text())
-    .then(msg => {
-        showSuccessMessage(msg);
-        loadOrdersFromAPI();
-    })
-    .catch(err => {
-        showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
-    });
-}
-function updateOrder(orderId) {
-    alert(`🛠️ Chức năng cập nhật đơn hàng #${orderId} sẽ được triển khai sau.`);
-    // Sau này bạn có thể mở modal cập nhật và gọi API để thay đổi trạng thái đơn
-}
 
-function viewOrder(orderId) {
-    alert(`📄 Chi tiết đơn hàng #${orderId} sẽ hiển thị tại đây.`);
-    // Sau này bạn có thể mở modal hiển thị chi tiết đơn hàng
+    fetch('/api/orders/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `orderId=${orderId}`
+})
+.then(res => {
+    if (!res.ok) return res.text().then(text => { throw new Error(text); });
+    return res.text();
+})
+.then(msg => {
+    showSuccessMessage(msg);
+    loadOrdersFromAPI();
+})
+.catch(err => {
+    console.error('Xác nhận lỗi:', err.message);
+    showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
+});
+
 }
-function updateOrderStatus(orderId, newStatus) {
-    if (!confirm(`Cập nhật trạng thái đơn hàng sang ${newStatus}?`)) return;
+function showUpdateStatusModal(orderId, currentStatus) {
+    const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+    document.getElementById('update-order-id').value = orderId;
+    document.getElementById('new-status').value = currentStatus;
+    modal.show();
+}
+function updateOrderStatus() {
+    const orderId = document.getElementById('update-order-id').value;
+    const newStatus = document.getElementById('new-status').value;
+
     fetch('/api/orders/update-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `orderId=${orderId}&status=${newStatus}`
     })
-    .then(res => res.text())
+    .then(res => {
+        if (!res.ok) return res.text().then(text => { throw new Error(text); });
+        return res.text();
+    })
     .then(msg => {
         showSuccessMessage(msg);
+        bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
         loadOrdersFromAPI();
     })
     .catch(err => {
-        showErrorMessage(err.message || "❌ Lỗi khi cập nhật trạng thái đơn hàng.");
+        showErrorMessage(err.message || "❌ Không thể cập nhật trạng thái.");
     });
 }
-function viewOrderDetail(orderId) {
-    fetch(`/api/orders/detail?orderId=${orderId}`)
-        .then(res => res.json())
-        .then(data => {
-            alert("Thông tin đơn hàng:\n" + JSON.stringify(data, null, 2));
-        })
-        .catch(err => {
-            showErrorMessage("Không thể tải chi tiết đơn hàng.");
-        });
-}
+
