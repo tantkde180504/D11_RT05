@@ -23,6 +23,13 @@ public class ProductController {
     public List<Product> getInventoryList() {
         return productRepository.findByIsActiveTrueOrderByUpdatedAtDesc();
     }
+    // API: Xem chi tiết sản phẩm theo ID
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Product> getProductDetail(@PathVariable Long id) {
+        return productRepository.findById(id)
+                .map(product -> ResponseEntity.ok().body(product))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     // API: Cập nhật tồn kho thông qua stored procedure
     @PostMapping("/update-stock")

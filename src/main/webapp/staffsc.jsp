@@ -367,7 +367,7 @@
                                 <option value="GUNDAM_BANDAI">GUNDAM_BANDAI</option>
                                 <option value="PRE_ORDER">PRE_ORDER</option>
                                 <option value="TOOLS_ACCESSORIES">TOOLS_ACCESSORIES</option>
-                            </select>                            
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <select class="form-select" id="status-filter">
@@ -375,7 +375,7 @@
                                 <option value="Còn hàng">Còn hàng</option>
                                 <option value="Sắp hết">Sắp hết</option>
                                 <option value="Hết hàng">Hết hàng</option>
-                            </select>                            
+                            </select>
                         </div>
                     </div>
 
@@ -656,6 +656,35 @@
                     </div>
                 </div>
             </div>
+            <!-- Product Detail Modal -->
+            <div class="modal fade" id="productDetailModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-eye me-2"></i>Chi tiết sản phẩm</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-5 text-center">
+                                    <img id="detail-product-image" src="" class="img-fluid rounded" alt="Ảnh sản phẩm">
+                                </div>
+                                <div class="col-md-7">
+                                    <h4 id="detail-product-name"></h4>
+                                    <p><strong>SKU:</strong> <span id="detail-product-sku"></span></p>
+                                    <p><strong>Giá:</strong> <span id="detail-product-price"></span></p>
+                                    <p><strong>Danh mục:</strong> <span id="detail-product-category"></span></p>
+                                    <p><strong>Grade:</strong> <span id="detail-product-grade"></span></p>
+                                    <p><strong>Thương hiệu:</strong> <span id="detail-product-brand"></span></p>
+                                    <p><strong>Tồn kho:</strong> <span id="detail-product-stock"></span></p>
+                                    <p><strong>Mô tả:</strong><br><span id="detail-product-desc"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Quick Actions -->
@@ -898,8 +927,7 @@
                     </div>
                 </div>
             </div>
-
-
+            
 
             <!-- Return Detail Modal -->
             <div class="modal fade modal-modern" id="returnModal" tabindex="-1">

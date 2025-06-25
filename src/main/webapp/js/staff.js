@@ -643,15 +643,25 @@ function loadInventoryFromAPI() {
                             title="Cập nhật">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-sm btn-info" title="Chi tiết"
-                            onclick="viewProductDetails(${p.id})">
+                        <button class="btn btn-sm btn-info btn-view-detail"
+                            data-product-id="${p.id}"
+                            title="Chi tiết">
                             <i class="fas fa-eye"></i>
                         </button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+
+            // Gắn sự kiện cho nút cập nhật (giữ nguyên phần cũ)
             bindUpdateStockButtons();
+
+            // Gắn sự kiện xem chi tiết
+            document.querySelectorAll('.btn-view-detail').forEach(btn => {
+                const id = btn.getAttribute('data-product-id');
+                btn.addEventListener('click', () => viewProductDetails(id));
+            });
+
             filterInventory();
         })
         .catch(err => {
@@ -772,9 +782,6 @@ function filterInventory() {
         }
     });
 }
-
-
-
 function initInventoryFilters() {
     const searchInput = document.querySelector('#inventory .search-box input');
     const categorySelect = document.getElementById('category-filter');
@@ -784,4 +791,32 @@ function initInventoryFilters() {
     categorySelect.addEventListener('change', filterInventory);
     statusSelect.addEventListener('change', filterInventory);
 }
+// Định nghĩa hàm chi tiết
+function viewProductDetails(productId) {
+    fetch(`/api/products/${productId}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Không tìm thấy sản phẩm');
+            return res.json();
+        })
+        .then(product => {
+            document.getElementById('detail-product-name').textContent = product.name;
+            document.getElementById('detail-product-sku').textContent = product.id;
+            document.getElementById('detail-product-price').textContent = formatCurrency(product.price);
+            document.getElementById('detail-product-category').textContent = product.category;
+            document.getElementById('detail-product-grade').textContent = product.grade;
+            document.getElementById('detail-product-brand').textContent = product.brand;
+            document.getElementById('detail-product-stock').textContent = product.stockQuantity;
+            document.getElementById('detail-product-desc').textContent = product.description;
+            document.getElementById('detail-product-image').src = product.imageUrl;
+
+            const modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+            modal.show();
+        })
+        .catch(err => {
+            showErrorMessage(err.message || 'Lỗi tải chi tiết sản phẩm');
+        });
+}
+
+// 👇 Gán vào window để dùng được qua `onclick`
+window.viewProductDetails = viewProductDetails;
 
