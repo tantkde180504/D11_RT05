@@ -1,5 +1,6 @@
 package com.mycompany;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,9 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
-    // ✅ API: Lấy danh sách đơn hàng (có productNames kèm số lượng)
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    // ✅ API: Lấy danh sách đơn hàng
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<OrderDetailDTO> getOrders(@RequestParam(value = "status", required = false) String status) {
         List<Order> orders = (status != null && !status.equalsIgnoreCase("ALL"))
@@ -37,10 +40,10 @@ public class OrderController {
             dto.shippingAddress = order.getShippingAddress();
             dto.paymentMethod = order.getPaymentMethod();
             dto.status = order.getStatus();
-            dto.orderDate = order.getOrderDate();
+            dto.orderDate = order.getOrderDate() != null ? order.getOrderDate().format(DATE_FORMATTER) : null;
             dto.totalAmount = order.getTotalAmount();
             dto.email = "customer@example.com";
-            dto.productNames = orderRepository.findProductNamesWithQuantityByOrderId(order.getId()); // ✅ lấy kèm số lượng
+            dto.productNames = orderRepository.findProductNamesWithQuantityByOrderId(order.getId());
             return dto;
         }).collect(java.util.stream.Collectors.toList());
     }
@@ -67,6 +70,30 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ Không tìm thấy đơn hàng");
     }
 
+    // ✅ API: Hủy đơn hàng
+    @PostMapping("/cancel")
+    @Transactional
+    public ResponseEntity<String> cancelOrder(@RequestParam Long orderId) {
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ Không tìm thấy đơn hàng.");
+        }
+
+        Order order = orderOpt.get();
+        if ("DELIVERED".equals(order.getStatus())) {
+            return ResponseEntity.badRequest().body("❌ Không thể hủy đơn đã giao.");
+        }
+        if ("CANCELLED".equals(order.getStatus())) {
+            return ResponseEntity.badRequest().body("❌ Đơn hàng đã bị hủy trước đó.");
+        }
+
+        int updated = orderRepository.updateOrderStatus(orderId, "CANCELLED");
+        if (updated > 0) {
+            return ResponseEntity.ok("✅ Đơn hàng đã được hủy");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Không thể hủy đơn hàng.");
+    }
+
     // ✅ API: Xem chi tiết đơn hàng
     @GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderDetailDTO> getOrderDetail(@RequestParam Long id) {
@@ -76,8 +103,6 @@ public class OrderController {
         }
 
         Order order = orderOpt.get();
-        List<String> productNames = orderRepository.findProductNamesWithQuantityByOrderId(id); // ✅ có số lượng
-
         OrderDetailDTO dto = new OrderDetailDTO();
         dto.id = order.getId();
         dto.orderNumber = order.getOrderNumber();
@@ -86,15 +111,15 @@ public class OrderController {
         dto.shippingAddress = order.getShippingAddress();
         dto.paymentMethod = order.getPaymentMethod();
         dto.status = order.getStatus();
-        dto.orderDate = order.getOrderDate();
+        dto.orderDate = order.getOrderDate() != null ? order.getOrderDate().format(DATE_FORMATTER) : null;
         dto.totalAmount = order.getTotalAmount();
         dto.email = "customer@example.com";
-        dto.productNames = productNames;
+        dto.productNames = orderRepository.findProductNamesWithQuantityByOrderId(order.getId());
 
         return ResponseEntity.ok(dto);
     }
 
-    // ✅ DTO chung cho danh sách & chi tiết
+    // ✅ DTO dùng cho trả JSON
     public static class OrderDetailDTO {
         public Long id;
         public String orderNumber;
@@ -104,7 +129,7 @@ public class OrderController {
         public String paymentMethod;
         public String status;
         public String email;
-        public Object orderDate;
+        public String orderDate;
         public Object totalAmount;
         public List<String> productNames;
     }

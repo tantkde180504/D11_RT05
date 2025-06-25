@@ -630,9 +630,8 @@ function loadOrdersFromAPI() {
             tbody.innerHTML = '';
 
             data.forEach(o => {
-                // ✅ Danh sách sản phẩm kèm số lượng, ví dụ: ["Nu Gundam x2", "Barbatos x1"]
-                const productListHtml = (o.productNames && o.productNames.length > 0)
-                    ? `<ul class="mb-0 ps-3">${o.productNames.map(nameWithQty => `<li>${nameWithQty}</li>`).join('')}</ul>`
+                const productListHtml = (o.productNames?.length > 0)
+                    ? `<ul class="mb-0 ps-3">${o.productNames.map(p => `<li>${p}</li>`).join('')}</ul>`
                     : '—';
 
                 const row = document.createElement('tr');
@@ -648,6 +647,12 @@ function loadOrdersFromAPI() {
                             <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
                                 <i class="fas fa-check"></i>
                             </button>` : ''}
+
+                        ${o.status !== 'DELIVERED' && o.status !== 'CANCELLED' ? `
+                            <button class="btn btn-sm btn-danger me-1" onclick="cancelOrder(${o.id})">
+                                <i class="fas fa-times"></i>
+                            </button>` : ''}
+
                         <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -725,11 +730,10 @@ function viewOrderDetail(orderId) {
             return res.json();
         })
         .then(order => {
-            window.currentOrder = order; // để in hóa đơn
+            window.currentOrder = order;
 
-            // ✅ Hiển thị danh sách sản phẩm kèm số lượng (đã nối sẵn từ backend)
             const productListHtml = (order.productNames || [])
-                .map(nameWithQty => `<li>${nameWithQty}</li>`)
+                .map(name => `<li>${name}</li>`)
                 .join('');
 
             const html = `
@@ -757,15 +761,12 @@ function viewOrderDetail(orderId) {
 }
 
 
-function formatDate(dateTime) {
-    if (!dateTime) return 'N/A';
-    try {
-        const d = new Date(dateTime);
-        return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN');
-    } catch (e) {
-        return dateTime;
-    }
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date)) return '—';
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
 }
+
 function printInvoice() {
     const content = document.getElementById('order-detail-body').innerHTML;
     const printWindow = window.open('', '_blank');
@@ -794,6 +795,27 @@ function printInvoice() {
         printWindow.print();
         printWindow.close();
     }, 500);
+}
+function cancelOrder(orderId) {
+    if (!confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
+
+    fetch('/api/orders/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `orderId=${orderId}`
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(text => { throw new Error(text); });
+        return res.text();
+    })
+    .then(msg => {
+        showSuccessMessage(msg);
+        loadOrdersFromAPI();
+    })
+    .catch(err => {
+        console.error('Hủy đơn lỗi:', err.message);
+        showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
+    });
 }
 
 
