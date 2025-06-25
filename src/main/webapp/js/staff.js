@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initDropdownFix();
     showKeyboardShortcutsHint();
     loadInventoryFromAPI();
+    initInventoryFilters();
 });
 
 // Tab switching functionality
@@ -651,6 +652,7 @@ function loadInventoryFromAPI() {
                 tbody.appendChild(row);
             });
             bindUpdateStockButtons();
+            filterInventory();
         })
         .catch(err => {
             console.error('Lỗi tải tồn kho:', err);
@@ -747,3 +749,39 @@ function bindUpdateStockButtons() {
         });
     });
 }
+function filterInventory() {
+    const searchTerm = document.querySelector('#inventory .search-box input').value.toLowerCase();
+    const selectedCategory = document.getElementById('category-filter').value.trim().toUpperCase();
+    const selectedStatus = document.getElementById('status-filter').value.trim();
+
+    const rows = document.querySelectorAll('#inventory-body tr');
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        const categoryText = row.querySelector('td:nth-child(4)')?.textContent.trim().toUpperCase();
+        const statusText = row.querySelector('td:nth-child(6)')?.textContent.trim();
+
+        const matchesSearch = rowText.includes(searchTerm);
+        const matchesCategory = selectedCategory === '' || categoryText === selectedCategory;
+        const matchesStatus = selectedStatus === '' || statusText === selectedStatus;
+
+        if (matchesSearch && matchesCategory && matchesStatus) {
+            row.style.display = 'table-row';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+
+
+function initInventoryFilters() {
+    const searchInput = document.querySelector('#inventory .search-box input');
+    const categorySelect = document.getElementById('category-filter');
+    const statusSelect = document.getElementById('status-filter');
+
+    searchInput.addEventListener('input', filterInventory);
+    categorySelect.addEventListener('change', filterInventory);
+    statusSelect.addEventListener('change', filterInventory);
+}
+

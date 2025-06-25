@@ -362,20 +362,20 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select">
-                                <option>Tất cả danh mục</option>
-                                <option>Real Grade</option>
-                                <option>Master Grade</option>
-                                <option>Perfect Grade</option>
-                            </select>
+                            <select class="form-select" id="category-filter">
+                                <option value="">Tất cả danh mục</option>
+                                <option value="GUNDAM_BANDAI">GUNDAM_BANDAI</option>
+                                <option value="PRE_ORDER">PRE_ORDER</option>
+                                <option value="TOOLS_ACCESSORIES">TOOLS_ACCESSORIES</option>
+                            </select>                            
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select">
-                                <option>Tất cả trạng thái</option>
-                                <option>Còn hàng</option>
-                                <option>Sắp hết</option>
-                                <option>Hết hàng</option>
-                            </select>
+                            <select class="form-select" id="status-filter">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="Còn hàng">Còn hàng</option>
+                                <option value="Sắp hết">Sắp hết</option>
+                                <option value="Hết hàng">Hết hàng</option>
+                            </select>                            
                         </div>
                     </div>
 
