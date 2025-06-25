@@ -12,6 +12,7 @@
     <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -20,26 +21,43 @@
     <header class="bg-white shadow-sm sticky-top">
         <div class="container">
             <div class="row align-items-center py-3">
-                <div class="col-lg-2 col-md-3">
-                    <div class="logo">
-                        <a href="<%=request.getContextPath()%>/">
-                            <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
-                        </a>
+                <!-- Logo Section with Hamburger Menu -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="header-logo-section">
+                        <!-- Hamburger Menu (Mobile) -->
+                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </button>
+                        
+                        <div class="logo">
+                            <a href="<%=request.getContextPath()%>/">
+                                <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-5">
-                    <div class="search-container">
-                        <form class="search-form">
-                            <div class="input-group">
-                                <input type="text" class="form-control search-input" placeholder="Tìm kiếm sản phẩm...">
-                                <button class="btn btn-search" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </form>
+                
+                <!-- Search Section -->
+                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
+                    <div class="header-center-section">
+                        <div class="search-container w-100">
+                            <form class="search-form">
+                                <div class="input-group">
+                                    <input type="text" class="form-control search-input" placeholder="Tìm kiếm sản phẩm...">
+                                    <button class="btn btn-search" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>                <div class="col-lg-4 col-md-4">
-                    <div class="header-actions d-flex justify-content-end align-items-center">
+                </div>
+                
+                <!-- Actions Section -->
+                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
+                    <div class="header-actions-section">
                         <div class="account-menu me-3">
                             <%
                                 Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
@@ -57,7 +75,7 @@
                                         <% } else { %>
                                             <i class="fas fa-user-circle me-2 user-icon-32"></i>
                                         <% } %>
-                                        <span class="text-dark">Xin chào, <%= userName != null ? userName : "User" %></span>
+                                        <span class="text-dark d-none d-md-inline">Xin chào, <%= userName != null ? userName : "User" %></span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end z-index-1050">
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
@@ -73,7 +91,7 @@
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
                                        id="accountDropdown" role="button" data-bs-toggle="dropdown">
                                         <i class="fas fa-user me-1"></i>
-                                        <span>Tài khoản</span>
+                                        <span class="d-none d-md-inline">Tài khoản</span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
@@ -100,61 +118,10 @@
             </div>
         </div>
     </header>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-0 position-relative">
-        <div class="container position-relative">
-            <!-- Nút danh mục sản phẩm -->
-            <div class="d-none d-lg-block position-relative">
-                <button class="btn btn-outline-primary fw-bold px-4 py-2 me-3" id="categoryBtn" type="button">
-                    <i class="fas fa-bars me-2"></i> DANH MỤC SẢN PHẨM
-                </button>
-                <div class="category-popup shadow" id="categoryPopup">
-                    <div class="category-item">Gundam Bandai</div>
-                    <div class="category-item">Mô hình Trung</div>
-                    <div class="category-item">Metal Build - Diecast</div>
-                    <div class="category-item">Dụng cụ - Tool</div>
-                    <div class="category-item">Phụ kiện - Base</div>
-                    <div class="category-item">Mô hình Dragon Ball</div>
-                    <div class="category-item">Sơn - Decal</div>
-                </div>
-            </div>
-            <!-- Menu -->
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="<%=request.getContextPath()%>/all-products.jsp">Tất cả sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="#">HÀNG MỚI VỀ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="#">HÀNG PRE-ORDER</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="phukienDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            PHỤ KIỆN & MÔ HÌNH
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="phukienDropdown">
-                            <li><a class="dropdown-item" href="#">Dụng cụ - Tool</a></li>
-                            <li><a class="dropdown-item" href="#">Phụ kiện - Base</a></li>
-                            <li><a class="dropdown-item" href="#">Mô hình Dragon Ball</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="bandaiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            BANDAI
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="bandaiDropdown">
-                            <li><a class="dropdown-item" href="#">High Grade (HG)</a></li>
-                            <li><a class="dropdown-item" href="#">Master Grade (MG)</a></li>
-                            <li><a class="dropdown-item" href="#">Real Grade (RG)</a></li>
-                            <li><a class="dropdown-item" href="#">Perfect Grade (PG)</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+
+    <!-- Mobile Sidebar Navigation -->
+    <jsp:include page="includes/mobile-sidebar.jsp" />
+
     <!-- Hero Banner -->
     <section class="hero-banner py-4">
         <div class="container">
@@ -581,5 +548,8 @@
         }, 2000);
     });
     </script>
+    
+    <!-- Hamburger Menu Script -->
+    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
 </body>
 </html>

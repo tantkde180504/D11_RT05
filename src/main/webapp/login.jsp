@@ -12,6 +12,7 @@
     <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
