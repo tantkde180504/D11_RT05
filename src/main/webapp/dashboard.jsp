@@ -835,23 +835,8 @@
                                         <th>Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Trần Thị B</td>
-                                        <td>tranthib@email.com</td>
-                                        <td>0901234567</td>
-                                        <td>15/03/2024</td>
-                                        <td>3</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tbody id="customerTableBody">
+                                    <!-- Dữ liệu render bằng JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -1132,5 +1117,6 @@
         
     </script>
    <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
+   <script src="<%=request.getContextPath()%>/js/customer-management.js"></script>
 </body>
 </html>

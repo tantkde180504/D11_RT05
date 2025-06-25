@@ -56,6 +56,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<CustomerDTO> getAllCustomers() {
+        List<User> customers = userRepository.findByRole("CUSTOMER");
+        List<CustomerDTO> dtos = new java.util.ArrayList<>();
+        for (User user : customers) {
+            CustomerDTO dto = new CustomerDTO();
+            dto.setId(user.getId());
+            dto.setFirstName(user.getFirstName());
+            dto.setLastName(user.getLastName());
+            dto.setEmail(user.getEmail());
+            dto.setPhone(user.getPhone());
+            if (user.getCreatedAt() != null) {
+                dto.setCreatedAt(java.util.Date.from(user.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toInstant()));
+            }
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }

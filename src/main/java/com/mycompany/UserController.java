@@ -82,6 +82,17 @@ public class UserController {
         }
     }
 
+    // Thêm API lấy danh sách khách hàng (role = CUSTOMER)
+    @GetMapping("/customers")
+    public ResponseEntity<?> getAllCustomers() {
+        try {
+            List<CustomerDTO> customers = userService.getAllCustomers();
+            return ResponseEntity.ok(customers);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(java.util.Collections.singletonMap("message", "Lỗi khi lấy danh sách khách hàng: " + ex.getMessage()));
+        }
+    }
+
     // ✅ Hàm dùng chung để map User → DTO
     private StaffDTO mapToDTO(User user) {
         StaffDTO dto = new StaffDTO();

@@ -25,6 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
+      // Validate email phải chứa @
+      const emailValue = form.querySelector('input[name="email"]').value;
+      if (!emailValue.includes("@")) {
+        alert("Email phải chứa ký tự @");
+        return;
+      }
+
       const data = {
         firstName: form.querySelector('input[name="firstName"]').value,
         lastName: form.querySelector('input[name="lastName"]').value,
@@ -36,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         address: form.querySelector('input[name="address"]').value
       };
 
-      fetch("/api/staffs/create", {
+      fetch(apiUrl("/api/staffs/create"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -91,9 +98,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// Đổi base URL API cho đúng port backend
+const API_BASE = "http://localhost:8081";
+
+function apiUrl(path) {
+  if (path.startsWith("/")) return API_BASE + path;
+  return API_BASE + "/" + path;
+}
+
 function loadStaffList() {
   console.log("✅ Hàm loadStaffList đã được gọi");
-  fetch("/api/staffs/list")
+  fetch(apiUrl("/api/staffs/list"))
     .then(res => {
       if (!res.ok) throw new Error("Lỗi HTTP");
       return res.json();
@@ -108,10 +123,10 @@ function loadStaffList() {
         // Log id khi render nút xóa
         console.log("[DEBUG] Render staff row, id:", staff.id, staff);
         let deleteBtn = '';
-        if (staff.id !== undefined && staff.id !== null && staff.id !== "") {
+        if (staff.id !== undefined && staff.id !== null && staff.id !== "" && !isNaN(staff.id)) {
           deleteBtn = `<button class=\"btn btn-sm btn-danger\" onclick=\"deleteStaff(${staff.id})\"><i class=\"fas fa-trash\"></i></button>`;
         } else {
-          console.warn("[WARN] Staff không có id hợp lệ khi render nút xóa:", staff);
+          console.warn("[WARN] Không render nút xóa vì staff không có id hợp lệ:", staff);
         }
         const row = `
           <tr>
@@ -138,7 +153,7 @@ function loadStaffList() {
 
 // ✅ Gắn các hàm vào phạm vi global
 window.openEditModal = function (id) {
-  fetch(`/api/staffs/${id}`)
+  fetch(apiUrl(`/api/staffs/${id}`))
     .then(async res => {
       if (!res.ok) {
         let msg = "Không tìm thấy nhân viên với ID: " + id;
@@ -181,7 +196,13 @@ window.saveStaffUpdate = function () {
     email: document.getElementById("editEmail").value
   };
 
-  fetch(`/api/staffs/${id}`, {
+  // Validate email phải chứa @
+  if (!data.email.includes("@")) {
+    alert("Email phải chứa ký tự @");
+    return;
+  }
+
+  fetch(apiUrl(`/api/staffs/${id}`), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
@@ -199,10 +220,11 @@ window.deleteStaff = function (id) {
   console.log("[DEBUG] Gọi deleteStaff với id:", id, typeof id);
   if (!id || isNaN(id)) {
     alert("ID nhân viên không hợp lệ! Không thể xóa.");
+    console.warn("[WARN] deleteStaff được gọi với id không hợp lệ:", id);
     return;
   }
   if (confirm("Bạn có chắc chắn muốn xoá nhân viên này?")) {
-    fetch(`/api/staffs/${id}`, {
+    fetch(apiUrl(`/api/staffs/${id}`), {
       method: "DELETE"
     }).then(res => {
       if (res.ok) {

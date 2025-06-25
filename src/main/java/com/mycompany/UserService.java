@@ -28,4 +28,9 @@ public interface UserService {
      * Xoá nhân viên theo ID
      */
     boolean deleteStaff(Long id);
+
+    /**
+     * Lấy danh sách tất cả khách hàng (có role là CUSTOMER)
+     */
+    List<CustomerDTO> getAllCustomers();
 }
