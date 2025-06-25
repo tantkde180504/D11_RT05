@@ -9,3 +9,4 @@ com\mycompany\OrderController.class
 com\mycompany\DatabaseTestController.class
 com\mycompany\Order.class
 com\mycompany\LoginController.class
+com\mycompany\OrderController$OrderDetailDTO.class

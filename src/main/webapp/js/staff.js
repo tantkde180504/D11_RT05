@@ -647,7 +647,9 @@ function loadOrdersFromAPI() {
     <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
     <i class="fas fa-edit"></i>
 </button>
-    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
+    <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
+  <i class="fas fa-eye"></i>
+</button>
 </td>
                 `;
                 tbody.appendChild(row);
@@ -712,4 +714,41 @@ function updateOrderStatus() {
         showErrorMessage(err.message || "❌ Không thể cập nhật trạng thái.");
     });
 }
+function viewOrderDetail(orderId) {
+    fetch(`/api/orders/detail?id=${orderId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Không thể lấy dữ liệu đơn hàng");
+            return res.json();
+        })
+        .then(order => {
+            const html = `
+                <div class="mb-2"><strong>Mã đơn hàng:</strong> #${order.orderNumber}</div>
+                <div class="mb-2"><strong>Khách hàng:</strong> ${order.shippingName}</div>
+                <div class="mb-2"><strong>Điện thoại:</strong> ${order.shippingPhone}</div>
+                <div class="mb-2"><strong>Email:</strong> ${order.email}</div>
+                <div class="mb-2"><strong>Địa chỉ:</strong> ${order.shippingAddress}</div>
+                <div class="mb-2"><strong>Phương thức thanh toán:</strong> ${order.paymentMethod}</div>
+                <div class="mb-2"><strong>Trạng thái:</strong> ${order.status}</div>
+                <div class="mb-2"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</div>
+                <div class="mb-2"><strong>Tổng tiền:</strong> ${formatCurrency(order.totalAmount)}</div>
+            `;
+            document.getElementById('order-detail-body').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('orderDetailModal')).show();
+        })
+        .catch(err => {
+            console.error("Chi tiết đơn hàng lỗi:", err);
+            showErrorMessage("❌ Không thể tải chi tiết đơn hàng.");
+        });
+}
+function formatDate(dateTime) {
+    if (!dateTime) return 'N/A';
+    try {
+        const d = new Date(dateTime);
+        return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN');
+    } catch (e) {
+        return dateTime;
+    }
+}
+
+
 

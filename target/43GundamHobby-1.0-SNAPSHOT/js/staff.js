@@ -536,18 +536,9 @@ function addActionButtons() {
 }
 
 // Initialize action buttons when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-    const s = document.querySelector("#order-status");
-    if (!s) return;
-    const status = s.textContent.trim().toUpperCase();
-    if (status === "PENDING") s.className = "badge bg-secondary";
-    else if (status === "CONFIRMED") s.className = "badge bg-primary";
-    else if (status === "PROCESSING") s.className = "badge bg-warning text-dark";
-    else if (status === "SHIPPING") s.className = "badge bg-info text-dark";
-    else if (status === "DELIVERED") s.className = "badge bg-success";
-    else s.className = "badge bg-dark";
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(addActionButtons, 100);
 });
-
 
 // Quick action handlers
 function handleQuickCall() {
@@ -653,8 +644,12 @@ function loadOrdersFromAPI() {
     <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
         <i class="fas fa-check"></i>
     </button>` : ''}
-    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
-    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i></button>
+    <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
+    <i class="fas fa-edit"></i>
+</button>
+    <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
+  <i class="fas fa-eye"></i>
+</button>
 </td>
                 `;
                 tbody.appendChild(row);
@@ -691,4 +686,69 @@ function confirmOrder(orderId) {
 });
 
 }
+function showUpdateStatusModal(orderId, currentStatus) {
+    const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+    document.getElementById('update-order-id').value = orderId;
+    document.getElementById('new-status').value = currentStatus;
+    modal.show();
+}
+function updateOrderStatus() {
+    const orderId = document.getElementById('update-order-id').value;
+    const newStatus = document.getElementById('new-status').value;
+
+    fetch('/api/orders/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `orderId=${orderId}&status=${newStatus}`
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(text => { throw new Error(text); });
+        return res.text();
+    })
+    .then(msg => {
+        showSuccessMessage(msg);
+        bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
+        loadOrdersFromAPI();
+    })
+    .catch(err => {
+        showErrorMessage(err.message || "❌ Không thể cập nhật trạng thái.");
+    });
+}
+function viewOrderDetail(orderId) {
+    fetch(`/api/orders/detail?id=${orderId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Không thể lấy dữ liệu đơn hàng");
+            return res.json();
+        })
+        .then(order => {
+            const html = `
+                <div class="mb-2"><strong>Mã đơn hàng:</strong> #${order.orderNumber}</div>
+                <div class="mb-2"><strong>Khách hàng:</strong> ${order.shippingName}</div>
+                <div class="mb-2"><strong>Điện thoại:</strong> ${order.shippingPhone}</div>
+                <div class="mb-2"><strong>Email:</strong> ${order.email}</div>
+                <div class="mb-2"><strong>Địa chỉ:</strong> ${order.shippingAddress}</div>
+                <div class="mb-2"><strong>Phương thức thanh toán:</strong> ${order.paymentMethod}</div>
+                <div class="mb-2"><strong>Trạng thái:</strong> ${order.status}</div>
+                <div class="mb-2"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</div>
+                <div class="mb-2"><strong>Tổng tiền:</strong> ${formatCurrency(order.totalAmount)}</div>
+            `;
+            document.getElementById('order-detail-body').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('orderDetailModal')).show();
+        })
+        .catch(err => {
+            console.error("Chi tiết đơn hàng lỗi:", err);
+            showErrorMessage("❌ Không thể tải chi tiết đơn hàng.");
+        });
+}
+function formatDate(dateTime) {
+    if (!dateTime) return 'N/A';
+    try {
+        const d = new Date(dateTime);
+        return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN');
+    } catch (e) {
+        return dateTime;
+    }
+}
+
+
 

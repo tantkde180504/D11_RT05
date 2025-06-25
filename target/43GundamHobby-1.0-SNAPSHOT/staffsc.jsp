@@ -531,6 +531,7 @@
                     <option value="PROCESSING">Đang xử lý</option>
                     <option value="SHIPPING">Đang giao</option>
                     <option value="DELIVERED">Hoàn thành</option>
+                    <option value="CANCELLED">Đã huỷ</option>
                 </select>
                 <button class="btn btn-primary action-btn" data-bs-toggle="modal" data-bs-target="#orderModal">
                     <i class="fas fa-plus me-2"></i>Tạo đơn hàng
@@ -552,9 +553,60 @@
                     </tr>
                 </thead>
                 <tbody id="orders-body">
+                    <!-- Dữ liệu sẽ được render từ JavaScript -->
+                </tbody>
             </table>
         </div>
     </div>
+
+    <!-- ✅ Modal: Cập nhật trạng thái đơn hàng -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cập nhật trạng thái đơn hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="update-order-id">
+                    <div class="mb-3">
+                        <label for="new-status" class="form-label">Trạng thái mới:</label>
+                        <select class="form-select" id="new-status">
+                            <option value="PENDING">Chờ xác nhận</option>
+                            <option value="CONFIRMED">Đã xác nhận</option>
+                            <option value="PROCESSING">Đang xử lý</option>
+                            <option value="SHIPPING">Đang giao</option>
+                            <option value="DELIVERED">Hoàn thành</option>
+                            <option value="CANCELLED">Đã huỷ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button class="btn btn-primary" onclick="updateOrderStatus()">Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal xem chi tiết đơn hàng -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chi tiết đơn hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="order-detail-body">
+          <!-- JavaScript sẽ render nội dung tại đây -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
 </div>
 
         <!-- Support Tab -->

@@ -559,7 +559,7 @@
         </div>
     </div>
 
-    <!-- ✅ Modal cập nhật trạng thái -->
+    <!-- ✅ Modal: Cập nhật trạng thái đơn hàng -->
     <div class="modal fade" id="updateStatusModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -588,8 +588,26 @@
             </div>
         </div>
     </div>
-</div>
 
+<!-- Modal xem chi tiết đơn hàng -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chi tiết đơn hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="order-detail-body">
+          <!-- JavaScript sẽ render nội dung tại đây -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
 
         <!-- Support Tab -->
         <div id="support" class="tab-content">
