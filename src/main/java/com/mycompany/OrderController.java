@@ -21,13 +21,28 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
-    // ✅ API: Lấy danh sách đơn hàng
+    // ✅ API: Lấy danh sách đơn hàng (có productNames kèm số lượng)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> getOrders(@RequestParam(value = "status", required = false) String status) {
-        if (status != null && !status.equalsIgnoreCase("ALL")) {
-            return orderRepository.findByStatusOrderByOrderDateDesc(status);
-        }
-        return orderRepository.findAllByOrderByOrderDateDesc();
+    public List<OrderDetailDTO> getOrders(@RequestParam(value = "status", required = false) String status) {
+        List<Order> orders = (status != null && !status.equalsIgnoreCase("ALL"))
+                ? orderRepository.findByStatusOrderByOrderDateDesc(status)
+                : orderRepository.findAllByOrderByOrderDateDesc();
+
+        return orders.stream().map(order -> {
+            OrderDetailDTO dto = new OrderDetailDTO();
+            dto.id = order.getId();
+            dto.orderNumber = order.getOrderNumber();
+            dto.shippingName = order.getShippingName();
+            dto.shippingPhone = order.getShippingPhone();
+            dto.shippingAddress = order.getShippingAddress();
+            dto.paymentMethod = order.getPaymentMethod();
+            dto.status = order.getStatus();
+            dto.orderDate = order.getOrderDate();
+            dto.totalAmount = order.getTotalAmount();
+            dto.email = "customer@example.com";
+            dto.productNames = orderRepository.findProductNamesWithQuantityByOrderId(order.getId()); // ✅ lấy kèm số lượng
+            return dto;
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     // ✅ API: Xác nhận đơn hàng
@@ -54,39 +69,43 @@ public class OrderController {
 
     // ✅ API: Xem chi tiết đơn hàng
     @GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
-public ResponseEntity<OrderDetailDTO> getOrderDetail(@RequestParam Long id) {
-    Optional<Order> orderOpt = orderRepository.findById(id);
-    if (orderOpt.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    public ResponseEntity<OrderDetailDTO> getOrderDetail(@RequestParam Long id) {
+        Optional<Order> orderOpt = orderRepository.findById(id);
+        if (orderOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Order order = orderOpt.get();
+        List<String> productNames = orderRepository.findProductNamesWithQuantityByOrderId(id); // ✅ có số lượng
+
+        OrderDetailDTO dto = new OrderDetailDTO();
+        dto.id = order.getId();
+        dto.orderNumber = order.getOrderNumber();
+        dto.shippingName = order.getShippingName();
+        dto.shippingPhone = order.getShippingPhone();
+        dto.shippingAddress = order.getShippingAddress();
+        dto.paymentMethod = order.getPaymentMethod();
+        dto.status = order.getStatus();
+        dto.orderDate = order.getOrderDate();
+        dto.totalAmount = order.getTotalAmount();
+        dto.email = "customer@example.com";
+        dto.productNames = productNames;
+
+        return ResponseEntity.ok(dto);
     }
 
-    Order order = orderOpt.get();
-
-    OrderDetailDTO dto = new OrderDetailDTO();
-    dto.id = order.getId();
-    dto.orderNumber = order.getOrderNumber();
-    dto.shippingName = order.getShippingName();
-    dto.shippingPhone = order.getShippingPhone();
-    dto.shippingAddress = order.getShippingAddress();
-    dto.paymentMethod = order.getPaymentMethod();
-    dto.status = order.getStatus();
-    dto.orderDate = order.getOrderDate();
-    dto.totalAmount = order.getTotalAmount();
-    dto.email = "customer@example.com";
-
-    return ResponseEntity.ok(dto);
-}
-
-public static class OrderDetailDTO {
-    public Long id;
-    public String orderNumber;
-    public String shippingName;
-    public String shippingPhone;
-    public String shippingAddress;
-    public String paymentMethod;
-    public String status;
-    public String email;
-    public Object orderDate;
-    public Object totalAmount;
-}
+    // ✅ DTO chung cho danh sách & chi tiết
+    public static class OrderDetailDTO {
+        public Long id;
+        public String orderNumber;
+        public String shippingName;
+        public String shippingPhone;
+        public String shippingAddress;
+        public String paymentMethod;
+        public String status;
+        public String email;
+        public Object orderDate;
+        public Object totalAmount;
+        public List<String> productNames;
+    }
 }

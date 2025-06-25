@@ -27,12 +27,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Order findByUserIdAndOrderNumber(Long userId, String orderNumber);
 
-    // ✅ Truy vấn tên sản phẩm theo đơn hàng
-    @Query(value = "SELECT p.product_name " +
-               "FROM order_details od " +
-               "JOIN products p ON od.product_id = p.id " +
-               "WHERE od.order_id = :orderId", 
+    // ✅ Truy vấn tên sản phẩm theo đơn hàng (dùng bảng order_items)
+@Query(value = "SELECT p.name " +
+               "FROM order_items oi " +
+               "JOIN products p ON oi.product_id = p.id " +
+               "WHERE oi.order_id = :orderId", 
        nativeQuery = true)
 List<String> findProductNamesByOrderId(@Param("orderId") Long orderId);
+@Query(value = "SELECT p.name + ' x' + CAST(oi.quantity AS NVARCHAR) " +
+               "FROM order_items oi " +
+               "JOIN products p ON oi.product_id = p.id " +
+               "WHERE oi.order_id = :orderId", 
+       nativeQuery = true)
+List<String> findProductNamesWithQuantityByOrderId(@Param("orderId") Long orderId);
+
 
 }

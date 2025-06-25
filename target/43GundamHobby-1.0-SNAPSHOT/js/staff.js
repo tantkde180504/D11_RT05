@@ -630,27 +630,31 @@ function loadOrdersFromAPI() {
             tbody.innerHTML = '';
 
             data.forEach(o => {
-                const productList = o.productNames?.join('<br>') || '';
+                // ✅ Danh sách sản phẩm kèm số lượng, ví dụ: ["Nu Gundam x2", "Barbatos x1"]
+                const productListHtml = (o.productNames && o.productNames.length > 0)
+                    ? `<ul class="mb-0 ps-3">${o.productNames.map(nameWithQty => `<li>${nameWithQty}</li>`).join('')}</ul>`
+                    : '—';
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><strong>#${o.orderNumber}</strong></td>
                     <td>${o.shippingName}</td>
-                    <td>${productList}</td>
+                    <td>${productListHtml}</td>
                     <td><strong>${formatCurrency(o.totalAmount)}</strong></td>
                     <td><span class="status-badge">${o.status}</span></td>
-                    <td>${o.orderDate}</td>
+                    <td>${formatDate(o.orderDate)}</td>
                     <td>
-    ${o.status === 'PENDING' ? `
-    <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
-        <i class="fas fa-check"></i>
-    </button>` : ''}
-    <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
-    <i class="fas fa-edit"></i>
-</button>
-    <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
-  <i class="fas fa-eye"></i>
-</button>
-</td>
+                        ${o.status === 'PENDING' ? `
+                            <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
+                                <i class="fas fa-check"></i>
+                            </button>` : ''}
+                        <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -721,8 +725,18 @@ function viewOrderDetail(orderId) {
             return res.json();
         })
         .then(order => {
+            window.currentOrder = order; // để in hóa đơn
+
+            // ✅ Hiển thị danh sách sản phẩm kèm số lượng (đã nối sẵn từ backend)
+            const productListHtml = (order.productNames || [])
+                .map(nameWithQty => `<li>${nameWithQty}</li>`)
+                .join('');
+
             const html = `
                 <div class="mb-2"><strong>Mã đơn hàng:</strong> #${order.orderNumber}</div>
+                <div class="mb-2"><strong>Sản phẩm:</strong>
+                    <ul class="mb-1">${productListHtml || '<li>—</li>'}</ul>
+                </div>
                 <div class="mb-2"><strong>Khách hàng:</strong> ${order.shippingName}</div>
                 <div class="mb-2"><strong>Điện thoại:</strong> ${order.shippingPhone}</div>
                 <div class="mb-2"><strong>Email:</strong> ${order.email}</div>
@@ -732,6 +746,7 @@ function viewOrderDetail(orderId) {
                 <div class="mb-2"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</div>
                 <div class="mb-2"><strong>Tổng tiền:</strong> ${formatCurrency(order.totalAmount)}</div>
             `;
+
             document.getElementById('order-detail-body').innerHTML = html;
             new bootstrap.Modal(document.getElementById('orderDetailModal')).show();
         })
@@ -740,6 +755,8 @@ function viewOrderDetail(orderId) {
             showErrorMessage("❌ Không thể tải chi tiết đơn hàng.");
         });
 }
+
+
 function formatDate(dateTime) {
     if (!dateTime) return 'N/A';
     try {
@@ -749,6 +766,36 @@ function formatDate(dateTime) {
         return dateTime;
     }
 }
+function printInvoice() {
+    const content = document.getElementById('order-detail-body').innerHTML;
+    const printWindow = window.open('', '_blank');
+
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Hóa đơn</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+            <style>
+                body { font-family: 'Segoe UI', sans-serif; padding: 30px; }
+                h2 { text-align: center; margin-bottom: 20px; }
+                .info-line { margin-bottom: 10px; }
+            </style>
+        </head>
+        <body>
+            <h2>HÓA ĐƠN ĐƠN HÀNG</h2>
+            <div>${content}</div>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+
 
 
 

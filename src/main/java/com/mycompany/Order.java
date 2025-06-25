@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "orders")
@@ -43,6 +44,10 @@ public class Order {
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;
+
+    // ❗Tùy chọn: nếu bạn dùng DTO thì không cần thuộc tính này ở entity
+    @Transient
+    private String productName; // dùng cho hiển thị tạm thời
 
     // === GETTERS ===
 
@@ -86,6 +91,10 @@ public class Order {
         return orderDate;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
     // === SETTERS ===
 
     public void setId(Long id) {
@@ -126,5 +135,9 @@ public class Order {
 
     public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

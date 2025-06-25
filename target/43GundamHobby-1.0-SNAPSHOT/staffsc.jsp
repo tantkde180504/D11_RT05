@@ -603,8 +603,11 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-      </div>
+  <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+  <button class="btn btn-outline-primary" onclick="printInvoice()">
+    <i class="fas fa-print me-1"></i> In hóa đơn
+  </button>
+</div>
     </div>
   </div>
 </div>
