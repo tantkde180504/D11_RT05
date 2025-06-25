@@ -91,7 +91,7 @@ class ProductManager {
                                     <small class="text-muted">${product.brand || 'Bandai'}</small>
                                 </div>
                                 <div class="d-grid gap-2">
-                                    <a href="/product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
+                                    <a href="product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
                                     ${product.stockQuantity > 0 ? 
                                         `<button class="btn btn-primary" onclick="addToCart(${product.id})">Thêm vào giỏ</button>` :
                                         `<button class="btn btn-secondary" disabled>Hết hàng</button>`
@@ -237,7 +237,7 @@ class ProductManager {
                                         <small class="text-muted">${product.brand || 'Bandai'}</small>
                                     </div>
                                     <div class="d-grid gap-2">
-                                        <a href="/product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
+                                        <a href="product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
                                         ${product.stockQuantity > 0 ? 
                                             `<button class="btn btn-primary" onclick="addToCart(${product.id})">Thêm vào giỏ</button>` :
                                             `<button class="btn btn-secondary" disabled>Hết hàng</button>`
