@@ -105,7 +105,7 @@ class AllProductsManager {
                                 <small class="${stockClass}">${stockStatus}</small>
                                 ${product.grade ? `<span class="badge bg-secondary ms-2">${product.grade}</span>` : ''}
                             </div>
-                            <a href="/product-detail.jsp?id=${product.id}" class="btn btn-sm btn-outline-primary w-100">Xem chi tiết</a>
+                            <a href="product-detail.jsp?id=${product.id}" class="btn btn-sm btn-outline-primary w-100">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>

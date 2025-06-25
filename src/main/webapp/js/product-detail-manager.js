@@ -38,7 +38,8 @@ class ProductDetailManager {
     // Load chi tiết sản phẩm từ API
     async loadProductDetail() {
         try {
-            const response = await fetch(`/api/products/${this.productId}`, {
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '';
+            const response = await fetch(`${contextPath}/api/products/${this.productId}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
@@ -68,14 +69,15 @@ class ProductDetailManager {
     // Load sản phẩm liên quan
     async loadRelatedProducts() {
         try {
-            let url = '/api/products/latest?limit=6';
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '';
+            let url = `${contextPath}/api/products/latest?limit=6`;
             
             // Nếu có sản phẩm hiện tại, load theo category hoặc grade
             if (this.product) {
                 if (this.product.category) {
-                    url = `/api/products/category/${this.product.category}?limit=6`;
+                    url = `${contextPath}/api/products/category/${this.product.category}?limit=6`;
                 } else if (this.product.grade) {
-                    url = `/api/products/grade/${this.product.grade}?limit=6`;
+                    url = `${contextPath}/api/products/grade/${this.product.grade}?limit=6`;
                 }
             }
 
@@ -403,7 +405,7 @@ class ProductDetailManager {
             const stockClass = product.stockQuantity > 0 ? 'text-success' : 'text-danger';
             
             relatedHTML += `
-                <a href="/product-detail.jsp?id=${product.id}" class="related-product-item">
+                <a href="/product/${product.id}" class="related-product-item">
                     <img src="${imageUrl}" alt="${product.name}" class="related-product-img"
                          onerror="this.src='/img/default-gundam.jpg'">
                     <div class="related-product-info">
@@ -615,7 +617,7 @@ window.loadProductDetail = function(productId) {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Chỉ khởi tạo nếu đang ở trang product-detail
-    if (window.location.pathname.includes('product-detail.jsp')) {
+    if (window.location.pathname.includes('/product/')) {
         window.productDetailManager = new ProductDetailManager();
     }
 });
