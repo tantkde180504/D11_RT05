@@ -818,29 +818,113 @@
 
                     <!-- Customers Management Tab -->
                     <div class="tab-pane fade" id="customers">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Quản lý khách hàng</h1>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tên khách hàng</th>
-                                        <th>Email</th>
-                                        <th>Số điện thoại</th>
-                                        <th>Ngày đăng ký</th>
-                                        <th>Tổng đơn hàng</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="customerTableBody">
-                                    <!-- Dữ liệu render bằng JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="page-title">
+                <i class="fas fa-users me-2"></i>Quản lý khách hàng
+            </h1>
+        </div>
+        <p class="text-muted mb-0">Danh sách tất cả khách hàng hệ thống</p>
+    </div>
+    <div class="admin-table">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên khách hàng</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày đăng ký</th>
+                        <th>Tổng đơn hàng</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    <!-- Dữ liệu render bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal: Xem chi tiết khách hàng -->
+<div class="modal fade" id="viewCustomerModal" tabindex="-1" aria-labelledby="viewCustomerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="viewCustomerModalLabel">Chi tiết khách hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li class="list-group-item"><strong>ID:</strong> <span id="viewCusId"></span></li>
+          <li class="list-group-item"><strong>Họ tên:</strong> <span id="viewCusName"></span></li>
+          <li class="list-group-item"><strong>Email:</strong> <span id="viewCusEmail"></span></li>
+          <li class="list-group-item"><strong>Số điện thoại:</strong> <span id="viewCusPhone"></span></li>
+          <li class="list-group-item"><strong>Ngày sinh:</strong> <span id="viewCusDob"></span></li>
+          <li class="list-group-item"><strong>Giới tính:</strong> <span id="viewCusGender"></span></li>
+          <li class="list-group-item"><strong>Địa chỉ:</strong> <span id="viewCusAddress"></span></li>
+          <li class="list-group-item"><strong>Ngày đăng ký:</strong> <span id="viewCusCreated"></span></li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: Sửa thông tin khách hàng -->
+<div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="editCustomerModalLabel">Chỉnh sửa khách hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <form id="editCustomerForm">
+        <div class="modal-body">
+          <input type="hidden" id="editCusId">
+          <div class="mb-3">
+            <label for="editCusFirstName" class="form-label">Họ</label>
+            <input type="text" class="form-control" id="editCusFirstName" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCusLastName" class="form-label">Tên</label>
+            <input type="text" class="form-control" id="editCusLastName" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCusEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="editCusEmail" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCusPhone" class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" id="editCusPhone">
+          </div>
+          <div class="mb-3">
+            <label for="editCusDob" class="form-label">Ngày sinh</label>
+            <input type="date" class="form-control" id="editCusDob">
+          </div>
+          <div class="mb-3">
+            <label for="editCusGender" class="form-label">Giới tính</label>
+            <select class="form-control" id="editCusGender">
+              <option value="MALE">Nam</option>
+              <option value="FEMALE">Nữ</option>
+              <option value="OTHER">Khác</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editCusAddress" class="form-label">Địa chỉ</label>
+            <input type="text" class="form-control" id="editCusAddress">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-warning">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
                     <!-- Orders Management Tab -->
                     <div class="tab-pane fade" id="orders">

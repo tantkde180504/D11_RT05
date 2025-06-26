@@ -93,6 +93,18 @@ public class UserController {
         }
     }
 
+    // Thêm API cập nhật thông tin khách hàng
+    @PutMapping("/customers/{id}")
+    public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id, @RequestBody CustomerDTO dto) {
+        try {
+            boolean updated = userService.updateCustomer(id, dto);
+            if (updated) return ResponseEntity.ok().build();
+            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("message", "Không tìm thấy khách hàng"));
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(java.util.Collections.singletonMap("message", "Lỗi cập nhật: " + ex.getMessage()));
+        }
+    }
+
     // ✅ Hàm dùng chung để map User → DTO
     private StaffDTO mapToDTO(User user) {
         StaffDTO dto = new StaffDTO();

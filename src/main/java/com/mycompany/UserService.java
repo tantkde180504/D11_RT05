@@ -33,4 +33,9 @@ public interface UserService {
      * Lấy danh sách tất cả khách hàng (có role là CUSTOMER)
      */
     List<CustomerDTO> getAllCustomers();
+
+    /**
+     * Cập nhật thông tin khách hàng (role CUSTOMER)
+     */
+    boolean updateCustomer(Long id, CustomerDTO dto);
 }

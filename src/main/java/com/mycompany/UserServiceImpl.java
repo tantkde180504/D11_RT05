@@ -66,6 +66,10 @@ public class UserServiceImpl implements UserService {
             dto.setLastName(user.getLastName());
             dto.setEmail(user.getEmail());
             dto.setPhone(user.getPhone());
+            // Bổ sung đầy đủ các trường cần thiết
+            dto.setDateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null);
+            dto.setGender(user.getGender());
+            dto.setAddress(user.getAddress());
             if (user.getCreatedAt() != null) {
                 dto.setCreatedAt(java.util.Date.from(user.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toInstant()));
             }
@@ -117,5 +121,28 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace(); // Thêm log chi tiết lỗi
             return false;
         }
+    }
+
+    @Override
+    public boolean updateCustomer(Long id, CustomerDTO dto) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null || !"CUSTOMER".equalsIgnoreCase(user.getRole())) return false;
+
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        // Chuyển String yyyy-MM-dd sang LocalDate
+        if (dto.getDateOfBirth() != null && !dto.getDateOfBirth().isEmpty()) {
+            user.setDateOfBirth(java.time.LocalDate.parse(dto.getDateOfBirth()));
+        } else {
+            user.setDateOfBirth(null);
+        }
+        user.setGender(dto.getGender());
+        user.setAddress(dto.getAddress());
+        user.setUpdatedAt(java.time.LocalDateTime.now());
+
+        userRepository.save(user);
+        return true;
     }
 }
