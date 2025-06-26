@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initDropdownFix();
     showKeyboardShortcutsHint();
     loadInventoryFromAPI();
+    loadComplaintsFromAPI(); 
     initInventoryFilters();
 });
 
@@ -34,8 +35,9 @@ function initTabSwitching() {
             document.getElementById(tabId).classList.add('active');
             if (tabId === 'inventory') {
                 loadInventoryFromAPI();
-            }
-
+            } else if (tabId === 'complaints') {
+                loadComplaintsFromAPI();
+            }            
         });
     });
 }
@@ -669,6 +671,134 @@ function loadInventoryFromAPI() {
             showErrorMessage('Không thể tải dữ liệu tồn kho từ máy chủ');
         });
 }
+// COMPLAINTS KHIẾU NẠI
+function loadComplaintsFromAPI() {
+    fetch('/api/complaints')
+        .then(res => res.json())
+        .then(data => {
+            console.log('Dữ liệu complaints nhận được:', data); // ← DÒNG NÀY
+            const tbody = document.getElementById('complaint-table-body');
+            tbody.innerHTML = '';
+
+            data.forEach(c => {
+                console.log('Thêm complaint:', c); // ← DÒNG NÀY
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${c.complaintCode}</strong></td>
+                    <td>${c.customerName}</td>
+                    <td>${c.content}</td>
+                    <td><span class="status-badge ${mapComplaintStatusClass(c.status)}">${mapComplaintStatusLabel(c.status)}</span></td>
+                    <td>${formatDateTime(c.createdAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1" onclick="viewComplaintDetail('${c.complaintCode}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            filterComplaints();
+        })
+        .catch(err => {
+            console.error('Lỗi khi tải khiếu nại:', err);
+            showErrorMessage('Không thể tải danh sách khiếu nại từ máy chủ.');
+        });
+}
+
+function mapComplaintStatusClass(status) {
+    switch (status) {
+        case 'PENDING': return 'status-pending';
+        case 'PROCESSING': return 'status-processing';
+        case 'COMPLETED': return 'status-completed';
+        case 'REJECTED': return 'status-rejected';
+        default: return '';
+    }
+}
+
+function mapComplaintStatusLabel(status) {
+    switch (status) {
+        case 'PENDING': return 'Chờ xử lý';
+        case 'PROCESSING': return 'Đang xử lý';
+        case 'COMPLETED': return 'Hoàn thành';
+        case 'REJECTED': return 'Từ chối';
+        default: return status;
+    }
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr); // ← sẽ parse chuỗi ISO như "2024-06-26T15:43:21"
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+}
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadComplaintsFromAPI();
+    document.getElementById('complaint-status-filter').addEventListener('change', filterComplaints);
+});
+
+function filterComplaints() {
+    const selected = document.getElementById('complaint-status-filter').value;
+    const rows = document.querySelectorAll('#complaint-table-body tr');
+
+    rows.forEach(row => {
+        const statusText = row.querySelector('td:nth-child(4)').textContent.trim();
+        if (!selected || statusText === mapComplaintStatusLabel(selected)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+//XỬ LÍ KHIẾU NẠI
+function handleComplaintUpdate(status) {
+    // Kiểm tra biến toàn cục có tồn tại không
+    if (!window.currentComplaint || !window.currentComplaint.complaintCode) {
+        showErrorMessage("Không tìm thấy dữ liệu khiếu nại hiện tại.");
+        return;
+    }
+
+    const complaintCode = window.currentComplaint.complaintCode;
+    const solution = document.getElementById("complaint-solution").value;
+    const staffResponse = document.getElementById("complaint-staff-response").value;
+
+    if (!solution || !staffResponse) {
+        alert("Vui lòng chọn giải pháp và nhập phản hồi.");
+        return;
+    }
+
+    fetch(`/api/complaints/${complaintCode}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            solution: solution,
+            staffResponse: staffResponse,
+            status: status
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Cập nhật thất bại");
+        return res.text();
+    })
+    .then(message => {
+        showSuccessMessage(message); // ✅ Thông báo đẹp
+        loadComplaintsFromAPI();     // reload lại bảng khiếu nại
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+        if (modal) modal.hide();
+    })
+    .catch(err => {
+        console.error(err);
+        showErrorMessage("Lỗi khi cập nhật khiếu nại!");
+    });
+}
+
 
 function getStockStatus(stock) {
     if (stock === 0) return 'status-rejected';
@@ -818,5 +948,40 @@ function viewProductDetails(productId) {
 }
 
 // 👇 Gán vào window để dùng được qua `onclick`
-window.viewProductDetails = viewProductDetails;
+function viewComplaintDetail(complaintCode) {
+    fetch('/api/complaints')
+        .then(res => res.json())
+        .then(data => {
+            const complaint = data.find(c => c.complaintCode === complaintCode);
+            if (!complaint) {
+                showErrorMessage('Không tìm thấy khiếu nại.');
+                return;
+            }
 
+            // Gán complaint hiện tại vào biến toàn cục
+            window.currentComplaint = complaint;
+
+            document.querySelector('#complaintModal .modal-title').innerHTML =
+                `<i class="fas fa-exclamation-triangle me-2"></i>Chi tiết khiếu nại #${complaint.complaintCode}`;
+            document.getElementById('complaint-customer-name').textContent = complaint.customerName;
+            document.getElementById('complaint-email').textContent = complaint.customerEmail;
+            document.getElementById('complaint-phone').textContent = complaint.customerPhone;
+            document.getElementById('complaint-order-number').textContent = complaint.orderNumber;
+            document.getElementById('complaint-created-at').textContent = formatDateTime(complaint.createdAt);
+            document.getElementById('complaint-category').textContent = complaint.category;
+            document.getElementById('complaint-status').innerHTML =
+                `<span class="status-badge ${mapComplaintStatusClass(complaint.status)}">
+                    ${mapComplaintStatusLabel(complaint.status)}
+                </span>`;
+            document.getElementById('complaint-content').textContent = complaint.content;
+            document.getElementById('complaint-staff-response').value = complaint.staffResponse || '';
+            document.getElementById('complaint-solution').value = complaint.solution || '';
+
+            const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
+            modal.show();
+        })
+        .catch(err => {
+            console.error('Lỗi tải chi tiết khiếu nại:', err);
+            showErrorMessage('Lỗi tải chi tiết khiếu nại');
+        });
+}
