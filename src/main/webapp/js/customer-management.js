@@ -98,12 +98,12 @@ function loadCustomerList() {
     .then(data => {
       const tbody = document.getElementById("customerTableBody");
       tbody.innerHTML = "";
-      data.forEach(cus => {
+      data.forEach((cus, idx) => {
         const fullName = `${cus.firstName || ""} ${cus.lastName || ""}`.trim();
         const createdAt = cus.createdAt ? new Date(cus.createdAt).toLocaleDateString('vi-VN') : "";
         const row = `
           <tr>
-            <td>${cus.id || ""}</td>
+            <td>${idx + 1}</td>
             <td>${fullName}</td>
             <td>${cus.email || ""}</td>
             <td>${cus.phone || ""}</td>

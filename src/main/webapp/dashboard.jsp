@@ -357,6 +357,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="#categories" data-bs-toggle="tab">
+                                <i class="fas fa-tags"></i> Quản lý danh mục
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#reports" data-bs-toggle="tab">
                                 <i class="fas fa-chart-bar"></i> Báo cáo
                             </a>
@@ -926,6 +931,134 @@
   </div>
 </div>
 
+                    <!-- Categories Management Tab -->
+                    <div class="tab-pane fade" id="categories">
+                        <div class="page-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h1 class="page-title">
+                                    <i class="fas fa-tags me-2"></i>Quản lý danh mục
+                                </h1>
+                                <button type="button" class="btn btn-admin-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                                    <i class="fas fa-plus me-2"></i>Thêm danh mục mới
+                                </button>
+                            </div>
+                            <p class="text-muted mb-0">Danh sách tất cả danh mục sản phẩm</p>
+                        </div>
+                        <div class="admin-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Tên danh mục</th>
+                                            <th>Mô tả</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="categoryTableBody">
+                                        <!-- Dữ liệu render bằng JavaScript -->
+                                        <!-- Ví dụ mẫu, sẽ render động bằng JS thực tế -->
+                                        <!--
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Real Grade</td>
+                                            <td>Dòng sản phẩm chi tiết cao</td>
+                                            <td>2024-06-26</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editCategory(1)"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(1)"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal: Thêm danh mục -->
+                    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addCategoryModalLabel">Thêm danh mục mới</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                          </div>
+                          <form id="addCategoryForm">
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                <label for="categoryName" class="form-label">Tên danh mục</label>
+                                <input type="text" class="form-control" id="categoryName" required>
+                              </div>
+                              <div class="mb-3">
+                                <label for="categoryDescription" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="categoryDescription" rows="2"></textarea>
+                              </div>
+                              <div class="mb-3">
+                                <label for="categoryParent" class="form-label">Danh mục cha</label>
+                                <select class="form-select" id="categoryParent">
+                                  <option value="">Không có</option>
+                                  <!-- Render động các option danh mục cha bằng JS nếu cần -->
+                                </select>
+                              </div>
+                              <div class="mb-3">
+                                <label for="categoryActive" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="categoryActive">
+                                  <option value="true" selected>Kích hoạt</option>
+                                  <option value="false">Ẩn</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                              <button type="submit" class="btn btn-primary">Lưu danh mục</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal: Sửa danh mục -->
+                    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="editCategoryModalLabel">Chỉnh sửa danh mục</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <form id="editCategoryForm">
+        <div class="modal-body">
+          <input type="hidden" id="editCategoryId">
+          <div class="mb-3">
+            <label for="editCategoryName" class="form-label">Tên danh mục</label>
+            <input type="text" class="form-control" id="editCategoryName" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCategoryDescription" class="form-label">Mô tả</label>
+            <textarea class="form-control" id="editCategoryDescription" rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editCategoryParent" class="form-label">Danh mục cha</label>
+            <select class="form-select" id="editCategoryParent">
+              <option value="">Không có</option>
+              <!-- Render động các option danh mục cha bằng JS nếu cần -->
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editCategoryActive" class="form-label">Trạng thái</label>
+            <select class="form-select" id="editCategoryActive">
+              <option value="true">Kích hoạt</option>
+              <option value="false">Ẩn</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-warning">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
                     <!-- Orders Management Tab -->
                     <div class="tab-pane fade" id="orders">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -1202,5 +1335,6 @@
     </script>
    <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/customer-management.js"></script>
+   <script src="<%=request.getContextPath()%>/js/category-management.js"></script>
 </body>
 </html>

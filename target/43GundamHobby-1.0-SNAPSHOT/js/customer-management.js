@@ -32,13 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
       const submitBtn = editForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       const id = document.getElementById('editCusId').value;
+      // Lấy giá trị gender, nếu rỗng thì mặc định là 'MALE'
+      let genderValue = document.getElementById('editCusGender').value;
+      if (!genderValue || !['MALE','FEMALE','OTHER'].includes(genderValue)) genderValue = 'MALE';
       const data = {
         firstName: document.getElementById('editCusFirstName').value,
         lastName: document.getElementById('editCusLastName').value,
         email: document.getElementById('editCusEmail').value,
         phone: document.getElementById('editCusPhone').value,
         dateOfBirth: document.getElementById('editCusDob').value,
-        gender: document.getElementById('editCusGender').value,
+        gender: genderValue,
         address: document.getElementById('editCusAddress').value
       };
       fetch(apiUrl(`/api/staffs/customers/${id}`), {
@@ -51,7 +54,17 @@ document.addEventListener("DOMContentLoaded", function () {
           let msg = await res.text();
           throw new Error('Lỗi cập nhật: ' + msg);
         }
-        return res.json();
+        // Nếu không có nội dung trả về (status 200, 204), không cần gọi res.json()
+        if (res.status === 204 || res.headers.get('content-length') === '0') {
+          return {};
+        }
+        const text = await res.text();
+        if (!text) return {};
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return {};
+        }
       })
       .then(result => {
         bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
@@ -85,20 +98,20 @@ function loadCustomerList() {
     .then(data => {
       const tbody = document.getElementById("customerTableBody");
       tbody.innerHTML = "";
-      data.forEach(cus => {
+      data.forEach((cus, idx) => {
         const fullName = `${cus.firstName || ""} ${cus.lastName || ""}`.trim();
         const createdAt = cus.createdAt ? new Date(cus.createdAt).toLocaleDateString('vi-VN') : "";
         const row = `
           <tr>
-            <td>${cus.id || ""}</td>
+            <td>${idx + 1}</td>
             <td>${fullName}</td>
             <td>${cus.email || ""}</td>
             <td>${cus.phone || ""}</td>
             <td>${createdAt}</td>
             <td><!-- Tổng đơn hàng --></td>
             <td>
-              <button class="btn btn-sm btn-info btn-view-cus" data-id="${cus.id}"><i class="fas fa-eye"></i></button>
-              <button class="btn btn-sm btn-warning btn-edit-cus" data-id="${cus.id}"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-info btn-view-cus" data-id="${cus.id}" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-warning btn-edit-cus" data-id="${cus.id}" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
             </td>
           </tr>
         `;
@@ -119,6 +132,10 @@ function loadCustomerList() {
           const cus = data.find(c => c.id == id);
           if (cus) showEditCustomerModal(cus);
         });
+      });
+      // Thêm hiệu ứng hover cho dòng
+      tbody.querySelectorAll('tr').forEach(tr => {
+        tr.classList.add('table-row-hover');
       });
     })
     .catch(err => {
