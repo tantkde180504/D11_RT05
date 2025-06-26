@@ -817,6 +817,113 @@ function cancelOrder(orderId) {
         showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
     });
 }
+// Load returns từ API
+function loadReturns(status = 'ALL') {
+    let url = '/api/returns';
+    if (status !== 'ALL') {
+        url += `?status=${status}`;
+    }
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => renderReturnsTable(data))
+        .catch(error => console.error('Lỗi khi load returns:', error));
+}
+
+// Render danh sách returns vào bảng
+function renderReturnsTable(returns) {
+    const tableBody = document.getElementById('returns-table-body');
+    tableBody.innerHTML = '';
+
+    if (!returns || returns.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Không có dữ liệu</td></tr>';
+        return;
+    }
+
+    returns.forEach(ret => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td><strong>#${ret.orderNumber || ret.orderId}</strong></td>
+            <td>${ret.customerName || 'Không rõ'}</td>
+            <td>${ret.productName || 'Không rõ'}</td>
+            <td>${ret.reason || ''}</td>
+            <td><span class="status-badge ${mapReturnStatusClass(ret.status)}">${mapReturnStatusLabel(ret.status)}</span></td>
+            <td>${ret.requestType || ''}</td>
+            <td>${ret.createdAt || ''}</td>
+            <td>
+                <button class="btn btn-sm btn-success me-1" title="Phê duyệt" onclick="approveReturn(${ret.id})">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-info" title="Xem chi tiết" onclick="viewReturnDetail(${ret.id})">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Map class trạng thái
+function mapReturnStatusClass(status) {
+    if (status === 'PROCESSING') return 'status-processing';
+    if (status === 'COMPLETED') return 'status-completed';
+    return '';
+}
+
+// Map nhãn trạng thái
+function mapReturnStatusLabel(status) {
+    if (status === 'PROCESSING') return 'Chờ xử lý';
+    if (status === 'COMPLETED') return 'Đã phê duyệt';
+    return status || '';
+}
+
+// Phê duyệt return
+function approveReturn(returnId) {
+    if (confirm('Xác nhận phê duyệt đơn trả hàng này?')) {
+        fetch('/api/returns/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `returnId=${returnId}`
+        })
+        .then(response => response.text())
+        .then(message => {
+            alert(message);
+            loadReturns(document.getElementById('filter-return-status').value);
+        })
+        .catch(error => console.error('Lỗi khi phê duyệt:', error));
+    }
+}
+
+// Xem chi tiết return
+function viewReturnDetail(returnId) {
+    fetch(`/api/returns/detail?id=${returnId}`)
+        .then(response => response.json())
+        .then(ret => {
+            document.getElementById('returnModalOrderNumber').innerText = `#${ret.orderNumber || ret.orderId}`;
+            document.getElementById('returnModalUserId').innerText = ret.customerName || '';
+            document.getElementById('returnModalProductId').innerText = ret.productName || '';
+            document.getElementById('returnModalReason').innerText = ret.reason || '';
+            document.getElementById('returnModalRequestType').innerText = ret.requestType || '';
+            document.getElementById('returnModalStatus').innerText = mapReturnStatusLabel(ret.status);
+            document.getElementById('returnModalCreatedAt').innerText = ret.createdAt || '';
+
+            const modal = new bootstrap.Modal(document.getElementById('returnModal'));
+            modal.show();
+        })
+        .catch(error => console.error('Lỗi khi xem chi tiết:', error));
+}
+
+// Sự kiện filter
+document.getElementById('filter-return-status').addEventListener('change', function () {
+    loadReturns(this.value);
+});
+
+// Load mặc định khi vào tab
+document.addEventListener('DOMContentLoaded', function () {
+    loadReturns();
+});
+
 
 
 

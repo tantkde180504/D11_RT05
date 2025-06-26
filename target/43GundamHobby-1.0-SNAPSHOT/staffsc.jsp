@@ -448,75 +448,63 @@
             </div>
         </div>
 
-        <!-- Returns Tab -->
-        <div id="returns" class="tab-content">
-            <div class="staff-card">                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5><i class="fas fa-undo me-2 text-info"></i>Xử lý đổi trả</h5>
-                    <select class="form-select auto-width">
-                        <option>Tất cả yêu cầu</option>
-                        <option>Chờ xử lý</option>
-                        <option>Đã phê duyệt</option>
-                        <option>Đã từ chối</option>
-                    </select>
-                </div>
+   <!-- Returns Tab -->
+<div id="returns" class="tab-content">
+    <div class="staff-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5><i class="fas fa-undo me-2 text-info"></i>Xử lý đổi trả</h5>
+            <select class="form-select auto-width" id="filter-return-status">
+                <option value="ALL">Tất cả yêu cầu</option>
+                <option value="PROCESSING">Chờ xử lý</option>
+                <option value="COMPLETED">Đã phê duyệt</option>
+            </select>
+        </div>
 
-                <div class="table-responsive table-modern">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Mã đơn hàng</th>
-                                <th>Khách hàng</th>
-                                <th>Sản phẩm</th>
-                                <th>Lý do</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày yêu cầu</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>#12345</strong></td>
-                                <td>Nguyễn Văn A</td>
-                                <td>RG Strike Freedom</td>
-                                <td>Sản phẩm bị lỗi</td>
-                                <td><span class="status-badge status-pending">Chờ xử lý</span></td>
-                                <td>15/03/2024</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success me-1" title="Phê duyệt">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger me-1" title="Từ chối">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#returnModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#12346</strong></td>
-                                <td>Trần Thị B</td>
-                                <td>MG Barbatos</td>
-                                <td>Không đúng mô tả</td>
-                                <td><span class="status-badge status-processing">Đang xử lý</span></td>
-                                <td>14/03/2024</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success me-1" title="Phê duyệt">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger me-1" title="Từ chối">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#returnModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="table-responsive table-modern">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Sản phẩm</th>
+                        <th>Lý do</th>
+                        <th>Trạng thái</th>
+                        <th>Yêu cầu</th>
+                        <th>Ngày yêu cầu</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="returns-table-body">
+                    <!-- Nội dung sẽ được render từ JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chi Tiết Return -->
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnModalLabel">Chi tiết yêu cầu đổi trả</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Mã đơn hàng:</strong> <span id="returnModalOrderNumber"></span></p>
+                <p><strong>Khách hàng:</strong> <span id="returnModalUserId"></span></p>
+                <p><strong>Sản phẩm:</strong> <span id="returnModalProductId"></span></p>
+                <p><strong>Lý do:</strong> <span id="returnModalReason"></span></p>
+                <p><strong>Yêu cầu:</strong> <span id="returnModalRequestType"></span></p>
+                <p><strong>Trạng thái:</strong> <span id="returnModalStatus"></span></p>
+                <p><strong>Ngày yêu cầu:</strong> <span id="returnModalCreatedAt"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
+    </div>
+</div>
 
 <!-- Orders Tab -->
 <div id="orders" class="tab-content">
@@ -528,7 +516,6 @@
                     <option value="ALL">Tất cả trạng thái</option>
                     <option value="PENDING">Chờ xác nhận</option>
                     <option value="CONFIRMED">Đã xác nhận</option>
-                    <option value="PROCESSING">Đang xử lý</option>
                     <option value="SHIPPING">Đang giao</option>
                     <option value="DELIVERED">Hoàn thành</option>
                     <option value="CANCELLED">Đã huỷ</option>
@@ -574,7 +561,6 @@
                         <select class="form-select" id="new-status">
                             <option value="PENDING">Chờ xác nhận</option>
                             <option value="CONFIRMED">Đã xác nhận</option>
-                            <option value="PROCESSING">Đang xử lý</option>
                             <option value="SHIPPING">Đang giao</option>
                             <option value="DELIVERED">Hoàn thành</option>
                             <option value="CANCELLED">Đã huỷ</option>

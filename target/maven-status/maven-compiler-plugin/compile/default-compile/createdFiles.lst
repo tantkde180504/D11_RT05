@@ -1,12 +1,16 @@
 com\mycompany\TestController.class
 com\mycompany\gundamhobby\JakartaRestConfiguration.class
 com\mycompany\HomeController.class
+com\mycompany\ReturnController$ReturnDTO.class
 com\mycompany\config\WebConfig.class
 com\mycompany\OrderRepository.class
 com\mycompany\Application.class
 com\mycompany\gundamhobby\resources\JakartaEE10Resource.class
 com\mycompany\OrderController.class
+com\mycompany\ReturnController.class
 com\mycompany\DatabaseTestController.class
+com\mycompany\ReturnRepository.class
 com\mycompany\Order.class
 com\mycompany\LoginController.class
+com\mycompany\Return.class
 com\mycompany\OrderController$OrderDetailDTO.class
