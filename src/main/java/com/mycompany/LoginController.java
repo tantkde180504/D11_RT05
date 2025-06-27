@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 import java.sql.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api")
@@ -21,7 +22,11 @@ public class LoginController {
     }    @PostMapping(value = "/login", 
                 consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<Map<String, Object>> login(
+        @RequestParam String email, 
+        @RequestParam String password,
+        HttpServletRequest request // THÊM DÒNG NÀY
+    ) {
         System.out.println("=== LOGIN REQUEST RECEIVED ===");
         System.out.println("Email: " + email);
         System.out.println("Password: " + password);          String connectionUrl = "jdbc:sqlserver://43gundam.database.windows.net:1433;database=gundamhobby;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
@@ -57,13 +62,13 @@ public class LoginController {
                 }
             }
             
-            String sql = "SELECT first_name, last_name, role, password FROM users WHERE email = ?";
+            String sql = "SELECT id,first_name, last_name, role, password FROM users WHERE email = ?";
             
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, email);
-                
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
+                        int userId = resultSet.getInt("id"); // Lấy id từ DB
                         String dbPasswordFromDb = resultSet.getString("password");
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
@@ -77,6 +82,15 @@ public class LoginController {
                         System.out.println("  - Passwords match: " + password.equals(dbPasswordFromDb));
                         
                         if (password.equals(dbPasswordFromDb)) {
+                            // Lưu thông tin vào session
+                            request.getSession().setAttribute("userId", (long) userId);
+                            request.getSession().setAttribute("isLoggedIn", true);
+                            request.getSession().setAttribute("userRole", role);
+                            request.getSession().setAttribute("fullName", firstName + " " + lastName);
+                            request.getSession().setAttribute("email", email);
+                            request.getSession().setAttribute("name", firstName + " " + lastName);
+                            request.getSession().setAttribute("picture", null); // hoặc lấy từ DB nếu có
+
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);

@@ -124,7 +124,7 @@
                         
                         <!-- Cart Button -->
                         <div class="cart-btn">
-                            <a href="#" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 <span class="cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
@@ -650,7 +650,7 @@
     <!-- Product Detail Script -->
     <script>
         // Product ID from server
-        const productId = <%= productId %>;
+        const productId = '<%= productId %>';
         const contextPath = '<%= request.getContextPath() %>';
         
         // Load product data when page loads
@@ -921,16 +921,30 @@
             // Add to cart button
             document.getElementById('addToCartBtn').addEventListener('click', function() {
                 const quantity = document.getElementById('quantityInput').value;
-                // Add your cart logic here
-                this.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm vào giỏ';
-                this.classList.add('btn-success');
-                this.classList.remove('btn-add-cart');
-                
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ hàng';
-                    this.classList.remove('btn-success');
-                    this.classList.add('btn-add-cart');
-                }, 2000);
+                fetch(contextPath + '/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ productId: Number(productId), quantity: Number(quantity) })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.innerHTML = '<i class="fas fa-check me-2"></i>Đã thêm vào giỏ';
+                        this.classList.add('btn-success');
+                        this.classList.remove('btn-add-cart');
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra!');
+                    }
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ hàng';
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-add-cart');
+                    }, 2000);
+                })
+                .catch(() => {
+                    alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
+                });
             });
             
             // Buy now button
