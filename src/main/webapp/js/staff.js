@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initDropdownFix();
     showKeyboardShortcutsHint();
     loadInventoryFromAPI();
-    loadComplaintsFromAPI(); 
+    loadComplaintsFromAPI();
     initInventoryFilters();
 });
 
@@ -37,7 +37,7 @@ function initTabSwitching() {
                 loadInventoryFromAPI();
             } else if (tabId === 'complaints') {
                 loadComplaintsFromAPI();
-            }            
+            }
         });
     });
 }
@@ -694,6 +694,10 @@ function loadComplaintsFromAPI() {
                         <button class="btn btn-sm btn-primary me-1" onclick="viewComplaintDetail('${c.complaintCode}')">
                             <i class="fas fa-eye"></i>
                         </button>
+                        ${c.status === 'PROCESSING' ? `
+                        <button class="btn btn-sm btn-success" onclick="handleCompleteComplaint('${c.complaintCode}')">
+                            <i class="fas fa-check"></i>
+                        </button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -754,49 +758,61 @@ function filterComplaints() {
         }
     });
 }
-//XỬ LÍ KHIẾU NẠI
+// XỬ LÍ KHIẾU NẠI
 function handleComplaintUpdate(status) {
-    // Kiểm tra biến toàn cục có tồn tại không
     if (!window.currentComplaint || !window.currentComplaint.complaintCode) {
         showErrorMessage("Không tìm thấy dữ liệu khiếu nại hiện tại.");
         return;
     }
 
     const complaintCode = window.currentComplaint.complaintCode;
+    const currentStatus = window.currentComplaint.status;
     const solution = document.getElementById("complaint-solution").value;
     const staffResponse = document.getElementById("complaint-staff-response").value;
 
-    if (!solution || !staffResponse) {
-        alert("Vui lòng chọn giải pháp và nhập phản hồi.");
+    // ✅ Chỉ xử lý nếu trạng thái hiện tại là PENDING
+    if (currentStatus !== "PENDING") {
+        alert("Chỉ được xử lý khi khiếu nại đang ở trạng thái 'Chờ xử lý'.");
+        return;
+    }
+
+    // Nếu phê duyệt → yêu cầu cả giải pháp và phản hồi
+    if (status === "PROCESSING") {
+        if (!solution || !staffResponse) {
+            alert("Vui lòng chọn giải pháp và nhập phản hồi.");
+            return;
+        }
+    }
+
+    // Nếu từ chối → chỉ cần phản hồi
+    if (status === "REJECTED" && !staffResponse) {
+        alert("Vui lòng nhập phản hồi khi từ chối.");
         return;
     }
 
     fetch(`/api/complaints/${complaintCode}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             solution: solution,
             staffResponse: staffResponse,
             status: status
         })
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Cập nhật thất bại");
-        return res.text();
-    })
-    .then(message => {
-        showSuccessMessage(message); // ✅ Thông báo đẹp
-        loadComplaintsFromAPI();     // reload lại bảng khiếu nại
-
-        const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
-        if (modal) modal.hide();
-    })
-    .catch(err => {
-        console.error(err);
-        showErrorMessage("Lỗi khi cập nhật khiếu nại!");
-    });
+        .then(res => {
+            if (!res.ok) throw new Error("Cập nhật thất bại");
+            return res.text();
+        })
+        .then(message => {
+            showSuccessMessage(message);
+            loadComplaintsFromAPI();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+            if (modal) modal.hide();
+        })
+        .catch(err => {
+            console.error(err);
+            showErrorMessage("Lỗi khi cập nhật khiếu nại!");
+        });
 }
 
 
@@ -865,22 +881,22 @@ function bindUpdateStockButtons() {
                         type: quantityDiff > 0 ? 'IN' : 'OUT'
                     })
                 })
-                .then(res => res.text())
-                .then(message => {
-                    hide();
-                    showSuccessMessage(message);
+                    .then(res => res.text())
+                    .then(message => {
+                        hide();
+                        showSuccessMessage(message);
 
-                    // Ẩn modal
-                    const modalElement = document.getElementById('updateStockModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    if (modalInstance) modalInstance.hide();
+                        // Ẩn modal
+                        const modalElement = document.getElementById('updateStockModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) modalInstance.hide();
 
-                    loadInventoryFromAPI(); // Tải lại bảng
-                })
-                .catch(err => {
-                    hide();
-                    showErrorMessage('Lỗi cập nhật tồn kho: ' + err.message);
-                });
+                        loadInventoryFromAPI(); // Tải lại bảng
+                    })
+                    .catch(err => {
+                        hide();
+                        showErrorMessage('Lỗi cập nhật tồn kho: ' + err.message);
+                    });
             };
 
             // Mở modal
@@ -958,9 +974,10 @@ function viewComplaintDetail(complaintCode) {
                 return;
             }
 
-            // Gán complaint hiện tại vào biến toàn cục
+            // Gán vào biến toàn cục
             window.currentComplaint = complaint;
 
+            // Gán thông tin
             document.querySelector('#complaintModal .modal-title').innerHTML =
                 `<i class="fas fa-exclamation-triangle me-2"></i>Chi tiết khiếu nại #${complaint.complaintCode}`;
             document.getElementById('complaint-customer-name').textContent = complaint.customerName;
@@ -977,11 +994,50 @@ function viewComplaintDetail(complaintCode) {
             document.getElementById('complaint-staff-response').value = complaint.staffResponse || '';
             document.getElementById('complaint-solution').value = complaint.solution || '';
 
+            // Ẩn hoặc hiển thị các nút xử lý
+            const approveBtn = document.querySelector("#complaintModal .btn-success");
+            const rejectBtn = document.querySelector("#complaintModal .btn-danger");
+
+            if (complaint.status === "PENDING") {
+                approveBtn.style.display = 'inline-block';
+                rejectBtn.style.display = 'inline-block';
+            } else {
+                approveBtn.style.display = 'none';
+                rejectBtn.style.display = 'none';
+            }
+
             const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
             modal.show();
         })
         .catch(err => {
             console.error('Lỗi tải chi tiết khiếu nại:', err);
             showErrorMessage('Lỗi tải chi tiết khiếu nại');
+        });
+}
+
+//xử lí hoàn thành khiếu nại
+function handleCompleteComplaint(complaintCode) {
+    if (!confirm("Bạn có chắc muốn đánh dấu khiếu nại này là đã hoàn thành?")) return;
+
+    fetch(`/api/complaints/${complaintCode}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            solution: "Đã xử lý hoàn tất",
+            staffResponse: "Khiếu nại đã được hoàn thành.",
+            status: "COMPLETED"
+        })
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Không thể cập nhật");
+            return res.text();
+        })
+        .then(msg => {
+            showSuccessMessage(msg);
+            loadComplaintsFromAPI();
+        })
+        .catch(err => {
+            console.error(err);
+            showErrorMessage("Lỗi khi cập nhật trạng thái khiếu nại.");
         });
 }
