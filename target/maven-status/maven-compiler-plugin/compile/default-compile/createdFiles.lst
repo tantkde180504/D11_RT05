@@ -14,3 +14,4 @@ com\mycompany\Order.class
 com\mycompany\LoginController.class
 com\mycompany\Return.class
 com\mycompany\OrderController$OrderDetailDTO.class
+com\mycompany\OrderController$OrderItemDTO.class

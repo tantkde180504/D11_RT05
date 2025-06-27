@@ -48,4 +48,18 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                    "WHERE oi.order_id = :orderId", 
            nativeQuery = true)
     List<String> findProductNamesWithQuantityByOrderId(@Param("orderId") Long orderId);
+
+    @Query(value = "SELECT p.name, oi.quantity, oi.unit_price " +
+               "FROM order_items oi " +
+               "JOIN products p ON oi.product_id = p.id " +
+               "WHERE oi.order_id = :orderId", nativeQuery = true)
+
+List<Object[]> findOrderItemDetails(@Param("orderId") Long orderId);
+
+@Query(value = "SELECT p.name, oi.quantity, oi.unit_price " +
+               "FROM order_items oi " +
+               "JOIN products p ON oi.product_id = p.id " +
+               "WHERE oi.order_id = :orderId", nativeQuery = true)
+List<Object[]> findOrderItemDetailsByOrderId(@Param("orderId") Long orderId);
+
 }

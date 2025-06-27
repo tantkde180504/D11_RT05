@@ -456,7 +456,7 @@
             <select class="form-select auto-width" id="filter-return-status">
                 <option value="ALL">Tất cả yêu cầu</option>
                 <option value="PROCESSING">Chờ xử lý</option>
-                <option value="COMPLETED">Đã phê duyệt</option>
+                <option value="COMPLETED">Đã xác nhận</option>
             </select>
         </div>
 

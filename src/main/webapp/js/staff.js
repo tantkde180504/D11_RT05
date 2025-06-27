@@ -670,9 +670,24 @@ function loadOrdersFromAPI() {
         });
 }
 
-function formatCurrency(price) {
-    return Number(price).toLocaleString('vi-VN') + '₫';
+function formatCurrency(amount) {
+    return Number(amount).toLocaleString('vi-VN') + '₫';
 }
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+}
+
+function mapOrderStatus(status) {
+    switch (status) {
+        case 'PENDING': return 'Chờ xác nhận';
+        case 'DELIVERED': return 'Đã giao';
+        case 'CANCELLED': return 'Đã hủy';
+        default: return status;
+    }
+}
+
 function confirmOrder(orderId) {
     if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
 
@@ -760,7 +775,6 @@ function viewOrderDetail(orderId) {
         });
 }
 
-
 function formatDate(dateStr) {
     const date = new Date(dateStr);
     if (isNaN(date)) return '—';
@@ -768,34 +782,128 @@ function formatDate(dateStr) {
 }
 
 function printInvoice() {
-    const content = document.getElementById('order-detail-body').innerHTML;
-    const printWindow = window.open('', '_blank');
+    const order = window.currentOrder;
+    if (!order) return alert('Không có dữ liệu hóa đơn.');
 
+    const productListHtml = (order.items || [])
+  .map(item => `
+    <tr>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>${formatCurrency(item.price)}</td>
+      <td>${formatCurrency(item.price * item.quantity)}</td>
+    </tr>
+  `)
+  .join('');
+
+    const printWindow = window.open('', '_blank');
     printWindow.document.write(`
         <html>
         <head>
             <title>Hóa đơn</title>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <style>
-                body { font-family: 'Segoe UI', sans-serif; padding: 30px; }
-                h2 { text-align: center; margin-bottom: 20px; }
-                .info-line { margin-bottom: 10px; }
+                body {
+                    font-family: 'Segoe UI', sans-serif;
+                    padding: 40px;
+                    color: #333;
+                }
+                .header {
+                    background-color: #f60;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+                .info-section {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 30px;
+                }
+                .info-box {
+                    width: 48%;
+                }
+                table {
+                    width: 100%;
+                    margin-top: 20px;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border-bottom: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f60;
+                    color: white;
+                }
+                .total-row {
+                    font-weight: bold;
+                    background-color: #eee;
+                }
+                .footer {
+                    margin-top: 40px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #555;
+                }
             </style>
         </head>
         <body>
-            <h2>HÓA ĐƠN ĐƠN HÀNG</h2>
-            <div>${content}</div>
+            <div class="header">
+                <h2>HÓA ĐƠN</h2>
+                <div>#${order.orderNumber}</div>
+                <div>${formatDate(order.orderDate)}</div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-box">
+                    <h5>KHÁCH HÀNG</h5>
+                    <p>${order.shippingName}</p>
+                    <p>${order.shippingAddress}</p>
+                    <p>${order.email}</p>
+                    <p>${order.shippingPhone}</p>
+                </div>
+                <div class="info-box">
+                    <h5>THANH TOÁN</h5>
+                    <p>Phương thức: ${order.paymentMethod}</p>
+                    <p>Trạng thái: ${mapOrderStatus(order.status)}</p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>MÔ TẢ</th>
+                        <th>SỐ LƯỢNG</th>
+                        <th>ĐƠN GIÁ</th>
+                        <th>THÀNH TIỀN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${productListHtml}
+                    <tr class="total-row">
+                        <td colspan="3">TỔNG CỘNG</td>
+                        <td>${formatCurrency(order.totalAmount)}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="footer">
+                Cảm ơn bạn đã mua hàng!<br>
+                Liên hệ: ${order.email} | ${order.shippingPhone}
+            </div>
         </body>
         </html>
     `);
 
     printWindow.document.close();
-    printWindow.focus();
     setTimeout(() => {
         printWindow.print();
         printWindow.close();
-    }, 500);
+    }, 300);
 }
+
+
 function cancelOrder(orderId) {
     if (!confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
 
@@ -852,9 +960,6 @@ function renderReturnsTable(returns) {
             <td>${ret.requestType || ''}</td>
             <td>${ret.createdAt || ''}</td>
             <td>
-                <button class="btn btn-sm btn-success me-1" title="Phê duyệt" onclick="approveReturn(${ret.id})">
-                    <i class="fas fa-check"></i>
-                </button>
                 <button class="btn btn-sm btn-info" title="Xem chi tiết" onclick="viewReturnDetail(${ret.id})">
                     <i class="fas fa-eye"></i>
                 </button>
@@ -874,25 +979,8 @@ function mapReturnStatusClass(status) {
 // Map nhãn trạng thái
 function mapReturnStatusLabel(status) {
     if (status === 'PROCESSING') return 'Chờ xử lý';
-    if (status === 'COMPLETED') return 'Đã phê duyệt';
+    if (status === 'COMPLETED') return 'Đã xác nhận';
     return status || '';
-}
-
-// Phê duyệt return
-function approveReturn(returnId) {
-    if (confirm('Xác nhận phê duyệt đơn trả hàng này?')) {
-        fetch('/api/returns/complete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `returnId=${returnId}`
-        })
-        .then(response => response.text())
-        .then(message => {
-            alert(message);
-            loadReturns(document.getElementById('filter-return-status').value);
-        })
-        .catch(error => console.error('Lỗi khi phê duyệt:', error));
-    }
 }
 
 // Xem chi tiết return
