@@ -103,14 +103,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => {
                         const role = data.role ? data.role.toUpperCase() : '';
                         let targetPage = '';
-                          if (role === 'ADMIN') {
+                        if (role === 'ADMIN') {
                             targetPage = '/';
                         } else if (role === 'STAFF') {
-                            targetPage = '/';
+                            targetPage = '/staffsc.jsp'; // Chuyển về staff dashboard JSP
                         } else {
                             targetPage = '/';
                         }
-                        
                         console.log('Redirecting to:', targetPage);
                         window.location.href = targetPage;
                     }, 1500);

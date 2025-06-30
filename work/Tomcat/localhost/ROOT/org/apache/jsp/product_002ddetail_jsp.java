@@ -14,11 +14,8 @@ import jakarta.servlet.jsp.*;
 import java.util.*;
 import java.text.NumberFormat;
 import java.util.Locale;
-import com.mycompany.model.Product;
 
 public final class product_002ddetail_jsp extends org.apache.jasper.runtime.HttpJspBase
-    implements org.apache.jasper.runtime.JspSourceDependent,
-                 org.apache.jasper.runtime.JspSourceImports,
                  org.apache.jasper.runtime.JspSourceDirectives {
 
   private static final jakarta.servlet.jsp.JspFactory _jspxFactory =
@@ -28,12 +25,9 @@ public final class product_002ddetail_jsp extends org.apache.jasper.runtime.Http
 
   static {
     _jspx_dependants = new java.util.HashMap<java.lang.String,java.lang.Long>(1);
-    _jspx_dependants.put("/includes/mobile-sidebar.jsp", Long.valueOf(1750864467732L));
   }
 
-  private static final java.util.Set<java.lang.String> _jspx_imports_packages;
-
-  private static final java.util.Set<java.lang.String> _jspx_imports_classes;
+=======
 
   static {
     _jspx_imports_packages = new java.util.LinkedHashSet<>(4);

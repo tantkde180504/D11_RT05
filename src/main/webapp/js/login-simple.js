@@ -62,14 +62,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Show success message
                     const roleText = getRoleDisplayName(data.role);
                     showAlert(`🎉 Đăng nhập thành công! Chào mừng ${data.fullName} (${roleText})`, 'success');
-                      // Redirect to home page after 2 seconds
+                    // Redirect based on role after 2 seconds
                     setTimeout(() => {
                         const role = data.role ? data.role.toUpperCase() : '';
-                        const targetPage = '/';
-                        
+                        let targetPage = '/';
+                        if (role === 'ADMIN') {
+                            targetPage = '/';
+                        } else if (role === 'STAFF') {
+                            targetPage = '/staffsc.jsp';
+                        } else {
+                            targetPage = '/';
+                        }
                         console.log('Redirecting to:', targetPage);
-                        showAlert(`🚀 Đang chuyển đến trang chủ...`, 'info');
-                        
+                        showAlert(`🚀 Đang chuyển trang...`, 'info');
                         setTimeout(() => {
                             window.location.href = targetPage;
                         }, 1000);

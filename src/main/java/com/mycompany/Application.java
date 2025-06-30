@@ -1,6 +1,5 @@
 package com.mycompany;
 
-import com.mycompany.service.OAuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +9,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import com.mycompany.service.OAuthUserService;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer implements CommandLineRunner {
@@ -29,7 +30,9 @@ public class Application extends SpringBootServletInitializer implements Command
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
         return resolver;
-    }    public static void main(String[] args) {
+    }
+
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 

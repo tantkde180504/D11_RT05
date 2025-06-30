@@ -1,15 +1,30 @@
 package com.mycompany;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.MediaType;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.sql.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
 public class LoginController {
+
+    @Autowired
+    private HttpSession session;
 
     @GetMapping("/login-test")
     public ResponseEntity<Map<String, Object>> testLoginEndpoint() {
@@ -77,6 +92,11 @@ public class LoginController {
                         System.out.println("  - Passwords match: " + password.equals(dbPasswordFromDb));
                         
                         if (password.equals(dbPasswordFromDb)) {
+                            // Lưu thông tin user vào session
+                            session.setAttribute("user", email);
+                            session.setAttribute("role", role);
+                            session.setAttribute("fullName", firstName + " " + lastName);
+                            session.setAttribute("isLoggedIn", true);
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);

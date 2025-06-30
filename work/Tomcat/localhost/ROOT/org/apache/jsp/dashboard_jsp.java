@@ -8,11 +8,8 @@
  */
 package org.apache.jsp;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.jsp.*;
-import java.util.*;
-import java.text.SimpleDateFormat;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 
 public final class dashboard_jsp extends org.apache.jasper.runtime.HttpJspBase
     implements org.apache.jasper.runtime.JspSourceDependent,
