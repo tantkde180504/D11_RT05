@@ -20,8 +20,12 @@ public class ProductController {
     
     // Lấy tất cả sản phẩm active
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllProducts() {
+    public ResponseEntity<Map<String, Object>> getAllProducts(
+            @SessionAttribute(name = "userId", required = false) Long userId) {
         try {
+            System.out.println("=== API /products REQUEST ===");
+            System.out.println("userId in session: " + userId);
+            
             List<Product> products = productService.getAllActiveProducts();
             
             Map<String, Object> response = new HashMap<>();
@@ -216,8 +220,13 @@ public class ProductController {
     
     // Lấy chi tiết sản phẩm
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getProductById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getProductById(
+            @PathVariable Long id,
+            @SessionAttribute(name = "userId", required = false) Long userId) {
         try {
+            System.out.println("=== API /cart REQUEST ===");
+            System.out.println("userId in session: " + userId);
+            
             Optional<Product> product = productService.getProductById(id);
             
             if (product.isPresent()) {

@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-@SpringBootApplication(scanBasePackages = "com.mycompany")
-
+@SpringBootApplication
 public class Application extends SpringBootServletInitializer implements CommandLineRunner {
 
     @Autowired

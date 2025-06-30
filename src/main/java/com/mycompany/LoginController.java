@@ -91,9 +91,20 @@ public class LoginController {
                             request.getSession().setAttribute("name", firstName + " " + lastName);
                             request.getSession().setAttribute("picture", null); // hoặc lấy từ DB nếu có
 
+                            // Kiểm tra session sau khi set
+                            System.out.println("=== SESSION AFTER LOGIN ===");
+                            System.out.println("userId: " + request.getSession().getAttribute("userId"));
+                            System.out.println("isLoggedIn: " + request.getSession().getAttribute("isLoggedIn"));
+                            System.out.println("userRole: " + request.getSession().getAttribute("userRole"));
+                            System.out.println("email: " + request.getSession().getAttribute("email"));
+                            System.out.println("fullName: " + request.getSession().getAttribute("fullName"));
+                            System.out.println("name: " + request.getSession().getAttribute("name"));
+                            System.out.println("Session ID: " + request.getSession().getId());
+
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);
+                            resp.put("userId", userId); // Thêm userId vào response
                             resp.put("fullName", firstName + " " + lastName);
                             System.out.println("Login successful for user: " + resp.get("fullName"));
                             return ResponseEntity.ok()

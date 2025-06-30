@@ -180,7 +180,14 @@ public class ComplaintController {
                     "       c.content, " +
                     "       c.status, " +
                     "       c.staff_response, " +
-                    "       c.created_at " +
+                    "       c.created_at, " +
+                    "       (SELECT TOP 1 p.name FROM order_items oi2 " +
+                    "        INNER JOIN products p ON oi2.product_id = p.id " +
+                    "        WHERE oi2.order_id = o.id) as product_name, " +
+                    "       (SELECT TOP 1 p.image_url FROM order_items oi2 " +
+                    "        INNER JOIN products p ON oi2.product_id = p.id " +
+                    "        WHERE oi2.order_id = o.id) as product_image, " +
+                    "       (SELECT COUNT(*) FROM order_items oi2 WHERE oi2.order_id = o.id) as total_items " +
                     "FROM complaints c " +
                     "INNER JOIN orders o ON c.order_id = o.id " +
                     "WHERE c.user_id = ? " +
@@ -200,6 +207,9 @@ public class ComplaintController {
                 item.put("status", row[4]);
                 item.put("staffResponse", row[5]);
                 item.put("createdAt", row[6] != null ? row[6].toString() : null);
+                item.put("productName", row[7] != null ? row[7].toString() : "N/A");
+                item.put("productImage", row[8] != null ? row[8].toString() : "");
+                item.put("totalItems", row[9] != null ? row[9].toString() : "1");
                 result.add(item);
             }
 

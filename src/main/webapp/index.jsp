@@ -635,50 +635,35 @@
             });
         });
 
-         // Add to cart functionality using event delegation
-        // This approach ensures that "add to cart" buttons work even if they are loaded dynamically.
-        document.addEventListener('click', function(e) {
-            const button = e.target.closest('.add-to-cart');
-
-            // If a valid button was clicked and it's not already being processed
-            if (button && !button.dataset.processing) {
-                const productId = button.getAttribute('data-product-id');
-
-                // Only proceed if there is a product ID. This skips buttons like "Pre-order" which might not have it.
-                if (productId) {
-                    button.dataset.processing = true; // Mark as processing to prevent double clicks
-                    const originalHtml = button.innerHTML; // Save original content
-
-                    fetch('<%=request.getContextPath()%>/api/cart/add', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'same-origin',
-                        body: JSON.stringify({ productId: Number(productId), quantity: 1 })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            button.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
-                            button.classList.add('btn-success');
-                            button.classList.remove('btn-primary');
-
-                            setTimeout(() => {
-                                button.innerHTML = originalHtml; // Restore original content
-                                button.classList.remove('btn-success');
-                                button.classList.add('btn-primary');
-                                delete button.dataset.processing;
-                            }, 2000);
-                        } else {
-                            alert(data.message || 'Có lỗi xảy ra!');
-                            delete button.dataset.processing; // Allow clicking again on failure
-                        }
-                    })
-                    .catch(() => {
-                        alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
-                        delete button.dataset.processing; // Allow clicking again on error
-                    });
-                }
-            }
+        // Add to cart functionality
+       document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                fetch('<%=request.getContextPath()%>/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ productId: Number(productId), quantity: 1 })
+                }) 
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
+                        this.classList.add('btn-success');
+                        this.classList.remove('btn-primary');
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra!');
+                    }
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ';
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-primary');
+                    }, 2000);
+                })
+                .catch(() => {
+                    alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
+                });
+            });
         });
 
         // Category popup functionality

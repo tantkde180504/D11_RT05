@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +23,11 @@ public class ProductDetailController {
      * Hiển thị trang chi tiết sản phẩm
      */
     @GetMapping("/product-detail")
-    public String showProductDetail(@RequestParam(required = false) Long id, 
+    public String showProductDetail(@RequestParam(required = false) Long id,
+                                   @SessionAttribute(name = "userId", required = false) Long userId,
                                    Model model) {
+        System.out.println("=== API /cart REQUEST ===");
+        System.out.println("userId in session: " + userId);
         try {
             if (id == null) {
                 // Redirect về trang all-products nếu không có ID
@@ -74,8 +78,11 @@ public class ProductDetailController {
      */
     @GetMapping("/product/{id}")
     public String showProductDetailSEO(@PathVariable Long id, 
+                                      @SessionAttribute(name = "userId", required = false) Long userId,
                                       Model model) {
-        return showProductDetail(id, model);
+        System.out.println("=== API /cart REQUEST ===");
+        System.out.println("userId in session: " + userId);
+        return showProductDetail(id, userId, model);
     }
     
     /**
