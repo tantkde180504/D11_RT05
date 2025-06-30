@@ -2,56 +2,9 @@
 
 // Initialize charts when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    initializeCharts();
+    const selectedType = document.getElementById('revenueType').value;
+    loadRevenueChart(selectedType);
 });
-
-// Initialize Chart.js charts
-function initializeCharts() {
-    // Revenue Chart
-    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    new Chart(revenueCtx, {
-        type: 'line',
-        data: {
-            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-            datasets: [{
-                label: 'Doanh thu (triệu VNĐ)',
-                data: [85, 92, 78, 105, 125, 110],
-                borderColor: '#4e73df',
-                backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                borderWidth: 2,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Product Chart
-    const productCtx = document.getElementById('productChart').getContext('2d');
-    new Chart(productCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Real Grade', 'Master Grade', 'Perfect Grade', 'High Grade'],
-            datasets: [{
-                data: [35, 28, 15, 22],
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-}
-
 // Product Management Functions
 function editProduct(productId) {
     alert('Chỉnh sửa sản phẩm ID: ' + productId);
@@ -143,4 +96,153 @@ function refreshDashboard() {
 function showNotification(message, type = 'success') {
     // You can implement a toast notification system here
     alert(message);
+}
+let revenueChartInstance = null;
+
+//THỐNG KÊ DOANH THU THEO THỜI GIAN
+function loadRevenueChart(type = "monthly") {
+    fetch(`/api/revenue?type=${type}`)
+        .then(res => res.json())
+        .then(data => {
+            // 🔧 Format label theo kiểu ngày nếu là 'daily'
+            const labels = data.map(r => {
+                if (type === "daily") {
+                    const date = new Date(r.label);
+                    return date.toLocaleDateString('vi-VN'); // ví dụ: 30/6/2025
+                }
+                return r.label; // monthly, quarterly, yearly giữ nguyên
+            });
+
+            const revenues = data.map(r => parseFloat(r.totalRevenue));
+            const orders = data.map(r => r.totalOrders);
+
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy(); // ⚠️ Hủy biểu đồ cũ nếu có
+            }
+
+            const ctx = document.getElementById("revenueChart").getContext("2d");
+            revenueChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Doanh thu (VNĐ)",
+                            data: revenues,
+                            backgroundColor: "rgba(75, 192, 192, 0.6)",
+                            borderColor: "rgba(75, 192, 192, 1)",
+                            borderWidth: 1,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: "Số lượng đơn hàng",
+                            data: orders,
+                            backgroundColor: "rgba(255, 159, 64, 0.6)",
+                            borderColor: "rgba(255, 159, 64, 1)",
+                            borderWidth: 1,
+                            yAxisID: 'y1',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    stacked: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: `Thống kê doanh thu theo ${mapLabel(type)}`
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Doanh thu (VNĐ)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Số đơn hàng'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => {
+            console.error("❌ Lỗi khi tải dữ liệu thống kê doanh thu:", err);
+        });
+}
+
+function mapLabel(type) {
+    switch (type) {
+        case "daily": return "ngày";
+        case "monthly": return "tháng";
+        case "quarterly": return "quý";
+        case "yearly": return "năm";
+        default: return "thời gian";
+    }
+}
+
+function loadOrderChart() {
+    fetch('/api/orders')
+        .then(res => res.json())
+        .then(data => {
+            const labels = data.map(d => d.status);
+            const counts = data.map(d => d.totalOrders || d.total); // ✅ linh hoạt
+
+            if (orderChartInstance) orderChartInstance.destroy();
+
+            orderChartInstance = new Chart(document.getElementById('orderChart'), {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Trạng thái đơn hàng',
+                        data: counts,
+                        backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', '#4BC0C0']
+                    }]
+                }
+            });
+        });
+}
+function loadBestsellerChart() {
+    fetch('/api/bestsellers')
+        .then(res => res.json())
+        .then(data => {
+            const labels = data.map(p => p.name);
+            const quantities = data.map(p => p.totalSold || p.total_sold); // ✅ nếu là raw SQL
+
+            if (bestsellerChartInstance) bestsellerChartInstance.destroy();
+
+            bestsellerChartInstance = new Chart(document.getElementById('bestsellerChart'), {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Sản phẩm bán chạy',
+                        data: quantities,
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)'
+                    }]
+                }
+            });
+        });
 }
