@@ -14,5 +14,7 @@ public class CustomerDTO {
     private String gender;
     private String address;
     private Date createdAt;
-    // Có thể bổ sung các trường khác nếu cần, ví dụ: tổng số đơn hàng
+    private int totalOrders; // Tổng số đơn hàng của khách hàng
+
+    // Có thể bổ sung các trường khác nếu cần
 }

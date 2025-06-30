@@ -7,9 +7,11 @@ public class CategoryDTO {
     private String name;
     private String description;
     private Long parentId;
+    private String parentName;
     private Boolean isActive;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private java.time.LocalDateTime createdAt;
+    private int productCount;
 
     public CategoryDTO() {}
 
@@ -39,4 +41,10 @@ public class CategoryDTO {
 
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getParentName() { return parentName; }
+    public void setParentName(String parentName) { this.parentName = parentName; }
+
+    public int getProductCount() { return productCount; }
+    public void setProductCount(int productCount) { this.productCount = productCount; }
 }

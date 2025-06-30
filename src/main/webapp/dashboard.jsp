@@ -944,6 +944,9 @@
                             </div>
                             <p class="text-muted mb-0">Danh sách tất cả danh mục sản phẩm</p>
                         </div>
+                        <div id="category-toolbar" class="mb-3">
+                            <input type="text" id="categorySearchInput" class="form-control" placeholder="Tìm kiếm theo tên danh mục...">
+                        </div>
                         <div class="admin-table">
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0">
@@ -953,6 +956,8 @@
                                             <th>Tên danh mục</th>
                                             <th>Mô tả</th>
                                             <th>Ngày tạo</th>
+                                            <th>Số sản phẩm</th>
+                                            <th>Trạng thái</th>
                                             <th>Thao tác</th>
                                         </tr>
                                     </thead>

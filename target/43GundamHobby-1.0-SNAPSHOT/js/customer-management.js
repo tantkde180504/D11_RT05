@@ -81,6 +81,30 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
+  // Thêm ô tìm kiếm khách hàng
+  const searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.placeholder = 'Tìm kiếm khách hàng...';
+  searchInput.className = 'form-control mb-3';
+  searchInput.id = 'customerSearchInput';
+  searchInput.addEventListener('input', function () {
+      const searchValue = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#customerTableBody tr');
+      rows.forEach(row => {
+          const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+          const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+          if (name.includes(searchValue) || email.includes(searchValue)) {
+              row.style.display = '';
+          } else {
+              row.style.display = 'none';
+          }
+      });
+  });
+
+  // Thêm ô tìm kiếm vào DOM
+  const customerTabContent = document.querySelector('#customers .admin-table');
+  customerTabContent.insertBefore(searchInput, customerTabContent.firstChild);
 });
 
 function apiUrl(path) {
@@ -92,7 +116,10 @@ function apiUrl(path) {
 function loadCustomerList() {
   fetch(apiUrl("/api/staffs/customers"))
     .then(res => {
-      if (!res.ok) throw new Error("Lỗi HTTP");
+      if (!res.ok) {
+        alert("Không thể tải danh sách khách hàng. Vui lòng thử lại sau.");
+        throw new Error("Lỗi HTTP: " + res.status);
+      }
       return res.json();
     })
     .then(data => {
@@ -108,7 +135,7 @@ function loadCustomerList() {
             <td>${cus.email || ""}</td>
             <td>${cus.phone || ""}</td>
             <td>${createdAt}</td>
-            <td><!-- Tổng đơn hàng --></td>
+            <td>${cus.totalOrders || 0}</td>
             <td>
               <button class="btn btn-sm btn-info btn-view-cus" data-id="${cus.id}" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
               <button class="btn btn-sm btn-warning btn-edit-cus" data-id="${cus.id}" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
@@ -139,8 +166,8 @@ function loadCustomerList() {
       });
     })
     .catch(err => {
-      alert("Không thể tải danh sách khách hàng");
-      console.error(err);
+      alert("Không thể tải danh sách khách hàng. Vui lòng thử lại sau.");
+      console.error("Lỗi khi tải danh sách khách hàng:", err);
     });
 }
 

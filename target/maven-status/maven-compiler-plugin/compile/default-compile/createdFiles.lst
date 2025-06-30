@@ -5,12 +5,14 @@ com\mycompany\HomeController.class
 com\mycompany\UserController.class
 com\mycompany\UserRepository.class
 com\mycompany\config\WebConfig.class
+com\mycompany\OrderRepository.class
 com\mycompany\UserServiceImpl.class
 com\mycompany\StaffDTO.class
 com\mycompany\Application.class
 com\mycompany\DatabaseTestController.class
 com\mycompany\User$UserBuilder.class
 com\mycompany\SecurityConfig.class
+com\mycompany\Order.class
 com\mycompany\CategoryController.class
 com\mycompany\LoginController.class
 com\mycompany\UserService.class

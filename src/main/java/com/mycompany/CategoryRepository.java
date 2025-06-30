@@ -67,8 +67,14 @@ public class CategoryRepository {
     }
 
     public List<CategoryDTO> findAll() {
-        String sql = "SELECT id, name, description, parent_id, is_active, created_at FROM categories ORDER BY id";
-        List<CategoryDTO> list = jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToCategoryDTO(rs));
+        String sql = "SELECT c.id, c.name, c.description, c.parent_id, c.is_active, c.created_at, " +
+                     "(SELECT COUNT(p.id) FROM products p WHERE p.category_id = c.id) as product_count " +
+                     "FROM categories c ORDER BY c.id";
+        List<CategoryDTO> list = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            CategoryDTO dto = mapRowToCategoryDTO(rs);
+            dto.setProductCount(rs.getInt("product_count"));
+            return dto;
+        });
         System.out.println("DEBUG: Số lượng danh mục lấy được = " + list.size());
         return list;
     }

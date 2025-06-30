@@ -12,6 +12,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     @Override
     public User createStaffAccount(User user) {
         // Validate all required fields
@@ -57,7 +60,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
+        System.out.println("DEBUG: Bắt đầu lấy danh sách khách hàng");
         List<User> customers = userRepository.findByRole("CUSTOMER");
+        if (customers == null || customers.isEmpty()) {
+            System.out.println("❌ Không tìm thấy khách hàng nào trong cơ sở dữ liệu.");
+            return new java.util.ArrayList<>();
+        }
+        System.out.println("DEBUG: Tổng số khách hàng tìm thấy: " + customers.size());
+        for (User user : customers) {
+            System.out.println("DEBUG: Khách hàng ID: " + user.getId() + ", Email: " + user.getEmail());
+        }
+
         List<CustomerDTO> dtos = new java.util.ArrayList<>();
         for (User user : customers) {
             CustomerDTO dto = new CustomerDTO();
@@ -66,12 +79,20 @@ public class UserServiceImpl implements UserService {
             dto.setLastName(user.getLastName());
             dto.setEmail(user.getEmail());
             dto.setPhone(user.getPhone());
-            // Bổ sung đầy đủ các trường cần thiết
             dto.setDateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null);
             dto.setGender(user.getGender());
             dto.setAddress(user.getAddress());
             if (user.getCreatedAt() != null) {
                 dto.setCreatedAt(java.util.Date.from(user.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toInstant()));
+            }
+            // Thêm tổng số đơn hàng
+            try {
+                int totalOrders = orderRepository.countByCustomerId(user.getId());
+                System.out.println("DEBUG: Tổng số đơn hàng cho khách hàng ID " + user.getId() + " = " + totalOrders);
+                dto.setTotalOrders(totalOrders);
+            } catch (Exception e) {
+                System.out.println("❌ Lỗi khi tính tổng số đơn hàng cho khách hàng ID: " + user.getId() + " - " + e.getMessage());
+                dto.setTotalOrders(0);
             }
             dtos.add(dto);
         }

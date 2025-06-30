@@ -15,11 +15,13 @@ public class Application extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        System.out.println("DEBUG: Đang cấu hình SpringApplicationBuilder");
         return application.sources(Application.class);
     }
 
     @Bean
     public InternalResourceViewResolver setupViewResolver() {
+        System.out.println("DEBUG: Đang cấu hình InternalResourceViewResolver");
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/");
         resolver.setSuffix(".jsp");
@@ -28,6 +30,7 @@ public class Application extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
+        System.out.println("DEBUG: Đang khởi chạy ứng dụng Spring Boot");
         SpringApplication.run(Application.class, args);
     }
 }
