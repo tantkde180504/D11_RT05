@@ -105,7 +105,7 @@ class AllProductsManager {
                                 <small class="${stockClass}">${stockStatus}</small>
                                 ${product.grade ? `<span class="badge bg-secondary ms-2">${product.grade}</span>` : ''}
                             </div>
-                            <a href="product-detail.jsp?id=${product.id}" class="btn btn-sm btn-outline-primary w-100">Xem chi tiết</a>
+                            <a href="${this.getContextPath()}product-detail.jsp?id=${product.id}" class="btn btn-sm btn-outline-primary w-100">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>
@@ -389,6 +389,20 @@ class AllProductsManager {
         // Re-render
         this.renderProducts();
         this.updateProductCount();
+    }
+
+    // Get context path
+    getContextPath() {
+        // Get context path from current page URL
+        const path = window.location.pathname;
+        const segments = path.split('/').filter(s => s); // Remove empty segments
+        
+        // If we're in a web application with context path (like D11_RT05)
+        if (segments.length > 0 && segments[0] !== 'index.jsp' && segments[0] !== 'all-products.jsp' && segments[0] !== 'product-detail.jsp') {
+            return '/' + segments[0] + '/';
+        }
+        
+        return '';
     }
 
     // Apply current filters to already filtered products

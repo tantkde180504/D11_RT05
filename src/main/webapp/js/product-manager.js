@@ -91,7 +91,7 @@ class ProductManager {
                                     <small class="text-muted">${product.brand || 'Bandai'}</small>
                                 </div>
                                 <div class="d-grid gap-2">
-                                    <a href="product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
+                                    <a href="${this.getContextPath()}product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
                                     ${product.stockQuantity > 0 ? 
                                         `<button class="btn btn-primary" onclick="addToCart(${product.id})">Thêm vào giỏ</button>` :
                                         `<button class="btn btn-secondary" disabled>Hết hàng</button>`
@@ -149,6 +149,20 @@ class ProductManager {
             carousel.setAttribute('data-protection-message', 'Carousel banner is protected - Do not modify');
             console.log('Carousel được bảo vệ:', carousel.id);
         }
+    }
+
+    // Get context path
+    getContextPath() {
+        // Get context path from current page URL
+        const path = window.location.pathname;
+        const segments = path.split('/').filter(s => s); // Remove empty segments
+        
+        // If we're in a web application with context path (like D11_RT05)
+        if (segments.length > 0 && segments[0] !== 'index.jsp' && segments[0] !== 'all-products.jsp' && segments[0] !== 'product-detail.jsp') {
+            return '/' + segments[0] + '/';
+        }
+        
+        return '';
     }
 
     // Format giá tiền
@@ -237,7 +251,7 @@ class ProductManager {
                                         <small class="text-muted">${product.brand || 'Bandai'}</small>
                                     </div>
                                     <div class="d-grid gap-2">
-                                        <a href="product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
+                                        <a href="${this.getContextPath()}product-detail.jsp?id=${product.id}" class="btn btn-outline-primary">Xem chi tiết</a>
                                         ${product.stockQuantity > 0 ? 
                                             `<button class="btn btn-primary" onclick="addToCart(${product.id})">Thêm vào giỏ</button>` :
                                             `<button class="btn btn-secondary" disabled>Hết hàng</button>`

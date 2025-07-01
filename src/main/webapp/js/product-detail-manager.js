@@ -405,7 +405,7 @@ class ProductDetailManager {
             const stockClass = product.stockQuantity > 0 ? 'text-success' : 'text-danger';
             
             relatedHTML += `
-                <a href="/product/${product.id}" class="related-product-item">
+                <a href="${this.getContextPath()}product-detail.jsp?id=${product.id}" class="related-product-item">
                     <img src="${imageUrl}" alt="${product.name}" class="related-product-img"
                          onerror="this.src='/img/default-gundam.jpg'">
                     <div class="related-product-info">
@@ -590,6 +590,20 @@ class ProductDetailManager {
         console.log('Loading fallback static product...');
         // Keep existing static content as fallback
         this.hideLoadingState();
+    }
+
+    // Get context path
+    getContextPath() {
+        // Get context path from current page URL
+        const path = window.location.pathname;
+        const segments = path.split('/').filter(s => s); // Remove empty segments
+        
+        // If we're in a web application with context path (like D11_RT05)
+        if (segments.length > 0 && segments[0] !== 'index.jsp' && segments[0] !== 'all-products.jsp' && segments[0] !== 'product-detail.jsp') {
+            return '/' + segments[0] + '/';
+        }
+        
+        return '';
     }
 
     // Hide loading state

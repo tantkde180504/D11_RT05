@@ -43,13 +43,16 @@
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
                         <div class="search-container w-100">
-                            <form class="search-form">
+                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
-                                    <input type="text" class="form-control search-input" placeholder="Tìm kiếm sản phẩm...">
+                                    <input type="text" name="q" class="form-control search-input" 
+                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
                                     <button class="btn btn-search" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
+                                <!-- Autocomplete suggestions -->
+                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
                             </form>
                         </div>
                     </div>
@@ -135,7 +138,7 @@
                         </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="<%=request.getContextPath()%>/img/Banner1.jpg" class="d-block w-100" alt="Banner 1" 
+                                <img src="<%=request.getContextPath()%>/img/Banner2.jpg" class="d-block w-100" alt="Banner 1" 
                                      onerror="this.src='https://via.placeholder.com/800x400/ff6600/ffffff?text=GUNPLA+45th+Anniversary'">
                                 <div class="carousel-caption">
                                     <h3 class="banner-title">GUNPLA 45th Anniversary</h3>
@@ -143,7 +146,7 @@
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <img src="<%=request.getContextPath()%>/img/Banner2.jpg" class="d-block w-100" alt="Banner 2"
+                                <img src="<%=request.getContextPath()%>/img/Banner1.jpg" class="d-block w-100" alt="Banner 2"
                                      onerror="this.src='https://via.placeholder.com/800x400/0066cc/ffffff?text=Gundam+Base+Tour'">
                                 <div class="carousel-caption">
                                     <h3 class="banner-title">The Gundam Base World Tour 2025</h3>
@@ -551,5 +554,8 @@
     
     <!-- Hamburger Menu Script -->
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
+    
+    <!-- Search Autocomplete Script -->
+    <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
 </body>
 </html>
