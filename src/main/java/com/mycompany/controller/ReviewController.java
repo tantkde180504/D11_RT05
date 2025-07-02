@@ -2,6 +2,7 @@ package com.mycompany.controller;
 
 import com.mycompany.model.Review;
 import com.mycompany.service.ReviewService;
+import com.mycompany.service.OrderService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,9 @@ public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private OrderService orderService;
 
     /**
      * Lấy tất cả đánh giá của một sản phẩm
@@ -52,57 +56,6 @@ public class ReviewController {
     }
 
     /**
-     * Thêm đánh giá mới (URL chuẩn)
-     */
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> addReview(
-            @RequestParam Long productId,
-            @SessionAttribute(name = "userId", required = false) Long userId,
-            @RequestBody Review review,
-            HttpServletRequest request) {
-        
-        // Log ra session ID và các attribute để debug
-        System.out.println("=== ADD REVIEW SESSION INFO ===");
-        if (request.getSession(false) != null) {
-            System.out.println("Session ID: " + request.getSession().getId());
-            Object userIdObj = request.getSession().getAttribute("userId");
-            System.out.println("userId from session (raw): " + userIdObj);
-            System.out.println("userId from session (type): " + (userIdObj != null ? userIdObj.getClass().getName() : "null"));
-            System.out.println("userId from @SessionAttribute: " + userId);
-            System.out.println("isLoggedIn from session: " + request.getSession().getAttribute("isLoggedIn"));
-            
-            // Nếu userId từ @SessionAttribute là null nhưng có trong session
-            if (userId == null && userIdObj != null) {
-                try {
-                    // Thử chuyển đổi từ Object sang Long
-                    if (userIdObj instanceof Long) {
-                        userId = (Long) userIdObj;
-                    } else if (userIdObj instanceof Integer) {
-                        userId = ((Integer) userIdObj).longValue();
-                    } else if (userIdObj instanceof String) {
-                        userId = Long.parseLong((String) userIdObj);
-                    }
-                    System.out.println("Extracted userId from session: " + userId);
-                } catch (Exception e) {
-                    System.out.println("Error converting userId from session: " + e.getMessage());
-                }
-            }
-            
-            // Kiểm tra xem có isLoggedIn=true nhưng không có userId không
-            Boolean isLoggedIn = (Boolean) request.getSession().getAttribute("isLoggedIn");
-            if (isLoggedIn != null && isLoggedIn && userId == null) {
-                // Nếu đã đăng nhập nhưng không có userId, sử dụng userId=3 (tương tự như cart)
-                userId = 3L;
-                System.out.println("User is logged in but userId is not in session, using userId=3");
-            }
-        } else {
-            System.out.println("No session found");
-        }
-        
-        return processReviewSubmission(productId, userId, review);
-    }
-
-    /**
      * Thêm đánh giá mới (URL alternative cho frontend hiện tại)
      */
     @PostMapping("/product/{productId}")
@@ -111,7 +64,19 @@ public class ReviewController {
             @SessionAttribute(name = "userId", required = false) Long userId,
             @RequestBody Review review,
             HttpServletRequest request) {
-        
+        // Lấy userId từ session nếu @SessionAttribute không có
+        if (userId == null && request.getSession(false) != null) {
+            Object userIdObj = request.getSession().getAttribute("userId");
+            if (userIdObj instanceof Long) {
+                userId = (Long) userIdObj;
+            } else if (userIdObj instanceof Integer) {
+                userId = ((Integer) userIdObj).longValue();
+            } else if (userIdObj instanceof String) {
+                try {
+                    userId = Long.parseLong((String) userIdObj);
+                } catch (Exception ignored) {}
+            }
+        }
         // Log ra session ID và các attribute để debug
         System.out.println("=== ADD REVIEW ALTERNATIVE SESSION INFO ===");
         if (request.getSession(false) != null) {
@@ -141,7 +106,13 @@ public class ReviewController {
         } else {
             System.out.println("No session found");
         }
-        
+        // Nếu không có userId thì trả về lỗi
+        if (userId == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Bạn cần đăng nhập để gửi đánh giá");
+            return ResponseEntity.status(401).body(errorResponse);
+        }
         return processReviewSubmission(productId, userId, review);
     }
 
@@ -158,26 +129,28 @@ public class ReviewController {
             System.out.println("UserID from session: " + userId);
             System.out.println("Review data: " + review);
 
-            // Kiểm tra trạng thái đăng nhập, nếu không có userId, sử dụng giá trị cố định như cart
+            // Nếu không có userId thì không cho gửi review
             if (userId == null) {
-                // Sử dụng userId=3 cố định như cart để đảm bảo nhất quán
-                userId = 3L;
-                System.out.println("Using hardcoded userId=3 for consistency with cart controller");
-                
-                // Trong trường hợp xảy ra lỗi nghiêm trọng và userId vẫn là null
-                if (userId == null) {
-                    Map<String, Object> errorResponse = new HashMap<>();
-                    errorResponse.put("success", false);
-                    errorResponse.put("message", "Bạn cần đăng nhập để gửi đánh giá");
-                    return ResponseEntity.status(401).body(errorResponse);
-                }
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Bạn cần đăng nhập để gửi đánh giá");
+                return ResponseEntity.status(401).body(errorResponse);
+            }
+
+            // Kiểm tra đã mua hàng chưa
+            boolean hasPurchased = orderService.hasUserPurchasedProduct(userId, productId);
+            if (!hasPurchased) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Bạn chỉ có thể đánh giá sản phẩm đã mua.");
+                return ResponseEntity.status(403).body(errorResponse);
             }
 
             // Gán userId từ session
             review.setUserId(userId);
             review.setProductId(productId);
 
-            // Kiểm tra xem user đã đánh giá sản phẩm này chưa (JPA)
+            // Kiểm tra xem user đã đánh giá sản phẩm này chưa (JPA) đánh giá 1 lần/ 1sp
             Optional<Review> existing = reviewService.findByUserIdAndProductId(userId, productId);
             if (existing.isPresent()) {
                 Map<String, Object> errorResponse = new HashMap<>();
@@ -228,4 +201,3 @@ public class ReviewController {
         }
     }
 }
- 

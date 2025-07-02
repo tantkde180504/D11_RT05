@@ -948,11 +948,11 @@
         reviewForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Kiểm tra đăng nhập trước
-            const userId = await getCurrentUserId();
-            console.log('Got user ID for review:', userId);
+            // Kiểm tra đăng nhập từ JSP session trực tiếp
+            const sessionUserId = getUserIdFromSession();
+            console.log('User ID from JSP session:', sessionUserId);
             
-            if (!userId) {
+            if (!sessionUserId || sessionUserId === 'null') {
                 const confirmLogin = confirm('Bạn cần đăng nhập để gửi đánh giá. Chuyển đến trang đăng nhập?');
                 if (confirmLogin) {
                     window.location.href = contextPath + '/login.jsp?redirect=' + encodeURIComponent(window.location.href);
@@ -975,39 +975,95 @@
             }
             
             const reviewData = {
-                userId: userId,
                 productId: parseInt(productId),
+                userId: sessionUserId, // Gửi userId từ session
                 rating: rating,
                 comment: comment,
                 isVerified: false
             };
             
             console.log('Sending review data:', reviewData);
+            console.log('Product ID for review:', productId);
+            console.log('Product ID type:', typeof productId);
+            console.log('Product ID is empty?', !productId || productId.trim() === '');
             console.log('JSESSIONID cookie exists:', document.cookie.includes('JSESSIONID'));
+            
+            // Kiểm tra productId trước khi tạo URL
+            if (!productId || productId.trim() === '' || productId === 'null' || productId === 'undefined') {
+                alert('Lỗi: Không tìm thấy ID sản phẩm. Vui lòng reload trang!');
+                return;
+            }
             
             try {
                 const submitButton = reviewForm.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.innerHTML;
                 submitButton.disabled = true;
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
                 
-                const response = await fetch(contextPath + '/api/reviews/product/' + productId, {
+                // Hiển thị trạng thái loading chi tiết hơn
+                let loadingStep = 1;
+                const loadingMessages = [
+                    'Đang gửi đánh giá...',
+                    'Đang kiểm tra quyền đánh giá...',
+                    'Đang xử lý đánh giá...',
+                    'Gần hoàn thành...'
+                ];
+                
+                const updateLoadingMessage = () => {
+                    if (loadingStep < loadingMessages.length) {
+                        submitButton.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingMessages[loadingStep - 1]}`;
+                        loadingStep++;
+                    }
+                };
+                
+                updateLoadingMessage();
+                const loadingInterval = setInterval(updateLoadingMessage, 10000); // Cập nhật message mỗi 10 giây
+                
+                const reviewUrl = contextPath + '/api/reviews/product/' + productId.trim();
+                console.log('Review submission URL:', reviewUrl);
+                console.log('Final URL parts - contextPath:', contextPath, 'productId:', productId.trim());
+                
+                // Tạo timeout controller để kiểm soát thời gian chờ
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    console.log('Review submission timed out after 45 seconds');
+                }, 45000); // Tăng timeout lên 45 giây
+                
+                const response = await fetch(reviewUrl, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
                     credentials: 'same-origin', // Đảm bảo gửi cookie session
-                    body: JSON.stringify(reviewData)
+                    body: JSON.stringify(reviewData),
+                    signal: controller.signal // Thêm signal để có thể cancel request
                 });
                 
+                // Clear timeout nếu request hoàn thành
+                clearTimeout(timeoutId);
+                clearInterval(loadingInterval); // Clear loading interval
+                
                 console.log('Review submission response status:', response.status);
+                console.log('Response headers:', Array.from(response.headers.entries()));
+                
+                // Đọc response text trước để debug
+                const responseText = await response.text();
+                console.log('Raw response text:', responseText);
                 
                 if (!response.ok) {
-                    throw new Error('HTTP error! status: ' + response.status);
+                    console.error('HTTP error! status:', response.status, 'response:', responseText);
+                    throw new Error('HTTP error! status: ' + response.status + ' - ' + responseText);
                 }
                 
-                const result = await response.json();
+                // Parse JSON từ text
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError, 'Raw text:', responseText);
+                    throw new Error('Lỗi phản hồi từ server không hợp lệ');
+                }
                 console.log('Review submission result:', result);
                 
                 if (result.success) {
@@ -1039,11 +1095,47 @@
                 }
                 
             } catch (error) {
+                // Clear loading interval nếu có lỗi
+                if (typeof loadingInterval !== 'undefined') {
+                    clearInterval(loadingInterval);
+                }
+                
                 console.error('Error submitting review:', error);
                 let errorMessage = error.message || 'Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại!';
                 
-                // Xử lý trường hợp chưa mua sản phẩm
+                // Xử lý các loại lỗi khác nhau
+                if (error.name === 'AbortError' || error.message.includes('timed out')) {
+                    errorMessage = 'Yêu cầu gửi đánh giá bị timeout. Vui lòng thử lại sau.';
+                } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+                    errorMessage = 'Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet và thử lại.';
+                } else if (error.message.includes('chỉ có thể đánh giá') || error.message.includes('only review products')) {
+                    errorMessage = 'Bạn chỉ có thể đánh giá những sản phẩm đã mua và được giao thành công.';
+                } else if (error.message.includes('đăng nhập') || error.message.includes('login')) {
+                    errorMessage = 'Vui lòng đăng nhập để có thể gửi đánh giá.';
+                }
+                
+                // Xử lý các loại lỗi khác nhau
                 if (error.message && error.message.includes('chỉ có thể đánh giá sản phẩm đã mua')) {
+                    errorMessage = `
+                        <div>
+                            <p class="mb-2">Bạn chỉ có thể đánh giá sản phẩm đã mua.</p>
+                            <a href="${contextPath}/order-history.jsp" class="btn btn-sm btn-primary">
+                                <i class="fas fa-shopping-bag me-1"></i>Xem lịch sử mua hàng
+                            </a>
+                        </div>
+                    `;
+                } else if (error.message && error.message.includes('purchased')) {
+                    // Xử lý lỗi tiếng Anh
+                    errorMessage = `
+                        <div>
+                            <p class="mb-2">Bạn chỉ có thể đánh giá sản phẩm đã mua.</p>
+                            <a href="${contextPath}/order-history.jsp" class="btn btn-sm btn-primary">
+                                <i class="fas fa-shopping-bag me-1"></i>Xem lịch sử mua hàng
+                            </a>
+                        </div>
+                    `;
+                } else if (response.status === 403 || response.status === 400) {
+                    // Lỗi không có quyền hoặc bad request - có thể là chưa mua hàng
                     errorMessage = `
                         <div>
                             <p class="mb-2">Bạn chỉ có thể đánh giá sản phẩm đã mua.</p>
@@ -1067,6 +1159,10 @@
                     errorAlert.remove();
                 }, 5000);
             } finally {
+                // Clear loading interval nếu vẫn đang chạy
+                if (typeof loadingInterval !== 'undefined') {
+                    clearInterval(loadingInterval);
+                }
                 // Khôi phục nút submit
                 const submitButton = reviewForm.querySelector('button[type="submit"]');
                 submitButton.disabled = false;
@@ -1079,34 +1175,14 @@
             try {
                 // Lấy userId từ session thông qua API
                 const response = await fetch(contextPath + '/api/user-info', {
-                    credentials: 'same-origin', // Đảm bảo gửi cookie session
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    }
+                    credentials: 'same-origin'
                 });
-                
                 const data = await response.json();
-                
                 // Debug - hiển thị thông tin user trả về
                 console.log('User info response:', data);
-                
-                if (data.isLoggedIn && data.userId) {
-                    console.log('Using user ID:', data.userId);
+                if (data && data.isLoggedIn && data.userId) {
                     return data.userId;
-                } else if (data.isLoggedIn) {
-                    // Người dùng đã đăng nhập nhưng không có userId trong response
-                    console.warn('User is logged in but no userId in response');
-                    
-                    // Kiểm tra cookie để debug
-                    console.log('Document cookies:', document.cookie);
-                    
-                    // Fallback cho user đã đăng nhập nhưng không có userId
-                    console.warn('Fallback to userId 3');
-                    return 3; 
                 }
-                
-                console.warn('User is not logged in according to API response');
                 return null;
             } catch (error) {
                 console.error('Error getting user info:', error);
@@ -1439,16 +1515,18 @@
         // Hàm trực tiếp để lấy user id từ session
         function getUserIdFromSession() {
             const sessionValue = '<%= session.getAttribute("userId") %>';
-            console.log('User ID from JSP session:', sessionValue);
+            console.log('Raw session userId value:', sessionValue);
             
-            if (sessionValue && sessionValue !== 'null') {
+            if (sessionValue && sessionValue !== 'null' && sessionValue.trim() !== '') {
                 const parsedId = parseInt(sessionValue);
-                if (!isNaN(parsedId)) {
+                console.log('Parsed userId:', parsedId);
+                if (!isNaN(parsedId) && parsedId > 0) {
                     return parsedId;
                 }
             }
             
-            return 3; // Fallback to user ID 3 from logs
+            console.log('No valid userId found in session');
+            return null;
         }
         
         function escapeHtml(text) {
@@ -1700,41 +1778,5 @@
     <% 
         }
     %>
-
-    <script>
-        document.getElementById('reviewForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const userId = '<%= session.getAttribute("userId") %>';
-            if (!userId || userId === 'null') {
-                alert('Bạn cần đăng nhập để gửi đánh giá.');
-                return;
-            }
-
-            const productId = '<%= productId %>';
-            const rating = document.getElementById('ratingValue').value;
-            const comment = document.getElementById('reviewComment').value;
-
-            try {
-                const response = await fetch(`${contextPath}/api/reviews`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userId, productId, rating, comment })
-                });
-
-                if (response.ok) {
-                    alert('Đánh giá của bạn đã được gửi thành công!');
-                    location.reload();
-                } else {
-                    alert('Gửi đánh giá thất bại. Vui lòng thử lại.');
-                }
-            } catch (error) {
-                console.error('Error submitting review:', error);
-                alert('Đã xảy ra lỗi khi gửi đánh giá.');
-            }
-        });
-    </script>
-</body>
-</html>
+    </body>
+    </html>
