@@ -2,8 +2,8 @@
 
 // Initialize charts when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    const selectedType = document.getElementById('revenueType').value;
-    loadRevenueChart(selectedType);
+    loadRevenueChart(document.getElementById('revenueType').value);
+    loadBestsellerChart();
 });
 // Product Management Functions
 function editProduct(productId) {
@@ -101,30 +101,39 @@ let revenueChartInstance = null;
 
 //THỐNG KÊ DOANH THU THEO THỜI GIAN
 function loadRevenueChart(type = "monthly") {
-    fetch(`/api/revenue?type=${type}`)
-        .then(res => res.json())
+    const url = `${window.location.origin}/api/revenue?type=${type}`;
+    fetch(url)
+        .then(async res => {
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`HTTP ${res.status}: ${text}`);
+            }
+            return res.json();
+        })
         .then(data => {
-            // 🔧 Format label theo kiểu ngày nếu là 'daily'
+            if (!data || data.length === 0) {
+                console.warn("⚠️ Không có dữ liệu để hiển thị biểu đồ.");
+                return;
+            }
+
             const labels = data.map(r => {
                 if (type === "daily") {
                     const date = new Date(r.label);
-                    return date.toLocaleDateString('vi-VN'); // ví dụ: 30/6/2025
+                    return date.toLocaleDateString('vi-VN');
                 }
-                return r.label; // monthly, quarterly, yearly giữ nguyên
+                return r.label;
             });
 
             const revenues = data.map(r => parseFloat(r.totalRevenue));
             const orders = data.map(r => r.totalOrders);
 
-            if (revenueChartInstance) {
-                revenueChartInstance.destroy(); // ⚠️ Hủy biểu đồ cũ nếu có
-            }
+            if (revenueChartInstance) revenueChartInstance.destroy();
 
             const ctx = document.getElementById("revenueChart").getContext("2d");
             revenueChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels,
                     datasets: [
                         {
                             label: "Doanh thu (VNĐ)",
@@ -147,15 +156,10 @@ function loadRevenueChart(type = "monthly") {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
+                    interaction: { mode: 'index', intersect: false },
                     stacked: false,
                     plugins: {
-                        legend: {
-                            position: 'top'
-                        },
+                        legend: { position: 'top' },
                         title: {
                             display: true,
                             text: `Thống kê doanh thu theo ${mapLabel(type)}`
@@ -164,33 +168,24 @@ function loadRevenueChart(type = "monthly") {
                     scales: {
                         y: {
                             type: 'linear',
-                            display: true,
                             position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Doanh thu (VNĐ)'
-                            }
+                            title: { display: true, text: 'Doanh thu (VNĐ)' }
                         },
                         y1: {
                             type: 'linear',
-                            display: true,
                             position: 'right',
-                            grid: {
-                                drawOnChartArea: false
-                            },
-                            title: {
-                                display: true,
-                                text: 'Số đơn hàng'
-                            }
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Số đơn hàng' }
                         }
                     }
                 }
             });
         })
         .catch(err => {
-            console.error("❌ Lỗi khi tải dữ liệu thống kê doanh thu:", err);
+            console.error("❌ Lỗi khi tải dữ liệu thống kê doanh thu:", err.message);
         });
 }
+
 
 function mapLabel(type) {
     switch (type) {

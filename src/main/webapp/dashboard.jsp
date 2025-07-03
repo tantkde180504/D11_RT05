@@ -951,66 +951,30 @@
 
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
                 <script>
-                    // Initialize Charts
+                    // Load biểu đồ từ API khi trang load
                     document.addEventListener('DOMContentLoaded', function () {
-                        // Revenue Chart
-                        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-                        new Chart(revenueCtx, {
-                            type: 'line',
-                            data: {
-                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                                datasets: [{
-                                    label: 'Doanh thu (triệu VNĐ)',
-                                    data: [80, 95, 110, 125, 140, 125],
-                                    borderColor: '#ff6600',
-                                    backgroundColor: 'rgba(255, 102, 0, 0.1)',
-                                    tension: 0.4,
-                                    fill: true
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'top',
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
+                        // ✅ Kiểm tra quyền truy cập
+                        checkPageAccess('ADMIN');
 
-                        // Product Chart
-                        const productCtx = document.getElementById('productChart').getContext('2d');
-                        new Chart(productCtx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: ['Real Grade', 'Master Grade', 'High Grade', 'Perfect Grade'],
-                                datasets: [{
-                                    data: [35, 25, 30, 10],
-                                    backgroundColor: [
-                                        '#ff6600',
-                                        '#0066cc',
-                                        '#28a745',
-                                        '#ffc107'
-                                    ]
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                    }
-                                }
-                            }
+                        // ✅ Gọi các biểu đồ
+                        const revenueType = document.getElementById("revenueType");
+                        if (revenueType) {
+                            loadRevenueChart(revenueType.value);
+                        }
+                        loadBestsellerChart();
+
+                        // ✅ Tab management
+                        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+                            tab.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                document.querySelectorAll('.nav-link').forEach(link => {
+                                    link.classList.remove('active');
+                                });
+                                this.classList.add('active');
+                            });
                         });
-                    });        // Admin functions
+                    });
+                    // Admin functions
                     function editProduct(id) {
                         alert('Chức năng chỉnh sửa sản phẩm #' + id);
                     }
@@ -1043,16 +1007,10 @@
                         });
                     });
                 </script>
-
                 <!-- Auth script for logout functionality -->
                 <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+                <script src="<%=request.getContextPath()%>/js/admin-dashboard.js"></script>
 
-                <script>
-                    // Check admin access on page load
-                    document.addEventListener('DOMContentLoaded', function () {
-                        checkPageAccess('ADMIN');
-                    });
-                </script>
             </body>
 
             </html>
