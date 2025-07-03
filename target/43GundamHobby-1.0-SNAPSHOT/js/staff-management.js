@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${result.id}</td>
             <td>${result.firstName} ${result.lastName}</td>
             <td>${result.email}</td>
+            <td>${result.phone || ''}</td>
             <td>${roleLabel}</td>
             <td>${result.createdAtFormatted || ""}</td>
             <td><span class="badge bg-success">Hoạt động</span></td>
@@ -133,6 +134,7 @@ function loadStaffList() {
             <td>${staff.id || ''}</td>
             <td>${fullName}</td>
             <td>${staff.email}</td>
+            <td>${staff.phone || ''}</td>
             <td>Nhân viên</td>
             <td>${joinDate}</td>
             <td><span class=\"badge bg-success\">Hoạt động</span></td>
@@ -178,6 +180,30 @@ window.openEditModal = function (id) {
       document.getElementById("editFirstName").value = data.firstName || "";
       document.getElementById("editLastName").value = data.lastName || "";
       document.getElementById("editEmail").value = data.email || "";
+      document.getElementById("editPhone").value = data.phone || "";
+      
+      // Xử lý ngày sinh - convert từ LocalDate sang format yyyy-MM-dd nếu cần
+      let dateOfBirth = "";
+      if (data.dateOfBirth) {
+        // Nếu đã là format yyyy-MM-dd thì dùng luôn
+        if (data.dateOfBirth.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          dateOfBirth = data.dateOfBirth;
+        } else {
+          // Nếu là format khác, thử parse và convert
+          try {
+            const date = new Date(data.dateOfBirth);
+            if (!isNaN(date)) {
+              dateOfBirth = date.toISOString().split('T')[0];
+            }
+          } catch (e) {
+            console.warn("Không thể parse ngày sinh:", data.dateOfBirth);
+          }
+        }
+      }
+      document.getElementById("editDateOfBirth").value = dateOfBirth;
+      
+      document.getElementById("editGender").value = data.gender || "";
+      document.getElementById("editAddress").value = data.address || "";
       const modal = new bootstrap.Modal(document.getElementById("editStaffModal"));
       modal.show();
     })
@@ -190,10 +216,61 @@ window.openEditModal = function (id) {
 
 window.saveStaffUpdate = function () {
   const id = document.getElementById("editId").value;
+  
+  // Validate required fields
+  const requiredFields = [
+    { id: "editFirstName", label: "Họ" },
+    { id: "editLastName", label: "Tên" },
+    { id: "editEmail", label: "Email" },
+    { id: "editPhone", label: "Số điện thoại" },
+    { id: "editDateOfBirth", label: "Ngày sinh" },
+    { id: "editGender", label: "Giới tính" },
+    { id: "editAddress", label: "Địa chỉ" }
+  ];
+  
+  let missing = [];
+  requiredFields.forEach(field => {
+    const value = document.getElementById(field.id).value;
+    if (!value || value.trim() === "") {
+      missing.push(field.label);
+    }
+  });
+  
+  if (missing.length > 0) {
+    alert("Vui lòng nhập đầy đủ các trường: " + missing.join(", "));
+    return;
+  }
+  
+  // Đảm bảo format ngày đúng yyyy-MM-dd
+  let dateOfBirth = document.getElementById("editDateOfBirth").value;
+  console.log("Original dateOfBirth:", dateOfBirth);
+  
+  // Nếu đã là format yyyy-MM-dd thì ok, nếu không thì convert
+  if (!dateOfBirth.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    console.warn("Invalid date format, trying to convert:", dateOfBirth);
+    try {
+      const date = new Date(dateOfBirth);
+      if (!isNaN(date)) {
+        dateOfBirth = date.toISOString().split('T')[0];
+        console.log("Converted dateOfBirth:", dateOfBirth);
+      } else {
+        alert("Format ngày sinh không hợp lệ. Vui lòng nhập lại.");
+        return;
+      }
+    } catch (e) {
+      alert("Format ngày sinh không hợp lệ. Vui lòng nhập lại.");
+      return;
+    }
+  }
+  
   const data = {
-    firstName: document.getElementById("editFirstName").value,
-    lastName: document.getElementById("editLastName").value,
-    email: document.getElementById("editEmail").value
+    firstName: document.getElementById("editFirstName").value.trim(),
+    lastName: document.getElementById("editLastName").value.trim(),
+    email: document.getElementById("editEmail").value.trim(),
+    phone: document.getElementById("editPhone").value.trim(),
+    dateOfBirth: dateOfBirth,
+    gender: document.getElementById("editGender").value,
+    address: document.getElementById("editAddress").value.trim()
   };
 
   // Validate email phải chứa @
@@ -202,17 +279,45 @@ window.saveStaffUpdate = function () {
     return;
   }
 
+  console.log("Dữ liệu gửi lên server:", data);
+
   fetch(apiUrl(`/api/staffs/${id}`), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
-  }).then(res => {
+  })
+  .then(async res => {
+    console.log("Response status:", res.status);
     if (res.ok) {
       alert("Cập nhật thành công");
-      location.reload();
+      bootstrap.Modal.getInstance(document.getElementById("editStaffModal")).hide();
+      loadStaffList(); // Reload danh sách thay vì reload toàn trang
     } else {
-      alert("Lỗi khi cập nhật");
+      // Xử lý lỗi chi tiết
+      let errorMessage = "Lỗi khi cập nhật nhân viên";
+      try {
+        const errorData = await res.json();
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch (e) {
+        // Nếu không parse được JSON, lấy text
+        try {
+          const errorText = await res.text();
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        } catch (e2) {
+          errorMessage = `Lỗi HTTP ${res.status}: ${res.statusText}`;
+        }
+      }
+      alert(errorMessage);
+      console.error("Chi tiết lỗi:", res);
     }
+  })
+  .catch(err => {
+    console.error("❌ Lỗi khi cập nhật nhân viên:", err);
+    alert("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.");
   });
 };
 

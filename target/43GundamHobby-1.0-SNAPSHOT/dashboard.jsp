@@ -707,6 +707,7 @@
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
+                        <th>Số điện thoại</th>
                         <th>Chức vụ</th>
                         <th>Ngày vào làm</th>
                         <th>Trạng thái</th>
@@ -781,7 +782,7 @@
 </div>
 <!-- Modal Chỉnh sửa Nhân Viên -->
 <div class="modal fade" id="editStaffModal" tabindex="-1" aria-labelledby="editStaffModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
     
       <div class="modal-header bg-warning text-dark">
@@ -793,19 +794,46 @@
         <!-- ✅ ĐÃ THÊM DÒNG BẮT BUỘC -->
         <input type="hidden" id="editId">
 
-        <div class="mb-3">
-          <label for="editFirstName">Họ</label>
-          <input type="text" class="form-control" id="editFirstName" required>
-        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="editFirstName" class="form-label">Họ <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="editFirstName" required>
+          </div>
 
-        <div class="mb-3">
-          <label for="editLastName">Tên</label>
-          <input type="text" class="form-control" id="editLastName" required>
-        </div>
+          <div class="col-md-6">
+            <label for="editLastName" class="form-label">Tên <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="editLastName" required>
+          </div>
 
-        <div class="mb-3">
-          <label for="editEmail">Email</label>
-          <input type="email" class="form-control" id="editEmail" required>
+          <div class="col-md-6">
+            <label for="editEmail" class="form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="editEmail" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editPhone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="editPhone" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editDateOfBirth" class="form-label">Ngày sinh <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="editDateOfBirth" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editGender" class="form-label">Giới tính <span class="text-danger">*</span></label>
+            <select class="form-control" id="editGender" required>
+              <option value="">-- Chọn giới tính --</option>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label for="editAddress" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="editAddress" rows="3" required></textarea>
+          </div>
         </div>
       </div>
 

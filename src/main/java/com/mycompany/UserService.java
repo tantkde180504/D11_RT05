@@ -15,6 +15,11 @@ public interface UserService {
     List<User> getAllStaffs();
 
     /**
+     * Tìm kiếm nhân viên theo từ khóa và role
+     */
+    List<User> searchStaffs(String keyword, String role);
+
+    /**
      * Tìm 1 nhân viên theo ID
      */
     User findById(Long id);

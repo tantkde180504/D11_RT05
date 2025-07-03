@@ -3,6 +3,7 @@ package com.mycompany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,6 +60,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> searchStaffs(String keyword, String role) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return userRepository.findByRoleAndFirstNameContainingIgnoreCaseOrRoleAndLastNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
+                "STAFF", keyword, "STAFF", keyword, "STAFF", keyword);
+        }
+        return userRepository.findByRole("STAFF");
+    }
+
+    @Override
     public List<CustomerDTO> getAllCustomers() {
         System.out.println("DEBUG: Bắt đầu lấy danh sách khách hàng");
         List<User> customers = userRepository.findByRole("CUSTOMER");
@@ -106,16 +116,77 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updateStaff(Long id, StaffDTO dto) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) return false;
+        try {
+            System.out.println("[DEBUG] UserService.updateStaff - Tìm nhân viên ID: " + id);
+            User user = userRepository.findById(id).orElse(null);
+            if (user == null) {
+                System.out.println("[DEBUG] Không tìm thấy nhân viên ID: " + id);
+                return false;
+            }
 
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setUpdatedAt(LocalDateTime.now());
+            // Kiểm tra email trùng lặp (trừ chính user đang update)
+            if (!user.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
+                throw new RuntimeException("Email đã tồn tại. Vui lòng sử dụng email khác.");
+            }
 
-        userRepository.save(user);
-        return true;
+            // Kiểm tra phone trùng lặp (trừ chính user đang update)
+            if (dto.getPhone() != null && !dto.getPhone().equals(user.getPhone()) && userRepository.existsByPhone(dto.getPhone())) {
+                throw new RuntimeException("Số điện thoại đã tồn tại. Vui lòng sử dụng số khác.");
+            }
+
+            System.out.println("[DEBUG] Tìm thấy nhân viên, đang cập nhật thông tin...");
+            System.out.println("[DEBUG] Current user data: email=" + user.getEmail() + ", password=" + user.getPassword() + ", role=" + user.getRole());
+
+            System.out.println("[DEBUG] Đang lưu vào database bằng custom update...");
+            
+            // Parse dateOfBirth an toàn
+            LocalDate dateOfBirth = null;
+            if (dto.getDateOfBirth() != null && !dto.getDateOfBirth().trim().isEmpty()) {
+                try {
+                    dateOfBirth = LocalDate.parse(dto.getDateOfBirth());
+                    System.out.println("[DEBUG] Parsed dateOfBirth: " + dateOfBirth);
+                } catch (Exception e) {
+                    System.out.println("[ERROR] Lỗi parse dateOfBirth: " + dto.getDateOfBirth() + " - " + e.getMessage());
+                    // dateOfBirth sẽ là null
+                }
+            }
+            
+            // Validate gender
+            String validGender = null;
+            if (dto.getGender() != null && !dto.getGender().trim().isEmpty()) {
+                String gender = dto.getGender().toUpperCase();
+                if ("MALE".equals(gender) || "FEMALE".equals(gender) || "OTHER".equals(gender)) {
+                    validGender = gender;
+                    System.out.println("[DEBUG] Valid gender: " + validGender);
+                } else {
+                    System.out.println("[DEBUG] Invalid gender value: " + dto.getGender() + ", using null");
+                    validGender = null;
+                }
+            }
+            
+            // Sử dụng custom update method để tránh update password/role
+            int updatedRows = userRepository.updateStaffInfo(
+                id,
+                dto.getFirstName(),
+                dto.getLastName(),
+                dto.getEmail(),
+                dto.getPhone(),
+                dateOfBirth,
+                validGender,
+                dto.getAddress(),
+                LocalDateTime.now()
+            );
+            
+            System.out.println("[DEBUG] Số dòng đã cập nhật: " + updatedRows);
+            return updatedRows > 0;
+        } catch (RuntimeException ex) {
+            System.out.println("[ERROR] Lỗi validation trong UserService.updateStaff: " + ex.getMessage());
+            throw ex; // Re-throw để UserController bắt được
+        } catch (Exception ex) {
+            System.out.println("[ERROR] Lỗi trong UserService.updateStaff: " + ex.getMessage());
+            ex.printStackTrace();
+            return false; // Đổi từ throw exception thành return false
+        }
     }
 
     @Override

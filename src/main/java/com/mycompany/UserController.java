@@ -47,6 +47,16 @@ public class UserController {
         return ResponseEntity.ok(dtos);
     }
 
+    // ✅ 2.1. Tìm kiếm nhân viên
+    @GetMapping("/search")
+    public ResponseEntity<List<StaffDTO>> searchStaffs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String role) {
+        List<User> staffs = userService.searchStaffs(keyword, role);
+        List<StaffDTO> dtos = staffs.stream().map(user -> mapToDTO(user)).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     // ✅ 3. Lấy chi tiết 1 nhân viên theo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getStaffById(@PathVariable("id") Long id) {
@@ -64,8 +74,37 @@ public class UserController {
     // ✅ 4. Cập nhật nhân viên
     @PutMapping("/{id}")
     public ResponseEntity<?> updateStaff(@PathVariable("id") Long id, @RequestBody StaffDTO dto) {
-        boolean updated = userService.updateStaff(id, dto);
-        return updated ? ResponseEntity.ok().build() : ResponseEntity.status(500).build();
+        try {
+            System.out.println("[DEBUG] Cập nhật nhân viên ID: " + id);
+            System.out.println("[DEBUG] Dữ liệu nhận được:");
+            System.out.println("  Họ: " + dto.getFirstName());
+            System.out.println("  Tên: " + dto.getLastName());
+            System.out.println("  Email: " + dto.getEmail());
+            System.out.println("  Phone: " + dto.getPhone());
+            System.out.println("  Ngày sinh: " + dto.getDateOfBirth());
+            System.out.println("  Giới tính: " + dto.getGender());
+            System.out.println("  Địa chỉ: " + dto.getAddress());
+
+            boolean updated = userService.updateStaff(id, dto);
+            if (updated) {
+                System.out.println("[DEBUG] Cập nhật thành công nhân viên ID: " + id);
+                return ResponseEntity.ok()
+                    .body(java.util.Collections.singletonMap("message", "Cập nhật thành công"));
+            } else {
+                System.out.println("[DEBUG] Cập nhật thất bại - Service return false cho ID: " + id);
+                return ResponseEntity.status(500)
+                    .body(java.util.Collections.singletonMap("message", "Lỗi hệ thống khi cập nhật nhân viên"));
+            }
+        } catch (RuntimeException ex) {
+            System.out.println("[ERROR] Lỗi validation khi cập nhật nhân viên ID: " + id + " - " + ex.getMessage());
+            return ResponseEntity.status(400)
+                .body(java.util.Collections.singletonMap("message", ex.getMessage()));
+        } catch (Exception ex) {
+            System.out.println("[ERROR] Lỗi hệ thống khi cập nhật nhân viên ID: " + id + " - " + ex.getMessage());
+            ex.printStackTrace();
+            return ResponseEntity.status(500)
+                .body(java.util.Collections.singletonMap("message", "Lỗi hệ thống: " + ex.getMessage()));
+        }
     }
 
     // ✅ 5. Xoá nhân viên
@@ -112,6 +151,15 @@ public class UserController {
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+        
+        // Convert LocalDate to String (yyyy-MM-dd) for JSON compatibility
+        if (user.getDateOfBirth() != null) {
+            dto.setDateOfBirth(user.getDateOfBirth().toString());
+        }
+        
+        dto.setGender(user.getGender());
+        dto.setAddress(user.getAddress());
         dto.setRole(user.getRole());
 
         if (user.getCreatedAt() != null) {
