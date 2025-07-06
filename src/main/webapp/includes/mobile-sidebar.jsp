@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!-- Universal Sidebar Navigation (works on all screen sizes) -->
 <div class="mobile-sidebar" id="mobileSidebar">
     <button class="sidebar-close" id="sidebarClose" aria-label="Đóng menu">&times;</button>
