@@ -1,9 +1,12 @@
 // Admin Dashboard JavaScript Functions
-
+let revenueChartInstance = null;
+let bestsellerChartInstance = null;
+let orderChartInstance = null;
 // Initialize charts when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadRevenueChart(document.getElementById('revenueType').value);
     loadBestsellerChart();
+    loadOrderChart()
 });
 // Product Management Functions
 function editProduct(productId) {
@@ -97,7 +100,7 @@ function showNotification(message, type = 'success') {
     // You can implement a toast notification system here
     alert(message);
 }
-let revenueChartInstance = null;
+
 
 //THỐNG KÊ DOANH THU THEO THỜI GIAN
 function loadRevenueChart(type = "monthly") {
@@ -202,41 +205,126 @@ function loadOrderChart() {
         .then(res => res.json())
         .then(data => {
             const labels = data.map(d => d.status);
-            const counts = data.map(d => d.totalOrders || d.total); // ✅ linh hoạt
+            const counts = data.map(d => d.totalOrders || d.total); // linh hoạt
 
             if (orderChartInstance) orderChartInstance.destroy();
 
-            orderChartInstance = new Chart(document.getElementById('orderChart'), {
-                type: 'doughnut',
+            const ctx = document.getElementById('orderChart').getContext('2d');
+            orderChartInstance = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels,
+                    labels: labels,
                     datasets: [{
-                        label: 'Trạng thái đơn hàng',
+                        label: 'Số đơn hàng',
                         data: counts,
-                        backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', '#4BC0C0']
+                        backgroundColor: [
+                            '#36A2EB', // CANCELLED
+                            '#FFCE56', // CONFIRMED
+                            '#FF6384', // DELIVERED
+                            '#4BC0C0', // PENDING
+                            '#2ECC71'  // SHIPPING
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
                     }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.label}: ${context.parsed.y} đơn`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: { size: 12 }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Số đơn hàng',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
                 }
             });
         });
 }
+
 function loadBestsellerChart() {
     fetch('/api/bestsellers')
         .then(res => res.json())
         .then(data => {
             const labels = data.map(p => p.name);
-            const quantities = data.map(p => p.totalSold || p.total_sold); // ✅ nếu là raw SQL
+            const quantities = data.map(p => p.totalSold || p.total_sold);
+            const total = quantities.reduce((sum, val) => sum + val, 0);
 
+            // Xóa biểu đồ cũ nếu có
             if (bestsellerChartInstance) bestsellerChartInstance.destroy();
 
-            bestsellerChartInstance = new Chart(document.getElementById('bestsellerChart'), {
-                type: 'bar',
+            const ctx = document.getElementById('bestsellerChart').getContext('2d');
+            bestsellerChartInstance = new Chart(ctx, {
+                type: 'pie',
                 data: {
-                    labels,
+                    labels: labels,
                     datasets: [{
                         label: 'Sản phẩm bán chạy',
                         data: quantities,
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)'
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56',
+                            '#8E44AD', '#1ABC9C', '#E67E22',
+                            '#2ECC71', '#3498DB', '#F39C12'
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 2
                     }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 13,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const percent = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} sản phẩm (${percent}%)`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
                 }
             });
         });

@@ -474,16 +474,16 @@
                                         </div>
                                     </div>
 
-                                    <!-- Charts -->
+                                    <!-- HÀNG 1: Doanh thu theo thời gian -->
                                     <div class="row mb-4">
-                                        <div class="col-xl-8 col-lg-7 mb-4">
+                                        <div class="col-12">
                                             <div class="chart-card">
                                                 <div class="chart-header">
                                                     <h6 class="chart-title">
                                                         <i class="fas fa-chart-line me-2"></i>Doanh Thu Theo Thời Gian
                                                     </h6>
 
-                                                    <!-- 🟡 Dropdown chọn loại báo cáo doanh thu -->
+                                                    <!-- Dropdown chọn loại thống kê -->
                                                     <div class="mt-3">
                                                         <label for="revenueType" class="form-label">Chọn loại thống
                                                             kê:</label>
@@ -498,24 +498,43 @@
                                                 </div>
 
                                                 <div class="p-4">
-                                                    <canvas id="revenueChart" height="300"></canvas>
+                                                    <canvas id="revenueChart" style="height: 400px;"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- HÀNG 2: Hai biểu đồ chia đôi -->
+                                    <div class="row mb-4">
+                                        <!-- Trạng thái đơn hàng -->
+                                        <div class="col-lg-6 mb-4">
+                                            <div class="chart-card h-100">
+                                                <div class="chart-header">
+                                                    <h6 class="chart-title">
+                                                        <i class="fas fa-chart-bar me-2"></i>Trạng Thái Đơn Hàng
+                                                    </h6>
+                                                </div>
+                                                <div class="p-4">
+                                                    <canvas id="orderChart" style="height: 350px;"></canvas>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-4 col-lg-5 mb-4">
-                                            <div class="chart-card">
+                                        <!-- Sản phẩm bán chạy -->
+                                        <div class="col-lg-6 mb-4">
+                                            <div class="chart-card h-100">
                                                 <div class="chart-header">
                                                     <h6 class="chart-title">
                                                         <i class="fas fa-chart-pie me-2"></i>Sản Phẩm Bán Chạy
                                                     </h6>
                                                 </div>
                                                 <div class="p-4">
-                                                    <canvas id="productChart" height="300"></canvas>
+                                                    <canvas id="bestsellerChart" style="height: 350px;"></canvas>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
 
                                     <!-- Recent Orders -->
                                     <div class="row">
@@ -950,63 +969,7 @@
                 </div>
 
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-                <script>
-                    // Load biểu đồ từ API khi trang load
-                    document.addEventListener('DOMContentLoaded', function () {
-                        // ✅ Kiểm tra quyền truy cập
-                        checkPageAccess('ADMIN');
 
-                        // ✅ Gọi các biểu đồ
-                        const revenueType = document.getElementById("revenueType");
-                        if (revenueType) {
-                            loadRevenueChart(revenueType.value);
-                        }
-                        loadBestsellerChart();
-
-                        // ✅ Tab management
-                        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                            tab.addEventListener('click', function (e) {
-                                e.preventDefault();
-                                document.querySelectorAll('.nav-link').forEach(link => {
-                                    link.classList.remove('active');
-                                });
-                                this.classList.add('active');
-                            });
-                        });
-                    });
-                    // Admin functions
-                    function editProduct(id) {
-                        alert('Chức năng chỉnh sửa sản phẩm #' + id);
-                    }
-
-                    function deleteProduct(id) {
-                        if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-                            alert('Đã xóa sản phẩm #' + id);
-                        }
-                    }
-
-                    function saveProduct() {
-                        const form = document.getElementById('addProductForm');
-                        if (form.checkValidity()) {
-                            alert('Đã thêm sản phẩm mới thành công!');
-                            bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-                            form.reset();
-                        } else {
-                            form.reportValidity();
-                        }
-                    }
-
-                    // Tab management
-                    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                        tab.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            document.querySelectorAll('.nav-link').forEach(link => {
-                                link.classList.remove('active');
-                            });
-                            this.classList.add('active');
-                        });
-                    });
-                </script>
                 <!-- Auth script for logout functionality -->
                 <script src="<%=request.getContextPath()%>/js/auth.js"></script>
                 <script src="<%=request.getContextPath()%>/js/admin-dashboard.js"></script>
