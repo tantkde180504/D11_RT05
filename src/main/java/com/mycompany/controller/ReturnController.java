@@ -1,6 +1,5 @@
 package com.mycompany.controller;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,6 @@ public class ReturnController {
 
     @Autowired
     private ReturnRepository returnRepository;
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // ✅ API: Lấy danh sách returns (JOIN users + products + orders)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

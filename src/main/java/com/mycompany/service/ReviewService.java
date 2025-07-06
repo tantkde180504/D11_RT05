@@ -1,17 +1,22 @@
 package com.mycompany.service;
 
-import com.mycompany.model.Review;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.mycompany.model.Review;
 
 @Service
 public class ReviewService {
     
     // Temporary in-memory storage for reviews (replace with database later)
-    private Map<Long, List<Review>> reviewsByProduct = new HashMap<>();
+    private final Map<Long, List<Review>> reviewsByProduct = new HashMap<>();
     private Long nextId = 1L;
     
     public ReviewService() {
@@ -91,7 +96,7 @@ public class ReviewService {
         Map<String, Object> ratingBreakdown = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             long count = ratingCounts.getOrDefault(i, 0L);
-            double percentage = reviews.size() > 0 ? (count * 100.0 / reviews.size()) : 0.0;
+            double percentage = !reviews.isEmpty() ? (count * 100.0 / reviews.size()) : 0.0;
             
             Map<String, Object> breakdown = new HashMap<>();
             breakdown.put("count", count);

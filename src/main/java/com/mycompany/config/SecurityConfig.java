@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.core.Authentication;
@@ -25,6 +24,20 @@ public class SecurityConfig {
 
     @Autowired
     private OAuthUserService oAuthUserService;
+    
+    // Initialize OAuth setup when Spring context loads
+    @Autowired
+    public void initOAuthSetup() {
+        try {
+            System.out.println("=== Initializing OAuth Setup ===");
+            oAuthUserService.createOAuthUsersTableIfNotExists();
+            oAuthUserService.migrateOAuthUsersToMainTable();
+            System.out.println("=== OAuth Setup Complete ===");
+        } catch (Exception e) {
+            System.err.println("Error initializing OAuth setup: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
