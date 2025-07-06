@@ -6,6 +6,9 @@ import org.springframework.http.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 import java.sql.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 @RestController
 @RequestMapping("/api")
@@ -99,9 +102,11 @@ public class LoginController {
                                     .body(resp);
                         }
                         
-                        System.out.println("  - Passwords match: " + password.equals(dbPasswordFromDb));
+                        String hashedInputPassword = hashPassword(password);
+                        boolean passwordMatch = hashedInputPassword.equals(dbPasswordFromDb) || password.equals(dbPasswordFromDb);
+                        System.out.println("  - Passwords match: " + passwordMatch);
                         
-                        if (password.equals(dbPasswordFromDb)) {
+                        if (passwordMatch) {
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);
@@ -140,5 +145,17 @@ public class LoginController {
         resp.put("method", "POST");
         System.out.println("Login status check");
         return ResponseEntity.ok(resp);
+    }
+    
+    // Password hashing method
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Error hashing password: " + e.getMessage());
+            return password; // Fallback to plain text in case of error
+        }
     }
 }
