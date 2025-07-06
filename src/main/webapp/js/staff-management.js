@@ -97,6 +97,52 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("🟢 Tab Nhân viên đang active sẵn, gọi loadStaffList()");
     loadStaffList();
   }
+
+  // Staff filter event listeners
+  const staffSearchInput = document.getElementById('staffSearchInput');
+  if (staffSearchInput) {
+    staffSearchInput.addEventListener('input', (e) => {
+      currentStaffFilters.search = e.target.value;
+      applyStaffFilters();
+    });
+  }
+
+  const roleFilter = document.getElementById('roleFilter');
+  if (roleFilter) {
+    roleFilter.addEventListener('change', (e) => {
+      currentStaffFilters.role = e.target.value;
+      applyStaffFilters();
+    });
+  }
+
+  const staffStatusFilter = document.getElementById('staffStatusFilter');
+  if (staffStatusFilter) {
+    staffStatusFilter.addEventListener('change', (e) => {
+      currentStaffFilters.status = e.target.value;
+      applyStaffFilters();
+    });
+  }
+
+  const joinDateFilter = document.getElementById('joinDateFilter');
+  if (joinDateFilter) {
+    joinDateFilter.addEventListener('change', (e) => {
+      currentStaffFilters.joinDate = e.target.value;
+      applyStaffFilters();
+    });
+  }
+
+  const staffSortFilter = document.getElementById('staffSortFilter');
+  if (staffSortFilter) {
+    staffSortFilter.addEventListener('change', (e) => {
+      currentStaffFilters.sort = e.target.value;
+      applyStaffFilters();
+    });
+  }
+
+  const resetStaffFiltersBtn = document.getElementById('resetStaffFiltersBtn');
+  if (resetStaffFiltersBtn) {
+    resetStaffFiltersBtn.addEventListener('click', resetAllStaffFilters);
+  }
 });
 
 // Đổi base URL API cho đúng port backend
@@ -116,40 +162,17 @@ function loadStaffList() {
     })
     .then(data => {
       console.log("📦 Dữ liệu trả về:", data);
-      const tbody = document.getElementById("staffTableBody");
-      tbody.innerHTML = "";
-      data.forEach(staff => {
-        const fullName = `${staff.firstName} ${staff.lastName}`;
-        const joinDate = staff.createdAtFormatted || "";
-        // Log id khi render nút xóa
-        console.log("[DEBUG] Render staff row, id:", staff.id, staff);
-        let deleteBtn = '';
-        if (staff.id !== undefined && staff.id !== null && staff.id !== "" && !isNaN(staff.id)) {
-          deleteBtn = `<button class=\"btn btn-sm btn-danger\" onclick=\"deleteStaff(${staff.id})\"><i class=\"fas fa-trash\"></i></button>`;
-        } else {
-          console.warn("[WARN] Không render nút xóa vì staff không có id hợp lệ:", staff);
-        }
-        const row = `
-          <tr>
-            <td>${staff.id || ''}</td>
-            <td>${fullName}</td>
-            <td>${staff.email}</td>
-            <td>${staff.phone || ''}</td>
-            <td>Nhân viên</td>
-            <td>${joinDate}</td>
-            <td><span class=\"badge bg-success\">Hoạt động</span></td>
-            <td>
-              <button class=\"btn btn-sm btn-warning\" onclick=\"openEditModal(${staff.id})\"><i class=\"fas fa-edit\"></i></button>
-              ${deleteBtn}
-            </td>
-          </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", row);
-      });
+      // Store data in global variable for filtering
+      staffList = data;
+      // Apply current filters
+      applyStaffFilters();
     })
     .catch(err => {
       console.error("❌ Lỗi khi tải danh sách nhân viên:", err);
       alert("Không thể tải danh sách nhân viên. Kiểm tra API /api/staffs/list hoặc xem log backend.");
+      // Reset data and UI
+      staffList = [];
+      applyStaffFilters();
     });
 }
 
@@ -341,3 +364,237 @@ window.deleteStaff = function (id) {
     });
   }
 };
+
+// Advanced Filters & Search for Staff Management
+let staffList = [];
+let currentStaffFilters = {
+    search: '',
+    role: '',
+    status: '',
+    joinDate: '',
+    sort: 'id_asc'
+};
+
+function applyStaffFilters() {
+    let filteredStaff = [...staffList];
+    
+    // Search filter
+    if (currentStaffFilters.search) {
+        const searchTerm = currentStaffFilters.search.toLowerCase();
+        filteredStaff = filteredStaff.filter(staff => {
+            const fullName = `${staff.firstName} ${staff.lastName}`.toLowerCase();
+            const email = (staff.email || '').toLowerCase();
+            const phone = (staff.phone || '').toLowerCase();
+            
+            return fullName.includes(searchTerm) || 
+                   email.includes(searchTerm) || 
+                   phone.includes(searchTerm);
+        });
+    }
+    
+    // Role filter
+    if (currentStaffFilters.role) {
+        filteredStaff = filteredStaff.filter(staff => {
+            const staffRole = staff.role || 'STAFF';
+            return staffRole === currentStaffFilters.role;
+        });
+    }
+    
+    // Status filter (assuming all current staff are active, can be extended)
+    if (currentStaffFilters.status) {
+        filteredStaff = filteredStaff.filter(staff => {
+            // For now, assume all staff are active unless there's an isActive field
+            if (currentStaffFilters.status === 'active') return staff.isActive !== false;
+            if (currentStaffFilters.status === 'inactive') return staff.isActive === false;
+            return true;
+        });
+    }
+    
+    // Join date filter
+    if (currentStaffFilters.joinDate) {
+        const now = new Date();
+        filteredStaff = filteredStaff.filter(staff => {
+            if (!staff.createdAt && !staff.createdAtFormatted) return false;
+            
+            let joinDate;
+            if (staff.createdAt) {
+                joinDate = new Date(staff.createdAt);
+            } else if (staff.createdAtFormatted) {
+                joinDate = new Date(staff.createdAtFormatted);
+            }
+            
+            if (!joinDate || isNaN(joinDate)) return false;
+            
+            switch (currentStaffFilters.joinDate) {
+                case 'today':
+                    return joinDate.toDateString() === now.toDateString();
+                case 'week':
+                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    return joinDate >= weekAgo;
+                case 'month':
+                    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                    return joinDate >= monthAgo;
+                case 'quarter':
+                    const quarterAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+                    return joinDate >= quarterAgo;
+                case 'year':
+                    const yearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                    return joinDate >= yearAgo;
+                case 'old':
+                    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+                    return joinDate < sixMonthsAgo;
+                default:
+                    return true;
+            }
+        });
+    }
+    
+    // Sort
+    filteredStaff.sort((a, b) => {
+        switch (currentStaffFilters.sort) {
+            case 'id_asc': return (a.id || 0) - (b.id || 0);
+            case 'id_desc': return (b.id || 0) - (a.id || 0);
+            case 'name_asc': 
+                const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
+                const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+                return nameA.localeCompare(nameB);
+            case 'name_desc':
+                const nameA2 = `${a.firstName} ${a.lastName}`.toLowerCase();
+                const nameB2 = `${b.firstName} ${b.lastName}`.toLowerCase();
+                return nameB2.localeCompare(nameA2);
+            case 'email_asc': return (a.email || '').localeCompare(b.email || '');
+            case 'email_desc': return (b.email || '').localeCompare(a.email || '');
+            case 'date_asc': 
+                const dateA = new Date(a.createdAt || a.createdAtFormatted || 0);
+                const dateB = new Date(b.createdAt || b.createdAtFormatted || 0);
+                return dateA - dateB;
+            case 'date_desc':
+                const dateA2 = new Date(a.createdAt || a.createdAtFormatted || 0);
+                const dateB2 = new Date(b.createdAt || b.createdAtFormatted || 0);
+                return dateB2 - dateA2;
+            default: return 0;
+        }
+    });
+    
+    // Update UI
+    renderStaffTable(filteredStaff);
+    updateStaffFilterSummary(filteredStaff.length);
+    updateStaffActiveFilters();
+}
+
+function renderStaffTable(staffToRender) {
+    const tbody = document.getElementById("staffTableBody");
+    tbody.innerHTML = "";
+    
+    staffToRender.forEach(staff => {
+        const fullName = `${staff.firstName} ${staff.lastName}`;
+        const joinDate = staff.createdAtFormatted || "";
+        const roleLabel = staff.role === "STAFF" ? "Nhân viên" : (staff.role || "Nhân viên");
+        
+        let deleteBtn = '';
+        if (staff.id !== undefined && staff.id !== null && staff.id !== "" && !isNaN(staff.id)) {
+            deleteBtn = `<button class="btn btn-sm btn-danger" onclick="deleteStaff(${staff.id})"><i class="fas fa-trash"></i></button>`;
+        }
+        
+        const statusBadge = staff.isActive === false ? 
+            '<span class="badge bg-secondary">Tạm ngưng</span>' : 
+            '<span class="badge bg-success">Hoạt động</span>';
+        
+        const row = `
+            <tr>
+                <td>${staff.id || ''}</td>
+                <td>${fullName}</td>
+                <td>${staff.email}</td>
+                <td>${staff.phone || ''}</td>
+                <td>${roleLabel}</td>
+                <td>${joinDate}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="openEditModal(${staff.id})"><i class="fas fa-edit"></i></button>
+                    ${deleteBtn}
+                </td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
+    });
+}
+
+function updateStaffFilterSummary(filteredCount) {
+    document.getElementById('staffFilteredCount').textContent = filteredCount;
+    document.getElementById('staffTotalCount').textContent = staffList.length;
+}
+
+function updateStaffActiveFilters() {
+    const container = document.getElementById('staffActiveFilters');
+    container.innerHTML = '';
+    
+    const filterLabels = {
+        search: 'Tìm kiếm',
+        role: 'Chức vụ',
+        status: 'Trạng thái',
+        joinDate: 'Ngày vào làm'
+    };
+    
+    Object.keys(currentStaffFilters).forEach(key => {
+        if (currentStaffFilters[key] && key !== 'sort') {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-primary me-1';
+            badge.innerHTML = `${filterLabels[key]}: ${getStaffFilterDisplayValue(key, currentStaffFilters[key])} <i class="fas fa-times ms-1" style="cursor: pointer;" onclick="removeStaffFilter('${key}')"></i>`;
+            container.appendChild(badge);
+        }
+    });
+}
+
+function getStaffFilterDisplayValue(key, value) {
+    const displayValues = {
+        role: { ADMIN: 'Quản trị viên', STAFF: 'Nhân viên', MANAGER: 'Quản lý' },
+        status: { active: 'Hoạt động', inactive: 'Tạm ngưng' },
+        joinDate: { 
+            today: 'Hôm nay', 
+            week: 'Tuần này', 
+            month: 'Tháng này', 
+            quarter: 'Quý này',
+            year: 'Năm này',
+            old: 'Cũ hơn' 
+        }
+    };
+    
+    if (key === 'search') return value;
+    return displayValues[key] ? displayValues[key][value] : value;
+}
+
+function removeStaffFilter(filterKey) {
+    currentStaffFilters[filterKey] = '';
+    document.getElementById(getStaffFilterElementId(filterKey)).value = '';
+    applyStaffFilters();
+}
+
+function getStaffFilterElementId(filterKey) {
+    const elementIds = {
+        search: 'staffSearchInput',
+        role: 'roleFilter',
+        status: 'staffStatusFilter',
+        joinDate: 'joinDateFilter',
+        sort: 'staffSortFilter'
+    };
+    return elementIds[filterKey];
+}
+
+function resetAllStaffFilters() {
+    currentStaffFilters = {
+        search: '',
+        role: '',
+        status: '',
+        joinDate: '',
+        sort: 'id_asc'
+    };
+    
+    // Reset form elements
+    document.getElementById('staffSearchInput').value = '';
+    document.getElementById('roleFilter').value = '';
+    document.getElementById('staffStatusFilter').value = '';
+    document.getElementById('joinDateFilter').value = '';
+    document.getElementById('staffSortFilter').value = 'id_asc';
+    
+    applyStaffFilters();
+}

@@ -698,6 +698,95 @@
         </div>
         <p class="text-muted mb-0">Danh sách tất cả nhân viên hệ thống</p>
     </div>
+    
+    <!-- Advanced Filters & Search for Staff -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="fas fa-filter me-2"></i>Bộ lọc nâng cao
+                </h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="resetStaffFiltersBtn">
+                    <i class="fas fa-undo me-1"></i>Đặt lại
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Search Input -->
+                <div class="col-md-4">
+                    <label class="form-label small">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="staffSearchInput" class="form-control" placeholder="Tên, email hoặc SĐT...">
+                    </div>
+                </div>
+                
+                <!-- Role Filter -->
+                <div class="col-md-2">
+                    <label class="form-label small">Chức vụ</label>
+                    <select id="roleFilter" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="ADMIN">Quản trị viên</option>
+                        <option value="STAFF">Nhân viên</option>
+                        <option value="MANAGER">Quản lý</option>
+                    </select>
+                </div>
+                
+                <!-- Status Filter -->
+                <div class="col-md-2">
+                    <label class="form-label small">Trạng thái</label>
+                    <select id="staffStatusFilter" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="active">Hoạt động</option>
+                        <option value="inactive">Tạm ngưng</option>
+                    </select>
+                </div>
+                
+                <!-- Join Date Filter -->
+                <div class="col-md-2">
+                    <label class="form-label small">Ngày vào làm</label>
+                    <select id="joinDateFilter" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="today">Hôm nay</option>
+                        <option value="week">Tuần này</option>
+                        <option value="month">Tháng này</option>
+                        <option value="quarter">Quý này</option>
+                        <option value="year">Năm này</option>
+                        <option value="old">Cũ hơn</option>
+                    </select>
+                </div>
+                
+                <!-- Sort Options -->
+                <div class="col-md-2">
+                    <label class="form-label small">Sắp xếp</label>
+                    <select id="staffSortFilter" class="form-select">
+                        <option value="id_asc">ID ↑</option>
+                        <option value="id_desc">ID ↓</option>
+                        <option value="name_asc">Tên A-Z</option>
+                        <option value="name_desc">Tên Z-A</option>
+                        <option value="email_asc">Email A-Z</option>
+                        <option value="email_desc">Email Z-A</option>
+                        <option value="date_asc">Cũ nhất</option>
+                        <option value="date_desc">Mới nhất</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Filter Summary -->
+            <div class="mt-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div id="staffFilterSummary" class="text-muted small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <span id="staffFilteredCount">0</span> / <span id="staffTotalCount">0</span> nhân viên
+                    </div>
+                    <div id="staffActiveFilters" class="d-flex gap-1 flex-wrap">
+                        <!-- Active filter badges will be shown here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="admin-table">
         <div class="table-responsive">
@@ -859,6 +948,96 @@
         </div>
         <p class="text-muted mb-0">Danh sách tất cả khách hàng hệ thống</p>
     </div>
+    
+    <!-- Advanced Filters & Search for Customers -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="fas fa-filter me-2"></i>Bộ lọc nâng cao
+                </h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="resetCustomerFiltersBtn">
+                    <i class="fas fa-undo me-1"></i>Đặt lại
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Search Input -->
+                <div class="col-md-4">
+                    <label class="form-label small">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="customerSearchInputAdvanced" class="form-control" placeholder="Tên, email, số điện thoại...">
+                    </div>
+                </div>
+                
+                <!-- Gender Filter -->
+                <div class="col-md-2">
+                    <label class="form-label small">Giới tính</label>
+                    <select id="customerGenderFilter" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="MALE">Nam</option>
+                        <option value="FEMALE">Nữ</option>
+                        <option value="OTHER">Khác</option>
+                    </select>
+                </div>
+                
+                <!-- Order Count Filter -->
+                <div class="col-md-2">
+                    <label class="form-label small">Số đơn hàng</label>
+                    <select id="customerOrderFilter" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="new">Mới (0)</option>
+                        <option value="low">Ít (1-5)</option>
+                        <option value="medium">Trung bình (6-15)</option>
+                        <option value="high">Nhiều (>15)</option>
+                    </select>
+                </div>
+                
+                <!-- Registration Date Filter -->
+                <div class="col-md-2">
+                    <label class="form-label small">Ngày đăng ký</label>
+                    <select id="customerDateFilter" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="today">Hôm nay</option>
+                        <option value="week">Tuần này</option>
+                        <option value="month">Tháng này</option>
+                        <option value="old">Cũ hơn</option>
+                    </select>
+                </div>
+                
+                <!-- Sort Options -->
+                <div class="col-md-2">
+                    <label class="form-label small">Sắp xếp</label>
+                    <select id="customerSortFilter" class="form-select">
+                        <option value="id_asc">ID ↑</option>
+                        <option value="id_desc">ID ↓</option>
+                        <option value="name_asc">Tên A-Z</option>
+                        <option value="name_desc">Tên Z-A</option>
+                        <option value="date_asc">Cũ nhất</option>
+                        <option value="date_desc">Mới nhất</option>
+                        <option value="orders_asc">Ít đơn nhất</option>
+                        <option value="orders_desc">Nhiều đơn nhất</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Filter Summary -->
+            <div class="mt-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div id="customerFilterSummary" class="text-muted small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <span id="customerFilteredCount">0</span> / <span id="customerTotalCount">0</span> khách hàng
+                    </div>
+                    <div id="customerActiveFilters" class="d-flex gap-1 flex-wrap">
+                        <!-- Active filter badges will be shown here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="admin-table">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -972,8 +1151,93 @@
                             </div>
                             <p class="text-muted mb-0">Danh sách tất cả danh mục sản phẩm</p>
                         </div>
-                        <div id="category-toolbar" class="mb-3">
-                            <input type="text" id="categorySearchInput" class="form-control" placeholder="Tìm kiếm theo tên danh mục...">
+                        
+                        <!-- Advanced Filters & Search -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-filter me-2"></i>Bộ lọc nâng cao
+                                    </h6>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="resetFiltersBtn">
+                                        <i class="fas fa-undo me-1"></i>Đặt lại
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <!-- Search Input -->
+                                    <div class="col-md-4">
+                                        <label class="form-label small">Tìm kiếm</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <input type="text" id="categorySearchInput" class="form-control" placeholder="Tên hoặc mô tả danh mục...">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Status Filter -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small">Trạng thái</label>
+                                        <select id="statusFilter" class="form-select">
+                                            <option value="">Tất cả</option>
+                                            <option value="active">Hoạt động</option>
+                                            <option value="inactive">Tạm ẩn</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Product Count Filter -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small">Số sản phẩm</label>
+                                        <select id="productCountFilter" class="form-select">
+                                            <option value="">Tất cả</option>
+                                            <option value="empty">Trống (0)</option>
+                                            <option value="low">Ít (1-5)</option>
+                                            <option value="medium">Trung bình (6-15)</option>
+                                            <option value="high">Nhiều (>15)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Date Filter -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small">Ngày tạo</label>
+                                        <select id="dateFilter" class="form-select">
+                                            <option value="">Tất cả</option>
+                                            <option value="today">Hôm nay</option>
+                                            <option value="week">Tuần này</option>
+                                            <option value="month">Tháng này</option>
+                                            <option value="old">Cũ hơn</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Sort Options -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small">Sắp xếp</label>
+                                        <select id="sortFilter" class="form-select">
+                                            <option value="id_asc">ID ↑</option>
+                                            <option value="id_desc">ID ↓</option>
+                                            <option value="name_asc">Tên A-Z</option>
+                                            <option value="name_desc">Tên Z-A</option>
+                                            <option value="date_asc">Cũ nhất</option>
+                                            <option value="date_desc">Mới nhất</option>
+                                            <option value="products_asc">Ít SP nhất</option>
+                                            <option value="products_desc">Nhiều SP nhất</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Filter Summary -->
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div id="filterSummary" class="text-muted small">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            <span id="filteredCount">0</span> / <span id="totalCount">0</span> danh mục
+                                        </div>
+                                        <div id="activeFilters" class="d-flex gap-1 flex-wrap">
+                                            <!-- Active filter badges will be shown here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="admin-table">
                             <div class="table-responsive">

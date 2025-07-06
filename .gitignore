@@ -1,0 +1,22 @@
+# Build directories
+target/
+work/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# SQL test files (comment out if you want to keep them)
+# test_*.sql
