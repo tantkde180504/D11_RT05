@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadInventoryFromAPI();
     loadComplaintsFromAPI();
     initInventoryFilters();
+    checkLowStockAlert();
 });
 
 // Tab switching functionality
@@ -1041,3 +1042,80 @@ function handleCompleteComplaint(complaintCode) {
             showErrorMessage("Lỗi khi cập nhật trạng thái khiếu nại.");
         });
 }
+// ⚠️ Hiển thị thông báo sản phẩm sắp hết hàng (1 lần mỗi ngày)
+function checkLowStockAlert() {
+    const shownToday = localStorage.getItem("lowStockNoticeShown");
+    const today = new Date().toISOString().slice(0, 10);
+
+    if (shownToday === today) return;
+
+    fetch('/api/notifications/low-stock')
+        .then(res => res.json())
+        .then(data => {
+            if (data.length > 0) {
+                document.getElementById('low-stock-count').innerText = data.length;
+                document.getElementById('low-stock-alert').style.display = 'flex';
+                localStorage.setItem("lowStockNoticeShown", today);
+            }
+        })
+        .catch(err => {
+            console.error('❌ Lỗi khi tải cảnh báo sắp hết hàng:', err);
+        });
+}
+
+// ✅ Khi staff click "Xem ngay"
+function viewLowStockProducts() {
+    // 1. Chuyển sang tab tồn kho
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+    const inventoryTab = document.querySelector('[data-tab="inventory"]');
+    const inventoryContent = document.getElementById('inventory');
+
+    if (inventoryTab && inventoryContent) {
+        inventoryTab.classList.add('active');
+        inventoryContent.classList.add('active');
+    }
+
+    // 2. Gọi lại dữ liệu tồn kho
+    loadInventoryFromAPI();
+
+    // 3. Lọc sản phẩm có stock <= 5
+    setTimeout(() => {
+        const rows = document.querySelectorAll('#inventory-body tr');
+        rows.forEach(row => {
+            const stockText = row.querySelector('td:nth-child(5)')?.textContent.trim();
+            const stock = parseInt(stockText);
+
+            if (!isNaN(stock) && stock <= 5) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Cập nhật dropdown filter về rỗng để user thấy rõ là đang dùng lọc tùy chỉnh
+        const statusSelect = document.getElementById('status-filter');
+        if (statusSelect) statusSelect.value = '';
+    }, 200);
+
+    history.replaceState(null, '', '#inventory');
+}
+
+
+
+// ✅ Khi staff click "Tôi đã biết"
+function dismissLowStockAlert() {
+    console.log("Đã nhấn 'Tôi đã biết'");
+    const el = document.getElementById('low-stock-alert');
+    if (el) {
+        el.style.display = 'none';
+        console.log("Đã ẩn cảnh báo.");
+    } else {
+        console.warn("Không tìm thấy phần tử #low-stock-alert");
+    }
+}
+
+window.dismissLowStockAlert = dismissLowStockAlert;
+window.viewLowStockProducts = viewLowStockProducts;
+
