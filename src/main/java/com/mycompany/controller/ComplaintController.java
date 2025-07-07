@@ -169,8 +169,10 @@ public class ComplaintController {
         System.out.println("===> [GET /api/complaints/my] userId in session = " + userId);
 
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Collections.singletonMap("message", "Bạn chưa đăng nhập!"));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Bạn chưa đăng nhập!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
 
         try {
@@ -193,12 +195,16 @@ public class ComplaintController {
                     "WHERE c.user_id = ? " +
                     "ORDER BY c.created_at DESC";
 
+            System.out.println("===> Executing SQL with userId = " + userId);
             List<Object[]> rows = entityManager.createNativeQuery(sql)
                     .setParameter(1, userId)
                     .getResultList();
 
+            System.out.println("===> Found " + rows.size() + " complaints for user " + userId);
+
             List<Map<String, Object>> result = new ArrayList<>();
             for (Object[] row : rows) {
+                System.out.println("===> Processing row: " + Arrays.toString(row));
                 Map<String, Object> item = new HashMap<>();
                 item.put("complaintCode", row[0]);
                 item.put("orderNumber", row[1]);
@@ -213,12 +219,16 @@ public class ComplaintController {
                 result.add(item);
             }
 
-            return ResponseEntity.ok(result);
+            System.out.println("===> Returning " + result.size() + " complaints for user " + userId);
+            return ResponseEntity.ok(result); // Trả về mảng trực tiếp để tương thích với frontend
 
         } catch (Exception e) {
+            System.out.println("===> Exception in getMyComplaints: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("message", "Lỗi máy chủ: " + e.getMessage()));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Lỗi máy chủ: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }

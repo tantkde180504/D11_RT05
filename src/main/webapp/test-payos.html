@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PayOS Integration - 43 Gundam Hobby</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .test-btn {
+            background-color: #28a745;
+        }
+        .test-btn:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>Test PayOS Integration</h1>
+        <p>Trang này giúp kiểm tra tích hợp PayOS có hoạt động đúng không.</p>
+        
+        <h3>Các bước test:</h3>
+        <ol>
+            <li>Kiểm tra cấu hình PayOS</li>
+            <li>Tạo link thanh toán test</li>
+            <li>Kiểm tra kết nối tới PayOS API</li>
+        </ol>
+
+        <div>
+            <button onclick="testConfig()" class="btn test-btn">1. Test Cấu hình</button>
+            <button onclick="testPayment()" class="btn test-btn">2. Test Tạo Payment Link</button>
+            <a href="/cart.jsp" class="btn">Về Giỏ hàng</a>
+            <a href="/index.html" class="btn">Về Trang chủ</a>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess = true) {
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            result.className = 'result ' + (isSuccess ? 'success' : 'error');
+            result.innerHTML = message;
+        }
+
+        async function testConfig() {
+            try {
+                showResult('Đang kiểm tra cấu hình...', true);
+                
+                const response = await fetch('/api/test/config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult(`
+                        <strong>✓ Cấu hình PayOS thành công!</strong><br>
+                        Client ID: ${data.clientId}<br>
+                        Return URL: ${data.returnUrl}<br>
+                        Cancel URL: ${data.cancelUrl}
+                    `, true);
+                } else {
+                    showResult(`<strong>✗ Lỗi cấu hình:</strong> ${data.message}`, false);
+                }
+            } catch (error) {
+                showResult(`<strong>✗ Lỗi kết nối:</strong> ${error.message}`, false);
+            }
+        }
+
+        async function testPayment() {
+            try {
+                showResult('Đang tạo link thanh toán test...', true);
+                
+                const response = await fetch('/api/test/payos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult(`
+                        <strong>✓ Tạo link PayOS thành công!</strong><br>
+                        Order Code: ${data.orderCode}<br>
+                        <a href="${data.checkoutUrl}" target="_blank" class="btn">Mở link thanh toán</a><br>
+                        <small>Link sẽ mở trong tab mới</small>
+                    `, true);
+                } else {
+                    showResult(`<strong>✗ Lỗi tạo link:</strong> ${data.message}`, false);
+                }
+            } catch (error) {
+                showResult(`<strong>✗ Lỗi kết nối:</strong> ${error.message}`, false);
+            }
+        }
+    </script>
+</body>
+</html>

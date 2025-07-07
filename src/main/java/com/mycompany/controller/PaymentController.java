@@ -1,5 +1,6 @@
 package com.mycompany.controller;
 
+import com.mycompany.config.PayOSConfig;
 import com.mycompany.repository.CartRepository;
 import com.mycompany.repository.OrderItemRepository;
 import com.mycompany.repository.OrderRepository;
@@ -13,6 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import vn.payos.PayOS;
+import vn.payos.type.CheckoutResponseData;
+import vn.payos.type.ItemData;
+import vn.payos.type.PaymentData;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,6 +34,10 @@ public class PaymentController {
     private OrderRepository orderRepository;
     @Autowired
     private OrderItemRepository orderItemRepository;
+    @Autowired
+    private PayOS payOS;
+    @Autowired
+    private PayOSConfig payOSConfig;
 
     @PostMapping(value = "/payment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -46,6 +55,7 @@ public class PaymentController {
             String address = (String) payload.getOrDefault("address", "");
             String note = (String) payload.getOrDefault("note", "");
             String paymentMethod = (String) payload.getOrDefault("paymentMethod", "COD");
+            
             // Lấy cart từ database theo userId
             List<Cart> cartList = cartRepository.findByUserId(userId);
             if (cartList == null || cartList.isEmpty()) {
@@ -53,8 +63,11 @@ public class PaymentController {
                 resp.put("message", "Giỏ hàng trống!");
                 return ResponseEntity.ok(resp);
             }
-            // Tính tổng tiền
+            
+            // Tính tổng tiền và chuẩn bị dữ liệu
             BigDecimal total = BigDecimal.ZERO;
+            List<ItemData> items = new ArrayList<>();
+            
             for (Cart cart : cartList) {
                 Product product = productRepository.findById(cart.getProductId()).orElse(null);
                 if (product == null || !Boolean.TRUE.equals(product.getIsActive())) {
@@ -67,46 +80,110 @@ public class PaymentController {
                     resp.put("message", "Sản phẩm '" + product.getName() + "' không đủ hàng!");
                     return ResponseEntity.ok(resp);
                 }
-                total = total.add(product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity())));
+                
+                BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity()));
+                total = total.add(itemTotal);
+                
+                // Tạo item data cho PayOS
+                ItemData itemData = ItemData.builder()
+                    .name(product.getName())
+                    .quantity(cart.getQuantity())
+                    .price(product.getPrice().intValue())
+                    .build();
+                items.add(itemData);
             }
-            // Tạo đơn hàng
-            Order order = new Order();
-            order.setUserId(userId);
-            order.setTotalAmount(total);
-            order.setStatus("PENDING");
-            order.setShippingAddress(address);
-            order.setShippingPhone(phone);
-            order.setShippingName(fullName);
-            order.setPaymentMethod(paymentMethod);
-            order.setOrderDate(LocalDateTime.now());
-            order.setNotes(note);
-            // Sinh order_number 6 số cuối
-            String orderNumber = "ORD" + String.format("%06d", System.currentTimeMillis() % 1000000);
-            order.setOrderNumber(orderNumber);
-            orderRepository.save(order);
-            // Tạo order_items và cập nhật stock
-            for (Cart cart : cartList) {
-                Product product = productRepository.findById(cart.getProductId()).orElse(null);
-                if (product == null) continue;
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrder(order);
-                orderItem.setProduct(product);
-                orderItem.setQuantity(cart.getQuantity());
-                orderItem.setUnitPrice(product.getPrice());
-                orderItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity())));
-                orderItemRepository.save(orderItem);
-                // Trừ tồn kho
-                product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
-                productRepository.save(product);
+            
+            // Xử lý thanh toán dựa trên phương thức
+            if ("BANK_TRANSFER".equalsIgnoreCase(paymentMethod)) {
+                // Tạo đơn hàng cho PayOS
+                Order order = new Order();
+                order.setUserId(userId);
+                order.setTotalAmount(total);
+                order.setStatus("PENDING");
+                order.setShippingAddress(address);
+                order.setShippingPhone(phone);
+                order.setShippingName(fullName);
+                order.setPaymentMethod(paymentMethod);
+                order.setOrderDate(LocalDateTime.now());
+                order.setNotes(note);
+                
+                // Sinh order_number 6 số cuối
+                String orderNumber = "ORD" + String.format("%06d", System.currentTimeMillis() % 1000000);
+                order.setOrderNumber(orderNumber);
+                orderRepository.save(order);
+                
+                // Tạo link thanh toán PayOS
+                Long orderCode = order.getId(); // Sử dụng ID của order làm orderCode
+                
+                PaymentData paymentData = PaymentData.builder()
+                    .orderCode(orderCode)
+                    .amount(total.intValue())
+                    .description("Don hang " + orderNumber.substring(3)) // Rút gọn: "Don hang 123456"
+                    .returnUrl(payOSConfig.getReturnUrl() + "?orderCode=" + orderCode)
+                    .cancelUrl(payOSConfig.getCancelUrl() + "?orderCode=" + orderCode)
+                    .items(items)
+                    .build();
+                
+                CheckoutResponseData checkoutResponse = payOS.createPaymentLink(paymentData);
+                
+                // Trả về URL thanh toán
+                resp.put("success", true);
+                resp.put("message", "Đã tạo link thanh toán!");
+                resp.put("checkoutUrl", checkoutResponse.getCheckoutUrl());
+                resp.put("orderCode", orderCode);
+                resp.put("orderNumber", orderNumber);
+                
+                return ResponseEntity.ok(resp);
+                
+            } else {
+                // Xử lý thanh toán COD như cũ
+                Order order = new Order();
+                order.setUserId(userId);
+                order.setTotalAmount(total);
+                order.setStatus("PENDING");
+                order.setShippingAddress(address);
+                order.setShippingPhone(phone);
+                order.setShippingName(fullName);
+                order.setPaymentMethod(paymentMethod);
+                order.setOrderDate(LocalDateTime.now());
+                order.setNotes(note);
+                
+                // Sinh order_number 6 số cuối
+                String orderNumber = "ORD" + String.format("%06d", System.currentTimeMillis() % 1000000);
+                order.setOrderNumber(orderNumber);
+                orderRepository.save(order);
+                
+                // Tạo order_items và cập nhật stock
+                for (Cart cart : cartList) {
+                    Product product = productRepository.findById(cart.getProductId()).orElse(null);
+                    if (product == null) continue;
+                    
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(product);
+                    orderItem.setQuantity(cart.getQuantity());
+                    orderItem.setUnitPrice(product.getPrice());
+                    orderItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity())));
+                    orderItemRepository.save(orderItem);
+                    
+                    // Trừ tồn kho
+                    product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
+                    productRepository.save(product);
+                }
+                
+                // Xóa cart
+                cartRepository.deleteByUserId(userId);
+                
+                resp.put("success", true);
+                resp.put("message", "Đặt hàng thành công!");
+                resp.put("orderNumber", orderNumber);
+                
+                return ResponseEntity.ok(resp);
             }
-            // Xóa cart
-            cartRepository.deleteByUserId(userId);
-            resp.put("success", true);
-            resp.put("message", "Đặt hàng thành công!");
-            return ResponseEntity.ok(resp);
+            
         } catch (Exception ex) {
             resp.put("success", false);
-            resp.put("message", "Lỗi xử lý đơn hàng!");
+            resp.put("message", "Lỗi xử lý đơn hàng: " + ex.getMessage());
             return ResponseEntity.status(500).body(resp);
         }
     }
@@ -179,4 +256,72 @@ public class PaymentController {
         }
         return ResponseEntity.ok(resp);
     }
+
+    // PayOS Payment confirmation endpoint
+    @PostMapping("/payment/payos/confirm")
+    @Transactional
+    public ResponseEntity<?> confirmPayOSPayment(@RequestBody Map<String, Object> payload) {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Long orderCode = Long.valueOf(payload.get("orderCode").toString());
+            String status = payload.get("status").toString();
+            
+            // Tìm order theo orderCode (sử dụng ID)
+            Optional<Order> optOrder = orderRepository.findById(orderCode);
+            if (optOrder.isEmpty()) {
+                resp.put("success", false);
+                resp.put("message", "Không tìm thấy đơn hàng!");
+                return ResponseEntity.ok(resp);
+            }
+            
+            Order order = optOrder.get();
+            
+            if ("PAID".equalsIgnoreCase(status)) {
+                // Thanh toán thành công - xử lý đơn hàng
+                order.setStatus("PAID");
+                orderRepository.save(order);
+                
+                // Tạo order_items và cập nhật stock
+                List<Cart> cartList = cartRepository.findByUserId(order.getUserId());
+                for (Cart cart : cartList) {
+                    Product product = productRepository.findById(cart.getProductId()).orElse(null);
+                    if (product == null) continue;
+                    
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(product);
+                    orderItem.setQuantity(cart.getQuantity());
+                    orderItem.setUnitPrice(product.getPrice());
+                    orderItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity())));
+                    orderItemRepository.save(orderItem);
+                    
+                    // Trừ tồn kho
+                    product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
+                    productRepository.save(product);
+                }
+                
+                // Xóa cart
+                cartRepository.deleteByUserId(order.getUserId());
+                
+                resp.put("success", true);
+                resp.put("message", "Thanh toán thành công!");
+            } else {
+                // Thanh toán thất bại - hủy đơn hàng
+                order.setStatus("CANCELLED");
+                orderRepository.save(order);
+                
+                resp.put("success", false);
+                resp.put("message", "Thanh toán thất bại!");
+            }
+            
+            return ResponseEntity.ok(resp);
+            
+        } catch (Exception ex) {
+            resp.put("success", false);
+            resp.put("message", "Lỗi xử lý thanh toán: " + ex.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
+    }
+    
+
 }

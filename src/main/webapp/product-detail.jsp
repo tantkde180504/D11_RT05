@@ -328,15 +328,6 @@
                         <i class="fas fa-edit me-2"></i>Viết đánh giá
                     </h3>
                     
-                    <!-- DEBUG: Test API Button (remove in production) -->
-                    <div class="mb-3 p-2 bg-light border rounded">
-                        <small class="text-muted">DEBUG: Test API connection</small><br>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="testReviewsAPI()">
-                            <i class="fas fa-bug me-1"></i>Test Reviews API
-                        </button>
-                        <div id="apiTestResult" class="mt-2"></div>
-                    </div>
-                    
                     <form class="review-form" id="reviewForm">
                         <div class="rating-input mb-3">
                             <label class="form-label">Đánh giá của bạn *</label>
@@ -1560,49 +1551,6 @@
         
         function markHelpful(reviewId) {
             alert('Cảm ơn phản hồi của bạn!');
-        }
-        
-        // DEBUG: Test function to check API
-        function testReviewsAPI() {
-            const resultDiv = document.getElementById('apiTestResult');
-            resultDiv.innerHTML = '<small class="text-info">Testing API...</small>';
-            
-            const testUrl = contextPath + '/api/reviews/product/' + productId;
-            console.log('Testing API URL:', testUrl);
-            
-            fetch(testUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Cache-Control': 'no-cache'
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                console.log('API Test - Response status:', response.status);
-                console.log('API Test - Response headers:', response.headers);
-                return response.text();
-            })
-            .then(text => {
-                console.log('API Test - Raw response:', text);
-                resultDiv.innerHTML = `<small class="text-success">API Response: ${text.substring(0, 200)}...</small>`;
-                
-                try {
-                    const data = JSON.parse(text);
-                    console.log('API Test - Parsed data:', data);
-                    
-                    if (data.success && data.reviews) {
-                        resultDiv.innerHTML += `<br><small class="text-success">Found ${data.reviews.length} reviews</small>`;
-                    }
-                } catch (e) {
-                    console.error('API Test - JSON parse error:', e);
-                    resultDiv.innerHTML += `<br><small class="text-danger">JSON Parse Error: ${e.message}</small>`;
-                }
-            })
-            .catch(error => {
-                console.error('API Test - Error:', error);
-                resultDiv.innerHTML = `<small class="text-danger">API Error: ${error.message}</small>`;
-            });
         }
         
         // Review Filter

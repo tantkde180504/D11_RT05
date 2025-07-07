@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%
+    String contextPath = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -11,7 +14,10 @@
 </head>
 
 <body style="background:#f5f5f5;">
-    <div class="container py-5">
+    <script>
+        // Khai báo contextPath để sử dụng trong JavaScript
+        const contextPath = '<%= contextPath %>';
+    </script>
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="checkout-section mb-4">
@@ -46,17 +52,17 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="payment" id="bank">
                                 <label class="form-check-label" for="bank">
-                                    Chuyển khoản ngân hàng
+                                    Thanh toán qua PayOS
                                 </label>
                             </div>
-                            <div id="qr-section" class="mt-3" style="display:none;">
+                            <div id="payos-section" class="mt-3" style="display:none;">
                                 <div class="alert alert-info py-2 mb-2">
-                                    Vui lòng quét mã QR bên dưới để chuyển khoản thanh toán.
+                                    <i class="fas fa-credit-card me-2"></i>
+                                    Bạn sẽ được chuyển đến cổng thanh toán PayOS để hoàn tất giao dịch.
                                 </div>
-                                <img src="https://img.vietqr.io/image/VCB-0123456789-compact2.jpg"
-                                    alt="QR chuyển khoản" style="max-width:220px;display:block;margin:auto;">
-                                <div class="text-center mt-2 small text-muted">Nội dung chuyển khoản:
-                                    <b>ThanhToanDonHang</b>
+                                <div class="text-center">
+                                    <img src="https://docs.payos.vn/img/logo.svg" 
+                                         alt="PayOS Logo" style="max-width:150px;">
                                 </div>
                             </div>
                         </div>
@@ -100,45 +106,156 @@
 document.addEventListener('DOMContentLoaded', function() {
     const codRadio = document.getElementById('cod');
     const bankRadio = document.getElementById('bank');
-    const qrSection = document.getElementById('qr-section');
+    const payosSection = document.getElementById('payos-section');
     const checkoutForm = document.getElementById('checkout-form');
 
-    function toggleQR() {
-        qrSection.style.display = bankRadio.checked ? 'block' : 'none';
+    function togglePayOS() {
+        payosSection.style.display = bankRadio.checked ? 'block' : 'none';
     }
 
-    codRadio.addEventListener('change', toggleQR);
-    bankRadio.addEventListener('change', toggleQR);
-    toggleQR();
+    codRadio.addEventListener('change', togglePayOS);
+    bankRadio.addEventListener('change', togglePayOS);
+    togglePayOS();
 
     checkoutForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        
         // Lấy dữ liệu form
         const fullName = checkoutForm.querySelector('input[placeholder="Nhập họ và tên"]').value.trim();
         const phone = checkoutForm.querySelector('input[placeholder="Nhập số điện thoại"]').value.trim();
         const address = checkoutForm.querySelector('input[placeholder="Nhập địa chỉ nhận hàng"]').value.trim();
         const note = checkoutForm.querySelector('textarea').value.trim();
-        const paymentMethod = bankRadio.checked ? 'VNPAY' : 'COD';
+        const paymentMethod = bankRadio.checked ? 'BANK_TRANSFER' : 'COD';
 
-        // Gửi dữ liệu lên backend (KHÔNG gửi cartItems)
-        const payload = {
-            fullName, phone, address, note, paymentMethod
-        };
-        fetch('/api/payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
+        // Validate form
+        if (!fullName || !phone || !address) {
+            alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+            return;
+        }
+
+        try {
+            // Nếu chọn PayOS, chuyển đến PayOS payment
+            if (paymentMethod === 'BANK_TRANSFER') {
+                // Lấy thông tin giỏ hàng
+                let cartItems = [];
+                let grandTotal = 0;
+                
+                // Debug: Log để kiểm tra
+                console.log('Checking localStorage for cartItems...');
+                
+                if (localStorage.getItem('cartItems')) {
+                    try {
+                        cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                        grandTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                        console.log('Found cart in localStorage:', cartItems, 'Total:', grandTotal);
+                    } catch (e) { 
+                        console.error('Error parsing localStorage cart:', e);
+                        cartItems = []; 
+                        grandTotal = 0; 
+                    }
+                } else {
+                    console.log('No cart in localStorage, trying API...');
+                    // Lấy từ API
+                    try {
+                        const resp = await fetch('/api/cart', { headers: { 'Accept': 'application/json' } });
+                        const data = await resp.json();
+                        if (data.success) {
+                            cartItems = data.cartItems;
+                            grandTotal = data.grandTotal;
+                            console.log('Found cart from API:', cartItems, 'Total:', grandTotal);
+                        } else {
+                            console.log('API returned no cart data');
+                        }
+                    } catch (err) {
+                        console.error('Error fetching cart from API:', err);
+                    }
+                }
+
+                // Nếu vẫn không có cart, thử lấy từ order summary hiện tại
+                if (!cartItems.length || grandTotal <= 0) {
+                    console.log('No cart found, trying to get from DOM...');
+                    // Fallback: lấy từ order summary đã render
+                    const orderSummaryItems = document.querySelectorAll('#order-summary-list .d-flex');
+                    if (orderSummaryItems.length > 0) {
+                        // Lấy tổng tiền từ DOM
+                        const totalElement = document.querySelector('#order-summary-list .text-danger .fw-bold');
+                        if (totalElement) {
+                            const totalText = totalElement.textContent.replace(/[^\d]/g, '');
+                            grandTotal = parseInt(totalText) || 0;
+                            console.log('Got total from DOM:', grandTotal);
+                        }
+                    }
+                }
+
+                // Nếu vẫn không có, dùng giá trị mặc định để test
+                if (grandTotal <= 0) {
+                    console.log('No valid cart found, using default values for testing...');
+                    grandTotal = 299999; // Giá trị mặc định để test
+                    cartItems = [{ name: 'Test Product', quantity: 1, price: 299999 }];
+                }
+
+                console.log('Final cart data:', cartItems, 'Final total:', grandTotal);
+
+                // Tạo request để gửi đến PayOS
+                const payosPayload = {
+                    fullName: fullName,
+                    phone: phone,
+                    address: address,
+                    note: note,
+                    paymentMethod: 'BANK_TRANSFER'
+                };
+
+                console.log('Sending to PayOS with payload:', payosPayload);
+
+                // Gửi request đến PayOS API
+                const payosResponse = await fetch('/api/payment', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payosPayload)
+                });
+
+                const payosData = await payosResponse.json();
+                console.log('PayOS response:', payosData);
+                console.log('PayOS response checkoutUrl:', payosData.checkoutUrl);
+                console.log('PayOS response success:', payosData.success);
+
+                if (payosData.success && payosData.checkoutUrl) {
+                    console.log('Redirecting to PayOS:', payosData.checkoutUrl);
+                    // Chuyển hướng đến PayOS checkout
+                    window.location.href = payosData.checkoutUrl;
+                } else {
+                    console.error('PayOS error:', payosData);
+                    alert('Lỗi tạo link thanh toán PayOS: ' + (payosData.message || 'Vui lòng thử lại'));
+                }
+                
             } else {
-                alert(data.message || 'Đặt hàng thất bại!');
+                // Xử lý COD
+                const payload = {
+                    fullName, phone, address, note, paymentMethod
+                };
+                
+                const response = await fetch('/api/payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+                } else {
+                    alert(data.message || 'Đặt hàng thất bại!');
+                }
             }
-        })
-        .catch(() => alert('Lỗi kết nối máy chủ!'));
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Lỗi kết nối máy chủ!');
+        }
     });
 
     // Render order summary

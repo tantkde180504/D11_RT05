@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán thành công - 43 Gundam Hobby</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      .payment-success {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .success-box {
+        background: white;
+        border-radius: 10px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+      }
+      .success-icon {
+        font-size: 60px;
+        color: #28a745;
+        margin-bottom: 20px;
+      }
+      .success-title {
+        color: #28a745;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+      .success-message {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+      .return-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s;
+      }
+      .return-btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="payment-success">
+      <div class="success-box">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">Thanh toán thành công!</h1>
+        <p class="success-message">
+          Cảm ơn bạn đã đặt hàng tại 43 Gundam Hobby. Đơn hàng của bạn đã được xử lý thành công.
+          <br><br>
+          Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận và giao hàng.
+        </p>
+        <a href="/order-history.jsp" class="return-btn">Xem lịch sử đơn hàng</a>
+        <br><br>
+        <a href="/index.html" class="return-btn" style="background-color: #6c757d;">Về trang chủ</a>
+      </div>
+    </div>
+    
+    <script>
+      // Tự động cập nhật trạng thái thanh toán
+      window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderCode = urlParams.get('orderCode');
+        const status = urlParams.get('status');
+        
+        if (orderCode && status === 'PAID') {
+          // Gọi API để cập nhật trạng thái đơn hàng
+          fetch('/api/payment/payos/confirm', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              orderCode: orderCode,
+              status: status
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Payment confirmed:', data);
+          })
+          .catch(error => {
+            console.error('Error confirming payment:', error);
+          });
+        }
+      };
+    </script>
+  </body>
+</html>

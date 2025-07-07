@@ -170,6 +170,7 @@
                 const section = document.getElementById('my-complaints-section');
                 section.innerHTML = '<div class="text-muted">Đang tải danh sách khiếu nại...</div>';
                 try {
+                    console.log("===> Bắt đầu gọi API /api/complaints/my");
                     const resp = await fetch('/api/complaints/my', {
                         method: 'GET',
                         headers: {
@@ -178,19 +179,26 @@
                         credentials: 'include'
                     });
 
+                    console.log("===> Response status:", resp.status);
+                    console.log("===> Response ok:", resp.ok);
+                    
                     //const data = await resp.json();
                     const text = await resp.text();
                     console.log("===> complaints response text:", text);
+                    
                     let data;
                     try {
                         data = JSON.parse(text);
+                        console.log("===> Parsed data:", data);
+                        console.log("===> Is array:", Array.isArray(data));
                     } catch (parseError) {
                         console.error("===> Lỗi JSON.parse:", parseError);
-                        section.innerHTML = '<div class="text-danger">Phản hồi không hợp lệ!</div>';
+                        section.innerHTML = '<div class="text-danger">Phản hồi không hợp lệ! Raw response: ' + text + '</div>';
                         return;
                     }
 
                     if (!Array.isArray(data)) {
+                        console.error("===> Data is not array:", data);
                         section.innerHTML = '<div class="text-danger">' + (data.message || 'Không lấy được dữ liệu!') + '</div>';
                         return;
                     }
@@ -200,25 +208,51 @@
                         return;
                     }
 
+                    console.log("===> Found", data.length, "complaints");
                     let html = '<h5 class="mt-4">Các khiếu nại đã gửi</h5><div class="table-responsive"><table class="table table-bordered align-middle text-center mt-2"><thead class="table-light">' +
-                        '<tr><th>Mã đơn</th><th>Danh mục</th><th>Nội dung</th><th>Trạng thái</th><th>Phản hồi</th><th>Thời gian</th></tr></thead><tbody>';
+                        '<tr><th>Sản phẩm</th><th>Mã đơn</th><th>Danh mục</th><th>Nội dung</th><th>Trạng thái</th><th>Phản hồi</th><th>Thời gian</th></tr></thead><tbody>';
 
                     data.forEach(c => {
                         console.log("📦 Complaint object:", c);
+                        
+                        // Xử lý an toàn cho các field
+                        const productImage = c.productImage || 'img/logo.png';
+                        const productName = c.productName || 'N/A';
+                        const totalItems = c.totalItems || '1';
+                        const orderNumber = c.orderNumber || '-';
+                        const category = c.category || '-';
+                        const content = c.content || '-';
+                        const status = c.status || 'UNKNOWN';
+                        const staffResponse = c.staffResponse || '-';
+                        const createdAt = c.createdAt || '-';
+                        
                         html += '<tr>' +
-                            '<td>' + (c.order_number || '-') + '</td>' +
-                            '<td>' + (c.category || '-') + '</td>' +
-                            '<td class="text-start">' + c.content + '</td>' +
-                            '<td><span class="badge bg-' + renderStatusColor(c.status) + '">' + c.status + '</span></td>' +
-                            '<td class="text-start">' + (c.staffResponse || '-') + '</td>' +
-                            '<td>' + c.createdAt + '</td>' +
+                            '<td><div class="d-flex align-items-center"><img src="' + productImage + '" alt="' + productName + '" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"><div class="text-start"><strong>' + productName + '</strong><br><small class="text-muted">SL: ' + totalItems + '</small></div></div></td>' +
+                            '<td>' + orderNumber + '</td>' +
+                            '<td>' + category + '</td>' +
+                            '<td class="text-start">' + content + '</td>' +
+                            '<td><span class="badge bg-' + renderStatusColor(status) + '">' + status + '</span></td>' +
+                            '<td class="text-start">' + staffResponse + '</td>' +
+                            '<td>' + createdAt + '</td>' +
                             '</tr>';
                     });
 
                     html += '</tbody></table></div>';
                     section.innerHTML = html;
+                    console.log("===> Đã hiển thị thành công!");
                 } catch (err) {
-                    section.innerHTML = '<div class="text-danger">Lỗi tải khiếu nại!</div>';
+                    console.error("===> Lỗi tải khiếu nại:", err);
+                    section.innerHTML = '<div class="text-danger">Lỗi tải khiếu nại: ' + err.message + '</div>';
+                }
+            }
+
+            function renderStatusColor(status) {
+                switch (status) {
+                    case 'PENDING': return 'warning';
+                    case 'PROCESSING': return 'info';
+                    case 'COMPLETED': return 'success';
+                    case 'REJECTED': return 'danger';
+                    default: return 'secondary';
                 }
             }
         </script>
