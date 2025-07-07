@@ -1,0 +1,34 @@
+# Build directories
+/target/
+/build/
+/out/
+
+# Compiled class files
+*.class
+
+# WAR/JAR files
+*.war
+*.jar
+*.ear
+
+# IDE config
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Node modules (nếu có)
+node_modules/
+
+# SQL test
+test_*.sql
