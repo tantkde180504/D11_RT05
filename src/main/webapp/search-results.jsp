@@ -16,6 +16,10 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-bg-orange.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-menu-white.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hamburger-menu.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-fix.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/account-menu-fix.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-avatar.css">
     
     <style>
         .search-container {
@@ -226,79 +230,155 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
-                <img src="${pageContext.request.contextPath}/img/logo.png" alt="Logo" width="40" height="40" class="me-2">
-                <span class="fw-bold">Gundam Hobby</span>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/all-products">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">Giới thiệu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Liên hệ</a>
-                    </li>
-                </ul>
-
-                <!-- Search Form -->
-                <form class="d-flex me-3" id="headerSearchForm" action="${pageContext.request.contextPath}/search" method="get">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="q" placeholder="Tìm kiếm sản phẩm..." 
-                               value="${query}" id="headerSearchInput" autocomplete="off">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fas fa-search"></i>
+            <div class="row align-items-center py-3">
+                <!-- Logo Section with Hamburger Menu -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="header-logo-section">
+                        <!-- Hamburger Menu (Mobile) -->
+                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
                         </button>
+                        
+                        <div class="logo">
+                            <a href="${pageContext.request.contextPath}/">
+                                <img src="${pageContext.request.contextPath}/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                            </a>
+                        </div>
                     </div>
-                    <!-- Autocomplete suggestions -->
-                    <div id="headerSearchSuggestions" class="search-suggestions"></div>
-                </form>
-
-                <!-- User Menu -->
-                <div class="nav-user-menu">
-                    <div id="userNotLoggedIn" style="display: none;">
-                        <a href="${pageContext.request.contextPath}/login" class="btn btn-outline-primary me-2">Đăng nhập</a>
-                        <a href="${pageContext.request.contextPath}/register" class="btn btn-primary">Đăng ký</a>
+                </div>
+                
+                <!-- Search Section -->
+                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
+                    <div class="header-center-section">
+                        <div class="search-container w-100">
+                            <form class="search-form" action="${pageContext.request.contextPath}/search.jsp" method="get" id="headerSearchForm">
+                                <div class="input-group">
+                                    <input type="text" name="q" class="form-control search-input" 
+                                           placeholder="Tìm kiếm sản phẩm..." value="${query}" id="headerSearchInput" autocomplete="off">
+                                    <button class="btn btn-search" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <!-- Autocomplete suggestions -->
+                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
+                            </form>
+                        </div>
                     </div>
-                    
-                    <div id="userLoggedIn" style="display: none;">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" 
-                                    id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-2"></i>
-                                <span id="userName">User</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile">
-                                    <i class="fas fa-user me-2"></i>Hồ sơ
-                                </a></li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orders">
-                                    <i class="fas fa-shopping-bag me-2"></i>Đơn hàng
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" id="logoutBtn">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                </a></li>
-                            </ul>
+                </div>
+                
+                <!-- Actions Section -->
+                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
+                    <div class="header-actions-section">
+                        <div class="account-menu me-3">
+                            <!-- User Info (visible when logged in) -->
+                            <div id="nav-user-info" class="d-none">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
+                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <div class="user-avatar-container me-2">
+                                            <img id="userAvatarImage" 
+                                                 src="${pageContext.request.contextPath}/img/placeholder.jpg" 
+                                                 alt="User Avatar" 
+                                                 class="user-avatar rounded-circle"
+                                                 style="width: 32px; height: 32px; object-fit: cover;">
+                                        </div>
+                                        <span class="d-none d-md-inline">
+                                            <span class="greeting-text">Xin chào</span>
+                                            <span id="userDisplayName" class="fw-bold">User</span>
+                                        </span>
+                                        <span class="d-md-none">
+                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header d-flex align-items-center">
+                                            <img id="userAvatarDropdown" 
+                                                 src="${pageContext.request.contextPath}/img/placeholder.jpg" 
+                                                 alt="User Avatar" 
+                                                 class="user-avatar-small rounded-circle me-2"
+                                                 style="width: 24px; height: 24px; object-fit: cover;">
+                                            <span id="userFullName">User Name</span>
+                                        </h6></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile.jsp">
+                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Login Button (visible when not logged in) -->
+                            <div id="nav-login-btn">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login.jsp">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/register.jsp">
+                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cart-btn">
+                            <a href="#" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart me-1"></i>
+                                <span class="cart-count">0</span>
+                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <h5>Menu</h5>
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <nav class="mobile-nav">
+                <a href="${pageContext.request.contextPath}/" class="mobile-nav-link">
+                    <i class="fas fa-home"></i> Trang chủ
+                </a>
+                <a href="${pageContext.request.contextPath}/all-products.jsp" class="mobile-nav-link">
+                    <i class="fas fa-box"></i> Tất cả sản phẩm
+                </a>
+                <div class="mobile-nav-divider"></div>
+                <a href="#" class="mobile-nav-link">
+                    <i class="fas fa-info-circle"></i> Giới thiệu
+                </a>
+                <a href="#" class="mobile-nav-link">
+                    <i class="fas fa-phone"></i> Liên hệ
+                </a>
+            </nav>
+        </div>
+    </div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <!-- Search Header -->
     <section class="search-container">
@@ -452,38 +532,12 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            initializeAuthentication();
-            initializeSearch();
-            loadProducts();
-            setupEventListeners();
-        });
-
-        // Authentication handling
-        function initializeAuthentication() {
-            try {
-                const userInfo = JSON.parse(localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo') || 'null');
-                
-                if (userInfo && userInfo.username) {
-                    document.getElementById('userLoggedIn').style.display = 'block';
-                    document.getElementById('userNotLoggedIn').style.display = 'none';
-                    document.getElementById('userName').textContent = userInfo.username;
-                } else {
-                    document.getElementById('userLoggedIn').style.display = 'none';
-                    document.getElementById('userNotLoggedIn').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error checking authentication:', error);
-                document.getElementById('userLoggedIn').style.display = 'none';
-                document.getElementById('userNotLoggedIn').style.display = 'block';
-            }
-        }
-
-        // Logout handling
-        document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('userInfo');
-            sessionStorage.removeItem('userInfo');
-            window.location.href = '${pageContext.request.contextPath}/';
+            // Wait a bit for auth scripts to load
+            setTimeout(() => {
+                initializeSearch();
+                loadProducts();
+                setupEventListeners();
+            }, 200);
         });
 
         // Search initialization
@@ -525,6 +579,9 @@
             fetch(apiUrl)
                 .then(response => {
                     console.log('API Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
                     return response.json();
                 })
                 .then(data => {
@@ -543,7 +600,14 @@
                 .catch(error => {
                     hideLoading();
                     console.error('Error loading products:', error);
-                    showError('Lỗi kết nối. Vui lòng thử lại.');
+                    
+                    // If API endpoint doesn't exist, show sample products
+                    if (error.message.includes('404') || error.message.includes('Not Found')) {
+                        console.log('API endpoint not found, showing sample data');
+                        showSampleProducts();
+                    } else {
+                        showError('Lỗi kết nối: ' + error.message);
+                    }
                 });
         }
 
@@ -720,6 +784,48 @@
                 '<h4>Đã xảy ra lỗi</h4>' +
                 '<p>' + message + '</p>';
         }
+
+        // Show sample products when API is not available
+        function showSampleProducts() {
+            console.log('Showing sample products');
+            hideLoading();
+            
+            const sampleProducts = [
+                {
+                    id: 1,
+                    name: 'RG 1/144 RX-78-2 Gundam',
+                    price: 850000,
+                    category: 'Real Grade',
+                    grade: 'RG',
+                    stockQuantity: 15,
+                    imageUrl: '${pageContext.request.contextPath}/img/RGStrikeGundam.jpg'
+                },
+                {
+                    id: 2,
+                    name: 'MG 1/100 Strike Freedom Gundam',
+                    price: 1200000,
+                    category: 'Master Grade',
+                    grade: 'MG',
+                    stockQuantity: 8,
+                    imageUrl: '${pageContext.request.contextPath}/img/placeholder.jpg'
+                },
+                {
+                    id: 3,
+                    name: 'HG 1/144 Barbatos Lupus',
+                    price: 550000,
+                    category: 'High Grade',
+                    grade: 'HG',
+                    stockQuantity: 22,
+                    imageUrl: '${pageContext.request.contextPath}/img/placeholder.jpg'
+                }
+            ];
+            
+            displayProducts(sampleProducts);
+            updateResultsCount(sampleProducts.length);
+            
+            // Hide pagination for sample data
+            document.getElementById('paginationContainer').style.display = 'none';
+        }
     </script>
 
     <style>
@@ -757,5 +863,33 @@
             position: relative;
         }
     </style>
+    
+    <!-- Avatar Utils -->
+    <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
+    
+    <!-- Authentication and Navbar Scripts -->
+    <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
+    <script src="${pageContext.request.contextPath}/js/navbar-manager.js"></script>
+    <script src="${pageContext.request.contextPath}/js/google-oauth-clean.js"></script>
+    <script src="${pageContext.request.contextPath}/js/navbar-fix.js"></script>
+    <script src="${pageContext.request.contextPath}/js/hamburger-menu.js"></script>
+    
+    <!-- Force check auth state after page load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force check auth state multiple times to ensure sync
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 500);
+        });
+    </script>
 </body>
 </html>

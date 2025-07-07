@@ -169,7 +169,8 @@
             </div>
         </div>
     </main>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<%=request.getContextPath()%>/js/account-dropdown.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
     <script>
         // Hiển thị thông tin người dùng từ session
         document.addEventListener('DOMContentLoaded', function() {

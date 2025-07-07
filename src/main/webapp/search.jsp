@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-bg-orange.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-menu-white.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hamburger-menu.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-fix.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/account-menu-fix.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-avatar.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -248,5 +252,36 @@
             position: relative;
         }
     </style>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Avatar Utils -->
+    <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
+    
+    <!-- Authentication and Navbar Scripts -->
+    <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
+    <script src="${pageContext.request.contextPath}/js/navbar-manager.js"></script>
+    <script src="${pageContext.request.contextPath}/js/google-oauth-clean.js"></script>
+    <script src="${pageContext.request.contextPath}/js/navbar-fix.js"></script>
+    <script src="${pageContext.request.contextPath}/js/hamburger-menu.js"></script>
+    
+    <!-- Force check auth state after page load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force check auth state multiple times to ensure sync
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 500);
+        });
+    </script>
 </body>
 </html>

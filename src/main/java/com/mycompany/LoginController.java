@@ -80,20 +80,9 @@ public class LoginController {
                         System.out.println("  - Password from DB: " + dbPasswordFromDb);
                         System.out.println("  - Password from input: " + password);
                         
-                        // Check if this is an OAuth user trying to login with password
-                        if (provider != null && !provider.isEmpty() && !"OAUTH_USER".equals(dbPasswordFromDb)) {
-                            System.out.println("This is an OAuth user. Regular password login not allowed.");
-                            Map<String, Object> resp = new HashMap<>();
-                            resp.put("success", false);
-                            resp.put("message", "Tài khoản này đã được liên kết với " + provider + ". Vui lòng đăng nhập bằng " + provider + "!");
-                            return ResponseEntity.status(401)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .body(resp);
-                        }
-                        
-                        // Regular password check for non-OAuth users
+                        // Check if this is an OAuth-only user (no password set)
                         if ("OAUTH_USER".equals(dbPasswordFromDb)) {
-                            System.out.println("OAuth user trying to login with password - not allowed");
+                            System.out.println("OAuth-only user trying to login with password - not allowed");
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", false);
                             resp.put("message", "Tài khoản này chỉ có thể đăng nhập bằng Google!");
@@ -101,6 +90,9 @@ public class LoginController {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .body(resp);
                         }
+                        
+                        // For users with both OAuth and password, allow password login
+                        System.out.println("User has both OAuth and password capability - allowing password login");
                         
                         String hashedInputPassword = hashPassword(password);
                         boolean passwordMatch = hashedInputPassword.equals(dbPasswordFromDb) || password.equals(dbPasswordFromDb);
@@ -111,6 +103,8 @@ public class LoginController {
                             resp.put("success", true);
                             resp.put("role", role);
                             resp.put("fullName", firstName + " " + lastName);
+                            resp.put("email", email);
+                            resp.put("avatarUrl", ""); // Will be generated on client-side from email
                             System.out.println("Login successful for user: " + resp.get("fullName"));
                             return ResponseEntity.ok()
                                     .contentType(MediaType.APPLICATION_JSON)

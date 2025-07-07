@@ -13,6 +13,9 @@
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -62,34 +65,55 @@
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
                     <div class="header-actions-section">
                         <div class="account-menu me-3">
-                            <%
-                                Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                String userName = (String) session.getAttribute("userName");
-                                String userPicture = (String) session.getAttribute("userPicture");
-                                String loginType = (String) session.getAttribute("loginType");
-                                
-                                if (isLoggedIn != null && isLoggedIn) {
-                            %>
-                                <!-- User logged in -->
+                            <!-- User Info (visible when logged in) -->
+                            <div id="nav-user-info" class="d-none">
                                 <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle text-decoration-none d-flex align-items-center" data-bs-toggle="dropdown">
-                                        <% if (userPicture != null && !userPicture.isEmpty()) { %>
-                                            <img src="<%= userPicture %>" alt="Avatar" class="rounded-circle me-2 avatar-32">
-                                        <% } else { %>
-                                            <i class="fas fa-user-circle me-2 user-icon-32"></i>
-                                        <% } %>
-                                        <span class="text-dark d-none d-md-inline">Xin chào, <%= userName != null ? userName : "User" %></span>
+                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
+                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <div class="user-avatar-container me-2">
+                                            <img id="userAvatarImage" 
+                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
+                                                 alt="User Avatar" 
+                                                 class="user-avatar rounded-circle"
+                                                 style="width: 32px; height: 32px; object-fit: cover;">
+                                        </div>
+                                        <span class="d-none d-md-inline">
+                                            <span class="greeting-text">Xin chào</span>
+                                            <span id="userDisplayName" class="fw-bold">User</span>
+                                        </span>
+                                        <span class="d-md-none">
+                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
+                                        </span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end z-index-1050">
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header d-flex align-items-center">
+                                            <img id="userAvatarDropdown" 
+                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
+                                                 alt="User Avatar" 
+                                                 class="user-avatar-small rounded-circle me-2"
+                                                 style="width: 24px; height: 24px; object-fit: cover;">
+                                            <span id="userFullName">User Name</span>
+                                        </h6></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
+                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a></li>
                                     </ul>
                                 </div>
-                            <%
-                                } else {
-                            %>
-                                <!-- User not logged in -->
+                            </div>
+                            
+                            <!-- Login Button (visible when not logged in) -->
+                            <div id="nav-login-btn">
                                 <div class="dropdown">
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
                                        id="accountDropdown" role="button" data-bs-toggle="dropdown">
@@ -105,9 +129,7 @@
                                         </a></li>
                                     </ul>
                                 </div>
-                            <%
-                                }
-                            %>
+                            </div>
                         </div>
                         <div class="cart-btn">
                             <a href="#" class="btn btn-primary">
@@ -557,5 +579,32 @@
     
     <!-- Search Autocomplete Script -->
     <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+    
+    <!-- Avatar Utils -->
+    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
+    
+    <!-- Authentication and Navbar Scripts -->
+    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-fix.js"></script>
+    
+    <!-- Force check auth state after page load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force check auth state multiple times to ensure sync
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 500);
+        });
+    </script>
 </body>
 </html>

@@ -42,12 +42,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())            .authorizeHttpRequests(authz -> authz
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/", "/login.jsp", "/index.jsp", "/profile.jsp", "/css/**", "/js/**", "/img/**", 
                                "/api/login", "/api/login-test", "/demo-login.html", "/test-login.html", 
                                "/test-login-simple.html", "/test-flow.html", "/oauth-redirect-test.html", 
                                "/google-oauth-test.jsp", "/oauth-login-test.jsp", "/oauth-success", "/oauth-success.html").permitAll()
-                .anyRequest().permitAll()).oauth2Login(oauth2 -> oauth2
+                .anyRequest().permitAll())
+            .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login.jsp")
                 .defaultSuccessUrl("/", true)
                 .successHandler(oAuth2AuthenticationSuccessHandler())

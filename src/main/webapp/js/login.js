@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     
-    // Handle exclusive checkbox selection for user roles
+    // Handle exclusive checkbox selection for user roles (optional - only if checkboxes exist)
     const isAdminCheckbox = document.getElementById('isAdmin');
     const isStaffCheckbox = document.getElementById('isStaff');
     
@@ -57,22 +57,35 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('Form submitted!'); // Debug log
+            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const isAdmin = document.getElementById('isAdmin').checked;
-            const isStaff = document.getElementById('isStaff').checked;
+            
+            // Optional checkboxes - only check if they exist
+            const isAdminCheckbox = document.getElementById('isAdmin');
+            const isStaffCheckbox = document.getElementById('isStaff');
+            const isAdmin = isAdminCheckbox ? isAdminCheckbox.checked : false;
+            const isStaff = isStaffCheckbox ? isStaffCheckbox.checked : false;
+            
+            console.log('Email:', email, 'Password:', password); // Debug log
+            
             if (!email || !password) {
                 showAlert('Vui lòng điền đầy đủ thông tin!', 'danger');
                 return;
             }
-            if (isAdmin && isStaff) {
+            
+            // Only check role conflict if both checkboxes exist
+            if (isAdminCheckbox && isStaffCheckbox && isAdmin && isStaff) {
                 showAlert('Vui lòng chỉ chọn một loại quyền đăng nhập!', 'warning');
                 return;
             }
+            
             if (!isValidEmail(email)) {
                 showAlert('Email không hợp lệ!', 'danger');
                 return;
             }
+            
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;            // Gửi request đến backend kiểm tra tài khoản
@@ -92,12 +105,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (data.success === true) {
                     // Lưu thông tin user
-                    setUserLoggedIn(data.fullName, email);
+                    localStorage.setItem('userLoggedIn', 'true');
+                    localStorage.setItem('userName', data.fullName);
+                    localStorage.setItem('userEmail', email);
                     localStorage.setItem('userRole', data.role);
                     
                     // Hiển thị thông báo thành công
                     const roleText = getRoleDisplayName(data.role);
                     showAlert(`🎉 Đăng nhập thành công! Chào mừng ${data.fullName} (${roleText})`, 'success');
+                    
+                    // Cập nhật UI ngay lập tức nếu có function
+                    if (typeof setUserLoggedIn === 'function') {
+                        setUserLoggedIn(data.fullName, email);
+                    }
+                    
+                    // Cập nhật navbar ngay lập tức
+                    if (typeof window.showUserMenu === 'function') {
+                        window.showUserMenu(data.fullName);
+                    }
+                    
+                    // Trigger event để các component khác biết user đã đăng nhập
+                    const loginEvent = new CustomEvent('userLoggedIn', {
+                        detail: { fullName: data.fullName, email: email, role: data.role }
+                    });
+                    window.dispatchEvent(loginEvent);
                     
                     // Chuyển trang dựa theo role
                     setTimeout(() => {
@@ -273,4 +304,26 @@ document.addEventListener('DOMContentLoaded', function() {
 function setUserLoggedIn(name, email) {
     localStorage.setItem('userName', name);
     localStorage.setItem('userEmail', email);
+    localStorage.setItem('userLoggedIn', 'true');
+    
+    // Trigger navbar update if function exists
+    if (typeof window.showUserMenu === 'function') {
+        window.showUserMenu(name);
+    }
+    
+    // Trigger function to check login status
+    if (typeof window.checkUserLoginStatus === 'function') {
+        window.checkUserLoginStatus();
+    }
 }
+
+// Global function to update navbar after login
+window.updateNavbarAfterLogin = function(userData) {
+    if (typeof window.showUserMenu === 'function') {
+        window.showUserMenu(userData.fullName);
+    }
+    
+    if (typeof window.checkUserLoginStatus === 'function') {
+        window.checkUserLoginStatus();
+    }
+};

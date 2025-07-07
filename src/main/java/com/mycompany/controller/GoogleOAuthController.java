@@ -20,13 +20,20 @@ public class GoogleOAuthController {    @GetMapping("/user-info")
         
         if (principal != null) {
             // User đăng nhập qua OAuth2
-            response.put("email", principal.getAttribute("email"));
-            response.put("name", principal.getAttribute("name"));
-            response.put("picture", principal.getAttribute("picture"));
-            response.put("role", session.getAttribute("userRole"));
+            String email = principal.getAttribute("email");
+            String name = principal.getAttribute("name");
+            String picture = principal.getAttribute("picture");
+            String role = (String) session.getAttribute("userRole");
+            if (role == null) role = "CUSTOMER"; // Default role
+            
+            response.put("email", email);
+            response.put("name", name);
+            response.put("picture", picture);
+            response.put("role", role);
             response.put("isLoggedIn", true);
             response.put("loginType", "google");
-            System.out.println("OAuth2 user found: " + principal.getAttribute("name"));
+            
+            System.out.println("OAuth2 user found: " + name + " (" + email + ")");
         } else {
             // Kiểm tra session cho user thường
             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");

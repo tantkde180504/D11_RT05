@@ -402,7 +402,7 @@ header {
 
 /* User Info Display */
 #nav-user-info {
-    display: none !important;
+    display: none;
 }
 
 #nav-user-info.show {

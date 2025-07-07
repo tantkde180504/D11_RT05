@@ -13,6 +13,7 @@
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -302,7 +303,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/register.js"></script>
-    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script>
         // Back to top functionality
@@ -323,5 +325,8 @@
             });
         });
     </script>
+    
+    <!-- Navbar Fix Script -->
+    <script src="<%=request.getContextPath()%>/js/navbar-fix.js"></script>
 </body>
 </html>

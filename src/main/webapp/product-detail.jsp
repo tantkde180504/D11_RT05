@@ -48,7 +48,8 @@
     <link href="<%=request.getContextPath()%>/css/product-detail.css" rel="stylesheet">
     
     <!-- Google OAuth Handler -->
-    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,7 +105,35 @@
                         <!-- Account Menu -->
                         <div class="account-menu me-3">
                             <!-- User Info (visible when logged in) -->
-                            <div id="nav-user-info" class="d-none"></div>
+                            <div id="nav-user-info" class="d-none">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-success dropdown-toggle" 
+                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle me-1"></i>
+                                        <span id="userDisplayName">User</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header">
+                                            <i class="fas fa-user me-2"></i>
+                                            <span id="userFullName">User Name</span>
+                                        </h6></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
+                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
                             
                             <!-- Login Button (visible when not logged in) -->
                             <div id="nav-login-btn">

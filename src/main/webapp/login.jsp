@@ -13,6 +13,8 @@
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,20 +64,70 @@
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
                     <div class="header-actions-section">
                         <div class="account-menu me-3">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                   id="accountDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span class="d-none d-md-inline">Tài khoản</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                    </a></li>
-                                </ul>
+                            <!-- User Info (visible when logged in) -->
+                            <div id="nav-user-info" class="d-none">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
+                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <div class="user-avatar-container me-2">
+                                            <img id="userAvatarImage" 
+                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
+                                                 alt="User Avatar" 
+                                                 class="user-avatar rounded-circle"
+                                                 style="width: 32px; height: 32px; object-fit: cover;">
+                                        </div>
+                                        <span class="d-none d-md-inline">
+                                            <span class="greeting-text">Xin chào</span>
+                                            <span id="userDisplayName" class="fw-bold">User</span>
+                                        </span>
+                                        <span class="d-md-none">
+                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header d-flex align-items-center">
+                                            <img id="userAvatarDropdown" 
+                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
+                                                 alt="User Avatar" 
+                                                 class="user-avatar-small rounded-circle me-2"
+                                                 style="width: 24px; height: 24px; object-fit: cover;">
+                                            <span id="userFullName">User Name</span>
+                                        </h6></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
+                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Login Button (visible when not logged in) -->
+                            <div id="nav-login-btn">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
+                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                        </a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="cart-btn">
@@ -97,7 +149,7 @@
         <div class="login-title mt-4">Đăng nhập tài khoản</div>
         
         <div class="login-form-box mx-auto" id="login-form">
-            <form id="loginForm" action="/api/login" method="post" autocomplete="off">
+            <form id="loginForm" action="<%=request.getContextPath()%>/api/login" method="post" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
                     <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
@@ -266,9 +318,34 @@
     </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<%=request.getContextPath()%>/js/login-simple.js"></script>
-    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
+    
+    <!-- Navbar Manager - Single Source of Truth -->
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    
+    <!-- Avatar Utils - Xử lý avatar và Gravatar -->
+    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
+    
+    <!-- Auth Sync Manager - Đồng bộ authentication state -->
+    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
+    
+    <!-- Google OAuth Clean Handler -->
+    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
+    
+    <!-- Login Clean Handler -->
+    <script src="<%=request.getContextPath()%>/js/login-clean.js"></script>
+    
+    <!-- Login Fallback Handler (if API is not available) -->
+    <script src="<%=request.getContextPath()%>/js/login-fallback.js"></script>
+    
+    <!-- Hamburger Menu Script -->
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
+    
+    <!-- Login Debug Helper (Development Only) -->
+    <script src="<%=request.getContextPath()%>/js/login-debug-helper.js"></script>
+    
+    <!-- Context Path Test Script (Development Only) -->
+    <script src="<%=request.getContextPath()%>/js/context-path-test.js"></script>
+    
     <script>
         // Back to top functionality
         const backToTopBtn = document.getElementById('backToTop');
@@ -287,6 +364,10 @@
                 behavior: 'smooth'
             });
         });
+        
+        // Set context path globally for JavaScript access
+        window.APP_CONTEXT_PATH = '<%=request.getContextPath()%>';
+        console.log('App context path from JSP:', window.APP_CONTEXT_PATH);
     </script>
 </body>
 </html>
