@@ -272,8 +272,93 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+/* Register Form Styles */
+.register-form-box {
+    max-width: 450px;
+    width: 100%;
+    padding: 32px 28px 24px 28px;
+}
+
+.register-form-box .row {
+    margin-bottom: 0;
+}
+
+.register-form-box .col-md-6 {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.register-form-box .col-md-6:first-child {
+    padding-left: 0;
+}
+
+.register-form-box .col-md-6:last-child {
+    padding-right: 0;
+}
+
+.register-form-box .form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.register-form-box .form-check {
+    margin-top: 0.5rem;
+}
+
+.register-form-box .form-check-label {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.register-form-box .form-check-label a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.register-form-box .form-check-label a:hover {
+    text-decoration: underline;
+}
+
+/* Success message styles */
+#success-message {
+    text-align: center;
+    max-width: 400px;
+}
+
+#success-message i {
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+#success-message h4 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+#success-message .text-muted {
+    margin-bottom: 1.5rem;
+}
+
 @media (max-width: 576px) {
     .login-form-box {
         padding: 18px 6px 12px 6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .register-form-box {
+        max-width: 100%;
+        padding: 24px 20px 20px 20px;
+    }
+    
+    .register-form-box .col-md-6 {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .register-form-box .row .col-md-6:last-child {
+        margin-bottom: 0;
     }
 }

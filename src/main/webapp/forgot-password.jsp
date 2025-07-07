@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>43 Gundam Hobby - Mô hình Gundam chính hãng</title>
+    <title>43 Gundam Hobby - Quên mật khẩu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
@@ -89,42 +89,83 @@
                 </div>
             </div>
         </div>
-    </header>    <!-- Mobile Sidebar Navigation -->
+    </header>
+
+    <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
-    <!-- Login Form -->
+    <!-- Forgot Password Form -->
     <div class="container d-flex flex-column align-items-center justify-content-center min-height-70vh">
-        <div class="login-title mt-4">Đăng nhập tài khoản</div>
+        <div class="login-title mt-4">Quên mật khẩu</div>
+        <div class="text-center mb-4">
+            <p class="text-muted">Nhập email của bạn để nhận liên kết đặt lại mật khẩu</p>
+        </div>
         
-        <div class="login-form-box mx-auto" id="login-form">
-            <form id="loginForm" action="/api/login" method="post" autocomplete="off">
+        <!-- Step 1: Email Input Form -->
+        <div class="login-form-box mx-auto" id="forgot-password-form">
+            <form id="forgotPasswordForm" action="/api/forgot-password" method="post" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
-                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
+                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off" placeholder="Nhập email đã đăng ký">
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu *</label>
-                    <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <a href="<%=request.getContextPath()%>/forgot-password.jsp" class="forgot-password-link">Quên mật khẩu?</a>
-                </div>
-                <button type="submit" class="btn btn-login w-100">Đăng nhập</button>
+                <button type="submit" class="btn btn-login w-100">Gửi liên kết đặt lại mật khẩu</button>
             </form>
-            <div class="login-divider">Hoặc đăng nhập bằng</div>
-            <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-in-btn">
-                <i class="fab fa-google me-2"></i>Google
-            </button>
-            <div class="register-link">
-                Bạn chưa có tài khoản? <a href="<%=request.getContextPath()%>/register.jsp">Đăng ký tại đây</a>
+            
+            <div class="text-center mt-3">
+                <a href="<%=request.getContextPath()%>/login.jsp" class="text-primary text-decoration-none">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại đăng nhập
+                </a>
             </div>
         </div>
         
-        <!-- User Info Display (hidden by default) -->
-        <div id="user-info" class="login-form-box mx-auto d-none">
-            <!-- Content will be populated by JavaScript -->
+        <!-- Step 2: Success Message (hidden by default) -->
+        <div id="success-message" class="login-form-box mx-auto d-none">
+            <div class="text-center">
+                <i class="fas fa-envelope-circle-check text-success mb-3" style="font-size: 3rem;"></i>
+                <h4>Email đã được gửi!</h4>
+                <p class="text-muted">Chúng tôi đã gửi liên kết đặt lại mật khẩu đến email của bạn. Vui lòng kiểm tra hộp thư và làm theo hướng dẫn.</p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <small>Nếu không thấy email, vui lòng kiểm tra thư mục spam/junk</small>
+                </div>
+                <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Quay lại đăng nhập</a>
+            </div>
+        </div>
+        
+        <!-- Step 3: Reset Password Form (hidden by default) -->
+        <div id="reset-password-form" class="login-form-box mx-auto d-none">
+            <form id="resetPasswordForm" action="/api/reset-password" method="post" autocomplete="off">
+                <input type="hidden" id="resetToken" name="token" value="">
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">Mật khẩu mới *</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" required autocomplete="off">
+                    <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmNewPassword" class="form-label">Xác nhận mật khẩu mới *</label>
+                    <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-login w-100">Đặt lại mật khẩu</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <a href="<%=request.getContextPath()%>/login.jsp" class="text-primary text-decoration-none">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại đăng nhập
+                </a>
+            </div>
+        </div>
+        
+        <!-- Step 4: Reset Success Message (hidden by default) -->
+        <div id="reset-success-message" class="login-form-box mx-auto d-none">
+            <div class="text-center">
+                <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+                <h4>Mật khẩu đã được đặt lại!</h4>
+                <p class="text-muted">Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập với mật khẩu mới.</p>
+                <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Đăng nhập ngay</a>
+            </div>
         </div>
     </div>
+
     <!-- Footer -->
     <footer class="bg-dark text-white">
         <div class="footer-top py-5">
@@ -266,8 +307,7 @@
     </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<%=request.getContextPath()%>/js/login-simple.js"></script>
-    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
+    <script src="<%=request.getContextPath()%>/js/forgot-password.js"></script>
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script>
         // Back to top functionality

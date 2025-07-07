@@ -184,6 +184,7 @@ public class OAuthUserService {
         }
     }
     
+    
     /**
      * Migrate existing OAuth users from oauth_users table to main users table
      * This method should be called once during deployment to consolidate user data

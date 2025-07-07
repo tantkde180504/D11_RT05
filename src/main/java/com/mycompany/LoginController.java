@@ -7,15 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.sql.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -72,7 +76,7 @@ public class LoginController {
                 }
             }
             
-            String sql = "SELECT first_name, last_name, role, password FROM users WHERE email = ?";
+            String sql = "SELECT first_name, last_name, role, password, provider FROM users WHERE email = ?";
             
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, email);
@@ -83,20 +87,42 @@ public class LoginController {
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
                         String role = resultSet.getString("role");
+                        String provider = resultSet.getString("provider");
                         
                         System.out.println("User found in database:");
                         System.out.println("  - Name: " + firstName + " " + lastName);
                         System.out.println("  - Role: " + role);
+                        System.out.println("  - Provider: " + provider);
                         System.out.println("  - Password from DB: " + dbPasswordFromDb);
                         System.out.println("  - Password from input: " + password);
-                        System.out.println("  - Passwords match: " + password.equals(dbPasswordFromDb));
                         
-                        if (password.equals(dbPasswordFromDb)) {
-                            // Lưu thông tin user vào session
-                            session.setAttribute("user", email);
-                            session.setAttribute("role", role);
-                            session.setAttribute("fullName", firstName + " " + lastName);
-                            session.setAttribute("isLoggedIn", true);
+                        // Check if this is an OAuth user trying to login with password
+                        if (provider != null && !provider.isEmpty() && !"OAUTH_USER".equals(dbPasswordFromDb)) {
+                            System.out.println("This is an OAuth user. Regular password login not allowed.");
+                            Map<String, Object> resp = new HashMap<>();
+                            resp.put("success", false);
+                            resp.put("message", "Tài khoản này đã được liên kết với " + provider + ". Vui lòng đăng nhập bằng " + provider + "!");
+                            return ResponseEntity.status(401)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(resp);
+                        }
+                        
+                        // Regular password check for non-OAuth users
+                        if ("OAUTH_USER".equals(dbPasswordFromDb)) {
+                            System.out.println("OAuth user trying to login with password - not allowed");
+                            Map<String, Object> resp = new HashMap<>();
+                            resp.put("success", false);
+                            resp.put("message", "Tài khoản này chỉ có thể đăng nhập bằng Google!");
+                            return ResponseEntity.status(401)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(resp);
+                        }
+                        
+                        String hashedInputPassword = hashPassword(password);
+                        boolean passwordMatch = hashedInputPassword.equals(dbPasswordFromDb) || password.equals(dbPasswordFromDb);
+                        System.out.println("  - Passwords match: " + passwordMatch);
+                        
+                        if (passwordMatch) {
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);
@@ -135,5 +161,17 @@ public class LoginController {
         resp.put("method", "POST");
         System.out.println("Login status check");
         return ResponseEntity.ok(resp);
+    }
+    
+    // Password hashing method
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Error hashing password: " + e.getMessage());
+            return password; // Fallback to plain text in case of error
+        }
     }
 }

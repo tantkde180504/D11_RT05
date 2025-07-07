@@ -82,6 +82,7 @@ header {
 /* Search */
 .search-container {
     max-width: 100%;
+    position: relative;
 }
 
 .search-input {
@@ -111,6 +112,219 @@ header {
     border-color: #e55a00;
 }
 
+/* Search Suggestions */
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 40px;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.suggestion-section {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-section:last-child {
+    border-bottom: none;
+}
+
+.suggestion-header {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    background-color: #f8f9fa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+    background-color: #f8f9fa;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.suggestion-item.active:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.suggestion-item i {
+    opacity: 0.7;
+    width: 16px;
+    text-align: center;
+}
+
+/* Product suggestion styles */
+.product-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.product-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-meta {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.product-category,
+.product-grade {
+    font-size: 0.75rem;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 0.125rem 0.375rem;
+    border-radius: 12px;
+}
+
+.product-price {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* History item styles */
+.history-item {
+    position: relative;
+}
+
+.remove-history {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    padding: 0.25rem;
+    color: #999;
+}
+
+.history-item:hover .remove-history {
+    opacity: 1;
+}
+
+.remove-history:hover {
+    color: #dc3545;
+}
+
+/* Popular item styles */
+.popular-item .fa-fire {
+    color: #ff6b35;
+}
+
+/* Active state overrides for different item types */
+.suggestion-item.active .product-name {
+    color: white;
+}
+
+.suggestion-item.active .product-category,
+.suggestion-item.active .product-grade {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.suggestion-item.active .product-price {
+    color: white;
+}
+
+.suggestion-item.active .remove-history {
+    color: rgba(255,255,255,0.7);
+}
+
+.suggestion-item.active .remove-history:hover {
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .search-suggestions {
+        right: 0;
+        max-height: 300px;
+    }
+    
+    .product-suggestion {
+        gap: 0.5rem;
+    }
+    
+    .product-thumb {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .product-name {
+        font-size: 0.85rem;
+    }
+    
+    .suggestion-item {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Scrollbar styling */
+.search-suggestions::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-suggestions::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
 /* Header Actions */
 .header-actions .btn {
     border-radius: 20px;
