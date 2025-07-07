@@ -14,6 +14,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Add jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         /* Admin Dashboard Specific Styles */
         :root {
@@ -294,19 +299,254 @@
         }
 
         /* Responsive */
-        @media (max-width: 991.98px) {
-            .admin-main {
-                padding: 1rem;
-            }
-            
-            .page-header {
-                padding: 1.5rem;
-            }
-            
-            .stat-card-body {
-                padding: 1.5rem;
-            }
-        }
+        /* Reports specific styles */
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin: 20px 0;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 102, 0, 0.075);
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    /* Print styles for reports */
+    @page { 
+        margin: 2cm; 
+        size: A4;
+    }
+    
+    body { 
+        font-family: Arial, sans-serif; 
+        color: #000;
+        background: white;
+    }
+    
+    .admin-header,
+    .admin-sidebar,
+    .btn-toolbar,
+    .no-print {
+        display: none !important;
+    }
+    
+    .admin-main {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .reports-print-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #333;
+        padding-bottom: 20px;
+    }
+    
+    .reports-print-header h1 {
+        color: #ff6600;
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .reports-print-header h2 {
+        color: #333;
+        margin: 10px 0;
+        font-size: 18px;
+    }
+    
+    .reports-print-header p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 14px;
+    }
+    
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin: 20px 0;
+        font-size: 12px;
+    }
+    
+    th, td { 
+        border: 1px solid #333; 
+        padding: 8px; 
+        text-align: left; 
+    }
+    
+    th { 
+        background-color: #f5f5f5; 
+        font-weight: bold; 
+        color: #333;
+    }
+    
+    .stat-card {
+        border: 1px solid #333;
+        margin: 10px 0;
+        padding: 15px;
+        page-break-inside: avoid;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .chart-container {
+        display: none; /* Hide charts in print */
+    }
+    
+    .print-footer {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        font-size: 10px;
+        color: #666;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+    }
+    
+    /* Page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+    
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    /* Table page breaks */
+    table {
+        page-break-inside: auto;
+    }
+    
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    thead {
+        display: table-header-group;
+    }
+    
+    /* Alert styles for print */
+    .alert {
+        border: 1px solid #333;
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+    }
+    
+    /* Enhanced print styles for reports */
+    .badge {
+        background-color: #f0f0f0 !important;
+        color: #333 !important;
+        border: 1px solid #333;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+    
+    .progress {
+        border: 1px solid #333;
+        background-color: #f9f9f9;
+        height: 15px !important;
+    }
+    
+    .progress-bar {
+        background-color: #ccc !important;
+        color: #333;
+        text-align: center;
+        line-height: 15px;
+    }
+    
+    .text-success, .text-primary, .text-info, .text-warning, .text-danger {
+        color: #333 !important;
+    }
+    
+    .card {
+        border: 1px solid #333;
+        margin: 10px 0;
+        page-break-inside: avoid;
+    }
+    
+    .card-header {
+        background-color: #f0f0f0 !important;
+        border-bottom: 1px solid #333;
+        font-weight: bold;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .btn, .btn-group, .btn-toolbar {
+        display: none !important;
+    }
+    
+    .modal, .dropdown, .offcanvas {
+        display: none !important;
+    }
+    
+    /* Specific report print styles */
+    .admin-table {
+        border: 1px solid #333;
+        overflow: visible;
+    }
+    
+    .table-responsive {
+        overflow: visible !important;
+    }
+    
+    .chart-card {
+        border: 1px solid #333;
+        page-break-inside: avoid;
+    }
+    
+    .report-section {
+        page-break-before: auto;
+        page-break-after: auto;
+        page-break-inside: avoid;
+    }
+    
+    /* Hide navigation and sidebar */
+    .nav, .navbar, .sidebar, .admin-sidebar, .admin-header {
+        display: none !important;
+    }
+    
+    /* Make sure tables fit on page */
+    table {
+        font-size: 10px !important;
+    }
+    
+    th, td {
+        padding: 4px !important;
+        word-wrap: break-word;
+        max-width: 150px;
+    }
+    
+    /* Print-specific headers and footers */
+    .print-only {
+        display: block !important;
+    }
+    
+    .no-print, .no-print * {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -652,39 +892,8 @@
   
                     
 <!-- Employees Management Tab -->
-// document.querySelector("#addStaffForm").addEventListener("submit", function(e) {
-//     e.preventDefault();
 
-//     const data = {
-//       firstName: document.querySelector('input[name="firstName"]').value,
-//       lastName: document.querySelector('input[name="lastName"]').value,
-//       email: document.querySelector('input[name="email"]').value,
-//       password: document.querySelector('input[name="password"]').value,
-//       phone: document.querySelector('input[name="phone"]').value,
-//       dateOfBirth: document.querySelector('input[name="dateOfBirth"]').value,
-//       gender: document.querySelector('select[name="gender"]').value,
-//       address: document.querySelector('input[name="address"]').value
-//     };
-
-//     fetch("/api/staffs/create", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(data)
-//     })
-//     .then(res => {
-//       if (!res.ok) throw res;
-//       return res.json();
-//     })
-//     .then(result => {
-//       alert("✅ Tạo nhân viên thành công!");
-//       location.reload();
-//     })
-//     .catch(err => {
-//       err.text().then(msg => alert("❌ Lỗi: " + msg));
-//     });
-//   });
-// </script>
-
+</script>
 
 <div class="tab-pane fade" id="employees">
     <div class="page-header">
@@ -1397,64 +1606,161 @@
 
                     <!-- Reports Tab -->
                     <div class="tab-pane fade" id="reports">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 class="h2">Báo cáo</h1>
-                        </div>
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="page-title" id="reportTitle">
+                <i class="fas fa-chart-bar me-3"></i>📊 Báo cáo
+            </h1>
+            <div class="btn-toolbar mb-2 mb-md-0 no-print">
+                <div class="btn-group me-2">
+                    <button type="button" class="btn btn-outline-secondary" id="exportExcel" disabled>
+                        <i class="fas fa-file-excel me-1"></i>Excel
+                    </button>
+                    <!-- XÓA NÚT PDF: Đã loại bỏ nút xuất PDF -->
+                    <button id="exportPrintBtn" class="btn btn-outline-secondary">
+                        <i class="fas fa-print"></i> In
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p class="text-muted mb-0">Tổng quan và phân tích dữ liệu kinh doanh 43 Gundam Hobby</p>
+    </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>Báo cáo doanh thu</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="reportType" class="form-label">Loại báo cáo</label>
-                                                <select class="form-select" id="reportType">
-                                                    <option value="daily">Theo ngày</option>
-                                                    <option value="monthly">Theo tháng</option>
-                                                    <option value="yearly">Theo năm</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="dateRange" class="form-label">Khoảng thời gian</label>
-                                                <input type="date" class="form-control" id="dateFrom">
-                                                <input type="date" class="form-control mt-2" id="dateTo">
-                                            </div>
-                                            <button type="button" class="btn btn-primary" onclick="generateReport()">
-                                                <i class="fas fa-chart-line"></i> Tạo báo cáo
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Reports Filters -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6><i class="fas fa-filter me-2"></i>Bộ lọc báo cáo</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold">Loại báo cáo:</label>
+                    <select id="reportType" class="form-select">
+                        <option value="revenue">📈 Báo cáo doanh thu</option>
+                        <option value="top-products">🏆 Sản phẩm bán chạy</option>
+                        <option value="category">📂 Doanh thu theo danh mục</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3" id="periodTypeContainer">
+                    <label class="form-label fw-bold">Nhóm theo:</label>
+                    <select id="periodType" class="form-select">
+                        <option value="day">📅 Theo ngày</option>
+                        <option value="month">📆 Theo tháng</option>
+                        <option value="year">🗓️ Theo năm</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3" id="startDateContainer">
+                    <label class="form-label fw-bold">Từ ngày:</label>
+                    <input type="date" id="startDate" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3" id="endDateContainer">
+                    <label class="form-label fw-bold">Đến ngày:</label>
+                    <input type="date" id="endDate" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3" id="monthPickerContainer" style="display:none;">
+                    <label class="form-label fw-bold">Chọn tháng:</label>
+                    <input type="month" id="monthPicker" class="form-control" />
+                </div>
+                <div class="col-md-2 mb-3" id="yearPickerContainer" style="display:none;">
+                    <label class="form-label fw-bold">Chọn năm:</label>
+                    <input type="number" id="yearPicker" class="form-control" min="2000" max="2100" placeholder="Năm" />
+                </div>
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <button type="button" class="btn btn-admin-primary w-100" id="generateReport">
+                        <i class="fas fa-chart-line me-2"></i>Tạo báo cáo
+                    </button>
+                </div>
+        </div>
+    </div>
 
-                            <div class="col-md-6 mb-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>Xuất báo cáo</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-success" onclick="exportExcel()">
-                                                <i class="fas fa-file-excel"></i> Xuất Excel
-                                            </button>
-                                            <button class="btn btn-danger" onclick="exportPDF()">
-                                                <i class="fas fa-file-pdf"></i> Xuất PDF
-                                            </button>
-                                            <button class="btn btn-info" onclick="printReport()">
-                                                <i class="fas fa-print"></i> In báo cáo
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Quick Stats Row -->
+    <div class="row mb-4" id="quickStatsRow" style="display: none;">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card primary">
+                <div class="stat-card-body">
+                    <div class="stat-label">Tổng đơn hàng</div>
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card success">
+                <div class="stat-card-body">
+                    <div class="stat-label">Tổng doanh thu</div>
+                    <div class="stat-value" id="totalRevenue">0₫</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card info">
+                <div class="stat-card-body">
+                    <div class="stat-label">Đã giao hàng</div>
+                    <div class="stat-value" id="deliveredOrders">0</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card warning">
+                <div class="stat-card-body">
+                    <div class="stat-label">Giá trị TB/đơn</div>
+                    <div class="stat-value" id="averageOrderValue">0₫</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="row mb-4" id="chartContainer" style="display: none;">
+        <div class="col-12">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h6 class="chart-title">
+                        <i class="fas fa-chart-area me-2"></i>Biểu đồ phân tích
+                    </h6>
+                </div>
+                <div class="p-4">
+                    <div class="chart-container">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Content -->
+    <div class="row">
+        <div class="col-12">
+            <div class="admin-table">
+                <div class="p-4 border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-table me-2"></i>Dữ liệu báo cáo
+                    </h5>
+                </div>
+                <div id="reportContent">
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-chart-bar fa-3x mb-3 opacity-50"></i>
+                        <p>Chọn loại báo cáo và nhấn "Tạo báo cáo" để bắt đầu</p>
+                        <small class="text-muted">
+                            Hệ thống hỗ trợ 3 loại báo cáo chính với biểu đồ trực quan
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     </div>    <!-- Add Product Modal -->
     <div class="modal fade" id="addProductModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -1618,6 +1924,102 @@
                 });
                 this.classList.add('active');
             });        });
+            // Common utility functions for reports
+function formatCurrency(amount) {
+    if (amount === null || amount === undefined) return '0₫';
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(amount);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('vi-VN');
+}
+
+function showAlert(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <i class="fas fa-info-circle me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 3000);
+}
+
+// Status/Payment functions
+function getStatusText(status) {
+    const statusMap = {
+        'PENDING': 'Chờ xử lý',
+        'CONFIRMED': 'Đã xác nhận', 
+        'SHIPPING': 'Đang giao',
+        'DELIVERED': 'Đã giao',
+        'CANCELLED': 'Đã hủy'
+    };
+    return statusMap[status] || status;
+}
+
+function getStatusBadgeClass(status) {
+    const classMap = {
+        'PENDING': 'warning',
+        'CONFIRMED': 'info',
+        'SHIPPING': 'primary', 
+        'DELIVERED': 'success',
+        'CANCELLED': 'danger'
+    };
+    return classMap[status] || 'secondary';
+}
+
+function getStatusIcon(status) {
+    const iconMap = {
+        'PENDING': '⏳',
+        'CONFIRMED': '✅',
+        'SHIPPING': '🚚',
+        'DELIVERED': '📦',
+        'CANCELLED': '❌'
+    };
+    return iconMap[status] || '📋';
+}
+
+function getPaymentText(method) {
+    const methodMap = {
+        'COD': 'Thanh toán khi nhận hàng',
+        'BANK_TRANSFER': 'Chuyển khoản ngân hàng',
+        'MOMO': 'Ví MoMo',
+        'VNPAY': 'VNPay'
+    };
+    return methodMap[method] || method;
+}
+
+function getPaymentBadgeClass(method) {
+    const classMap = {
+        'COD': 'warning',
+        'BANK_TRANSFER': 'primary',
+        'MOMO': 'info',
+        'VNPAY': 'success'
+    };
+    return classMap[method] || 'secondary';
+}
+
+function getPaymentIcon(method) {
+    const iconMap = {
+        'COD': '💵',
+        'BANK_TRANSFER': '🏦',
+        'MOMO': '📱',
+        'VNPAY': '💳'
+    };
+    return iconMap[method] || '💰';
+}
     </script>
     
     <!-- Auth script for logout functionality -->
@@ -1630,6 +2032,18 @@
         });
         
     </script>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+        <div class="text-center text-white">
+            <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5>Đang tạo báo cáo...</h5>
+        </div>
+    </div>
+
+    <!-- Load reports script -->
+<script src="<%=request.getContextPath()%>/js/reports-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/customer-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/category-management.js"></script>

@@ -1,22 +1,13 @@
 // category-management.js
 let categories = [];
 
-// Advanced Filters & Search Functions
-let currentFilters = {
-    search: '',
-    status: '',
-    productCount: '',
-    date: '',
-    sort: 'id_asc'
-};
-
 function fetchCategoriesAndRender() {
   fetch('/api/categories')
     .then(res => res.json())
     .then(data => {
       if (Array.isArray(data)) {
         categories = data;
-        applyFilters();
+        renderCategoryTable();
       } else {
         categories = [];
         renderCategoryTable();
@@ -30,205 +21,45 @@ function fetchCategoriesAndRender() {
     });
 }
 
-function applyFilters() {
-    let filteredCategories = [...categories];
+function renderCategoryTable(categoriesToRender = categories) {
+  const tbody = document.getElementById('categoryTableBody');
+  tbody.innerHTML = '';
+  categoriesToRender.forEach((cat) => {
+    const createdAt = cat.createdAt ? cat.createdAt.split('T')[0] : '';
+    const description = cat.description || '';
+    const name = cat.name || '';
+    const id = cat.id || '';
+    const productCount = cat.productCount || 0;
     
-    // Search filter
-    if (currentFilters.search) {
-        const searchTerm = currentFilters.search.toLowerCase();
-        filteredCategories = filteredCategories.filter(cat => 
-            (cat.name || '').toLowerCase().includes(searchTerm) ||
-            (cat.description || '').toLowerCase().includes(searchTerm)
-        );
-    }
-    
-    // Status filter
-    if (currentFilters.status) {
-        filteredCategories = filteredCategories.filter(cat => {
-            if (currentFilters.status === 'active') return cat.isActive === true;
-            if (currentFilters.status === 'inactive') return cat.isActive === false;
-            return true;
-        });
-    }
-    
-    // Product count filter
-    if (currentFilters.productCount) {
-        filteredCategories = filteredCategories.filter(cat => {
-            const count = cat.productCount || 0;
-            switch (currentFilters.productCount) {
-                case 'empty': return count === 0;
-                case 'low': return count >= 1 && count <= 5;
-                case 'medium': return count >= 6 && count <= 15;
-                case 'high': return count > 15;
-                default: return true;
-            }
-        });
-    }
-    
-    // Date filter
-    if (currentFilters.date) {
-        const now = new Date();
-        filteredCategories = filteredCategories.filter(cat => {
-            if (!cat.createdAt) return false;
-            const createdDate = new Date(cat.createdAt);
-            
-            switch (currentFilters.date) {
-                case 'today':
-                    return createdDate.toDateString() === now.toDateString();
-                case 'week':
-                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    return createdDate >= weekAgo;
-                case 'month':
-                    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                    return createdDate >= monthAgo;
-                case 'old':
-                    const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-                    return createdDate < threeMonthsAgo;
-                default:
-                    return true;
-            }
-        });
-    }
-    
-    // Sort
-    filteredCategories.sort((a, b) => {
-        switch (currentFilters.sort) {
-            case 'id_asc': return (a.id || 0) - (b.id || 0);
-            case 'id_desc': return (b.id || 0) - (a.id || 0);
-            case 'name_asc': return (a.name || '').localeCompare(b.name || '');
-            case 'name_desc': return (b.name || '').localeCompare(a.name || '');
-            case 'date_asc': return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-            case 'date_desc': return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-            case 'products_asc': return (a.productCount || 0) - (b.productCount || 0);
-            case 'products_desc': return (b.productCount || 0) - (a.productCount || 0);
-            default: return 0;
-        }
-    });
-    
-    // Update UI
-    renderCategoryTable(filteredCategories);
-    updateFilterSummary(filteredCategories.length);
-    updateActiveFilters();
-}
+    // Status display logic
+    const statusBadge = cat.isActive 
+      ? `<span class="badge bg-success">Hoạt động</span>` 
+      : `<span class="badge bg-secondary">Tạm ẩn</span>`;
 
-function renderCategoryTable(categoriesToRender = null) {
-    if (categoriesToRender === null) {
-        applyFilters();
-        return;
-    }
+    // Action buttons logic
+    const toggleStatusBtn = cat.isActive
+      ? `<button class="btn btn-sm btn-outline-secondary me-1" onclick="toggleCategoryStatus(${id})" title="Tạm ẩn danh mục"><i class="fas fa-eye-slash"></i></button>`
+      : `<button class="btn btn-sm btn-outline-success me-1" onclick="toggleCategoryStatus(${id})" title="Kích hoạt danh mục"><i class="fas fa-eye"></i></button>`;
     
-    const tbody = document.getElementById('categoryTableBody');
-    tbody.innerHTML = '';
-    categoriesToRender.forEach((cat) => {
-        const createdAt = cat.createdAt ? cat.createdAt.split('T')[0] : '';
-        const description = cat.description || '';
-        const name = cat.name || '';
-        const id = cat.id || '';
-        const productCount = cat.productCount || 0;
-        
-        // Status display logic
-        const statusBadge = cat.isActive 
-            ? `<span class="badge bg-success">Hoạt động</span>` 
-            : `<span class="badge bg-secondary">Tạm ẩn</span>`;
+    const deleteBtnDisabled = productCount > 0 ? 'disabled' : '';
+    const deleteBtnTitle = productCount > 0 ? 'Không thể xóa danh mục có sản phẩm' : 'Xóa danh mục';
 
-        // Action buttons logic
-        const toggleStatusBtn = cat.isActive
-            ? `<button class="btn btn-sm btn-outline-secondary me-1" onclick="toggleCategoryStatus(${id})" title="Tạm ẩn danh mục"><i class="fas fa-eye-slash"></i></button>`
-            : `<button class="btn btn-sm btn-outline-success me-1" onclick="toggleCategoryStatus(${id})" title="Kích hoạt danh mục"><i class="fas fa-eye"></i></button>`;
-        
-        const deleteBtnDisabled = productCount > 0 ? 'disabled' : '';
-        const deleteBtnTitle = productCount > 0 ? 'Không thể xóa danh mục có sản phẩm' : 'Xóa danh mục';
-
-        tbody.innerHTML += `
-            <tr>
-                <td>${id}</td>
-                <td>${name}</td>
-                <td>${description}</td>
-                <td>${createdAt}</td>
-                <td><span class="badge bg-info">${productCount}</span></td>
-                <td>${statusBadge}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-warning me-1" onclick="editCategory(${id})"><i class="fas fa-edit"></i></button>
-                    ${toggleStatusBtn}
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${id})" ${deleteBtnDisabled} title="${deleteBtnTitle}"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-    });
-}
-
-function updateFilterSummary(filteredCount) {
-    document.getElementById('filteredCount').textContent = filteredCount;
-    document.getElementById('totalCount').textContent = categories.length;
-}
-
-function updateActiveFilters() {
-    const container = document.getElementById('activeFilters');
-    container.innerHTML = '';
-    
-    const filterLabels = {
-        search: 'Tìm kiếm',
-        status: 'Trạng thái',
-        productCount: 'Số sản phẩm',
-        date: 'Ngày tạo',
-        sort: 'Sắp xếp'
-    };
-    
-    Object.keys(currentFilters).forEach(key => {
-        if (currentFilters[key] && key !== 'sort') {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-primary me-1';
-            badge.innerHTML = `${filterLabels[key]}: ${getFilterDisplayValue(key, currentFilters[key])} <i class="fas fa-times ms-1" style="cursor: pointer;" onclick="removeFilter('${key}')"></i>`;
-            container.appendChild(badge);
-        }
-    });
-}
-
-function getFilterDisplayValue(key, value) {
-    const displayValues = {
-        status: { active: 'Hoạt động', inactive: 'Tạm ẩn' },
-        productCount: { empty: 'Trống', low: 'Ít', medium: 'Trung bình', high: 'Nhiều' },
-        date: { today: 'Hôm nay', week: 'Tuần này', month: 'Tháng này', old: 'Cũ hơn' }
-    };
-    
-    if (key === 'search') return value;
-    return displayValues[key] ? displayValues[key][value] : value;
-}
-
-function removeFilter(filterKey) {
-    currentFilters[filterKey] = '';
-    document.getElementById(getFilterElementId(filterKey)).value = '';
-    applyFilters();
-}
-
-function getFilterElementId(filterKey) {
-    const elementIds = {
-        search: 'categorySearchInput',
-        status: 'statusFilter',
-        productCount: 'productCountFilter',
-        date: 'dateFilter',
-        sort: 'sortFilter'
-    };
-    return elementIds[filterKey];
-}
-
-function resetAllFilters() {
-    currentFilters = {
-        search: '',
-        status: '',
-        productCount: '',
-        date: '',
-        sort: 'id_asc'
-    };
-    
-    // Reset form elements
-    document.getElementById('categorySearchInput').value = '';
-    document.getElementById('statusFilter').value = '';
-    document.getElementById('productCountFilter').value = '';
-    document.getElementById('dateFilter').value = '';
-    document.getElementById('sortFilter').value = 'id_asc';
-    
-    applyFilters();
+    tbody.innerHTML += `
+      <tr>
+        <td>${id}</td>
+        <td>${name}</td>
+        <td>${description}</td>
+        <td>${createdAt}</td>
+        <td><span class="badge bg-info">${productCount}</span></td>
+        <td>${statusBadge}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-warning me-1" onclick="editCategory(${id})"><i class="fas fa-edit"></i></button>
+          ${toggleStatusBtn}
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${id})" ${deleteBtnDisabled} title="${deleteBtnTitle}"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
 function editCategory(id) {
@@ -344,55 +175,15 @@ function toggleCategoryStatus(id) {
 document.addEventListener('DOMContentLoaded', () => {
     fetchCategoriesAndRender();
 
-    // Search input
     const searchInput = document.getElementById('categorySearchInput');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
-            currentFilters.search = e.target.value;
-            applyFilters();
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredCategories = categories.filter(cat => 
+                cat.name.toLowerCase().includes(searchTerm)
+            );
+            renderCategoryTable(filteredCategories);
         });
-    }
-    
-    // Status filter
-    const statusFilter = document.getElementById('statusFilter');
-    if (statusFilter) {
-        statusFilter.addEventListener('change', (e) => {
-            currentFilters.status = e.target.value;
-            applyFilters();
-        });
-    }
-    
-    // Product count filter
-    const productCountFilter = document.getElementById('productCountFilter');
-    if (productCountFilter) {
-        productCountFilter.addEventListener('change', (e) => {
-            currentFilters.productCount = e.target.value;
-            applyFilters();
-        });
-    }
-    
-    // Date filter
-    const dateFilter = document.getElementById('dateFilter');
-    if (dateFilter) {
-        dateFilter.addEventListener('change', (e) => {
-            currentFilters.date = e.target.value;
-            applyFilters();
-        });
-    }
-    
-    // Sort filter
-    const sortFilter = document.getElementById('sortFilter');
-    if (sortFilter) {
-        sortFilter.addEventListener('change', (e) => {
-            currentFilters.sort = e.target.value;
-            applyFilters();
-        });
-    }
-    
-    // Reset filters button
-    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
-    if (resetFiltersBtn) {
-        resetFiltersBtn.addEventListener('click', resetAllFilters);
     }
 
     document.getElementById('addCategoryForm').addEventListener('submit', function(e) {

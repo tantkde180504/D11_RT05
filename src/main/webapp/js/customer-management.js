@@ -1,13 +1,3 @@
-// Advanced Filters for Customers
-let customerList = [];
-let currentCustomerFilters = {
-    search: '',
-    gender: '',
-    orderCount: '',
-    date: '',
-    sort: 'id_asc'
-};
-
 document.addEventListener("DOMContentLoaded", function () {
   // Chỉ load khi tab khách hàng được mở
   const customerTab = document.querySelector('a[href="#customers"]');
@@ -115,52 +105,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Thêm ô tìm kiếm vào DOM
   const customerTabContent = document.querySelector('#customers .admin-table');
   customerTabContent.insertBefore(searchInput, customerTabContent.firstChild);
-  
-  // Advanced Filters Event Listeners
-  const customerSearchAdvanced = document.getElementById('customerSearchInputAdvanced');
-  if (customerSearchAdvanced) {
-      customerSearchAdvanced.addEventListener('input', (e) => {
-          currentCustomerFilters.search = e.target.value;
-          applyCustomerFilters();
-      });
-  }
-  
-  const customerGenderFilter = document.getElementById('customerGenderFilter');
-  if (customerGenderFilter) {
-      customerGenderFilter.addEventListener('change', (e) => {
-          currentCustomerFilters.gender = e.target.value;
-          applyCustomerFilters();
-      });
-  }
-  
-  const customerOrderFilter = document.getElementById('customerOrderFilter');
-  if (customerOrderFilter) {
-      customerOrderFilter.addEventListener('change', (e) => {
-          currentCustomerFilters.orderCount = e.target.value;
-          applyCustomerFilters();
-      });
-  }
-  
-  const customerDateFilter = document.getElementById('customerDateFilter');
-  if (customerDateFilter) {
-      customerDateFilter.addEventListener('change', (e) => {
-          currentCustomerFilters.date = e.target.value;
-          applyCustomerFilters();
-      });
-  }
-  
-  const customerSortFilter = document.getElementById('customerSortFilter');
-  if (customerSortFilter) {
-      customerSortFilter.addEventListener('change', (e) => {
-          currentCustomerFilters.sort = e.target.value;
-          applyCustomerFilters();
-      });
-  }
-  
-  const resetCustomerFiltersBtn = document.getElementById('resetCustomerFiltersBtn');
-  if (resetCustomerFiltersBtn) {
-      resetCustomerFiltersBtn.addEventListener('click', resetAllCustomerFilters);
-  }
 });
 
 function apiUrl(path) {
@@ -179,113 +123,14 @@ function loadCustomerList() {
       return res.json();
     })
     .then(data => {
-      customerList = data; // Lưu danh sách khách hàng gốc
-      applyCustomerFilters(); // Áp dụng bộ lọc hiện tại (nếu có)
-    })
-    .catch(err => {
-      alert("Không thể tải danh sách khách hàng. Vui lòng thử lại sau.");
-      console.error("Lỗi khi tải danh sách khách hàng:", err);
-    });
-}
-
-function applyCustomerFilters() {
-    let filteredCustomers = [...customerList];
-    
-    // Search filter
-    if (currentCustomerFilters.search) {
-        const searchTerm = currentCustomerFilters.search.toLowerCase();
-        filteredCustomers = filteredCustomers.filter(customer => {
-            const fullName = `${customer.firstName || ""} ${customer.lastName || ""}`.trim().toLowerCase();
-            const email = (customer.email || '').toLowerCase();
-            const phone = (customer.phone || '').toLowerCase();
-            return fullName.includes(searchTerm) || email.includes(searchTerm) || phone.includes(searchTerm);
-        });
-    }
-    
-    // Gender filter
-    if (currentCustomerFilters.gender) {
-        filteredCustomers = filteredCustomers.filter(customer => 
-            customer.gender === currentCustomerFilters.gender
-        );
-    }
-    
-    // Order count filter
-    if (currentCustomerFilters.orderCount) {
-        filteredCustomers = filteredCustomers.filter(customer => {
-            const count = customer.totalOrders || 0;
-            switch (currentCustomerFilters.orderCount) {
-                case 'new': return count === 0;
-                case 'low': return count >= 1 && count <= 5;
-                case 'medium': return count >= 6 && count <= 15;
-                case 'high': return count > 15;
-                default: return true;
-            }
-        });
-    }
-    
-    // Date filter
-    if (currentCustomerFilters.date) {
-        const now = new Date();
-        filteredCustomers = filteredCustomers.filter(customer => {
-            if (!customer.createdAt) return false;
-            const createdDate = new Date(customer.createdAt);
-            
-            switch (currentCustomerFilters.date) {
-                case 'today':
-                    return createdDate.toDateString() === now.toDateString();
-                case 'week':
-                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    return createdDate >= weekAgo;
-                case 'month':
-                    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                    return createdDate >= monthAgo;
-                case 'old':
-                    const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-                    return createdDate < threeMonthsAgo;
-                default:
-                    return true;
-            }
-        });
-    }
-    
-    // Sort
-    filteredCustomers.sort((a, b) => {
-        switch (currentCustomerFilters.sort) {
-            case 'id_asc': return (a.id || 0) - (b.id || 0);
-            case 'id_desc': return (b.id || 0) - (a.id || 0);
-            case 'name_asc': {
-                const nameA = `${a.firstName || ""} ${a.lastName || ""}`.trim();
-                const nameB = `${b.firstName || ""} ${b.lastName || ""}`.trim();
-                return nameA.localeCompare(nameB);
-            }
-            case 'name_desc': {
-                const nameA = `${a.firstName || ""} ${a.lastName || ""}`.trim();
-                const nameB = `${b.firstName || ""} ${b.lastName || ""}`.trim();
-                return nameB.localeCompare(nameA);
-            }
-            case 'date_asc': return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-            case 'date_desc': return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-            case 'orders_asc': return (a.totalOrders || 0) - (b.totalOrders || 0);
-            case 'orders_desc': return (b.totalOrders || 0) - (a.totalOrders || 0);
-            default: return 0;
-        }
-    });
-    
-    // Update UI
-    renderCustomerTable(filteredCustomers);
-    updateCustomerFilterSummary(filteredCustomers.length);
-    updateCustomerActiveFilters();
-}
-
-function renderCustomerTable(customers) {
-    const tbody = document.getElementById("customerTableBody");
-    tbody.innerHTML = "";
-    customers.forEach((cus, idx) => {
+      const tbody = document.getElementById("customerTableBody");
+      tbody.innerHTML = "";
+      data.forEach((cus, idx) => {
         const fullName = `${cus.firstName || ""} ${cus.lastName || ""}`.trim();
         const createdAt = cus.createdAt ? new Date(cus.createdAt).toLocaleDateString('vi-VN') : "";
         const row = `
           <tr>
-            <td>${cus.id || idx + 1}</td>
+            <td>${idx + 1}</td>
             <td>${fullName}</td>
             <td>${cus.email || ""}</td>
             <td>${cus.phone || ""}</td>
@@ -298,95 +143,32 @@ function renderCustomerTable(customers) {
           </tr>
         `;
         tbody.insertAdjacentHTML("beforeend", row);
-    });
-    
-    // Gán sự kiện cho nút xem và sửa
-    tbody.querySelectorAll('.btn-view-cus').forEach(btn => {
+      });
+      // Gán sự kiện cho nút xem
+      tbody.querySelectorAll('.btn-view-cus').forEach(btn => {
         btn.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            viewCustomer(id);
+          const id = this.getAttribute('data-id');
+          const cus = data.find(c => c.id == id);
+          if (cus) showCustomerDetail(cus);
         });
-    });
-    
-    tbody.querySelectorAll('.btn-edit-cus').forEach(btn => {
+      });
+      // Gán sự kiện cho nút sửa
+      tbody.querySelectorAll('.btn-edit-cus').forEach(btn => {
         btn.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            editCustomer(id);
+          const id = this.getAttribute('data-id');
+          const cus = data.find(c => c.id == id);
+          if (cus) showEditCustomerModal(cus);
         });
+      });
+      // Thêm hiệu ứng hover cho dòng
+      tbody.querySelectorAll('tr').forEach(tr => {
+        tr.classList.add('table-row-hover');
+      });
+    })
+    .catch(err => {
+      alert("Không thể tải danh sách khách hàng. Vui lòng thử lại sau.");
+      console.error("Lỗi khi tải danh sách khách hàng:", err);
     });
-}
-
-function updateCustomerFilterSummary(filteredCount) {
-    document.getElementById('customerFilteredCount').textContent = filteredCount;
-    document.getElementById('customerTotalCount').textContent = customerList.length;
-}
-
-function updateCustomerActiveFilters() {
-    const container = document.getElementById('customerActiveFilters');
-    container.innerHTML = '';
-    
-    const filterLabels = {
-        search: 'Tìm kiếm',
-        gender: 'Giới tính',
-        orderCount: 'Số đơn hàng',
-        date: 'Ngày đăng ký'
-    };
-    
-    Object.keys(currentCustomerFilters).forEach(key => {
-        if (currentCustomerFilters[key] && key !== 'sort') {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-primary me-1';
-            badge.innerHTML = `${filterLabels[key]}: ${getCustomerFilterDisplayValue(key, currentCustomerFilters[key])} <i class="fas fa-times ms-1" style="cursor: pointer;" onclick="removeCustomerFilter('${key}')"></i>`;
-            container.appendChild(badge);
-        }
-    });
-}
-
-function getCustomerFilterDisplayValue(key, value) {
-    const displayValues = {
-        gender: { MALE: 'Nam', FEMALE: 'Nữ', OTHER: 'Khác' },
-        orderCount: { new: 'Mới', low: 'Ít', medium: 'Trung bình', high: 'Nhiều' },
-        date: { today: 'Hôm nay', week: 'Tuần này', month: 'Tháng này', old: 'Cũ hơn' }
-    };
-    
-    if (key === 'search') return value;
-    return displayValues[key] ? displayValues[key][value] : value;
-}
-
-function removeCustomerFilter(filterKey) {
-    currentCustomerFilters[filterKey] = '';
-    document.getElementById(getCustomerFilterElementId(filterKey)).value = '';
-    applyCustomerFilters();
-}
-
-function getCustomerFilterElementId(filterKey) {
-    const elementIds = {
-        search: 'customerSearchInputAdvanced',
-        gender: 'customerGenderFilter',
-        orderCount: 'customerOrderFilter',
-        date: 'customerDateFilter',
-        sort: 'customerSortFilter'
-    };
-    return elementIds[filterKey];
-}
-
-function resetAllCustomerFilters() {
-    currentCustomerFilters = {
-        search: '',
-        gender: '',
-        orderCount: '',
-        date: '',
-        sort: 'id_asc'
-    };
-    
-    // Reset form elements
-    document.getElementById('customerSearchInputAdvanced').value = '';
-    document.getElementById('customerGenderFilter').value = '';
-    document.getElementById('customerOrderFilter').value = '';
-    document.getElementById('customerDateFilter').value = '';
-    document.getElementById('customerSortFilter').value = 'id_asc';
-    
-    applyCustomerFilters();
 }
 
 // Hiển thị modal chi tiết khách hàng (bổ sung trường mới)
