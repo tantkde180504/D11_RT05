@@ -51,15 +51,20 @@
                     </div>
                 </div>
             </div>
+            
             <!-- ⚠️ Cảnh báo sản phẩm sắp hết -->
             <div id="low-stock-alert"
                 class="alert alert-warning d-flex justify-content-between align-items-center mt-3 mx-3"
                 style="display: none;">
-                <span>
+
+                <span class="mb-0">
                     ⚠️ Có <span id="low-stock-count"></span> sản phẩm <strong>sắp hết hàng</strong>.
-                    <a href="#inventory" data-tab="inventory" class="ms-2" onclick="viewLowStockProducts()">Xem ngay</a>
                 </span>
-                <button class="btn btn-sm btn-outline-dark" onclick="dismissLowStockAlert()">Tôi đã biết</button>
+
+                <a href="#inventory" data-tab="inventory" onclick="viewLowStockProducts()"
+                    class="btn btn-sm btn-outline-dark ms-3">
+                    Xem ngay
+                </a>
             </div>
 
 
