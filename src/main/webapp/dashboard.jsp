@@ -1457,7 +1457,7 @@
                                             <th>Tên danh mục</th>
                                             <th>Mô tả</th>
                                             <th>Ngày tạo</th>
-                                            <th>Số sản phẩm</th>
+                                            <th>Sản phẩm bán được</th>
                                             <th>Trạng thái</th>
                                             <th>Thao tác</th>
                                         </tr>

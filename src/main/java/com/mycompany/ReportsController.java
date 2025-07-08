@@ -44,9 +44,10 @@ public class ReportsController {
     @GetMapping("/category")
     public ResponseEntity<?> getProductCategoryReport(
             @RequestParam String startDate,
-            @RequestParam String endDate) {
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "day") String periodType) {
         try {
-            Map<String, Object> reportData = reportsService.getProductCategoryReport(startDate, endDate);
+            Map<String, Object> reportData = reportsService.getProductCategoryReport(startDate, endDate, periodType);
             return ResponseEntity.ok(reportData);
         } catch (Exception e) {
             return ResponseEntity.badRequest()

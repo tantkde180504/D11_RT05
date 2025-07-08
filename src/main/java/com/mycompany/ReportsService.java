@@ -19,8 +19,13 @@ public class ReportsService {
         return reportsRepository.getTopProductsReport(startDate, endDate);
     }
 
+    public Map<String, Object> getProductCategoryReport(String startDate, String endDate, String periodType) {
+        return reportsRepository.getProductCategoryReport(startDate, endDate, periodType);
+    }
+
+    // Backward compatibility - giữ method cũ để không break code
     public Map<String, Object> getProductCategoryReport(String startDate, String endDate) {
-        return reportsRepository.getProductCategoryReport(startDate, endDate);
+        return getProductCategoryReport(startDate, endDate, "day");
     }
 
     // Helper method để validate dates

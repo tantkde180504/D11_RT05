@@ -1,34 +1,26 @@
-# Build directories
-/target/
-/build/
-/out/
+# Maven build directory
+target/
 
-# Compiled class files
-*.class
+# Tomcat work directory
+work/
 
-# WAR/JAR files
-*.war
-*.jar
-*.ear
-
-# IDE config
-.idea/
+# VS Code settings
 .vscode/
-*.iml
 
-# Logs
-*.log
+# IDE files
+*.iml
+.idea/
+.eclipse/
+.project
+.classpath
+.settings/
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Temporary files
-*.tmp
-*.temp
+# Log files
+*.log
 
-# Node modules (nếu có)
-node_modules/
-
-# SQL test
-test_*.sql
+# Compiled class files
+*.class

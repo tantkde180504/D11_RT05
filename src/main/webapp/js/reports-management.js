@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
     togglePeriodType();
     showReportPlaceholder();
 
+    // Thiết lập nút xuất Excel và In
+    setupExportButtons();
+
     document.getElementById('periodType').addEventListener('change', function() {
         togglePeriodType();
     });
@@ -93,7 +96,7 @@ function togglePeriodType() {
     const endDateContainer = document.querySelector('.col-md-2.mb-3:has(#endDate)') || 
                             document.querySelector('input#endDate').closest('.col-md-2');
 
-    if (reportType === 'revenue') {
+    if (reportType === 'revenue' || reportType === 'category') {
         periodTypeContainer.style.display = 'block';
         
         if (periodType === 'month') {
@@ -195,7 +198,7 @@ function generateReport() {
     
     let url = `/api/reports/${reportType}?startDate=${startDate}&endDate=${endDate}`;
     
-    if (reportType === 'revenue') {
+    if (reportType === 'revenue' || reportType === 'category') {
         const periodType = document.getElementById('periodType').value;
         url += `&periodType=${periodType}`;
         console.log('Period Type:', periodType);
@@ -214,9 +217,14 @@ function generateReport() {
             
             if (data.error) {
                 showError(data.message || 'Có lỗi xảy ra khi tạo báo cáo');
+                disableExportButtons();
             } else {
+                console.log('🔍 DEBUG - Saving currentReportData:', data);
+                console.log('🔍 DEBUG - Data type:', typeof data);
+                console.log('🔍 DEBUG - Data length:', Array.isArray(data) ? data.length : 'Not array');
                 currentReportData = data;
                 displayReport(reportType, data);
+                enableExportButtons();
                 showSuccess('Tạo báo cáo thành công!');
             }
         })
@@ -377,19 +385,12 @@ function displayRevenueReport(data) {
 
 // 🏆 HIỂN THỊ BÁO CÁO SẢN PHẨM BÁN CHẠY
 function displayTopProductsReport(data) {
-    console.log('🎯 DEBUG - Top Products data:', data);
-    console.log('🎯 DEBUG - Top Products data keys:', Object.keys(data));
-    console.log('🎯 DEBUG - topProducts:', data.topProducts);
-    
     const reportContent = document.getElementById('reportContent');
     
     if (!data.topProducts || data.topProducts.length === 0) {
-        console.log('❌ No top products data found');
         showReportPlaceholder();
         return;
     }
-    
-    console.log('✅ Found', data.topProducts.length, 'top products');
     
     let tableHTML = `
         <div class="table-responsive">
@@ -398,11 +399,10 @@ function displayTopProductsReport(data) {
                     <tr>
                         <th><i class="fas fa-trophy me-1"></i>Hạng</th>
                         <th><i class="fas fa-tag me-1"></i>Tên sản phẩm</th>
-                        <th><i class="fas fa-star me-1"></i>Grade</th>
                         <th><i class="fas fa-industry me-1"></i>Thương hiệu</th>
                         <th><i class="fas fa-shopping-cart me-1"></i>Số lượng bán</th>
                         <th><i class="fas fa-dollar-sign me-1"></i>Doanh thu</th>
-                        <th><i class="fas fa-coins me-1"></i>Giá TB/sản phẩm</th>
+                        <th><i class="fas fa-receipt me-1"></i>Số đơn</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -413,27 +413,16 @@ function displayTopProductsReport(data) {
         const badge = ranking <= 3 ? 'bg-warning' : 'bg-secondary';
         const icon = ranking === 1 ? '🥇' : ranking === 2 ? '🥈' : ranking === 3 ? '🥉' : '';
         
-        const quantity = product.total_quantity || product.order_count || 0;
+        const quantity = product.total_sold || product.total_quantity || product.order_count || 0;
         const revenue = product.total_revenue || 0;
-        const avgPrice = product.avg_price || (quantity > 0 ? revenue / quantity : 0);
-        const grade = product.grade || 'N/A';
-        const brand = product.brand || 'N/A';
-        
-        // Badge màu cho grade
-        let gradeBadge = 'bg-secondary';
-        if (grade === 'PG') gradeBadge = 'bg-danger';
-        else if (grade === 'MG') gradeBadge = 'bg-warning';
-        else if (grade === 'RG') gradeBadge = 'bg-info';
-        else if (grade === 'HG') gradeBadge = 'bg-success';
-        else if (grade === 'TOOLS') gradeBadge = 'bg-dark';
+        const avgPrice = quantity > 0 ? revenue / quantity : 0;
         
         tableHTML += `
             <tr>
                 <td><span class="badge ${badge} fs-6">${icon} ${ranking}</span></td>
                 <td><strong>${product.name || product.product_name}</strong></td>
-                <td><span class="badge ${gradeBadge}">${grade}</span></td>
-                <td>${brand}</td>
-                <td><span class="badge bg-primary fs-6">${quantity}</span></td>
+                <td>${product.brand || 'N/A'}</td>
+                <td><span class="badge bg-primary">${quantity}</span></td>
                 <td class="text-success fw-bold">${formatCurrency(revenue)}</td>
                 <td class="text-muted">${formatCurrency(avgPrice)}</td>
             </tr>
@@ -466,7 +455,6 @@ function displayCategoryReport(data) {
                 <thead class="table-dark">
                     <tr>
                         <th><i class="fas fa-list me-1"></i>Danh mục</th>
-                        <th><i class="fas fa-star me-1"></i>Grade</th>
                         <th><i class="fas fa-cubes me-1"></i>Số sản phẩm</th>
                         <th><i class="fas fa-shopping-cart me-1"></i>Số lượng bán</th>
                         <th><i class="fas fa-dollar-sign me-1"></i>Doanh thu</th>
@@ -481,27 +469,11 @@ function displayCategoryReport(data) {
     data.categoryData.forEach(category => {
         const revenue = category.total_revenue || 0;
         const percentage = totalRevenue > 0 ? (revenue / totalRevenue * 100).toFixed(1) : 0;
-        const grade = category.grade || 'N/A';
-        const categoryName = category.category_name || category.name;
-        
-        // Badge màu cho category
-        let categoryBadge = 'bg-primary';
-        if (categoryName === 'GUNDAM_BANDAI') categoryBadge = 'bg-warning';
-        else if (categoryName === 'TOOLS_ACCESSORIES') categoryBadge = 'bg-dark';
-        
-        // Badge màu cho grade
-        let gradeBadge = 'bg-secondary';
-        if (grade === 'PG') gradeBadge = 'bg-danger';
-        else if (grade === 'MG') gradeBadge = 'bg-warning';
-        else if (grade === 'RG') gradeBadge = 'bg-info';
-        else if (grade === 'HG') gradeBadge = 'bg-success';
-        else if (grade === 'TOOLS') gradeBadge = 'bg-dark';
         
         tableHTML += `
             <tr>
-                <td><span class="badge ${categoryBadge}">${categoryName}</span></td>
-                <td><span class="badge ${gradeBadge}">${grade}</span></td>
-                <td><span class="badge bg-info">${category.product_count || 0}</span></td>
+                <td><strong>${category.category_name || category.name}</strong></td>
+                <td><span class="badge bg-info">${category.products_sold || 0}</span></td>
                 <td><span class="badge bg-primary">${category.total_quantity || 0}</span></td>
                 <td class="text-success fw-bold">${formatCurrency(revenue)}</td>
                 <td>
@@ -568,12 +540,32 @@ function hideLoading() {
 
 function showSuccess(message) {
     console.log('✅ SUCCESS:', message);
-    // Có thể thêm toast notification ở đây
+    showNotification(message, 'success');
 }
 
 function showError(message) {
     console.error('❌ ERROR:', message);
-    alert(message); // Temporary - có thể thay bằng toast
+    showNotification(message, 'error');
+}
+
+function showNotification(message, type = 'info') {
+    // Tạo toast notification đơn giản
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Tự động xóa sau 3 giây
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 3000);
 }
 
 function showReportPlaceholder() {
@@ -586,5 +578,382 @@ function showReportPlaceholder() {
                 <div style="color: #888; margin-top: 4px;">Chọn loại báo cáo và nhấn <b>'Tạo báo cáo'</b> để xem dữ liệu</div>
             </div>
         `;
+    }
+}
+
+// 📊 XUẤT EXCEL VÀ IN BÁO CÁO
+function setupExportButtons() {
+    // Nút xuất Excel
+    const exportExcelBtn = document.getElementById('exportExcel');
+    if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', exportToExcel);
+    }
+    
+    // Nút in
+    const exportPrintBtn = document.getElementById('exportPrintBtn');
+    if (exportPrintBtn) {
+        exportPrintBtn.addEventListener('click', printReport);
+    }
+}
+
+// 📊 XUẤT EXCEL
+function exportToExcel() {
+    console.log('🔍 DEBUG exportToExcel:');
+    console.log('currentReportData:', currentReportData);
+    console.log('currentReportData type:', typeof currentReportData);
+    
+    // Kiểm tra dữ liệu - có thể là object chứa array hoặc trực tiếp là array
+    let reportData = null;
+    if (Array.isArray(currentReportData)) {
+        reportData = currentReportData;
+    } else if (currentReportData && typeof currentReportData === 'object') {
+        // Xử lý theo loại báo cáo
+        const reportType = document.getElementById('reportType').value;
+        if (reportType === 'revenue' && currentReportData.periodRevenue) {
+            reportData = currentReportData.periodRevenue;
+        } else if (reportType === 'top-products' && currentReportData.topProducts) {
+            reportData = currentReportData.topProducts;
+        } else if (reportType === 'category' && Array.isArray(currentReportData.data)) {
+            reportData = currentReportData.data;
+        } else if (Array.isArray(currentReportData.data)) {
+            reportData = currentReportData.data;
+        } else {
+            // Thử lấy property đầu tiên là array
+            const keys = Object.keys(currentReportData);
+            for (let key of keys) {
+                if (Array.isArray(currentReportData[key])) {
+                    reportData = currentReportData[key];
+                    break;
+                }
+            }
+        }
+    }
+    
+    console.log('🔍 DEBUG reportData:', reportData);
+    console.log('🔍 DEBUG reportData length:', reportData ? reportData.length : 'N/A');
+    
+    if (!reportData || !reportData.length) {
+        alert('⚠️ Chưa có dữ liệu báo cáo để xuất!');
+        return;
+    }
+    
+    const reportType = document.getElementById('reportType').value;
+    const fileName = getReportFileName(reportType, 'xlsx');
+    
+    try {
+        // Tạo workbook và worksheet
+        const wb = XLSX.utils.book_new();
+        let ws_data = [];
+        
+        // Thêm tiêu đề báo cáo
+        const reportTitle = getReportTitle(reportType);
+        ws_data.push([reportTitle]);
+        ws_data.push(['43 Gundam Hobby - Báo cáo tự động']);
+        ws_data.push(['Ngày xuất: ' + new Date().toLocaleDateString('vi-VN')]);
+        ws_data.push([]); // Dòng trống
+        
+        // Thêm header dựa trên loại báo cáo
+        let headers = [];
+        if (reportType === 'revenue') {
+            headers = ['Thời gian', 'Tổng đơn hàng', 'Đơn giao thành công', 'Doanh thu (VNĐ)'];
+        } else if (reportType === 'top-products') {
+            headers = ['STT', 'Tên sản phẩm', 'Danh mục', 'Grade', 'Số lượng bán', 'Doanh thu (VNĐ)'];
+        } else if (reportType === 'category') {
+            headers = ['Danh mục', 'Số sản phẩm', 'Số lượng bán', 'Doanh thu (VNĐ)'];
+        }
+        ws_data.push(headers);
+        
+        // Thêm dữ liệu
+        console.log('🔍 DEBUG - Adding data to Excel:');
+        console.log('🔍 reportData:', reportData);
+        console.log('🔍 reportData[0]:', reportData[0]);
+        
+        reportData.forEach((item, index) => {
+            console.log(`🔍 Processing item ${index}:`, item);
+            let row = [];
+            if (reportType === 'revenue') {
+                // Sử dụng field names chính xác từ backend
+                let periodDate = item.period_date || item.period || '';
+                
+                // Format lại ngày cho dễ đọc
+                if (periodDate && !isNaN(periodDate)) {
+                    // Nếu là timestamp, convert sang date
+                    const date = new Date(parseInt(periodDate));
+                    const periodType = document.getElementById('periodType').value;
+                    periodDate = formatPeriodDate(periodDate, periodType);
+                } else if (typeof periodDate === 'string' && periodDate.includes('E')) {
+                    // Nếu là scientific notation, convert
+                    const timestamp = parseFloat(periodDate);
+                    const date = new Date(timestamp);
+                    const periodType = document.getElementById('periodType').value;
+                    periodDate = formatPeriodDate(timestamp, periodType);
+                }
+                
+                const orderCount = item.order_count || item.total_orders || 0;
+                const deliveredCount = item.delivered_count || item.delivered_orders || 0;
+                const totalRevenue = item.total_revenue || 0;
+                
+                row = [periodDate, orderCount, deliveredCount, totalRevenue];
+            } else if (reportType === 'top-products') {
+                // Sử dụng field names thực tế từ debug
+                const productName = item.name || '';  // name, không phải product_name
+                const categoryName = item.category || '';  // category, không phải category_name
+                const grade = item.grade || '';
+                const totalSold = item.total_sold || 0;
+                const totalRevenue = item.total_revenue || 0;
+                
+                console.log('🔍 Final extracted values:', {productName, categoryName, grade, totalSold, totalRevenue});
+                
+                row = [index + 1, productName, categoryName, grade, totalSold, totalRevenue];
+            } else if (reportType === 'category') {
+                // Sử dụng field names chính xác từ displayCategoryReport
+                const categoryName = item.category_name || item.name || '';
+                const productsSold = item.products_sold || 0;  // Số sản phẩm
+                const totalQuantity = item.total_quantity || 0;  // Số lượng bán
+                const totalRevenue = item.total_revenue || 0;
+                
+                console.log('🔍 Category values:', {categoryName, productsSold, totalQuantity, totalRevenue});
+                
+                row = [categoryName, productsSold, totalQuantity, totalRevenue];
+            }
+            console.log(`🔍 Generated row:`, row);
+            ws_data.push(row);
+        });
+        
+        // Tạo worksheet
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        
+        // Tự động điều chỉnh độ rộng cột
+        const colWidths = [];
+        ws_data.forEach(row => {
+            row.forEach((cell, i) => {
+                const cellLength = cell ? cell.toString().length : 10;
+                colWidths[i] = Math.max(colWidths[i] || 10, cellLength + 2);
+            });
+        });
+        ws['!cols'] = colWidths.map(w => ({wch: Math.min(w, 50)}));
+        
+        // Thêm worksheet vào workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Báo cáo');
+        
+        // Xuất file
+        XLSX.writeFile(wb, fileName);
+        
+        showNotification('✅ Xuất Excel thành công!', 'success');
+    } catch (error) {
+        console.error('❌ Lỗi xuất Excel:', error);
+        alert('❌ Có lỗi khi xuất Excel: ' + error.message);
+    }
+}
+
+// 🖨️ IN BÁO CÁO
+function printReport() {
+    // Kiểm tra dữ liệu tương tự như exportToExcel
+    let reportData = null;
+    if (Array.isArray(currentReportData)) {
+        reportData = currentReportData;
+    } else if (currentReportData && typeof currentReportData === 'object') {
+        // Xử lý theo loại báo cáo
+        const reportType = document.getElementById('reportType').value;
+        if (reportType === 'revenue' && currentReportData.periodRevenue) {
+            reportData = currentReportData.periodRevenue;
+        } else if (reportType === 'category' && Array.isArray(currentReportData.data)) {
+            reportData = currentReportData.data;
+        } else if (Array.isArray(currentReportData.data)) {
+            reportData = currentReportData.data;
+        } else {
+            // Thử lấy property đầu tiên là array
+            const keys = Object.keys(currentReportData);
+            for (let key of keys) {
+                if (Array.isArray(currentReportData[key])) {
+                    reportData = currentReportData[key];
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (!reportData || !reportData.length) {
+        alert('⚠️ Chưa có dữ liệu báo cáo để in!');
+        return;
+    }
+    
+    const reportType = document.getElementById('reportType').value;
+    const reportTitle = getReportTitle(reportType);
+    
+    // Tạo nội dung in
+    let printContent = `
+        <div class="reports-print-header">
+            <h1>43 GUNDAM HOBBY</h1>
+            <h2>${reportTitle}</h2>
+            <p>Ngày in: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN')}</p>
+        </div>
+        
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+    `;
+    
+    // Thêm header
+    if (reportType === 'revenue') {
+        printContent += `
+            <th>Thời gian</th>
+            <th>Tổng đơn hàng</th>
+            <th>Đơn giao thành công</th>
+            <th>Doanh thu (VNĐ)</th>
+        `;
+    } else if (reportType === 'top-products') {
+        printContent += `
+            <th>STT</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Grade</th>
+            <th>Số lượng bán</th>
+            <th>Doanh thu (VNĐ)</th>
+        `;
+    } else if (reportType === 'category') {
+        printContent += `
+            <th>Danh mục</th>
+            <th>Số sản phẩm</th>
+            <th>Số lượng bán</th>
+            <th>Doanh thu (VNĐ)</th>
+        `;
+    }
+    
+    printContent += `
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    // Thêm dữ liệu
+    reportData.forEach((item, index) => {
+        printContent += '<tr>';
+        if (reportType === 'revenue') {
+            let periodDate = item.period_date || item.period || '';
+            
+            // Format lại ngày cho dễ đọc
+            if (periodDate && !isNaN(periodDate)) {
+                const periodType = document.getElementById('periodType').value;
+                periodDate = formatPeriodDate(periodDate, periodType);
+            } else if (typeof periodDate === 'string' && periodDate.includes('E')) {
+                const timestamp = parseFloat(periodDate);
+                const periodType = document.getElementById('periodType').value;
+                periodDate = formatPeriodDate(timestamp, periodType);
+            }
+            
+            const orderCount = item.order_count || item.total_orders || 0;
+            const deliveredCount = item.delivered_count || item.delivered_orders || 0;
+            const totalRevenue = item.total_revenue || 0;
+            
+            printContent += `
+                <td>${periodDate}</td>
+                <td>${orderCount}</td>
+                <td>${deliveredCount}</td>
+                <td>${formatCurrency(totalRevenue)}</td>
+            `;
+        } else if (reportType === 'top-products') {
+            const productName = item.name || '';  // name, không phải product_name
+            const categoryName = item.category || '';  // category, không phải category_name
+            const grade = item.grade || '';
+            const totalSold = item.total_sold || 0;
+            const totalRevenue = item.total_revenue || 0;
+            
+            printContent += `
+                <td>${index + 1}</td>
+                <td>${productName}</td>
+                <td>${categoryName}</td>
+                <td>${grade}</td>
+                <td>${totalSold}</td>
+                <td>${formatCurrency(totalRevenue)}</td>
+            `;
+        } else if (reportType === 'category') {
+            printContent += `
+                <td>${item.category_name || item.name}</td>
+                <td>${item.products_sold || 0}</td>
+                <td>${item.total_quantity || 0}</td>
+                <td>${formatCurrency(item.total_revenue || 0)}</td>
+            `;
+        }
+        printContent += '</tr>';
+    });
+    
+    printContent += `
+            </tbody>
+        </table>
+        
+        <div class="reports-print-footer">
+            <p><strong>Tổng cộng:</strong> ${reportData.length} bản ghi</p>
+            <p><em>Báo cáo được tạo tự động bởi hệ thống 43 Gundam Hobby</em></p>
+        </div>
+    `;
+    
+    // Mở cửa sổ in
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>${reportTitle} - 43 Gundam Hobby</title>
+            <meta charset="UTF-8">
+            <style>
+                @page { margin: 2cm; size: A4; }
+                body { font-family: Arial, sans-serif; color: #000; background: white; margin: 0; padding: 20px; }
+                .reports-print-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                .reports-print-header h1 { color: #ff6600; font-size: 24px; margin-bottom: 10px; }
+                .reports-print-header h2 { color: #333; font-size: 18px; margin-bottom: 10px; }
+                .reports-print-footer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px; text-align: center; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+                th { background-color: #333; color: white; font-weight: bold; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                .text-end { text-align: right; }
+            </style>
+        </head>
+        <body>
+            ${printContent}
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    
+    // In sau khi load xong
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+    
+    showNotification('✅ Đã mở cửa sổ in!', 'success');
+}
+
+// HELPER FUNCTIONS
+function getReportTitle(reportType) {
+    switch(reportType) {
+        case 'revenue': return 'Báo cáo doanh thu';
+        case 'top-products': return 'Báo cáo sản phẩm bán chạy';
+        case 'category': return 'Báo cáo doanh thu theo danh mục';
+        default: return 'Báo cáo';
+    }
+}
+
+function getReportFileName(reportType, extension) {
+    const title = getReportTitle(reportType).toLowerCase().replace(/\s+/g, '-');
+    const date = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
+    return `${title}-${date}.${extension}`;
+}
+
+function enableExportButtons() {
+    const exportExcelBtn = document.getElementById('exportExcel');
+    if (exportExcelBtn) {
+        exportExcelBtn.disabled = false;
+    }
+}
+
+function disableExportButtons() {
+    const exportExcelBtn = document.getElementById('exportExcel');
+    if (exportExcelBtn) {
+        exportExcelBtn.disabled = true;
     }
 }
