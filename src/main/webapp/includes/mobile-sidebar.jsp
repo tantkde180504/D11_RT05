@@ -47,7 +47,7 @@
                 <li><a href="#"><i class="fas fa-crown me-2"></i>Perfect Grade (PG)</a></li>
             </ul>
         </li>
-        <li><a href="#"><i class="fas fa-heart me-2"></i>Yêu thích</a></li>
+        <li><a href="favorites.jsp"><i class="fas fa-heart me-2"></i>Yêu thích</a></li>
         <li><a href="#"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
     </ul>
     

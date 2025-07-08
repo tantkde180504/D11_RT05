@@ -8,7 +8,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import com.mycompany.repository.CartRepository;
 import com.mycompany.repository.OrderRepository;
+import com.mycompany.repository.OrderItemRepository;
+import com.mycompany.repository.ProductRepository;
+import com.mycompany.model.Cart;
 import com.mycompany.model.Order;
+import com.mycompany.model.OrderItem;
+import com.mycompany.model.Product;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -19,6 +26,12 @@ public class PaymentPageController {
     
     @Autowired
     private OrderRepository orderRepository;
+    
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+    
+    @Autowired
+    private ProductRepository productRepository;
     
     // PayOS Payment success page
     @GetMapping("/payment/success")
@@ -44,11 +57,31 @@ public class PaymentPageController {
                     
                     // Kiểm tra xem order có thuộc về user hiện tại không
                     if (order.getUserId().equals(userId)) {
-                        // Cập nhật trạng thái order thành PAID nếu chưa có
-                        if (!"PAID".equals(order.getStatus()) && !"CONFIRMED".equals(order.getStatus())) {
-                            order.setStatus("PAID");
+                        // Cập nhật trạng thái order thành CONFIRMED (thay vì PAID) 
+                        if (!"CONFIRMED".equals(order.getStatus()) && !"DELIVERED".equals(order.getStatus())) {
+                            order.setStatus("CONFIRMED");
                             orderRepository.save(order);
-                            System.out.println("Order status updated to PAID: " + orderId);
+                            System.out.println("Order status updated to CONFIRMED: " + orderId);
+                            
+                            // Tạo order_items và trừ stock (chỉ khi order chuyển thành CONFIRMED)
+                            List<Cart> cartList = cartRepository.findByUserId(userId);
+                            for (Cart cart : cartList) {
+                                Product product = productRepository.findById(cart.getProductId()).orElse(null);
+                                if (product == null) continue;
+                                
+                                OrderItem orderItem = new OrderItem();
+                                orderItem.setOrder(order);
+                                orderItem.setProduct(product);
+                                orderItem.setQuantity(cart.getQuantity());
+                                orderItem.setUnitPrice(product.getPrice());
+                                orderItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity())));
+                                orderItemRepository.save(orderItem);
+                                
+                                // Trừ tồn kho
+                                product.setStockQuantity(product.getStockQuantity() - cart.getQuantity());
+                                productRepository.save(product);
+                            }
+                            System.out.println("Order items created and stock updated for order: " + orderId);
                         }
                         
                         // Xóa giỏ hàng của user sau khi thanh toán thành công
@@ -67,8 +100,8 @@ public class PaymentPageController {
             }
         }
         
-        // Redirect về trang chủ luôn
-        return "redirect:/index.html";
+        // Redirect về trang chủ luôn (index.jsp là trang chủ thực)
+        return "redirect:/index.jsp";
     }
     
     // PayOS Payment cancel page
