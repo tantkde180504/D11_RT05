@@ -12,12 +12,12 @@ import org.springframework.http.MediaType;
 public class NotificationController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private InventoryRepository inventoryRepository;
 
     // ✅ API lấy sản phẩm có tồn kho < 5
     @GetMapping(value = "/low-stock", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> getLowStockProducts() {
-        List<Product> products = productRepository.findByIsActiveTrueOrderByUpdatedAtDesc();
+        List<Product> products = inventoryRepository.findByIsActiveTrueOrderByUpdatedAtDesc();
         return products.stream()
                 .filter(p -> p.getStockQuantity() <= 5)
                 .collect(Collectors.toList());

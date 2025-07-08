@@ -10,10 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-public class ProductController {
+public class InventoryController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private InventoryRepository inventoryRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -21,12 +21,12 @@ public class ProductController {
     // API: Lấy danh sách sản phẩm tồn kho
     @GetMapping(value = "/inventory", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> getInventoryList() {
-        return productRepository.findByIsActiveTrueOrderByUpdatedAtDesc();
+        return inventoryRepository.findByIsActiveTrueOrderByUpdatedAtDesc();
     }
     // API: Xem chi tiết sản phẩm theo ID
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> getProductDetail(@PathVariable Long id) {
-        return productRepository.findById(id)
+        return inventoryRepository.findById(id)
                 .map(product -> ResponseEntity.ok().body(product))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

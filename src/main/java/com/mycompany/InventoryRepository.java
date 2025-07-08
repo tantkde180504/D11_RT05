@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface InventoryRepository extends JpaRepository<Product, Long> {
     List<Product> findByIsActiveTrueOrderByUpdatedAtDesc();
     // ✅ Thêm method lấy sản phẩm sắp hết hàng
     List<Product> findByIsActiveTrueAndStockQuantityLessThanOrderByStockQuantityAsc(int quantityThreshold);
