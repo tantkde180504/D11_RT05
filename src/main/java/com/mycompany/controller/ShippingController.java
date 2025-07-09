@@ -46,9 +46,36 @@ public class ShippingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy bản ghi shipping.");
         }
         Shipping shipping = shippingOpt.get();
+        // Chuyển FAILED thành CANCELLED để không vi phạm constraint
+        if ("FAILED".equalsIgnoreCase(status)) {
+            status = "CANCELLED";
+        }
+        // Chỉ cho phép các status hợp lệ
+        if (!status.equalsIgnoreCase("PENDING") &&
+            !status.equalsIgnoreCase("SHIPPING") &&
+            !status.equalsIgnoreCase("DELIVERED") &&
+            !status.equalsIgnoreCase("CANCELLED")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Trạng thái không hợp lệ.");
+        }
         shipping.setStatus(status);
         if (note != null) {
             shipping.setNote(note);
+        }
+        if ("SHIPPING".equalsIgnoreCase(status)) {
+            if (shipping.getOrderId() != null) {
+                orderRepository.updateOrderStatus(shipping.getOrderId(), "CONFIRMED");
+            }
+        }
+        if ("DELIVERED".equalsIgnoreCase(status)) {
+            shipping.setConfirmedAt(java.time.LocalDateTime.now());
+            if (shipping.getOrderId() != null) {
+                orderRepository.updateOrderStatus(shipping.getOrderId(), "DELIVERED");
+            }
+        }
+        if ("CANCELLED".equalsIgnoreCase(status)) {
+            if (shipping.getOrderId() != null) {
+                orderRepository.updateOrderStatus(shipping.getOrderId(), "CANCELLED");
+            }
         }
         shippingRepository.save(shipping);
         return ResponseEntity.ok("Đã cập nhật trạng thái shipping.");

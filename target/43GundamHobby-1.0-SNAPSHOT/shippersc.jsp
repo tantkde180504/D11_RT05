@@ -46,9 +46,11 @@
                 <h5><i class="fas fa-list me-2 text-success"></i>Đơn hàng cần giao</h5>
                 <select id="order-status-filter" class="form-select auto-width" style="max-width:200px">
                     <option value="ALL">Tất cả</option>
+                    <option value="PENDING">Chờ giao</option>
                     <option value="SHIPPING">Đang giao</option>
                     <option value="DELIVERED">Đã giao</option>
-                    <option value="FAILED">Giao thất bại</option>
+                    <option value="FAILED">Hủy giao hàng</option>
+                    <option value="CANCELLED" style="display:none">Hủy giao hàng</option>
                 </select>
             </div>
             <div class="table-responsive table-modern">
@@ -83,9 +85,11 @@
                         <div class="mb-3">
                             <label for="new-status" class="form-label">Trạng thái mới:</label>
                             <select class="form-select" id="new-status">
+                                <option value="PENDING">Chờ giao</option>
                                 <option value="SHIPPING">Đang giao</option>
                                 <option value="DELIVERED">Đã giao</option>
-                                <option value="FAILED">Giao thất bại</option>
+                                <option value="FAILED">Hủy giao hàng</option>
+                                <option value="CANCELLED" style="display:none">Hủy giao hàng</option>
                             </select>
                         </div>
                         <div class="mb-3">

@@ -57,9 +57,11 @@ function renderOrders(filter = 'ALL') {
 
 function statusBadge(status) {
   switch(status) {
+    case 'PENDING': return '<span class="badge bg-secondary">Chờ giao</span>';
     case 'SHIPPING': return '<span class="badge bg-primary">Đang giao</span>';
     case 'DELIVERED': return '<span class="badge bg-success">Đã giao</span>';
-    case 'FAILED': return '<span class="badge bg-danger">Giao thất bại</span>';
+    case 'FAILED':
+    case 'CANCELLED': return '<span class="badge bg-danger">Hủy giao hàng</span>';
     default: return status;
   }
 }
