@@ -85,12 +85,6 @@
                 <i class="fas fa-life-ring me-2"></i>Hỗ trợ
             </a>
         </li>
-        <!-- ✅ Tab vận chuyển mới -->
-        <li class="nav-item">
-            <a class="nav-link" href="#shipping" data-tab="shipping">
-                <i class="fas fa-truck me-2"></i>Vận chuyển
-            </a>
-        </li>
     </ul>
 </div>
 
@@ -667,47 +661,6 @@
             </div>
         </div>
     </div>
-<!-- TAB VẬN CHUYỂN -->
-<div class="tab-content" id="shipping">
-    <div class="staff-card">
-        <!-- Thanh tiêu đề và bộ lọc -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-truck me-2 text-primary"></i>
-                <label class="me-2 fw-bold mb-0">Xử lý vận chuyển</label>
-                <select id="filter-shipping-status" class="form-select form-select-sm w-auto">
-                    <option value="ALL">Tất cả</option>
-                    <option value="CONFIRMED">Xác nhận giao hàng</option>
-                    <option value="CANCELLED">Hủy giao hàng</option>
-                    <option value="PENDING">Chờ xác nhận</option>
-                </select>
-            </div>
-            <div class="search-box">
-                <input type="text" class="form-control form-control-sm" placeholder="Tìm đơn vận chuyển...">
-            </div>
-        </div>
-
-        <!-- Bảng danh sách vận chuyển -->
-        <div class="table-responsive">
-            <table class="table table-modern table-bordered table-sm">
-                <thead class="table-light">
-                    <tr>
-                        <th>Mã đơn hàng</th>
-                        <th>Khách hàng</th>
-                        <th>Sản phẩm</th>
-                        <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày đặt</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody id="shipping-body">
-                    <!-- Dữ liệu sẽ được render từ staff.js -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
     <!-- Quick Actions -->
     <div class="quick-actions">

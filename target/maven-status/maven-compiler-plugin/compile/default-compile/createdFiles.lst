@@ -6,6 +6,7 @@ com\mycompany\service\OAuthUserService.class
 com\mycompany\gundamhobby\JakartaRestConfiguration.class
 com\mycompany\HomeController.class
 com\mycompany\controller\OrderController$OrderDetailDTO.class
+com\mycompany\controller\ShippingController$ShippingDTO.class
 com\mycompany\model\Return.class
 com\mycompany\service\ProductService.class
 com\mycompany\controller\OrderController.class
@@ -16,6 +17,7 @@ com\mycompany\DatabaseTestController.class
 com\mycompany\model\Product.class
 com\mycompany\controller\TestRedirectController.class
 com\mycompany\controller\SearchController.class
+com\mycompany\controller\ShippingController$ProductItemInfo.class
 com\mycompany\LoginController.class
 com\mycompany\model\Review.class
 com\mycompany\repository\ShippingRepository.class

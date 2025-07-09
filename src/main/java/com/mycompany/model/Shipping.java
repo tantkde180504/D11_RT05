@@ -1,37 +1,54 @@
 package com.mycompany.model;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "shipping")
 public class Shipping {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "order_id")
     private Long orderId;
-    private String orderNumber;
-    private String customerName;
-    private List<String> products;
-    private BigDecimal totalAmount;
+
+    @Column(name = "status")
     private String status;
-    private LocalDateTime orderDate;
+
+    @Column(name = "assigned_at")
+    private java.time.LocalDateTime assignedAt;
+
+    @Column(name = "confirmed_at")
+    private java.time.LocalDateTime confirmedAt;
+
+    @Column(name = "note")
+    private String note;
+
+    // Nếu có các trường shipper_id, shipping_date, delivery_date thì giữ lại, nếu không thì bỏ
+    // public Long shipperId; ...
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public Long getOrderId() { return orderId; }
     public void setOrderId(Long orderId) { this.orderId = orderId; }
 
-    public String getOrderNumber() { return orderNumber; }
-    public void setOrderNumber(String orderNumber) { this.orderNumber = orderNumber; }
-
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
-
-    public List<String> getProducts() { return products; }
-    public void setProducts(List<String> products) { this.products = products; }
-
-    public BigDecimal getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
-
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public LocalDateTime getOrderDate() { return orderDate; }
-    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
+    public java.time.LocalDateTime getAssignedAt() { return assignedAt; }
+    public void setAssignedAt(java.time.LocalDateTime assignedAt) { this.assignedAt = assignedAt; }
+
+    public java.time.LocalDateTime getConfirmedAt() { return confirmedAt; }
+    public void setConfirmedAt(java.time.LocalDateTime confirmedAt) { this.confirmedAt = confirmedAt; }
+
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
 }
 

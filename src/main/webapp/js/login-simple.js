@@ -70,7 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             targetPage = '/';
                         } else if (role === 'STAFF') {
                             targetPage = '/staffsc.jsp';
-                        } else {
+                        } else if (role === 'SHIPPER') {
+                            targetPage = '/shippersc.jsp';
+                        }
+                        else {
                             targetPage = '/';
                         }
                         console.log('Redirecting to:', targetPage);
@@ -113,6 +116,8 @@ function getRoleDisplayName(role) {
             return 'Nhân viên';
         case 'CUSTOMER':
             return 'Khách hàng';
+        case 'SHIPPER':
+            return 'Giao hàng';
         default:
             return 'Người dùng';
     }

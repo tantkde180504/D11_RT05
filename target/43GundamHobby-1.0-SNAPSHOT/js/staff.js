@@ -1002,52 +1002,7 @@ document.getElementById('filter-return-status').addEventListener('change', funct
 document.addEventListener('DOMContentLoaded', function () {
     loadReturns();
 });
-async function loadShippingOrders() {
-    const status = document.getElementById("filter-shipping-status").value;
-    const response = await fetch(`/api/shipping?status=${status}`);
-    const data = await response.json();
 
-    const tbody = document.getElementById("shipping-body");
-    tbody.innerHTML = "";
-
-    data.forEach(item => {
-        const row = `
-            <tr>
-                <td>${item.orderNumber}</td>
-                <td>${item.customerName}</td>
-                <td>${item.products.join(", ")}</td>
-                <td>${item.totalAmount.toLocaleString()}₫</td>
-                <td>${mapShippingStatus(item.status)}</td>
-                <td>${formatDateTime(item.orderDate)}</td>
-                <td>
-                    <button class="btn btn-success btn-sm" onclick="confirmShipping(${item.orderId})">Xác nhận</button>
-                    <button class="btn btn-danger btn-sm" onclick="cancelShipping(${item.orderId})">Hủy</button>
-                </td>
-            </tr>`;
-        tbody.innerHTML += row;
-    });
-}
-
-function mapShippingStatus(status) {
-    switch (status) {
-        case "CONFIRMED": return "Xác nhận giao hàng";
-        case "PENDING": return "Chờ xác nhận";
-        case "CANCELLED": return "Hủy giao hàng";
-        default: return "Không xác định";
-    }
-}
-
-function confirmShipping(orderId) {
-    fetch(`/api/shipping/confirm?orderId=${orderId}`, { method: "POST" })
-        .then(() => loadShippingOrders());
-}
-
-function cancelShipping(orderId) {
-    fetch(`/api/shipping/cancel?orderId=${orderId}`, { method: "POST" })
-        .then(() => loadShippingOrders());
-}
-
-document.getElementById("filter-shipping-status").addEventListener("change", loadShippingOrders);
 
 
 
