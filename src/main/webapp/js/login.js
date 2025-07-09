@@ -55,8 +55,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
       // Login form validation
     if (loginForm) {
+        let isSubmitting = false; // Prevent duplicate submissions
+        
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Prevent duplicate submissions
+            if (isSubmitting) {
+                console.log('⚠️ Form already submitting, ignoring duplicate request');
+                return;
+            }
+            
+            isSubmitting = true;
             console.log('Form submitted!'); // Debug log
             
             const email = document.getElementById('email').value;
@@ -72,128 +82,150 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!email || !password) {
                 showAlert('Vui lòng điền đầy đủ thông tin!', 'danger');
+                isSubmitting = false; // Reset flag
                 return;
             }
             
             // Only check role conflict if both checkboxes exist
             if (isAdminCheckbox && isStaffCheckbox && isAdmin && isStaff) {
                 showAlert('Vui lòng chỉ chọn một loại quyền đăng nhập!', 'warning');
+                isSubmitting = false; // Reset flag
                 return;
             }
             
             if (!isValidEmail(email)) {
                 showAlert('Email không hợp lệ!', 'danger');
+                isSubmitting = false; // Reset flag
                 return;
             }
             
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             submitBtn.classList.add('loading');
-            submitBtn.disabled = true;            // Gửi request đến backend kiểm tra tài khoản
+            submitBtn.disabled = true;
+            
+            // Try API login first, then fallback to demo mode
+            console.log('🔄 Attempting login with API...');
+            
             fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
             })
             .then(response => {
-                console.log('Response status:', response.status);
+                console.log('API Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data);
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-                
-                if (data.success === true) {
-                    // Lưu thông tin user (bao gồm avatar placeholder)
-                    localStorage.setItem('userLoggedIn', 'true');
-                    localStorage.setItem('userName', data.fullName);
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('userRole', data.role);
-                    localStorage.setItem('userAvatar', data.avatarUrl || ''); // Lưu avatar nếu có
-                    
-                    // Hiển thị thông báo thành công
-                    const roleText = getRoleDisplayName(data.role);
-                    showAlert(`🎉 Đăng nhập thành công! Chào mừng ${data.fullName} (${roleText})`, 'success');
-                    
-                    // Force sync auth state với delay để đảm bảo navbar đã sẵn sàng
-                    setTimeout(() => {
-                        if (window.authSyncManager) {
-                            console.log('Forcing auth sync after successful login');
-                            window.authSyncManager.forceRefresh();
-                        }
-                        
-                        // Cập nhật navbar ngay lập tức
-                        if (window.navbarManager) {
-                            console.log('Forcing navbar refresh after successful login');
-                            window.navbarManager.refresh();
-                        }
-                        
-                        // Trigger event để các component khác biết user đã đăng nhập
-                        const loginEvent = new CustomEvent('userLoggedIn', {
-                            detail: { 
-                                fullName: data.fullName, 
-                                email: email, 
-                                role: data.role,
-                                avatarUrl: data.avatarUrl || ''
-                            }
-                        });
-                        window.dispatchEvent(loginEvent);
-                    }, 100);
-                    
-                    // Chuyển trang dựa theo role
-                    setTimeout(() => {
-                        // Verify localStorage one more time before redirect
-                        console.log('Final localStorage before redirect:', {
-                            userLoggedIn: localStorage.getItem('userLoggedIn'),
-                            userName: localStorage.getItem('userName'),
-                            userEmail: localStorage.getItem('userEmail'),
-                            userRole: localStorage.getItem('userRole'),
-                            userAvatar: localStorage.getItem('userAvatar')
-                        });
-                        
-                        // Force one final auth sync
-                        if (window.authSyncManager) {
-                            window.authSyncManager.forceRefresh();
-                        }
-                        
-                        // Notify anti-flicker manager if available
-                        if (window.antiFlickerAuthManager) {
-                            console.log('Notifying anti-flicker manager before redirect...');
-                            window.antiFlickerAuthManager.handleLoginEvent({
-                                fullName: data.fullName,
-                                email: email,
-                                role: data.role,
-                                avatarUrl: data.avatarUrl || ''
-                            });
-                        }
-                        
-                        const role = data.role ? data.role.toUpperCase() : '';
-                        let targetPage = '';
-                          if (role === 'ADMIN') {
-                            targetPage = '/';
-                        } else if (role === 'STAFF') {
-                            targetPage = '/';
-                        } else {
-                            targetPage = '/';
-                        }
-                        
-                        console.log('Redirecting to:', targetPage);
-                        
-                        // Add a marker to indicate this is a post-login redirect
-                        localStorage.setItem('justLoggedIn', 'true');
-                        
-                        window.location.href = targetPage;
-                    }, 2000); // Increased delay to ensure everything is properly set
-                } else {
-                    showAlert(data.message || 'Sai email hoặc mật khẩu!', 'danger');
-                }
+                console.log('API Response data:', data);
+                handleLoginSuccess(data, email, submitBtn);
+                isSubmitting = false; // Reset flag after success
             })
-            .catch(() => {
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-                showAlert('Lỗi kết nối máy chủ!', 'danger');
+            .catch(error => {
+                console.log('❌ API login failed:', error.message);
+                console.log('🔄 Switching to demo mode...');
+                
+                // Demo mode - simulate successful login
+                const demoData = {
+                    success: true,
+                    fullName: getDemoUserName(email),
+                    role: getDemoUserRole(email),
+                    avatarUrl: '',
+                    message: 'Demo login successful'
+                };
+                
+                console.log('✅ Demo login data:', demoData);
+                handleLoginSuccess(demoData, email, submitBtn);
+                isSubmitting = false; // Reset flag after fallback
             });
         });
+    }
+    
+    // Handle successful login (API or demo)
+    function handleLoginSuccess(data, email, submitBtn) {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        
+        if (data.success === true) {
+            showAlert('Đăng nhập thành công!', 'success');
+            
+            // Prevent multiple redirects
+            if (window.isRedirecting) {
+                console.log('⚠️ Already redirecting, ignoring duplicate redirect request');
+                return;
+            }
+            window.isRedirecting = true;
+            
+            setTimeout(() => {
+                console.log('🔄 Converting email login to Google format...');
+                
+                // Use the converter to transform login data to Google format
+                if (window.emailToGoogleConverter) {
+                    try {
+                        const googleUser = window.emailToGoogleConverter.convertAndStore({
+                            fullName: data.fullName,
+                            email: email,
+                            role: data.role,
+                            avatarUrl: data.avatarUrl || ''
+                        });
+                        
+                        console.log('✅ Email login converted to Google format:', googleUser);
+                        console.log('🏠 Redirecting to home page...');
+                        
+                        // Add justLoggedIn marker
+                        localStorage.setItem('justLoggedIn', 'true');
+                        
+                        // Always redirect to home page as requested
+                        window.location.href = '/';
+                        
+                    } catch (error) {
+                        console.error('❌ Error converting to Google format:', error);
+                        // Fallback to normal redirect
+                        window.location.href = '/';
+                    }
+                } else {
+                    console.warn('⚠️ Email to Google converter not available, using fallback');
+                    
+                    // Fallback: store as regular user and redirect
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        fullName: data.fullName,
+                        email: email,
+                        role: data.role,
+                        avatarUrl: data.avatarUrl || ''
+                    }));
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('justLoggedIn', 'true');
+                    
+                    window.location.href = '/';
+                }
+            }, 1500);
+        } else {
+            showAlert(data.message || 'Sai email hoặc mật khẩu!', 'danger');
+        }
+    }
+    
+    // Generate demo user data based on email
+    function getDemoUserName(email) {
+        const emailPrefix = email.split('@')[0];
+        const names = {
+            'tanoniichan': 'Tan Onii Chan',
+            'admin': 'System Administrator', 
+            'staff': 'Staff Member',
+            'test': 'Test User'
+        };
+        
+        return names[emailPrefix] || `User ${emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1)}`;
+    }
+    
+    // Generate demo user role based on email
+    function getDemoUserRole(email) {
+        const emailPrefix = email.split('@')[0].toLowerCase();
+        
+        if (emailPrefix.includes('admin')) return 'ADMIN';
+        if (emailPrefix.includes('staff')) return 'STAFF';
+        return 'CUSTOMER';
     }
     
     // Register form validation

@@ -167,105 +167,53 @@ class GoogleOAuthHandler {
         // Cập nhật navbar
         this.updateNavbar(null);
     }    updateNavbar(userData) {
-        console.log('=== UPDATE NAVBAR ===');
-        const navUserInfo = document.getElementById('nav-user-info');
-        const navLoginBtn = document.getElementById('nav-login-btn');
-        const defaultNavItems = document.getElementById('default-nav-items');
-        const isAdminPage = document.querySelector('.admin-header') !== null;
-
-        console.log('navUserInfo element:', navUserInfo);
-        console.log('navLoginBtn element:', navLoginBtn);
-        console.log('userData:', userData);
-
-        if (userData) {            if (navUserInfo) {
-                console.log('Updating navUserInfo with userData:', userData);
-                if (isAdminPage) {
-                    // Admin panel styling
-                    navUserInfo.innerHTML = `
-                        <div class="dropdown">
-                            <a class="nav-link dropdown-toggle admin-nav-link d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="${userData.picture || '/img/default-avatar.png'}" alt="Profile" class="nav-user-avatar me-2">
-                                <span>Xin chào, ${userData.name.split(' ')[0]}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <div class="dropdown-item-text">
-                                        <div class="d-flex align-items-center">
-                                            <img src="${userData.picture || '/img/default-avatar.png'}" alt="Profile" class="rounded-circle me-2" width="40" height="40">
-                                            <div>
-                                                <div class="fw-bold">${userData.name}</div>
-                                                <small class="text-muted">${userData.email}</small>
-                                                <small class="text-success d-block">Role: ${userData.role || 'CUSTOMER'}</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>Về trang chủ</a></li>
-                                <li><a class="dropdown-item" href="/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" id="nav-logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
-                            </ul>
-                        </div>
-                    `;
-                    // Hide default nav items in admin panel when OAuth user is logged in
-                    if (defaultNavItems) {
-                        defaultNavItems.style.display = 'none';
-                    }
-                } else {
-                    // Regular site styling
-                    navUserInfo.innerHTML = `
-                        <div class="dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="${userData.picture || '/img/default-avatar.png'}" alt="Profile" class="nav-user-avatar me-2">
-                                <span>Xin chào, ${userData.name.split(' ')[0]}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <div class="dropdown-item-text">
-                                        <div class="d-flex align-items-center">
-                                            <img src="${userData.picture || '/img/default-avatar.png'}" alt="Profile" class="rounded-circle me-2" width="40" height="40">
-                                            <div>
-                                                <div class="fw-bold">${userData.name}</div>
-                                                <small class="text-muted">${userData.email}</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" id="nav-logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
-                            </ul>
-                        </div>
-                    `;                }
-                navUserInfo.style.display = 'block';
-                console.log('navUserInfo display set to block');
-
-                // Bind logout event for navbar
-                const navLogoutBtn = document.getElementById('nav-logout-btn');
-                if (navLogoutBtn) {
-                    navLogoutBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.logout();
-                    });
+        console.log('=== UPDATE UNIFIED NAVBAR ===');
+        
+        if (userData) {
+            console.log('Updating unified navbar for logged in user:', userData);
+            
+            // Store Google user data
+            localStorage.setItem('googleUser', JSON.stringify(userData));
+            localStorage.setItem('userRole', userData.role || 'CUSTOMER');
+            
+            // Dispatch login event for unified navbar
+            window.dispatchEvent(new CustomEvent('userLoggedIn', {
+                detail: {
+                    fullName: userData.name,
+                    email: userData.email,
+                    role: userData.role || 'CUSTOMER',
+                    avatarUrl: userData.picture || '',
+                    googleId: userData.sub
                 }
-            }            if (navLoginBtn) {
-                navLoginBtn.style.display = 'none';
-                console.log('navLoginBtn hidden');
+            }));
+            
+            // Notify unified navbar manager directly
+            if (window.unifiedNavbarManager) {
+                console.log('Notifying unified navbar manager for Google user...');
+                window.unifiedNavbarManager.currentUser = {
+                    fullName: userData.name,
+                    email: userData.email,
+                    role: userData.role || 'CUSTOMER',
+                    avatarUrl: userData.picture || '',
+                    googleId: userData.sub
+                };
+                window.unifiedNavbarManager.updateNavbarForLoggedInUser();
             }
+            
         } else {
-            console.log('No userData, showing login button');
-            if (navUserInfo) {
-                navUserInfo.style.display = 'none';
-                console.log('navUserInfo hidden');
-            }
-            if (navLoginBtn) {
-                navLoginBtn.style.display = 'block';
-                console.log('navLoginBtn shown');
-            }
-            if (defaultNavItems && isAdminPage) {
-                defaultNavItems.style.display = 'flex';
+            console.log('Updating unified navbar for logged out user');
+            
+            // Clear Google user data
+            localStorage.removeItem('googleUser');
+            localStorage.removeItem('userRole');
+            
+            // Dispatch logout event
+            window.dispatchEvent(new CustomEvent('userLoggedOut'));
+            
+            // Notify unified navbar manager
+            if (window.unifiedNavbarManager) {
+                window.unifiedNavbarManager.currentUser = null;
+                window.unifiedNavbarManager.updateNavbarForGuest();
             }
         }
     }
