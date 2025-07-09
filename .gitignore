@@ -1,0 +1,3 @@
+# Ignore build output and IDE/workspace folders
+/target/
+/work/
