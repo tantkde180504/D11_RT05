@@ -5,10 +5,12 @@ import com.mycompany.model.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 @Transactional
 public class FavoriteRepository {
     
@@ -21,6 +23,7 @@ public class FavoriteRepository {
         } else {
             entityManager.merge(favorite);
         }
+        entityManager.flush();
     }
     
     public Optional<Favorite> findByUserIdAndProductId(Long userId, Long productId) {
@@ -61,12 +64,14 @@ public class FavoriteRepository {
         .setParameter("userId", userId)
         .setParameter("productId", productId)
         .executeUpdate();
+        entityManager.flush();
     }
     
     public void deleteById(Long id) {
         Favorite favorite = entityManager.find(Favorite.class, id);
         if (favorite != null) {
             entityManager.remove(favorite);
+            entityManager.flush();
         }
     }
     

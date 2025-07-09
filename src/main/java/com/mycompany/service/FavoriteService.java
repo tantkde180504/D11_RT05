@@ -3,12 +3,14 @@ package com.mycompany.service;
 import com.mycompany.model.Favorite;
 import com.mycompany.model.Product;
 import com.mycompany.repository.FavoriteRepository;
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class FavoriteService {
     
-    @Inject
+    @Autowired
     private FavoriteRepository favoriteRepository;
     
     public boolean addToFavorites(Long userId, Long productId) {

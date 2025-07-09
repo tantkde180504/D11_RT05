@@ -83,7 +83,7 @@ public class LoginController {
                         
                         if (password.equals(dbPasswordFromDb)) {
                             // Lưu thông tin vào session
-                            request.getSession().setAttribute("userId", (long) userId);
+                            request.getSession().setAttribute("userId", (long) userId); // Đảm bảo cast thành Long
                             request.getSession().setAttribute("isLoggedIn", true);
                             request.getSession().setAttribute("userRole", role);
                             request.getSession().setAttribute("fullName", firstName + " " + lastName);
@@ -94,6 +94,7 @@ public class LoginController {
                             // Kiểm tra session sau khi set
                             System.out.println("=== SESSION AFTER LOGIN ===");
                             System.out.println("userId: " + request.getSession().getAttribute("userId"));
+                            System.out.println("userId type: " + request.getSession().getAttribute("userId").getClass().getName());
                             System.out.println("isLoggedIn: " + request.getSession().getAttribute("isLoggedIn"));
                             System.out.println("userRole: " + request.getSession().getAttribute("userRole"));
                             System.out.println("email: " + request.getSession().getAttribute("email"));

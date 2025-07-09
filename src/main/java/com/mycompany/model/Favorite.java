@@ -22,14 +22,6 @@ public class Favorite {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private OAuthUser user;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private Product product;
-    
     // Constructors
     public Favorite() {}
     
@@ -70,22 +62,6 @@ public class Favorite {
     
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-    
-    public OAuthUser getUser() {
-        return user;
-    }
-    
-    public void setUser(OAuthUser user) {
-        this.user = user;
-    }
-    
-    public Product getProduct() {
-        return product;
-    }
-    
-    public void setProduct(Product product) {
-        this.product = product;
     }
     
     @PrePersist

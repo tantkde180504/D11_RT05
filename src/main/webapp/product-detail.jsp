@@ -628,6 +628,9 @@
             document.getElementById('productMain').style.display = 'block';
             document.getElementById('productDescription').style.display = 'block';
             document.getElementById('productSpecifications').style.display = 'block';
+            
+            // Load wishlist status for this product
+            loadWishlistStatus();
         }
         
         // Display product meta information
@@ -867,16 +870,7 @@
             
             // Wishlist button
             document.getElementById('wishlistBtn').addEventListener('click', function() {
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('far')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                    this.style.color = '#e74c3c';
-                } else {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                    this.style.color = '';
-                }
+                toggleWishlist();
             });
         }
         
@@ -897,7 +891,174 @@
                 behavior: 'smooth'
             });
         });
-
+        
+        // ===== TOAST NOTIFICATION FUNCTION =====
+        
+        function showToast(message, type = 'success', duration = 3000) {
+            // Remove existing toast if any
+            const existingToast = document.querySelector('.toast-notification');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            
+            // Set toast content based on type
+            let icon = '';
+            switch (type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle"></i>';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                case 'info':
+                    icon = '<i class="fas fa-info-circle"></i>';
+                    break;
+                default:
+                    icon = '<i class="fas fa-check-circle"></i>';
+            }
+            
+            toast.innerHTML = `
+                <div class="toast-content">
+                    ${icon}
+                    <span class="toast-message">${message}</span>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add toast to body
+            document.body.appendChild(toast);
+            
+            // Show toast with animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Auto hide toast after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, duration);
+        }
+        
+        // ===== WISHLIST FUNCTIONALITY =====
+        
+        // Initialize wishlist state
+        let isInWishlist = false;
+        
+        // Load wishlist status for current product
+        async function loadWishlistStatus() {
+            try {
+                const sessionUserId = getUserIdFromSession();
+                if (!sessionUserId) {
+                    return; // User not logged in
+                }
+                
+                const response = await fetch(contextPath + '/api/favorites/check?productId=' + productId, {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        isInWishlist = data.inWishlist;
+                        updateWishlistButton();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading wishlist status:', error);
+            }
+        }
+        
+        // Update wishlist button appearance
+        function updateWishlistButton() {
+            const wishlistBtn = document.getElementById('wishlistBtn');
+            const icon = wishlistBtn.querySelector('i');
+            
+            if (isInWishlist) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                wishlistBtn.style.color = '#e74c3c';
+                wishlistBtn.title = 'Xóa khỏi danh sách yêu thích';
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                wishlistBtn.style.color = '';
+                wishlistBtn.title = 'Thêm vào danh sách yêu thích';
+            }
+        }
+        
+        // Toggle wishlist status
+        async function toggleWishlist() {
+            try {
+                const sessionUserId = getUserIdFromSession();
+                if (!sessionUserId) {
+                    showToast('Vui lòng đăng nhập để sử dụng tính năng yêu thích!', 'warning');
+                    setTimeout(() => {
+                        window.location.href = contextPath + '/login.jsp?redirect=' + encodeURIComponent(window.location.href);
+                    }, 1500);
+                    return;
+                }
+                
+                const wishlistBtn = document.getElementById('wishlistBtn');
+                const originalContent = wishlistBtn.innerHTML;
+                
+                // Show loading state
+                wishlistBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                wishlistBtn.disabled = true;
+                
+                const endpoint = isInWishlist ? 'remove' : 'add';
+                const response = await fetch(contextPath + '/api/favorites/' + endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        productId: parseInt(productId),
+                        userId: sessionUserId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    isInWishlist = !isInWishlist;
+                    updateWishlistButton();
+                    
+                    const message = isInWishlist ? 
+                        'Đã thêm vào danh sách yêu thích!' : 
+                        'Đã xóa khỏi danh sách yêu thích!';
+                    showToast(message, 'success');
+                } else {
+                    const errorMessage = data.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+                    showToast(errorMessage, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error toggling wishlist:', error);
+                showToast('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
+            } finally {
+                // Restore button state
+                const wishlistBtn = document.getElementById('wishlistBtn');
+                wishlistBtn.innerHTML = '<i class="far fa-heart"></i>';
+                wishlistBtn.disabled = false;
+                updateWishlistButton();
+            }
+        }
         // ===== REVIEW FUNCTIONALITY =====
         
         // Star Rating Functionality
