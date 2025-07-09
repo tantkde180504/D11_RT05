@@ -71,13 +71,16 @@ class NavbarManager {
         console.log('Initial state:', { isLoggedIn, userName, userEmail, userAvatar });
         
         if (isLoggedIn && userName) {
+            console.log('User is logged in, showing user menu');
             this.showUserMenu(userName, userEmail, userAvatar);
         } else {
+            console.log('User is not logged in, showing guest menu');
             this.showGuestMenu();
             
             // Check OAuth as fallback after delay
             setTimeout(() => {
                 if (window.googleOAuthHandler) {
+                    console.log('Checking Google OAuth status as fallback');
                     window.googleOAuthHandler.checkLoginStatus();
                 }
             }, 800);
@@ -116,6 +119,8 @@ class NavbarManager {
         navUserInfo.style.display = 'block';
         
         console.log('✅ Menu visibility toggled');
+        console.log('NavUserInfo classes:', navUserInfo.classList.toString());
+        console.log('NavLoginBtn classes:', navLoginBtn.classList.toString());
         
         // Update user name display
         const userDisplayName = document.getElementById('userDisplayName');
@@ -133,14 +138,17 @@ class NavbarManager {
         
         if (userDisplayName) {
             userDisplayName.textContent = firstName;
+            console.log('Updated userDisplayName:', userDisplayName.textContent);
         }
         
         if (userDisplayNameMobile) {
             userDisplayNameMobile.textContent = firstName;
+            console.log('Updated userDisplayNameMobile:', userDisplayNameMobile.textContent);
         }
         
         if (userFullName) {
             userFullName.textContent = userName;
+            console.log('Updated userFullName:', userFullName.textContent);
         }
         
         // Update avatar images
@@ -148,6 +156,16 @@ class NavbarManager {
         this.updateUserAvatar(avatarUrl, userName, userEmail);
         
         console.log('✅ User menu displayed successfully');
+        
+        // Force a DOM re-render to ensure changes are applied
+        setTimeout(() => {
+            navUserInfo.style.display = 'block';
+            navUserInfo.classList.remove('d-none');
+            navLoginBtn.style.display = 'none';
+            navLoginBtn.classList.add('d-none');
+            console.log('🔄 Forced DOM re-render completed');
+        }, 50);
+        
         console.log('=== END SHOWING USER MENU ===');
     }
 

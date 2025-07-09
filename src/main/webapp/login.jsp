@@ -319,20 +319,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Navbar Manager - Single Source of Truth -->
-    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    <!-- MD5 Library for Gravatar -->
+    <script src="<%=request.getContextPath()%>/js/md5.min.js"></script>
     
-    <!-- Avatar Utils - Xử lý avatar và Gravatar -->
-    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
+    <!-- Email to Google Converter -->
+    <script src="<%=request.getContextPath()%>/js/email-to-google-converter.js"></script>
     
-    <!-- Auth Sync Manager - Đồng bộ authentication state -->
-    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
+    <!-- Unified Navbar Manager -->
+    <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
     
-    <!-- Google OAuth Clean Handler -->
-    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
+    <!-- Google OAuth Handler -->
+    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
     
-    <!-- Login Clean Handler -->
-    <script src="<%=request.getContextPath()%>/js/login-clean.js"></script>
+    <!-- Login Script -->
+    <script src="<%=request.getContextPath()%>/js/login.js"></script>
+    
+    <!-- Hamburger Menu -->
+    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     
     <!-- Login Fallback Handler (if API is not available) -->
     <script src="<%=request.getContextPath()%>/js/login-fallback.js"></script>
@@ -342,6 +345,12 @@
     
     <!-- Login Debug Helper (Development Only) -->
     <script src="<%=request.getContextPath()%>/js/login-debug-helper.js"></script>
+    
+    <!-- Login Debug Fix - Sửa lỗi navbar sau login -->
+    <script src="<%=request.getContextPath()%>/js/login-debug-fix.js"></script>
+    
+    <!-- Comprehensive Auth Manager - Đảm bảo auth state luôn đúng -->
+    <script src="<%=request.getContextPath()%>/js/comprehensive-auth-manager.js"></script>
     
     <!-- Context Path Test Script (Development Only) -->
     <script src="<%=request.getContextPath()%>/js/context-path-test.js"></script>

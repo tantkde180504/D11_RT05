@@ -38,9 +38,12 @@ class AuthSyncManager {
         const userRole = localStorage.getItem('userRole');
         const userAvatar = localStorage.getItem('userAvatar');
 
+        console.log('=== AUTH SYNC STATE ===');
         console.log('Syncing auth state:', { isLoggedIn, userName, userEmail, userRole, userAvatar });
+        console.log('=======================');
 
         if (isLoggedIn && userName) {
+            console.log('✅ User is logged in, dispatching userLoggedIn event');
             // Trigger login event for navbar and other components
             window.dispatchEvent(new CustomEvent('userLoggedIn', {
                 detail: {
@@ -51,6 +54,7 @@ class AuthSyncManager {
                 }
             }));
         } else {
+            console.log('❌ User is not logged in, dispatching userLoggedOut event');
             // Trigger logout event
             window.dispatchEvent(new CustomEvent('userLoggedOut'));
         }

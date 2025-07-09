@@ -1,3 +1,6 @@
 # Ignore build output and IDE/workspace folders
 /target/
 /work/
+
+# Ignore sensitive configuration files to avoid Repository rule violations
+src/main/resources/application.properties

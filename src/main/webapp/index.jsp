@@ -74,62 +74,18 @@
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
                     <div class="header-actions-section">
                         <div class="account-menu me-3">
-                            <!-- User Info (visible when logged in) -->
-                            <div id="nav-user-info" class="d-none">
+                            <!-- Unified Account Button -->
+                            <div id="unified-account-menu">
                                 <div class="dropdown">
-                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
-                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <div class="user-avatar-container me-2">
-                                            <img id="userAvatarImage" 
-                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar rounded-circle"
-                                                 style="width: 32px; height: 32px; object-fit: cover;">
-                                        </div>
-                                        <span class="d-none d-md-inline">
-                                            <span class="greeting-text">Xin chào</span>
-                                            <span id="userDisplayName" class="fw-bold">User</span>
-                                        </span>
-                                        <span class="d-md-none">
-                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header d-flex align-items-center">
-                                            <img id="userAvatarDropdown" 
-                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar-small rounded-circle me-2"
-                                                 style="width: 24px; height: 24px; object-fit: cover;">
-                                            <span id="userFullName">User Name</span>
-                                        </h6></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
-                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
-                                        </a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <!-- Login Button (visible when not logged in) -->
-                            <div id="nav-login-btn">
-                                <div class="dropdown">
+                                    <!-- This button will dynamically change based on login state -->
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
-                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                        <!-- Menu items will be updated by JavaScript -->
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
@@ -660,6 +616,47 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Legacy Cleanup - MUST RUN FIRST to remove old elements -->
+    <script src="<%=request.getContextPath()%>/js/legacy-navbar-cleanup.js"></script>
+    
+    <!-- MD5 Library for Gravatar -->
+    <script src="<%=request.getContextPath()%>/js/md5.min.js"></script>
+    
+    <!-- Email to Google Converter -->
+    <script src="<%=request.getContextPath()%>/js/email-to-google-converter.js"></script>
+    
+    <!-- Anti-Flicker Unified - LOAD FIRST to prevent navbar flickering -->
+    <script src="<%=request.getContextPath()%>/js/anti-flicker-unified.js"></script>
+    
+    <!-- Unified Navbar Manager - Core navbar logic -->
+    <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
+    
+    <!-- Google OAuth Handler - Updated for unified navbar -->
+    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
+    
+    <!-- Hamburger Menu Script -->
+    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
+    
+    <!-- Carousel Protection Script - Load FIRST to protect carousel -->
+    <script src="<%=request.getContextPath()%>/js/carousel-protection.js"></script>
+    
+    <!-- Product Manager - Load AFTER carousel protection -->
+    <script src="<%=request.getContextPath()%>/js/product-manager.js"></script>
+    
+    <!-- Search Autocomplete Script -->
+    <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+    
+    <!-- Unified Navbar Debug Tool -->
+    <script src="<%=request.getContextPath()%>/js/unified-navbar-debug.js"></script>
+    
+    <!-- Context Path Setup -->
+    <script>
+        window.contextPath = '<%=request.getContextPath()%>';
+        console.log('Context path set to:', window.contextPath);
+    </script>
+    
+    <!-- Basic page functionality -->
     <script>
         // Back to top functionality
         const backToTopBtn = document.getElementById('backToTop');
@@ -699,72 +696,74 @@
         const categoryBtn = document.getElementById('categoryBtn');
         const categoryPopup = document.getElementById('categoryPopup');
 
-        categoryBtn.addEventListener('click', () => {
-            categoryPopup.classList.toggle('show');
-        });
+        if (categoryBtn && categoryPopup) {
+            categoryBtn.addEventListener('click', () => {
+                categoryPopup.classList.toggle('show');
+            });
 
-        window.addEventListener('click', (e) => {
-            if (!categoryBtn.contains(e.target) && !categoryPopup.contains(e.target)) {
-                categoryPopup.classList.remove('show');
+            window.addEventListener('click', (e) => {
+                if (!categoryBtn.contains(e.target) && !categoryPopup.contains(e.target)) {
+                    categoryPopup.classList.remove('show');
+                }
+            });
+        }
+
+        // Hiện/ẩn popup danh mục sản phẩm
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('categoryBtn');
+            var popup = document.getElementById('categoryPopup');
+            if (btn && popup) {
+                btn.addEventListener('mouseenter', function() {
+                    popup.classList.add('show');
+                });
+                btn.addEventListener('mouseleave', function() {
+                    setTimeout(function(){
+                        if (!popup.matches(':hover')) popup.classList.remove('show');
+                    }, 100);
+                });
+                popup.addEventListener('mouseenter', function() {
+                    popup.classList.add('show');
+                });
+                popup.addEventListener('mouseleave', function() {
+                    popup.classList.remove('show');
+                });
+                // Mobile: click để toggle
+                btn.addEventListener('click', function(e) {
+                    if (window.innerWidth < 992) {
+                        popup.classList.toggle('show');
+                    }
+                });
+                // Click ngoài để ẩn
+                document.addEventListener('click', function(e) {
+                    if (!btn.contains(e.target) && !popup.contains(e.target)) {
+                        popup.classList.remove('show');
+                    }
+                });
             }
         });
-
-    // Hiện/ẩn popup danh mục sản phẩm
-    document.addEventListener('DOMContentLoaded', function() {
-        var btn = document.getElementById('categoryBtn');
-        var popup = document.getElementById('categoryPopup');
-        if (btn && popup) {
-            btn.addEventListener('mouseenter', function() {
-                popup.classList.add('show');
-            });
-            btn.addEventListener('mouseleave', function() {
-                setTimeout(function(){
-                    if (!popup.matches(':hover')) popup.classList.remove('show');
-                }, 100);
-            });
-            popup.addEventListener('mouseenter', function() {
-                popup.classList.add('show');
-            });
-            popup.addEventListener('mouseleave', function() {
-                popup.classList.remove('show');
-            });
-            // Mobile: click để toggle
-            btn.addEventListener('click', function(e) {
-                if (window.innerWidth < 992) {
-                    popup.classList.toggle('show');
-                }
-            });
-            // Click ngoài để ẩn
-            document.addEventListener('click', function(e) {
-                if (!btn.contains(e.target) && !popup.contains(e.target)) {
-                    popup.classList.remove('show');
-                }
-            });        }
-    });    </script>
-    <!-- Navbar Manager - Single Source of Truth -->
-    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
-    
-    <!-- Avatar Utils - Xử lý avatar và Gravatar -->
-    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
-    
-    <!-- Auth Sync Manager - Đồng bộ authentication state -->
-    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
-    
-    <!-- Google OAuth Clean Handler -->
-    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
-    
-    <!-- Hamburger Menu Script -->
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
-    
-    <!-- Carousel Protection Script - Load FIRST to protect carousel -->
-    <script src="<%=request.getContextPath()%>/js/carousel-protection.js"></script>
-    
-    <!-- Product Manager - Load AFTER carousel protection -->
-    <script src="<%=request.getContextPath()%>/js/product-manager.js"></script>
-    
-    <!-- Verify carousel integrity after all scripts loaded -->
+    </script>
+    <!-- Final auth state verification and cleanup -->
     <script>
         window.addEventListener('load', function() {
+            console.log('🔄 Window loaded, performing final auth checks...');
+            
+            // Clean up justLoggedIn flag after a delay
+            setTimeout(function() {
+                if (localStorage.getItem('justLoggedIn')) {
+                    console.log('🧹 Removing justLoggedIn flag');
+                    localStorage.removeItem('justLoggedIn');
+                }
+            }, 2000);
+            
+            // Final unified navbar state check
+            setTimeout(function() {
+                if (window.unifiedNavbarManager) {
+                    console.log('🔄 Final unified navbar refresh');
+                    window.unifiedNavbarManager.refreshNavbar();
+                }
+            }, 1500);
+            
+            // Verify carousel integrity
             setTimeout(function() {
                 if (window.checkCarouselIntegrity) {
                     const isIntact = window.checkCarouselIntegrity();
@@ -776,49 +775,18 @@
                 }
             }, 500);
         });
-    </script>
-    <!-- Search Autocomplete Script -->
-    <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
-    <!-- Force check authentication state after page load -->
-    <script>
-        // Ensure auth state is checked after everything is loaded
-        window.addEventListener('load', function() {
-            console.log('Window loaded, checking auth state...');
-            
-            // Multiple checks to ensure auth state is properly handled
-            setTimeout(function() {
-                if (window.authSyncManager) {
-                    console.log('Force refreshing auth state after page load');
-                    window.authSyncManager.forceRefresh();
-                }
-                
-                if (window.navbarManager) {
-                    console.log('Checking navbar initial state after page load');
-                    window.navbarManager.checkInitialState();
-                }
-            }, 100);
-            
-            // Additional check after a longer delay
-            setTimeout(function() {
-                if (window.authSyncManager) {
-                    window.authSyncManager.forceRefresh();
-                }
-            }, 1000);
-        });
         
-        // Also check when DOM is ready
+        // DOM ready handlers
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM ready, scheduling auth checks...');
+            console.log('📦 DOM ready, setting up unified navbar...');
             
-            setTimeout(function() {
-                if (window.authSyncManager) {
-                    window.authSyncManager.forceRefresh();
-                }
-            }, 500);
+            // Ensure unified navbar manager is initialized
+            if (window.unifiedNavbarManager) {
+                setTimeout(() => {
+                    window.unifiedNavbarManager.checkAuthState();
+                }, 100);
+            }
         });
     </script>
-    
-    <!-- Quick Auth Debug Test -->
-    <script src="<%=request.getContextPath()%>/js/quick-auth-test.js"></script>
     </body>
 </html>

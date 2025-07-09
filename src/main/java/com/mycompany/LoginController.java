@@ -3,6 +3,8 @@ package com.mycompany;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import java.sql.*;
@@ -24,7 +26,7 @@ public class LoginController {
     }    @PostMapping(value = "/login", 
                 consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<Map<String, Object>> login(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
         System.out.println("=== LOGIN REQUEST RECEIVED ===");
         System.out.println("Email: " + email);
         System.out.println("Password: " + password);          String connectionUrl = "jdbc:sqlserver://43gundam.database.windows.net:1433;database=gundamhobby;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
@@ -99,6 +101,20 @@ public class LoginController {
                         System.out.println("  - Passwords match: " + passwordMatch);
                         
                         if (passwordMatch) {
+                            // Create session for email/password login
+                            HttpSession session = request.getSession(true);
+                            session.setAttribute("isLoggedIn", true);
+                            session.setAttribute("userEmail", email);
+                            session.setAttribute("userName", firstName + " " + lastName);
+                            session.setAttribute("userRole", role);
+                            session.setAttribute("loginType", "email");
+                            
+                            System.out.println("=== EMAIL LOGIN SESSION CREATED ===");
+                            System.out.println("Session ID: " + session.getId());
+                            System.out.println("User: " + firstName + " " + lastName);
+                            System.out.println("Email: " + email);
+                            System.out.println("Role: " + role);
+                            
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);

@@ -104,34 +104,69 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.disabled = false;
                 
                 if (data.success === true) {
-                    // Lưu thông tin user
+                    // Lưu thông tin user (bao gồm avatar placeholder)
                     localStorage.setItem('userLoggedIn', 'true');
                     localStorage.setItem('userName', data.fullName);
                     localStorage.setItem('userEmail', email);
                     localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('userAvatar', data.avatarUrl || ''); // Lưu avatar nếu có
                     
                     // Hiển thị thông báo thành công
                     const roleText = getRoleDisplayName(data.role);
                     showAlert(`🎉 Đăng nhập thành công! Chào mừng ${data.fullName} (${roleText})`, 'success');
                     
-                    // Cập nhật UI ngay lập tức nếu có function
-                    if (typeof setUserLoggedIn === 'function') {
-                        setUserLoggedIn(data.fullName, email);
-                    }
-                    
-                    // Cập nhật navbar ngay lập tức
-                    if (typeof window.showUserMenu === 'function') {
-                        window.showUserMenu(data.fullName);
-                    }
-                    
-                    // Trigger event để các component khác biết user đã đăng nhập
-                    const loginEvent = new CustomEvent('userLoggedIn', {
-                        detail: { fullName: data.fullName, email: email, role: data.role }
-                    });
-                    window.dispatchEvent(loginEvent);
+                    // Force sync auth state với delay để đảm bảo navbar đã sẵn sàng
+                    setTimeout(() => {
+                        if (window.authSyncManager) {
+                            console.log('Forcing auth sync after successful login');
+                            window.authSyncManager.forceRefresh();
+                        }
+                        
+                        // Cập nhật navbar ngay lập tức
+                        if (window.navbarManager) {
+                            console.log('Forcing navbar refresh after successful login');
+                            window.navbarManager.refresh();
+                        }
+                        
+                        // Trigger event để các component khác biết user đã đăng nhập
+                        const loginEvent = new CustomEvent('userLoggedIn', {
+                            detail: { 
+                                fullName: data.fullName, 
+                                email: email, 
+                                role: data.role,
+                                avatarUrl: data.avatarUrl || ''
+                            }
+                        });
+                        window.dispatchEvent(loginEvent);
+                    }, 100);
                     
                     // Chuyển trang dựa theo role
                     setTimeout(() => {
+                        // Verify localStorage one more time before redirect
+                        console.log('Final localStorage before redirect:', {
+                            userLoggedIn: localStorage.getItem('userLoggedIn'),
+                            userName: localStorage.getItem('userName'),
+                            userEmail: localStorage.getItem('userEmail'),
+                            userRole: localStorage.getItem('userRole'),
+                            userAvatar: localStorage.getItem('userAvatar')
+                        });
+                        
+                        // Force one final auth sync
+                        if (window.authSyncManager) {
+                            window.authSyncManager.forceRefresh();
+                        }
+                        
+                        // Notify anti-flicker manager if available
+                        if (window.antiFlickerAuthManager) {
+                            console.log('Notifying anti-flicker manager before redirect...');
+                            window.antiFlickerAuthManager.handleLoginEvent({
+                                fullName: data.fullName,
+                                email: email,
+                                role: data.role,
+                                avatarUrl: data.avatarUrl || ''
+                            });
+                        }
+                        
                         const role = data.role ? data.role.toUpperCase() : '';
                         let targetPage = '';
                           if (role === 'ADMIN') {
@@ -143,8 +178,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         
                         console.log('Redirecting to:', targetPage);
+                        
+                        // Add a marker to indicate this is a post-login redirect
+                        localStorage.setItem('justLoggedIn', 'true');
+                        
                         window.location.href = targetPage;
-                    }, 1500);
+                    }, 2000); // Increased delay to ensure everything is properly set
                 } else {
                     showAlert(data.message || 'Sai email hoặc mật khẩu!', 'danger');
                 }

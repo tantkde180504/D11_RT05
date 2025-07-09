@@ -132,21 +132,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 console.log('Dispatching login event...');
                 
-                // Dispatch event for navbar manager
+                // Dispatch event for navbar manager - với multiple attempts
+                const loginEventDetail = {
+                    fullName: data.fullName || 'User',
+                    email: email,
+                    role: data.role || 'CUSTOMER',
+                    avatarUrl: data.avatarUrl || '' // Avatar sẽ được generate từ email
+                };
+                
+                // Dispatch immediately
                 window.dispatchEvent(new CustomEvent('userLoggedIn', {
-                    detail: {
-                        fullName: data.fullName || 'User',
-                        email: email,
-                        role: data.role || 'CUSTOMER',
-                        avatarUrl: data.avatarUrl || '' // Avatar sẽ được generate từ email
-                    }
+                    detail: loginEventDetail
                 }));
                 
-                // Force auth sync before redirect
-                if (window.authSyncManager) {
-                    console.log('Forcing auth sync...');
-                    window.authSyncManager.forceRefresh();
-                }
+                // Dispatch again after short delay to ensure navbar is ready
+                setTimeout(() => {
+                    console.log('Re-dispatching login event...');
+                    window.dispatchEvent(new CustomEvent('userLoggedIn', {
+                        detail: loginEventDetail
+                    }));
+                }, 100);
+                
+                // Force auth sync multiple times
+                const forceAuthSync = () => {
+                    if (window.authSyncManager) {
+                        console.log('Forcing auth sync...');
+                        window.authSyncManager.forceRefresh();
+                    }
+                };
+                
+                forceAuthSync();
+                setTimeout(forceAuthSync, 200);
+                setTimeout(forceAuthSync, 500);
                 
                 console.log('Event dispatched, preparing redirect...');
                 
@@ -165,12 +182,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.authSyncManager.forceRefresh();
                     }
                     
+                    // Force navbar update if available
+                    if (window.forceFixNavbar) {
+                        console.log('Forcing navbar fix before redirect...');
+                        window.forceFixNavbar();
+                    }
+                    
                     // Use context path for redirect
                     const redirectPath = (window.APP_CONTEXT_PATH || contextPath) || '/';
                     console.log('Redirecting to:', redirectPath);
                     
                     window.location.href = redirectPath;
-                }, 1500); // Increased delay
+                }, 2000); // Increased delay to 2 seconds
                 
             } else {
                 console.log('Login failed:', data.message);
