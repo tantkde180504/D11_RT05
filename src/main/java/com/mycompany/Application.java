@@ -14,7 +14,10 @@ import org.springframework.web.servlet.view.JstlView;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.mycompany") // ✅ FIX quan trọng
-public class Application extends SpringBootServletInitializer {
+public class Application extends SpringBootServletInitializer implements CommandLineRunner {
+
+    @Autowired
+    private OAuthUserService oAuthUserService;
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

@@ -549,28 +549,23 @@
 }
     </style>
 </head>
-<body class="dashboard-body"><!-- Admin Header -->
+<body>
+    <!-- Admin Header -->
     <nav class="navbar navbar-expand-lg navbar-dark admin-header">
         <div class="container-fluid">
             <a class="admin-brand" href="#">
                 <i class="fas fa-shield-alt"></i> Admin Panel - 43 Gundam Hobby
             </a>
-            <div class="navbar-nav ms-auto d-flex align-items-center">
-                <!-- User Info for OAuth -->
-                <div id="nav-user-info" class="d-none"></div>
-                
-                <!-- Default navigation -->
-                <div id="default-nav-items">
-                    <a class="nav-link admin-nav-link" href="<%=request.getContextPath()%>/">
-                        <i class="fas fa-home me-2"></i>Về trang chủ
-                    </a>
-                    <a class="nav-link admin-nav-link" href="#" onclick="logout()">
-                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                    </a>
-                </div>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link admin-nav-link" href="<%=request.getContextPath()%>/">
+                    <i class="fas fa-home me-2"></i>Về trang chủ
+                </a>
+                <a class="nav-link admin-nav-link" href="#" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                </a>
             </div>
         </div>
-    </nav><div class="container-fluid">
+    </nav>    <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
@@ -1860,6 +1855,9 @@ function getStatusIcon(status) {
         'SHIPPING': '🚚',
         'DELIVERED': '📦',
         'CANCELLED': '❌'
+
+
+
     };
     return iconMap[status] || '📋';
 }
@@ -1921,8 +1919,21 @@ function getPaymentIcon(method) {
    <script src="<%=request.getContextPath()%>/js/customer-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/category-management.js"></script>
    <script>
-    fetch('/api/dashboard')
-      .then(res => res.json())
+    fetch('/api/dashboard', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Lỗi mạng: ' + res.status);
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          return res.text().then(text => {
+            throw new Error('API không trả về JSON. Nội dung trả về: ' + text.substring(0, 200));
+          });
+        }
+        return res.json();
+      })
       .then(data => {
         document.getElementById('revenue').textContent = data.revenueThisMonth;
         document.getElementById('orderCount').textContent = data.orderCountThisMonth;
@@ -1936,7 +1947,10 @@ function getPaymentIcon(method) {
           document.getElementById('lowStockWarning').textContent = '';
         }
       })
-      .catch(err => console.error('Dashboard API error:', err));
+      .catch(err => {
+        console.error('Lỗi API Dashboard:', err);
+        alert('Lỗi khi lấy dữ liệu Dashboard: ' + err.message);
+      });
     </script>
 </body>
 </html>

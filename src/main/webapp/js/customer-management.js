@@ -183,13 +183,17 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function apiUrl(path) {
-  const API_BASE = "http://localhost:8081";
+  const API_BASE = "http://localhost:8080";
   if (path.startsWith("/")) return API_BASE + path;
   return API_BASE + "/" + path;
 }
 
 function loadCustomerList() {
-  fetch(apiUrl("/api/staffs/customers"))
+  fetch(apiUrl("/api/staffs/customers"), {
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
     .then(res => {
       if (!res.ok) {
         // Đã xóa alert thông báo lỗi

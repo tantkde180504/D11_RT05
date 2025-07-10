@@ -12,6 +12,9 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jakartaee>10.0.0</jakartaee>
+        <java.version>11</java.version>
+
     </properties>
 
     <parent>
@@ -34,7 +37,8 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        </dependency><dependency>
+        <!-- H2 Database (runtime only, for dev/test) -->
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
@@ -67,6 +71,7 @@
             <version>3.0.1</version>
         </dependency>
 
+        <!-- JSTL API for Jakarta EE -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
@@ -115,52 +120,55 @@
             <artifactId>azure-storage-blob</artifactId>
             <version>12.25.1</version>
         </dependency>
+
         <!-- Azure Identity for authentication -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
             <version>1.11.2</version>
         </dependency>
+
         <!-- Azure Key Vault Secrets -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-security-keyvault-secrets</artifactId>
             <version>4.7.2</version>
-        </dependency>        <!-- Spring Boot Actuator for health checks -->
+        </dependency>
+
+                       <!-- Spring Boot Actuator for health checks -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        
+        </dependency> 
+
         <!-- Google OAuth2 Client -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
-        
-        <!-- Spring Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        
+
         <!-- Google API Client -->
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
             <version>2.2.0</version>
         </dependency>
-        
+
         <!-- Google OAuth2 -->
         <dependency>
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>1.19.0</version>
-        </dependency><dependency>
+        </dependency>
+
+        <!-- Spring Boot Test -->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>        <!-- JSP Support for Spring Boot 3.x -->
+        </dependency>
+
+                        <!-- JSP Support for Spring Boot 3.x -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
@@ -186,7 +194,9 @@
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.0</version>
-        </dependency>
+        </dependency> 
+
+
     </dependencies>
 
     <build>

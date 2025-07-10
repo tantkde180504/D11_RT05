@@ -206,7 +206,11 @@ function generateReport() {
     
     console.log('API URL:', url);
     
-    fetch(url)
+    fetch(url, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
         .then(response => {
             console.log('Response Status:', response.status);
             return response.json();

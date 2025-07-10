@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Đổi base URL API cho đúng port backend
-const API_BASE = "http://localhost:8081";
+const API_BASE = "http://localhost:8080";
 
 function apiUrl(path) {
   if (path.startsWith("/")) return API_BASE + path;
@@ -155,7 +155,11 @@ function apiUrl(path) {
 
 function loadStaffList() {
   console.log("✅ Hàm loadStaffList đã được gọi");
-  fetch(apiUrl("/api/staffs/list"))
+  fetch(apiUrl("/api/staffs/list"), {
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
     .then(res => {
       if (!res.ok) throw new Error("Lỗi HTTP");
       return res.json();
@@ -178,7 +182,11 @@ function loadStaffList() {
 
 // ✅ Gắn các hàm vào phạm vi global
 window.openEditModal = function (id) {
-  fetch(apiUrl(`/api/staffs/${id}`))
+  fetch(apiUrl(`/api/staffs/${id}`), {
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
     .then(async res => {
       if (!res.ok) {
         let msg = "Không tìm thấy nhân viên với ID: " + id;

@@ -2,9 +2,25 @@
 let categories = [];
 
 function fetchCategoriesAndRender() {
-  fetch('/api/categories')
-    .then(res => res.json())
+  fetch('/api/categories', {
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+    .then(async res => {
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error('API /api/categories không trả về JSON. Content-Type:', contentType, '\nResponse:', text.slice(0, 200));
+        categories = [];
+        renderCategoryTable();
+        alert('❌ Lỗi: API /api/categories không trả về dữ liệu JSON hợp lệ!');
+        return;
+      }
+      return res.json();
+    })
     .then(data => {
+      if (!data) return;
       if (Array.isArray(data)) {
         categories = data;
         renderCategoryTable();
@@ -18,6 +34,7 @@ function fetchCategoriesAndRender() {
       categories = [];
       renderCategoryTable();
       console.error('Lỗi khi fetch /api/categories:', err);
+      alert('❌ Lỗi khi lấy danh sách danh mục!');
     });
 }
 
@@ -101,7 +118,7 @@ document.getElementById('editCategoryForm').addEventListener('submit', function(
 
   fetch('/api/categories/update', {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
       id,
       name,
@@ -110,36 +127,72 @@ document.getElementById('editCategoryForm').addEventListener('submit', function(
       isActive
     })
   })
-  .then(res => {
-    if (!res.ok) throw res;
+  .then(async res => {
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok) {
+      let msg = 'Lỗi không xác định!';
+      if (contentType.includes('application/json')) {
+        const data = await res.json();
+        msg = data.message || JSON.stringify(data);
+      } else {
+        const text = await res.text();
+        msg = text.slice(0, 200);
+      }
+      throw new Error(msg);
+    }
+    if (!contentType.includes('application/json')) {
+      const text = await res.text();
+      console.error('API /api/categories/update không trả về JSON. Content-Type:', contentType, '\nResponse:', text.slice(0, 200));
+      alert('❌ Lỗi: API /api/categories/update không trả về dữ liệu JSON hợp lệ!');
+      return;
+    }
     return res.json();
   })
   .then(result => {
+    if (!result) return;
     alert('✅ Sửa danh mục thành công!');
     bootstrap.Modal.getInstance(document.getElementById('editCategoryModal')).hide();
     fetchCategoriesAndRender();
   })
-  .catch(async err => {
-    let msg = 'Lỗi không xác định!';
-    if (err.text) msg = await err.text();
-    alert('❌ ' + msg);
+  .catch(err => {
+    alert('❌ ' + err.message);
   });
 });
 
 function deleteCategory(id) {
   if (confirm('Bạn có chắc chắn muốn xóa danh mục #' + id + ' không?')) {
     fetch(`/api/categories/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: { 'Accept': 'application/json' }
     })
-    .then(res => {
-      if (!res.ok) throw res;
+    .then(async res => {
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok) {
+        let msg = 'Lỗi không xác định!';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          msg = data.message || JSON.stringify(data);
+        } else {
+          const text = await res.text();
+          msg = text.slice(0, 200);
+        }
+        throw new Error(msg);
+      }
+      if (!contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error('API /api/categories/{id} không trả về JSON. Content-Type:', contentType, '\nResponse:', text.slice(0, 200));
+        alert('❌ Lỗi: API /api/categories/{id} không trả về dữ liệu JSON hợp lệ!');
+        return;
+      }
+      return res.json();
+    })
+    .then(result => {
+      if (!result) return;
       alert('✅ Đã xóa danh mục #' + id);
       fetchCategoriesAndRender();
     })
-    .catch(async err => {
-      let msg = 'Lỗi không xác định!';
-      if (err.text) msg = await err.text();
-      alert('❌ ' + msg);
+    .catch(err => {
+      alert('❌ ' + err.message);
     });
   }
 }
@@ -156,14 +209,32 @@ function toggleCategoryStatus(id) {
 
     fetch('/api/categories/update', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(updatedCategory)
     })
-    .then(res => {
-        if (!res.ok) throw new Error('Cập nhật trạng thái thất bại');
+    .then(async res => {
+        const contentType = res.headers.get('content-type') || '';
+        if (!res.ok) {
+          let msg = 'Lỗi không xác định!';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            msg = data.message || JSON.stringify(data);
+          } else {
+            const text = await res.text();
+            msg = text.slice(0, 200);
+          }
+          throw new Error(msg);
+        }
+        if (!contentType.includes('application/json')) {
+          const text = await res.text();
+          console.error('API /api/categories/update không trả về JSON. Content-Type:', contentType, '\nResponse:', text.slice(0, 200));
+          alert('❌ Lỗi: API /api/categories/update không trả về dữ liệu JSON hợp lệ!');
+          return;
+        }
         return res.json();
     })
     .then(result => {
+        if (!result) return;
         alert(`✅ Đã ${updatedCategory.isActive ? 'kích hoạt' : 'ẩn'} danh mục!`);
         fetchCategoriesAndRender();
     })
@@ -176,15 +247,76 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCategoriesAndRender();
 
     const searchInput = document.getElementById('categorySearchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCategories = categories.filter(cat => 
-                cat.name.toLowerCase().includes(searchTerm)
+    const statusFilter = document.getElementById('statusFilter');
+    const productCountFilter = document.getElementById('productCountFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const sortFilter = document.getElementById('sortFilter');
+
+    function applyAllFilters() {
+        let filtered = [...categories];
+        // Tên/mô tả
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        if (searchTerm) {
+            filtered = filtered.filter(cat =>
+                cat.name.toLowerCase().includes(searchTerm) ||
+                (cat.description && cat.description.toLowerCase().includes(searchTerm))
             );
-            renderCategoryTable(filteredCategories);
-        });
+        }
+        // Trạng thái
+        const status = statusFilter ? statusFilter.value : '';
+        if (status) {
+            filtered = filtered.filter(cat =>
+                (status === 'active' && cat.isActive) ||
+                (status === 'inactive' && !cat.isActive)
+            );
+        }
+        // Số sản phẩm
+        const productCount = productCountFilter ? productCountFilter.value : '';
+        if (productCount) {
+            filtered = filtered.filter(cat => {
+                const count = cat.productCount || 0;
+                if (productCount === 'empty') return count === 0;
+                if (productCount === 'low') return count >= 1 && count <= 5;
+                if (productCount === 'medium') return count >= 6 && count <= 15;
+                if (productCount === 'high') return count > 15;
+                return true;
+            });
+        }
+        // Ngày tạo
+        const dateType = dateFilter ? dateFilter.value : '';
+        if (dateType) {
+            const today = new Date();
+            filtered = filtered.filter(cat => {
+                if (!cat.createdAt) return false;
+                const created = new Date(cat.createdAt.split('T')[0]);
+                const diffDays = Math.floor((today - created) / (1000 * 60 * 60 * 24));
+                if (dateType === 'today') return diffDays === 0;
+                if (dateType === 'week') return diffDays <= 6;
+                if (dateType === 'month') return diffDays <= 30;
+                if (dateType === 'old') return diffDays > 30;
+                return true;
+            });
+        }
+        // Sắp xếp
+        const sort = sortFilter ? sortFilter.value : '';
+        if (sort) {
+            if (sort === 'id_asc') filtered.sort((a, b) => a.id - b.id);
+            if (sort === 'id_desc') filtered.sort((a, b) => b.id - a.id);
+            if (sort === 'name_asc') filtered.sort((a, b) => a.name.localeCompare(b.name));
+            if (sort === 'name_desc') filtered.sort((a, b) => b.name.localeCompare(a.name));
+            if (sort === 'date_asc') filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            if (sort === 'date_desc') filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            if (sort === 'products_asc') filtered.sort((a, b) => (a.productCount || 0) - (b.productCount || 0));
+            if (sort === 'products_desc') filtered.sort((a, b) => (b.productCount || 0) - (a.productCount || 0));
+        }
+        renderCategoryTable(filtered);
     }
+
+    if (searchInput) searchInput.addEventListener('input', applyAllFilters);
+    if (statusFilter) statusFilter.addEventListener('change', applyAllFilters);
+    if (productCountFilter) productCountFilter.addEventListener('change', applyAllFilters);
+    if (dateFilter) dateFilter.addEventListener('change', applyAllFilters);
+    if (sortFilter) sortFilter.addEventListener('change', applyAllFilters);
 
     document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -195,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       fetch('/api/categories/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           name,
           description,
@@ -203,20 +335,36 @@ document.addEventListener('DOMContentLoaded', () => {
           isActive
         })
       })
-      .then(res => {
-        if (!res.ok) throw res;
+      .then(async res => {
+        const contentType = res.headers.get('content-type') || '';
+        if (!res.ok) {
+          let msg = 'Lỗi không xác định!';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            msg = data.message || JSON.stringify(data);
+          } else {
+            const text = await res.text();
+            msg = text.slice(0, 200);
+          }
+          throw new Error(msg);
+        }
+        if (!contentType.includes('application/json')) {
+          const text = await res.text();
+          console.error('API /api/categories/add không trả về JSON. Content-Type:', contentType, '\nResponse:', text.slice(0, 200));
+          alert('❌ Lỗi: API /api/categories/add không trả về dữ liệu JSON hợp lệ!');
+          return;
+        }
         return res.json();
       })
       .then(result => {
+        if (!result) return;
         alert('✅ Thêm danh mục thành công!');
         bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
         fetchCategoriesAndRender();
         document.getElementById('addCategoryForm').reset();
       })
-      .catch(async err => {
-        let msg = 'Lỗi không xác định!';
-        if (err.text) msg = await err.text();
-        alert('❌ ' + msg);
+      .catch(err => {
+        alert('❌ ' + err.message);
       });
     });
 });
