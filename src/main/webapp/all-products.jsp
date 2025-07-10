@@ -110,7 +110,7 @@
                             %>
                         </div>
                         <div class="cart-btn">
-                            <a href="#" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 <span class="cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>

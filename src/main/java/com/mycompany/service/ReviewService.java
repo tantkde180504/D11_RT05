@@ -19,6 +19,9 @@ public class ReviewService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * Kiểm tra xem người dùng đã mua sản phẩm chưa
      */
@@ -140,5 +143,85 @@ public class ReviewService {
      */
     public Optional<Review> findByUserIdAndProductId(Long userId, Long productId) {
         return reviewRepository.findByUserIdAndProductId(userId, productId);
+    }
+
+    /**
+     * Lấy tất cả đánh giá của một sản phẩm với thông tin người dùng
+     */
+    public List<Map<String, Object>> getReviewsWithUserInfo(Long productId) {
+        List<Review> reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);
+
+        // Lấy danh sách userId để query tên user
+        List<Long> userIds = reviews.stream()
+                .map(Review::getUserId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // Lấy tên user cho tất cả userId cùng lúc (tối ưu hóa)
+        Map<Long, String> userNames = userService.getUserFullNames(userIds);
+
+        // Chuyển đổi sang Map để trả về cho frontend
+        return reviews.stream()
+                .map(review -> {
+                    Map<String, Object> reviewMap = new HashMap<>();
+                    reviewMap.put("id", review.getId());
+                    reviewMap.put("userId", review.getUserId());
+                    reviewMap.put("productId", review.getProductId());
+                    reviewMap.put("rating", review.getRating());
+                    reviewMap.put("comment", review.getComment());
+                    reviewMap.put("isVerified", review.getIsVerified());
+                    reviewMap.put("createdAt", review.getCreatedAt());
+                    reviewMap.put("timeAgo", review.getTimeAgo());
+                    reviewMap.put("formattedRating", review.getFormattedRating());
+
+
+                    // Thêm tên người dùng
+                    String userName = userNames.getOrDefault(review.getUserId(), "Khách");
+                    reviewMap.put("userName", userName);
+
+                    return reviewMap;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy reviews với thông tin vote "hữu ích" của user hiện tại
+     */
+    public List<Map<String, Object>> getReviewsWithHelpfulInfo(Long productId, Long currentUserId) {
+        List<Review> reviews = getReviewsByProductId(productId);
+
+        // Lấy thông tin user names
+        List<Long> userIds = reviews.stream()
+                .map(Review::getUserId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<Long, String> userNames = userService.getUserFullNames(userIds);
+
+        return reviews.stream()
+                .map(review -> {
+                    Map<String, Object> reviewMap = new HashMap<>();
+                    reviewMap.put("id", review.getId());
+                    reviewMap.put("userId", review.getUserId());
+                    reviewMap.put("productId", review.getProductId());
+                    reviewMap.put("rating", review.getRating());
+                    reviewMap.put("comment", review.getComment());
+                    reviewMap.put("isVerified", review.getIsVerified());
+                    reviewMap.put("createdAt", review.getCreatedAt());
+                    reviewMap.put("timeAgo", review.getTimeAgo());
+                    reviewMap.put("formattedRating", review.getFormattedRating());
+      
+
+                    // Thêm tên người dùng
+                    String userName = userNames.getOrDefault(review.getUserId(), "Khách");
+                    reviewMap.put("userName", userName);
+
+                    // Thêm thông tin vote của user hiện tại (placeholder - cần implement sau)
+                    reviewMap.put("hasUserVoted", false);
+
+                    return reviewMap;
+                })
+                .collect(Collectors.toList());
     }
 }

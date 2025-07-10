@@ -36,15 +36,16 @@ public class ReviewController {
         System.out.println("productId: " + productId);
         System.out.println("userId in session: " + userId);
         try {
-            List<Review> reviews = reviewService.getReviewsByProductId(productId);
-            System.out.println("Found " + reviews.size() + " reviews in service for productId: " + productId);
+            // Lấy reviews với thông tin tên người dùng và vote
+            List<Map<String, Object>> reviewsWithUserInfo = reviewService.getReviewsWithHelpfulInfo(productId, userId);
+            System.out.println("Found " + reviewsWithUserInfo.size() + " reviews with user info for productId: " + productId);
             Map<String, Object> statistics = reviewService.getReviewStatistics(productId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("reviews", reviews);
+            response.put("reviews", reviewsWithUserInfo);  // Sử dụng reviews có tên user và vote info
             response.put("statistics", statistics);
-            response.put("total", reviews.size());
+            response.put("total", reviewsWithUserInfo.size());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
