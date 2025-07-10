@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/address-book.css" rel="stylesheet">
     
     <style>
         .profile-body {
@@ -247,9 +248,9 @@
                     </div>
                     <nav class="nav flex-column">
                         <a class="nav-link active" href="#" id="profileInfoTab"><i class="fas fa-user me-2"></i>Thông tin tài khoản</a>
+                        <a class="nav-link" href="#" id="profileAddressTab"><i class="fas fa-map-marker-alt me-2"></i>Sổ địa chỉ <span class="badge bg-primary ms-1">0</span></a>
                         <a class="nav-link" href="#" id="profileOrdersTab"><i class="fas fa-box me-2"></i>Đơn hàng của bạn</a>
                         <a class="nav-link" href="#" id="profilePasswordTab"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a>
-                        <a class="nav-link" href="#" id="profileAddressTab"><i class="fas fa-map-marker-alt me-2"></i>Sổ địa chỉ <span class="badge bg-secondary ms-1">0</span></a>
                         <a class="nav-link text-danger" href="#" id="profileLogoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a>
                     </nav>
                 </div>
@@ -404,6 +405,13 @@
     <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
     <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
     
+    <!-- Address Book Script -->
+    <script src="<%=request.getContextPath()%>/js/address-book.js"></script>
+    
+    <!-- Test Scripts -->
+    <script src="<%=request.getContextPath()%>/js/address-api-test.js"></script>
+    <script src="<%=request.getContextPath()%>/js/address-e2e-test.js"></script>
+    
     <!-- Avatar Utils -->
     <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
     
@@ -531,6 +539,13 @@
             } else {
                 loadFromSession();
             }
+            
+            // Load address count immediately for sidebar badge
+            setTimeout(() => {
+                if (typeof loadAddressCount === 'function') {
+                    loadAddressCount();
+                }
+            }, 100);
             
             // Get session data for sidebar and other elements
             const userName = '<%= session.getAttribute("userName") != null ? session.getAttribute("userName") : "" %>';
@@ -746,6 +761,47 @@
             profileContent.innerHTML = document.getElementById('profileInfoContent').outerHTML;
         };
         
+        document.getElementById('profileAddressTab').onclick = async function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Load address book content
+            const profileContent = document.getElementById('profileContent');
+            profileContent.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+            
+            try {
+                console.log('=== LOADING ADDRESS BOOK TAB ===');
+                
+                // Đảm bảo script address-book.js đã load
+                if (typeof createAddressBookHTML === 'function') {
+                    console.log('Creating address book HTML...');
+                    const addressBookHTML = await createAddressBookHTML();
+                    console.log('Address book HTML created, setting innerHTML...');
+                    profileContent.innerHTML = addressBookHTML;
+                    console.log('Address book tab loaded successfully');
+                    
+                    // Force refresh sau khi load để đảm bảo data mới nhất
+                    if (typeof forceRefreshAddresses === 'function') {
+                        console.log('Force refreshing addresses after tab load...');
+                        setTimeout(() => {
+                            forceRefreshAddresses();
+                        }, 100);
+                    }
+                } else {
+                    throw new Error('Address book script not loaded');
+                }
+            } catch (error) {
+                console.error('Error loading address book:', error);
+                profileContent.innerHTML = 
+                    '<div class="alert alert-danger">' +
+                    '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                    'Có lỗi xảy ra khi tải sổ địa chỉ. Vui lòng thử lại.' +
+                    '<br><button class="btn btn-sm btn-outline-primary mt-2" onclick="location.reload()">Tải lại trang</button>' +
+                    '</div>';
+            }
+        };
+        
         document.getElementById('profileOrdersTab').onclick = function(e) {
             e.preventDefault();
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
@@ -769,19 +825,6 @@
                 '<div class="alert alert-warning mt-4">' +
                     '<i class="fas fa-exclamation-triangle me-2"></i>' +
                     'Chức năng này sẽ được cập nhật trong phiên bản tiếp theo.' +
-                '</div>';
-        };
-        
-        document.getElementById('profileAddressTab').onclick = function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            this.classList.add('active');
-            
-            document.getElementById('profileContent').innerHTML = 
-                '<h4><i class="fas fa-map-marker-alt me-2"></i>Sổ địa chỉ</h4>' +
-                '<div class="alert alert-info mt-4">' +
-                    '<i class="fas fa-info-circle me-2"></i>' +
-                    'Bạn chưa có địa chỉ nào được lưu.' +
                 '</div>';
         };
         

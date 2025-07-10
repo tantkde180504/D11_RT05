@@ -34,6 +34,14 @@ class UnifiedNavbarManager {
             this.updateNavbarForGuest();
         });
 
+        // Listen for localStorage changes
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'currentUser' || event.key === 'googleUser') {
+                console.log('📦 localStorage changed, refreshing auth state');
+                this.checkAuthState();
+            }
+        });
+
         // Handle logout button clicks (using event delegation)
         document.addEventListener('click', (event) => {
             if (event.target.id === 'unifiedLogoutBtn' || 
@@ -61,7 +69,7 @@ class UnifiedNavbarManager {
         console.log('🌐 Checking server authentication...');
         
         try {
-            const response = await fetch('/oauth2/user-info', {
+            const response = await fetch(`${this.contextPath}/oauth2/user-info`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -86,6 +94,9 @@ class UnifiedNavbarManager {
                         avatarUrl: data.picture,
                         loginType: data.loginType || 'server'
                     };
+                    
+                    // Also save to localStorage for consistency
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                     
                     this.updateNavbarForLoggedInUser();
                     return Promise.resolve();
@@ -263,7 +274,7 @@ class UnifiedNavbarManager {
             console.log('🌐 Calling server logout...');
             
             try {
-                const response = await fetch('/oauth2/logout', {
+                const response = await fetch(`${this.contextPath}/oauth2/logout`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -333,6 +344,30 @@ class UnifiedNavbarManager {
     // Public method to get current user
     getCurrentUser() {
         return this.currentUser;
+    }
+    
+    // Debug method
+    debugAuthState() {
+        console.log('🔍 UNIFIED NAVBAR DEBUG STATE:');
+        console.log('- Current User:', this.currentUser);
+        console.log('- localStorage.currentUser:', localStorage.getItem('currentUser'));
+        console.log('- localStorage.googleUser:', localStorage.getItem('googleUser'));
+        console.log('- localStorage.userLoggedIn:', localStorage.getItem('userLoggedIn'));
+        console.log('- Context Path:', this.contextPath);
+        
+        // Test server endpoint
+        fetch(`${this.contextPath}/oauth2/user-info`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('- Server Response:', data);
+        })
+        .catch(error => {
+            console.log('- Server Error:', error);
+        });
     }
 }
 
