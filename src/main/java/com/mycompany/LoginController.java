@@ -11,6 +11,8 @@ import java.sql.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
@@ -62,23 +64,30 @@ public class LoginController {
                 }
             }
             
-            String sql = "SELECT first_name, last_name, role, password, provider FROM users WHERE email = ?";
+            // For now, let's use a simple approach without provider column
+            // to avoid the SQL error and get login working first
+            String sql = "SELECT id, first_name, last_name, role, password FROM users WHERE email = ?";
+            
+            System.out.println("Using SQL: " + sql);
             
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, email);
-                
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
+                        int userId = resultSet.getInt("id"); // Lấy id từ DB
                         String dbPasswordFromDb = resultSet.getString("password");
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
                         String role = resultSet.getString("role");
-                        String provider = resultSet.getString("provider");
+                        
+                        // Skip provider column for now to avoid SQL errors
+                        String provider = null;
                         
                         System.out.println("User found in database:");
+                        System.out.println("  - UserID: " + userId);
                         System.out.println("  - Name: " + firstName + " " + lastName);
                         System.out.println("  - Role: " + role);
-                        System.out.println("  - Provider: " + provider);
+                        System.out.println("  - Provider: " + provider + " (skipped for now)");
                         System.out.println("  - Password from DB: " + dbPasswordFromDb);
                         System.out.println("  - Password from input: " + password);
                         
@@ -118,6 +127,7 @@ public class LoginController {
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);
+                            resp.put("userId", userId);
                             resp.put("fullName", firstName + " " + lastName);
                             resp.put("email", email);
                             resp.put("avatarUrl", ""); // Will be generated on client-side from email

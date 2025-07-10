@@ -97,10 +97,16 @@
                             </div>
                         </div>
                         <div class="cart-btn">
-                            <a href="#" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 <span class="cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                            </a>
+                        </div>
+                        <div class="order-history-btn">
+                            <a href="order-history.jsp" class="btn btn-outline-secondary">
+                                <i class="fas fa-history me-1"></i>
+                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
                             </a>
                         </div>
                     </div>
@@ -263,7 +269,7 @@
                                 <span class="old-price">750.000₫</span>
                                 <span class="discount-percent">-13%</span>
                             </div>
-                            <button class="btn btn-primary add-to-cart w-100">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="1">
                                 <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
                             </button>
                         </div>
@@ -288,7 +294,7 @@
                             <div class="product-price">
                                 <span class="current-price">1.200.000₫</span>
                             </div>
-                            <button class="btn btn-primary add-to-cart w-100">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="2">
                                 <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
                             </button>
                         </div>
@@ -310,7 +316,7 @@
                             <div class="product-price">
                                 <span class="current-price">450.000₫</span>
                             </div>
-                            <button class="btn btn-primary add-to-cart w-100">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="3">
                                 <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
                             </button>
                         </div>
@@ -335,7 +341,7 @@
                             <div class="product-price">
                                 <span class="current-price">3.500.000₫</span>
                             </div>
-                            <button class="btn btn-primary add-to-cart w-100">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="4">
                                 <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
                             </button>
                         </div>
@@ -360,7 +366,7 @@
                             <div class="product-price">
                                 <span class="current-price">750.000₫</span>
                             </div>
-                            <button class="btn btn-primary add-to-cart w-100">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="5">
                                 <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
                             </button>
                         </div>
@@ -384,7 +390,7 @@
                                 <span class="old-price">1.500.000₫</span>
                                 <span class="discount-percent">-10%</span>
                             </div>
-                            <button class="btn btn-primary add-to-cart w-100">
+                            <button class="btn btn-primary add-to-cart w-100" data-product-id="6">
                                 <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
                             </button>
                         </div>
@@ -677,18 +683,33 @@
         });
 
         // Add to cart functionality
-        document.querySelectorAll('.add-to-cart').forEach(button => {
+       document.querySelectorAll('.add-to-cart').forEach(button => {
             button.addEventListener('click', function() {
-                // Add your cart logic here
-                this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
-                this.classList.add('btn-success');
-                this.classList.remove('btn-primary');
-                
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ';
-                    this.classList.remove('btn-success');
-                    this.classList.add('btn-primary');
-                }, 2000);
+                const productId = this.getAttribute('data-product-id');
+                fetch('<%=request.getContextPath()%>/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ productId: Number(productId), quantity: 1 })
+                }) 
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
+                        this.classList.add('btn-success');
+                        this.classList.remove('btn-primary');
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra!');
+                    }
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ';
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-primary');
+                    }, 2000);
+                })
+                .catch(() => {
+                    alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
+                });
             });
         });
 
