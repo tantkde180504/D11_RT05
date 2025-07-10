@@ -1,0 +1,47 @@
+# -----------------------
+# Build outputs
+# -----------------------
+/target/
+out/
+build/
+
+# -----------------------
+# Tomcat JSP generated
+# -----------------------
+/work/
+/work/*
+
+*.jsp.java
+*_jsp.java
+*.jsp.class
+*_jsp.class
+
+# -----------------------
+# Java compiled classes
+# -----------------------
+*.class
+
+# -----------------------
+# Logs
+# -----------------------
+*.log
+
+# -----------------------
+# IDE & Editor settings
+# -----------------------
+.idea/
+*.iml
+.vscode/
+*.sw?
+
+# -----------------------
+# OS junk
+# -----------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# -----------------------
+# Environment files
+# -----------------------
+.env
