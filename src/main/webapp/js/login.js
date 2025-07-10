@@ -104,11 +104,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         const role = data.role ? data.role.toUpperCase() : '';
                         let targetPage = '';
                           if (role === 'ADMIN') {
-                            targetPage = '/';
+                            targetPage = '/dashboard.jsp';
                         } else if (role === 'STAFF') {
-                            targetPage = '/';
+                            targetPage = '/staffsc.jsp';
                         } else {
-                            targetPage = '/';
+                            targetPage = '/index.jsp';
                         }
                         
                         console.log('Redirecting to:', targetPage);

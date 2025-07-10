@@ -57,7 +57,7 @@ public class PaymentPageController {
                     
                     // Kiểm tra xem order có thuộc về user hiện tại không
                     if (order.getUserId().equals(userId)) {
-                        // Cập nhật trạng thái order thành CONFIRMED (thay vì PAID) 
+                        // Cập nhật trạng thái order thành CONFIRMED 
                         if (!"CONFIRMED".equals(order.getStatus()) && !"DELIVERED".equals(order.getStatus())) {
                             order.setStatus("CONFIRMED");
                             orderRepository.save(order);
