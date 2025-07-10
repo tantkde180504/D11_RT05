@@ -57,6 +57,12 @@
             <artifactId>azure-identity</artifactId>
             <version>1.11.2</version>
         </dependency>
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Azure Key Vault Secrets -->
         <dependency>
             <groupId>com.azure</groupId>

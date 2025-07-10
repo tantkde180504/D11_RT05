@@ -90,16 +90,22 @@ public class SecurityConfig {
                 System.out.println("Picture: " + picture);
                 System.out.println("Role: " + (user != null ? user.getRole() : "CUSTOMER"));
                   // FORCE REDIRECT - sử dụng controller để handle redirect
-                String redirectUrl = request.getContextPath() + "/";
+                // Xác định role và redirect phù hợp
+                String role = user != null && user.getRole() != null ? user.getRole().toUpperCase() : "CUSTOMER";
+                String redirectUrl;
+                if ("ADMIN".equals(role)) {
+                    redirectUrl = request.getContextPath() + "/dashboard.jsp";
+                } else if ("STAFF".equals(role)) {
+                    redirectUrl = request.getContextPath() + "/staffsc.jsp";
+                } else {
+                    redirectUrl = request.getContextPath() + "/index.jsp";
+                }
                 System.out.println("=== FORCING REDIRECT TO CONTROLLER ===");
                 System.out.println("Context path: " + request.getContextPath());
                 System.out.println("Target URL: " + redirectUrl);
                 System.out.println("Current session: " + session.getId());
                 System.out.println("User stored in session: " + session.getAttribute("userName"));
-                
-                // Xóa bất kỳ header nào có thể conflict
                 response.sendRedirect(redirectUrl);
-                
                 System.out.println("=== REDIRECT HEADERS SET TO CONTROLLER ===");
                 System.out.println("Status: " + response.getStatus());
                 System.out.println("Location: " + response.getHeader("Location"));
