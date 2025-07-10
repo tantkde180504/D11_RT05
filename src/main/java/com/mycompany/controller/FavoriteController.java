@@ -34,7 +34,14 @@ public class FavoriteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        Long userId = (Long) session.getAttribute("userId");
+        Object sessionValue = session.getAttribute("userId");
+        Long userId = null;
+        if (sessionValue instanceof Integer) {
+            userId = ((Integer) sessionValue).longValue();
+        } else if (sessionValue instanceof Long) {
+            userId = (Long) sessionValue;
+        }
+        
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -79,7 +86,14 @@ public class FavoriteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        Long userId = (Long) session.getAttribute("userId");
+        Object sessionValue = session.getAttribute("userId");
+        Long userId = null;
+        if (sessionValue instanceof Integer) {
+            userId = ((Integer) sessionValue).longValue();
+        } else if (sessionValue instanceof Long) {
+            userId = (Long) sessionValue;
+        }
+        
         if (userId == null) {
             System.out.println("UserId is null - returning 401");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -111,7 +125,14 @@ public class FavoriteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        Long userId = (Long) session.getAttribute("userId");
+        Object sessionValue = session.getAttribute("userId");
+        Long userId = null;
+        if (sessionValue instanceof Integer) {
+            userId = ((Integer) sessionValue).longValue();
+        } else if (sessionValue instanceof Long) {
+            userId = (Long) sessionValue;
+        }
+        
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -144,7 +165,14 @@ public class FavoriteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        Long userId = (Long) session.getAttribute("userId");
+        Object sessionValue = session.getAttribute("userId");
+        Long userId = null;
+        if (sessionValue instanceof Integer) {
+            userId = ((Integer) sessionValue).longValue();
+        } else if (sessionValue instanceof Long) {
+            userId = (Long) sessionValue;
+        }
+        
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -183,7 +211,14 @@ public class FavoriteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        Long userId = (Long) session.getAttribute("userId");
+        Object sessionValue = session.getAttribute("userId");
+        Long userId = null;
+        if (sessionValue instanceof Integer) {
+            userId = ((Integer) sessionValue).longValue();
+        } else if (sessionValue instanceof Long) {
+            userId = (Long) sessionValue;
+        }
+        
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -222,7 +257,14 @@ public class FavoriteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        Long userId = (Long) session.getAttribute("userId");
+        Object sessionValue = session.getAttribute("userId");
+        Long userId = null;
+        if (sessionValue instanceof Integer) {
+            userId = ((Integer) sessionValue).longValue();
+        } else if (sessionValue instanceof Long) {
+            userId = (Long) sessionValue;
+        }
+        
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

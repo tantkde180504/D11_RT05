@@ -117,6 +117,7 @@ public class LoginController {
                             session.setAttribute("userName", firstName + " " + lastName);
                             session.setAttribute("userRole", role);
                             session.setAttribute("loginType", "email");
+                            session.setAttribute("userId", userId);
                             
                             System.out.println("=== EMAIL LOGIN SESSION CREATED ===");
                             System.out.println("Session ID: " + session.getId());
