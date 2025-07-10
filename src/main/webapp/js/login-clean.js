@@ -120,38 +120,55 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success === true) {
                 console.log('Login successful!');
                 
-                // Save user info to localStorage
+                // Create user object for unified navbar manager
+                const userObj = {
+                    fullName: data.fullName || 'User',
+                    name: data.fullName || 'User',
+                    email: email,
+                    role: data.role || 'CUSTOMER',
+                    avatarUrl: data.avatarUrl || '',
+                    picture: data.avatarUrl || '',
+                    loginType: 'email'
+                };
+                
+                // Save user info to localStorage (legacy format)
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('userName', data.fullName || 'User');
                 localStorage.setItem('userEmail', email);
                 localStorage.setItem('userRole', data.role || 'CUSTOMER');
-                localStorage.setItem('userAvatar', data.avatarUrl || ''); // Save avatar info
+                localStorage.setItem('userAvatar', data.avatarUrl || '');
+                
+                // Save user info to unified format for navbar manager
+                localStorage.setItem('currentUser', JSON.stringify(userObj));
+                
+                console.log('✅ User data saved to localStorage:', userObj);
                 
                 // Success feedback
                 alert('Đăng nhập thành công! Chào mừng ' + (data.fullName || 'bạn'));
                 
                 console.log('Dispatching login event...');
                 
-                // Dispatch event for navbar manager - với multiple attempts
-                const loginEventDetail = {
-                    fullName: data.fullName || 'User',
-                    email: email,
-                    role: data.role || 'CUSTOMER',
-                    avatarUrl: data.avatarUrl || '' // Avatar sẽ được generate từ email
-                };
-                
+                // Dispatch event for navbar manager - với user object đã tạo
                 // Dispatch immediately
                 window.dispatchEvent(new CustomEvent('userLoggedIn', {
-                    detail: loginEventDetail
+                    detail: userObj
                 }));
                 
                 // Dispatch again after short delay to ensure navbar is ready
                 setTimeout(() => {
                     console.log('Re-dispatching login event...');
                     window.dispatchEvent(new CustomEvent('userLoggedIn', {
-                        detail: loginEventDetail
+                        detail: userObj
                     }));
                 }, 100);
+                
+                // Force unified navbar refresh
+                setTimeout(() => {
+                    if (window.unifiedNavbarManager) {
+                        console.log('🔄 Forcing unified navbar refresh...');
+                        window.unifiedNavbarManager.refreshNavbar();
+                    }
+                }, 200);
                 
                 // Force auth sync multiple times
                 const forceAuthSync = () => {

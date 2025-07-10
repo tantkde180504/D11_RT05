@@ -747,6 +747,19 @@
         window.addEventListener('load', function() {
             console.log('🔄 Window loaded, performing final auth checks...');
             
+            // Debug auth state immediately
+            console.log('📊 Initial Auth State Debug:');
+            console.log('- localStorage.currentUser:', localStorage.getItem('currentUser'));
+            console.log('- localStorage.googleUser:', localStorage.getItem('googleUser'));
+            console.log('- localStorage.userLoggedIn:', localStorage.getItem('userLoggedIn'));
+            console.log('- localStorage.userName:', localStorage.getItem('userName'));
+            
+            // Check server session immediately
+            if (window.unifiedNavbarManager) {
+                console.log('🔄 Checking server auth state...');
+                window.unifiedNavbarManager.checkAuthState();
+            }
+            
             // Clean up justLoggedIn flag after a delay
             setTimeout(function() {
                 if (localStorage.getItem('justLoggedIn')) {
@@ -780,11 +793,20 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📦 DOM ready, setting up unified navbar...');
             
+            // Immediate auth state debug
+            console.log('🔍 Immediate Auth Check:');
+            console.log('- currentUser:', localStorage.getItem('currentUser'));
+            console.log('- googleUser:', localStorage.getItem('googleUser'));
+            console.log('- userLoggedIn:', localStorage.getItem('userLoggedIn'));
+            
             // Ensure unified navbar manager is initialized
             if (window.unifiedNavbarManager) {
                 setTimeout(() => {
+                    console.log('⚡ Manual auth state check...');
                     window.unifiedNavbarManager.checkAuthState();
                 }, 100);
+            } else {
+                console.warn('⚠️ unifiedNavbarManager not found!');
             }
         });
     </script>

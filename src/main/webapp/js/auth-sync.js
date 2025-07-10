@@ -32,29 +32,87 @@ class AuthSyncManager {
     }
 
     syncAuthState() {
+        // First check unified format
+        const currentUser = localStorage.getItem('currentUser');
+        const googleUser = localStorage.getItem('googleUser');
+        
+        if (currentUser) {
+            try {
+                const user = JSON.parse(currentUser);
+                console.log('✅ Found unified currentUser:', user);
+                
+                // Update unified navbar manager if available
+                if (window.unifiedNavbarManager) {
+                    window.unifiedNavbarManager.currentUser = user;
+                    window.unifiedNavbarManager.updateNavbarForLoggedInUser();
+                }
+                return;
+            } catch (e) {
+                console.error('Error parsing currentUser:', e);
+            }
+        }
+        
+        if (googleUser) {
+            try {
+                const user = JSON.parse(googleUser);
+                console.log('✅ Found unified googleUser:', user);
+                
+                // Update unified navbar manager if available
+                if (window.unifiedNavbarManager) {
+                    window.unifiedNavbarManager.currentUser = user;
+                    window.unifiedNavbarManager.updateNavbarForLoggedInUser();
+                }
+                return;
+            } catch (e) {
+                console.error('Error parsing googleUser:', e);
+            }
+        }
+        
+        // Fallback: check legacy format
         const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
         const userName = localStorage.getItem('userName');
         const userEmail = localStorage.getItem('userEmail');
         const userRole = localStorage.getItem('userRole');
         const userAvatar = localStorage.getItem('userAvatar');
 
-        console.log('=== AUTH SYNC STATE ===');
+        console.log('=== AUTH SYNC STATE (LEGACY) ===');
         console.log('Syncing auth state:', { isLoggedIn, userName, userEmail, userRole, userAvatar });
-        console.log('=======================');
+        console.log('================================');
 
         if (isLoggedIn && userName) {
-            console.log('✅ User is logged in, dispatching userLoggedIn event');
-            // Trigger login event for navbar and other components
+            console.log('✅ User is logged in (legacy format), converting to unified format');
+            
+            // Convert to unified format
+            const userObj = {
+                fullName: userName,
+                name: userName,
+                email: userEmail,
+                role: userRole || 'CUSTOMER',
+                avatarUrl: userAvatar || '',
+                picture: userAvatar || '',
+                loginType: 'email'
+            };
+            
+            // Save to unified format
+            localStorage.setItem('currentUser', JSON.stringify(userObj));
+            
+            // Update unified navbar manager if available
+            if (window.unifiedNavbarManager) {
+                window.unifiedNavbarManager.currentUser = userObj;
+                window.unifiedNavbarManager.updateNavbarForLoggedInUser();
+            }
+            
+            // Dispatch event for legacy compatibility
             window.dispatchEvent(new CustomEvent('userLoggedIn', {
-                detail: {
-                    fullName: userName,
-                    email: userEmail || '',
-                    role: userRole || 'CUSTOMER',
-                    avatarUrl: userAvatar || ''
-                }
+                detail: userObj
             }));
         } else {
-            console.log('❌ User is not logged in, dispatching userLoggedOut event');
+            console.log('❌ No user logged in');
+            // Update unified navbar manager for guest
+            if (window.unifiedNavbarManager) {
+                window.unifiedNavbarManager.currentUser = null;
+                window.unifiedNavbarManager.updateNavbarForGuest();
+            }
             // Trigger logout event
             window.dispatchEvent(new CustomEvent('userLoggedOut'));
         }

@@ -1,71 +1,354 @@
-// Forgot Password Handler for 43 Gundam Hobby
+// Forgot Password with OTP Handler for 43 Gundam Hobby
+console.log('🔄 Loading Forgot Password OTP Script...');
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('📦 DOM ready, initializing forgot password OTP flow...');
+    
+    // Form elements
+    const step1Email = document.getElementById('step-1-email');
+    const step2OTP = document.getElementById('step-2-otp');
+    const step3Reset = document.getElementById('step-3-reset');
+    const step4Success = document.getElementById('step-4-success');
+    
     const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    const otpVerificationForm = document.getElementById('otpVerificationForm');
     const resetPasswordForm = document.getElementById('resetPasswordForm');
-    const forgotPasswordFormBox = document.getElementById('forgot-password-form');
-    const resetPasswordFormBox = document.getElementById('reset-password-form');
-    const successMessage = document.getElementById('success-message');
-    const resetSuccessMessage = document.getElementById('reset-success-message');
     
-    // Check URL for reset token
-    const urlParams = new URLSearchParams(window.location.search);
-    const resetToken = urlParams.get('token');
+    const emailDisplay = document.getElementById('email-display');
+    const resendOtpBtn = document.getElementById('resend-otp');
+    const backToEmailBtn = document.getElementById('back-to-email');
     
-    if (resetToken) {
-        // If token exists in URL, verify it and show reset password form
-        verifyResetToken(resetToken);
-    }
+    // Global variables
+    let currentEmail = '';
+    let verificationToken = '';
+    let otpResendTimer = null;
+    let resendCountdown = 0;
     
-    // Forgot Password Form Handler
+    // Context path detection
+    const contextPath = window.contextPath || getContextPath();
+    
+    console.log('📍 Context Path:', contextPath);
+    
+    // Step 1: Email submission
     if (forgotPasswordForm) {
         forgotPasswordForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('📧 Step 1: Email form submitted');
             
             const email = document.getElementById('email').value.trim();
             
-            // Client-side validation
             if (!validateEmail(email)) {
+                alert('Vui lòng nhập email hợp lệ!');
                 return;
             }
             
-            // Submit forgot password request
-            submitForgotPassword(email);
+            currentEmail = email;
+            sendOTPRequest(email);
         });
     }
     
-    // Reset Password Form Handler
-    if (resetPasswordForm) {
-        resetPasswordForm.addEventListener('submit', function(e) {
+    // Step 2: OTP verification
+    if (otpVerificationForm) {
+        otpVerificationForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('🔢 Step 2: OTP form submitted');
             
-            const token = document.getElementById('resetToken').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            const otp = document.getElementById('otp').value.trim();
             
-            // Client-side validation
-            if (!validateResetPassword(newPassword, confirmNewPassword)) {
+            if (!validateOTP(otp)) {
+                alert('Vui lòng nhập mã OTP gồm 6 chữ số!');
                 return;
             }
             
-            // Submit reset password request
-            submitResetPassword(token, newPassword, confirmNewPassword);
+            verifyOTP(currentEmail, otp);
+        });
+    }
+    
+    // Step 3: Password reset
+    if (resetPasswordForm) {
+        resetPasswordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('🔐 Step 3: Password reset form submitted');
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (!validatePasswordReset(newPassword, confirmPassword)) {
+                return;
+            }
+            
+            resetPassword(verificationToken, newPassword);
+        });
+    }
+    
+    // Resend OTP button
+    if (resendOtpBtn) {
+        resendOtpBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🔄 Resending OTP...');
+            sendOTPRequest(currentEmail, true);
+        });
+    }
+    
+    // Back to email button
+    if (backToEmailBtn) {
+        backToEmailBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('⬅️ Going back to email step');
+            showStep(1);
+            currentEmail = '';
+            document.getElementById('email').value = '';
+            clearResendTimer();
+        });
+    }
+    
+    // Auto-format OTP input
+    const otpInput = document.getElementById('otp');
+    if (otpInput) {
+        otpInput.addEventListener('input', function(e) {
+            // Only allow numbers
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
         
-        // Password confirmation validation
-        const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
-        if (confirmNewPasswordInput) {
-            confirmNewPasswordInput.addEventListener('input', function() {
-                const newPassword = document.getElementById('newPassword').value;
-                const confirmNewPassword = this.value;
-                
-                if (confirmNewPassword && newPassword !== confirmNewPassword) {
-                    this.setCustomValidity('Mật khẩu xác nhận không khớp!');
-                } else {
-                    this.setCustomValidity('');
-                }
-            });
+        otpInput.addEventListener('paste', function(e) {
+            // Handle paste events
+            setTimeout(() => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+            }, 10);
+        });
+    }
+    
+    // Functions
+    function getContextPath() {
+        const path = window.location.pathname;
+        const segments = path.split('/');
+        if (segments.length > 2 && segments[1] !== '') {
+            return '/' + segments[1];
+        }
+        return '';
+    }
+    
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function validateOTP(otp) {
+        return /^[0-9]{6}$/.test(otp);
+    }
+    
+    function validatePasswordReset(password, confirmPassword) {
+        if (password.length < 6) {
+            alert('Mật khẩu phải có ít nhất 6 ký tự!');
+            return false;
+        }
+        
+        if (password !== confirmPassword) {
+            alert('Mật khẩu xác nhận không khớp!');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function showStep(stepNumber) {
+        console.log('👁️ Showing step:', stepNumber);
+        
+        // Hide all steps
+        [step1Email, step2OTP, step3Reset, step4Success].forEach(step => {
+            if (step) step.classList.add('d-none');
+        });
+        
+        // Show current step
+        switch(stepNumber) {
+            case 1:
+                if (step1Email) step1Email.classList.remove('d-none');
+                break;
+            case 2:
+                if (step2OTP) step2OTP.classList.remove('d-none');
+                break;
+            case 3:
+                if (step3Reset) step3Reset.classList.remove('d-none');
+                break;
+            case 4:
+                if (step4Success) step4Success.classList.remove('d-none');
+                break;
         }
     }
+    
+    function sendOTPRequest(email, isResend = false) {
+        console.log('📤 Sending OTP request for:', email, 'Resend:', isResend);
+        
+        const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        
+        submitBtn.textContent = isResend ? 'Đang gửi lại...' : 'Đang gửi...';
+        submitBtn.disabled = true;
+        
+        fetch(`${contextPath}/api/forgot-password/send-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => {
+            console.log('📡 OTP send response:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📋 OTP send result:', data);
+            
+            if (data.success) {
+                emailDisplay.textContent = email;
+                showStep(2);
+                startResendTimer();
+                
+                if (!isResend) {
+                    alert('Mã OTP đã được gửi đến email của bạn!');
+                } else {
+                    alert('Mã OTP mới đã được gửi!');
+                }
+            } else {
+                alert(data.message || 'Có lỗi xảy ra khi gửi OTP!');
+            }
+        })
+        .catch(error => {
+            console.error('❌ OTP send error:', error);
+            alert('Lỗi kết nối! Vui lòng thử lại.');
+        })
+        .finally(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+    }
+    
+    function verifyOTP(email, otp) {
+        console.log('🔢 Verifying OTP for:', email);
+        
+        const submitBtn = otpVerificationForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        
+        submitBtn.textContent = 'Đang xác minh...';
+        submitBtn.disabled = true;
+        
+        fetch(`${contextPath}/api/forgot-password/verify-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ 
+                email: email,
+                otp: otp 
+            })
+        })
+        .then(response => {
+            console.log('📡 OTP verify response:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📋 OTP verify result:', data);
+            
+            if (data.success) {
+                verificationToken = data.token;
+                document.getElementById('verification-token').value = verificationToken;
+                showStep(3);
+                clearResendTimer();
+                alert('Mã OTP chính xác! Vui lòng nhập mật khẩu mới.');
+            } else {
+                alert(data.message || 'Mã OTP không chính xác!');
+                document.getElementById('otp').value = '';
+                document.getElementById('otp').focus();
+            }
+        })
+        .catch(error => {
+            console.error('❌ OTP verify error:', error);
+            alert('Lỗi kết nối! Vui lòng thử lại.');
+        })
+        .finally(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+    }
+    
+    function resetPassword(token, newPassword) {
+        console.log('🔐 Resetting password...');
+        
+        const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        
+        submitBtn.textContent = 'Đang cập nhật...';
+        submitBtn.disabled = true;
+        
+        fetch(`${contextPath}/api/forgot-password/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ 
+                token: token,
+                newPassword: newPassword,
+                email: currentEmail
+            })
+        })
+        .then(response => {
+            console.log('📡 Password reset response:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📋 Password reset result:', data);
+            
+            if (data.success) {
+                showStep(4);
+                alert('Mật khẩu đã được cập nhật thành công!');
+            } else {
+                alert(data.message || 'Có lỗi xảy ra khi cập nhật mật khẩu!');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Password reset error:', error);
+            alert('Lỗi kết nối! Vui lòng thử lại.');
+        })
+        .finally(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+    }
+    
+    function startResendTimer() {
+        resendCountdown = 60; // 60 seconds
+        resendOtpBtn.disabled = true;
+        
+        const updateTimer = () => {
+            if (resendCountdown > 0) {
+                resendOtpBtn.innerHTML = `<i class="fas fa-clock me-2"></i>Gửi lại sau ${resendCountdown}s`;
+                resendCountdown--;
+                otpResendTimer = setTimeout(updateTimer, 1000);
+            } else {
+                resendOtpBtn.innerHTML = '<i class="fas fa-refresh me-2"></i>Gửi lại mã OTP';
+                resendOtpBtn.disabled = false;
+            }
+        };
+        
+        updateTimer();
+    }
+    
+    function clearResendTimer() {
+        if (otpResendTimer) {
+            clearTimeout(otpResendTimer);
+            otpResendTimer = null;
+        }
+        resendCountdown = 0;
+        if (resendOtpBtn) {
+            resendOtpBtn.innerHTML = '<i class="fas fa-refresh me-2"></i>Gửi lại mã OTP';
+            resendOtpBtn.disabled = false;
+        }
+    }
+    
+    console.log('✅ Forgot Password OTP Script loaded successfully');
 });
 
 function validateEmail(email) {

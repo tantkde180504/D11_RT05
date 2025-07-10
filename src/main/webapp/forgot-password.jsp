@@ -14,6 +14,7 @@
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/forgot-password-otp.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -97,18 +98,18 @@
     <!-- Forgot Password Form -->
     <div class="container d-flex flex-column align-items-center justify-content-center min-height-70vh">
         <div class="login-title mt-4">Quên mật khẩu</div>
-        <div class="text-center mb-4">
-            <p class="text-muted">Nhập email của bạn để nhận liên kết đặt lại mật khẩu</p>
-        </div>
         
         <!-- Step 1: Email Input Form -->
-        <div class="login-form-box mx-auto" id="forgot-password-form">
-            <form id="forgotPasswordForm" action="/api/forgot-password" method="post" autocomplete="off">
+        <div class="login-form-box mx-auto" id="step-1-email">
+            <div class="text-center mb-4">
+                <p class="text-muted">Nhập email của bạn để nhận mã OTP</p>
+            </div>
+            <form id="forgotPasswordForm" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
                     <input type="email" class="form-control" id="email" name="email" required autocomplete="off" placeholder="Nhập email đã đăng ký">
                 </div>
-                <button type="submit" class="btn btn-login w-100">Gửi liên kết đặt lại mật khẩu</button>
+                <button type="submit" class="btn btn-login w-100">Gửi mã OTP</button>
             </form>
             
             <div class="text-center mt-3">
@@ -118,24 +119,46 @@
             </div>
         </div>
         
-        <!-- Step 2: Success Message (hidden by default) -->
-        <div id="success-message" class="login-form-box mx-auto d-none">
-            <div class="text-center">
-                <i class="fas fa-envelope-circle-check text-success mb-3" style="font-size: 3rem;"></i>
-                <h4>Email đã được gửi!</h4>
-                <p class="text-muted">Chúng tôi đã gửi liên kết đặt lại mật khẩu đến email của bạn. Vui lòng kiểm tra hộp thư và làm theo hướng dẫn.</p>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <small>Nếu không thấy email, vui lòng kiểm tra thư mục spam/junk</small>
+        <!-- Step 2: OTP Verification Form (hidden by default) -->
+        <div id="step-2-otp" class="login-form-box mx-auto d-none">
+            <div class="text-center mb-4">
+                <i class="fas fa-envelope-circle-check text-success mb-3" style="font-size: 2rem;"></i>
+                <h5>Nhập mã OTP</h5>
+                <p class="text-muted">Chúng tôi đã gửi mã OTP 6 số đến email: <strong id="email-display"></strong></p>
+                <p class="text-muted small">Mã OTP có hiệu lực trong 10 phút</p>
+            </div>
+            <form id="otpVerificationForm" autocomplete="off">
+                <div class="mb-3">
+                    <label for="otp" class="form-label">Mã OTP *</label>
+                    <input type="text" class="form-control text-center" id="otp" name="otp" required 
+                           maxlength="6" pattern="[0-9]{6}" placeholder="Nhập 6 chữ số" 
+                           style="letter-spacing: 0.5em; font-size: 1.2rem;">
+                    <div class="form-text">Vui lòng nhập mã OTP gồm 6 chữ số</div>
                 </div>
-                <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Quay lại đăng nhập</a>
+                <button type="submit" class="btn btn-login w-100">Xác nhận OTP</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <button id="resend-otp" class="btn btn-link text-decoration-none">
+                    <i class="fas fa-refresh me-2"></i>Gửi lại mã OTP
+                </button>
+                <div class="mt-2">
+                    <button id="back-to-email" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i>Thay đổi email
+                    </button>
+                </div>
             </div>
         </div>
         
         <!-- Step 3: Reset Password Form (hidden by default) -->
-        <div id="reset-password-form" class="login-form-box mx-auto d-none">
-            <form id="resetPasswordForm" action="/api/reset-password" method="post" autocomplete="off">
-                <input type="hidden" id="resetToken" name="token" value="">
+        <div id="step-3-reset" class="login-form-box mx-auto d-none">
+            <div class="text-center mb-4">
+                <i class="fas fa-key text-success mb-3" style="font-size: 2rem;"></i>
+                <h5>Đặt mật khẩu mới</h5>
+                <p class="text-muted">Tạo mật khẩu mới cho tài khoản của bạn</p>
+            </div>
+            <form id="resetPasswordForm" autocomplete="off">
+                <input type="hidden" id="verification-token" name="token" value="">
                 <div class="mb-3">
                     <label for="newPassword" class="form-label">Mật khẩu mới *</label>
                     <input type="password" class="form-control" id="newPassword" name="newPassword" required autocomplete="off">
@@ -145,22 +168,16 @@
                     <label for="confirmNewPassword" class="form-label">Xác nhận mật khẩu mới *</label>
                     <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required autocomplete="off">
                 </div>
-                <button type="submit" class="btn btn-login w-100">Đặt lại mật khẩu</button>
+                <button type="submit" class="btn btn-login w-100">Cập nhật mật khẩu</button>
             </form>
-            
-            <div class="text-center mt-3">
-                <a href="<%=request.getContextPath()%>/login.jsp" class="text-primary text-decoration-none">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại đăng nhập
-                </a>
-            </div>
         </div>
         
-        <!-- Step 4: Reset Success Message (hidden by default) -->
-        <div id="reset-success-message" class="login-form-box mx-auto d-none">
+        <!-- Step 4: Success Message (hidden by default) -->
+        <div id="step-4-success" class="login-form-box mx-auto d-none">
             <div class="text-center">
                 <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
-                <h4>Mật khẩu đã được đặt lại!</h4>
-                <p class="text-muted">Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập với mật khẩu mới.</p>
+                <h4>Mật khẩu đã được cập nhật!</h4>
+                <p class="text-muted">Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập với mật khẩu mới ngay bây giờ.</p>
                 <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Đăng nhập ngay</a>
             </div>
         </div>
@@ -307,6 +324,13 @@
     </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Context Path Setup -->
+    <script>
+        window.contextPath = '<%=request.getContextPath()%>';
+        console.log('🔧 Context path set to:', window.contextPath);
+    </script>
+    
     <script src="<%=request.getContextPath()%>/js/forgot-password.js"></script>
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script>

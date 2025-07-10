@@ -158,11 +158,17 @@
                     <label for="password" class="form-label">Mật khẩu *</label>
                     <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
                 </div>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <a href="<%=request.getContextPath()%>/forgot-password.jsp" class="forgot-password-link">Quên mật khẩu?</a>
-                </div>
                 <button type="submit" class="btn btn-login w-100">Đăng nhập</button>
             </form>
+            <div class="text-center mb-3">
+                <button type="button" class="btn btn-link p-0 text-decoration-none forgot-password-link" onclick="window.location.href='<%=request.getContextPath()%>/forgot-password.jsp'">
+                    Quên mật khẩu?
+                </button>
+                <br>
+                <small class="text-muted">hoặc</small>
+                <br>
+                <a href="<%=request.getContextPath()%>/forgot-password.jsp" class="text-primary">Khôi phục mật khẩu</a>
+            </div>
             <div class="login-divider">Hoặc đăng nhập bằng</div>
             <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-in-btn">
                 <i class="fab fa-google me-2"></i>Google
@@ -332,28 +338,28 @@
     <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
     
     <!-- Login Script -->
-    <script src="<%=request.getContextPath()%>/js/login.js"></script>
+    <script src="<%=request.getContextPath()%>/js/login-clean.js"></script>
     
     <!-- Hamburger Menu -->
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     
     <!-- Login Fallback Handler (if API is not available) -->
-    <script src="<%=request.getContextPath()%>/js/login-fallback.js"></script>
+    <!-- <script src="<%=request.getContextPath()%>/js/login-fallback.js"></script> -->
     
     <!-- Hamburger Menu Script -->
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
+    <!-- <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script> -->
     
     <!-- Login Debug Helper (Development Only) -->
-    <script src="<%=request.getContextPath()%>/js/login-debug-helper.js"></script>
+    <!-- <script src="<%=request.getContextPath()%>/js/login-debug-helper.js"></script> -->
     
     <!-- Login Debug Fix - Sửa lỗi navbar sau login -->
-    <script src="<%=request.getContextPath()%>/js/login-debug-fix.js"></script>
+    <!-- <script src="<%=request.getContextPath()%>/js/login-debug-fix.js"></script> -->
     
     <!-- Comprehensive Auth Manager - Đảm bảo auth state luôn đúng -->
-    <script src="<%=request.getContextPath()%>/js/comprehensive-auth-manager.js"></script>
+    <!-- <script src="<%=request.getContextPath()%>/js/comprehensive-auth-manager.js"></script> -->
     
     <!-- Context Path Test Script (Development Only) -->
-    <script src="<%=request.getContextPath()%>/js/context-path-test.js"></script>
+    <!-- <script src="<%=request.getContextPath()%>/js/context-path-test.js"></script> -->
     
     <script>
         // Back to top functionality
@@ -377,6 +383,39 @@
         // Set context path globally for JavaScript access
         window.APP_CONTEXT_PATH = '<%=request.getContextPath()%>';
         console.log('App context path from JSP:', window.APP_CONTEXT_PATH);
+        
+        // Debug: Add click handler for forgot password link
+        document.addEventListener('DOMContentLoaded', function() {
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            if (forgotPasswordLink) {
+                console.log('Forgot password link found:', forgotPasswordLink);
+                console.log('Link href:', forgotPasswordLink.href);
+                
+                // Add click event listener to debug
+                forgotPasswordLink.addEventListener('click', function(e) {
+                    console.log('🔗 Forgot password link clicked!');
+                    console.log('Event:', e);
+                    console.log('Target:', e.target);
+                    console.log('Default prevented?', e.defaultPrevented);
+                    
+                    // Force navigation if something is preventing it
+                    if (e.defaultPrevented) {
+                        console.log('⚠️ Default prevented! Forcing navigation...');
+                        window.location.href = this.href;
+                    }
+                });
+                
+                // Test click programmatically
+                setTimeout(() => {
+                    console.log('Testing programmatic click...');
+                    console.log('Link is:', forgotPasswordLink);
+                    console.log('Link href is:', forgotPasswordLink.href);
+                }, 2000);
+                
+            } else {
+                console.error('❌ Forgot password link not found!');
+            }
+        });
     </script>
 </body>
 </html>
