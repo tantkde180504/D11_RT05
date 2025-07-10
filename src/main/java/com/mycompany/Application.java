@@ -29,7 +29,9 @@ public class Application extends SpringBootServletInitializer implements Command
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
         return resolver;
-    }    public static void main(String[] args) {
+    }
+    
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
