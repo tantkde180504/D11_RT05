@@ -635,14 +635,12 @@
                                 <div class="stat-card primary">
                                     <div class="stat-card-body">
                                         <div class="stat-label">Doanh thu tháng này</div>
-                                        <div class="stat-value">125,450,000₫</div>
+                                        <div class="stat-value" id="revenue"></div>
                                         <div class="stat-icon">
                                             <i class="fas fa-dollar-sign text-primary"></i>
                                         </div>
                                         <div class="mt-2">
-                                            <small class="text-success">
-                                                <i class="fas fa-arrow-up me-1"></i>+12.5% so với tháng trước
-                                            </small>
+                                            <small class="text-success"></small>
                                         </div>
                                     </div>
                                 </div>
@@ -652,14 +650,12 @@
                                 <div class="stat-card success">
                                     <div class="stat-card-body">
                                         <div class="stat-label">Đơn hàng tháng này</div>
-                                        <div class="stat-value">245</div>
+                                        <div class="stat-value" id="orderCount"></div>
                                         <div class="stat-icon">
                                             <i class="fas fa-shopping-cart text-success"></i>
                                         </div>
                                         <div class="mt-2">
-                                            <small class="text-success">
-                                                <i class="fas fa-arrow-up me-1"></i>+8.3% so với tháng trước
-                                            </small>
+                                            <small class="text-success"></small>
                                         </div>
                                     </div>
                                 </div>
@@ -669,14 +665,12 @@
                                 <div class="stat-card info">
                                     <div class="stat-card-body">
                                         <div class="stat-label">Khách hàng mới</div>
-                                        <div class="stat-value">67</div>
+                                        <div class="stat-value" id="newCustomers"></div>
                                         <div class="stat-icon">
                                             <i class="fas fa-user-plus text-info"></i>
                                         </div>
                                         <div class="mt-2">
-                                            <small class="text-info">
-                                                <i class="fas fa-arrow-up me-1"></i>+15.2% so với tháng trước
-                                            </small>
+                                            <small class="text-info"></small>
                                         </div>
                                     </div>
                                 </div>
@@ -686,14 +680,12 @@
                                 <div class="stat-card warning">
                                     <div class="stat-card-body">
                                         <div class="stat-label">Tổng sản phẩm</div>
-                                        <div class="stat-value">127</div>
+                                        <div class="stat-value" id="totalProducts"></div>
                                         <div class="stat-icon">
                                             <i class="fas fa-box text-warning"></i>
                                         </div>
                                         <div class="mt-2">
-                                            <small class="text-warning">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>5 sản phẩm sắp hết hàng
-                                            </small>
+                                            <small class="text-warning" id="lowStockWarning"></small>
                                         </div>
                                     </div>
                                 </div>
@@ -751,51 +743,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td><strong>#DH001</strong></td>
-                                                    <td>Trần Thị B</td>
-                                                    <td>RG RX-78-2 Gundam</td>
-                                                    <td><strong>650,000₫</strong></td>
-                                                    <td><span class="badge bg-warning">Đang xử lý</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary me-1">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-success">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>#DH002</strong></td>
-                                                    <td>Nguyễn Văn C</td>
-                                                    <td>MG Wing Gundam Zero</td>
-                                                    <td><strong>1,200,000₫</strong></td>
-                                                    <td><span class="badge bg-success">Hoàn thành</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary me-1">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-info">
-                                                            <i class="fas fa-print"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>#DH003</strong></td>
-                                                    <td>Lê Thị D</td>
-                                                    <td>HG Strike Freedom</td>
-                                                    <td><strong>450,000₫</strong></td>
-                                                    <td><span class="badge bg-info">Đang giao</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary me-1">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-warning">
-                                                            <i class="fas fa-truck"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                <!-- Dữ liệu render bằng JavaScript hoặc backend, đã xóa mẫu -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -832,57 +780,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><strong>001</strong></td>
-                                            <td><img src="https://via.placeholder.com/50x50/cccccc/666666?text=RG" class="img-thumbnail" alt="Product"></td>
-                                            <td><strong>RG RX-78-2 Gundam</strong></td>
-                                            <td><span class="badge bg-info">Real Grade</span></td>
-                                            <td><strong>650,000₫</strong></td>
-                                            <td>25</td>
-                                            <td><span class="badge bg-success">Có sẵn</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-warning me-1" onclick="editProduct(1)">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(1)">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>002</strong></td>
-                                            <td><img src="https://via.placeholder.com/50x50/cccccc/666666?text=MG" class="img-thumbnail" alt="Product"></td>
-                                            <td><strong>MG Wing Gundam Zero</strong></td>
-                                            <td><span class="badge bg-primary">Master Grade</span></td>
-                                            <td><strong>1,200,000₫</strong></td>
-                                            <td>15</td>
-                                            <td><span class="badge bg-success">Có sẵn</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-warning me-1">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>003</strong></td>
-                                            <td><img src="https://via.placeholder.com/50x50/cccccc/666666?text=PG" class="img-thumbnail" alt="Product"></td>
-                                            <td><strong>PG Unicorn Gundam</strong></td>
-                                            <td><span class="badge bg-warning">Perfect Grade</span></td>
-                                            <td><strong>3,500,000₫</strong></td>
-                                            <td>3</td>
-                                            <td><span class="badge bg-warning">Sắp hết</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-warning me-1">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <!-- Dữ liệu render bằng JavaScript hoặc backend, đã xóa mẫu -->
                                     </tbody>
                                 </table>
                             </div>
@@ -929,17 +827,6 @@
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                         <input type="text" id="staffSearchInput" class="form-control" placeholder="Tên, email hoặc SĐT...">
                     </div>
-                </div>
-                
-                <!-- Role Filter -->
-                <div class="col-md-2">
-                    <label class="form-label small">Chức vụ</label>
-                    <select id="roleFilter" class="form-select">
-                        <option value="">Tất cả</option>
-                        <option value="ADMIN">Quản trị viên</option>
-                        <option value="STAFF">Nhân viên</option>
-                        <option value="MANAGER">Quản lý</option>
-                    </select>
                 </div>
                 
                 <!-- Status Filter -->
@@ -1180,7 +1067,6 @@
                         <input type="text" id="customerSearchInputAdvanced" class="form-control" placeholder="Tên, email, số điện thoại...">
                     </div>
                 </div>
-                
                 <!-- Gender Filter -->
                 <div class="col-md-2">
                     <label class="form-label small">Giới tính</label>
@@ -1191,7 +1077,6 @@
                         <option value="OTHER">Khác</option>
                     </select>
                 </div>
-                
                 <!-- Order Count Filter -->
                 <div class="col-md-2">
                     <label class="form-label small">Số đơn hàng</label>
@@ -1203,7 +1088,6 @@
                         <option value="high">Nhiều (>15)</option>
                     </select>
                 </div>
-                
                 <!-- Registration Date Filter -->
                 <div class="col-md-2">
                     <label class="form-label small">Ngày đăng ký</label>
@@ -1215,23 +1099,7 @@
                         <option value="old">Cũ hơn</option>
                     </select>
                 </div>
-                
-                <!-- Sort Options -->
-                <div class="col-md-2">
-                    <label class="form-label small">Sắp xếp</label>
-                    <select id="customerSortFilter" class="form-select">
-                        <option value="id_asc">ID ↑</option>
-                        <option value="id_desc">ID ↓</option>
-                        <option value="name_asc">Tên A-Z</option>
-                        <option value="name_desc">Tên Z-A</option>
-                        <option value="date_asc">Cũ nhất</option>
-                        <option value="date_desc">Mới nhất</option>
-                        <option value="orders_asc">Ít đơn nhất</option>
-                        <option value="orders_desc">Nhiều đơn nhất</option>
-                    </select>
-                </div>
             </div>
-            
             <!-- Filter Summary -->
             <div class="mt-3">
                 <div class="d-flex justify-content-between align-items-center">
@@ -2047,5 +1915,23 @@ function getPaymentIcon(method) {
    <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/customer-management.js"></script>
    <script src="<%=request.getContextPath()%>/js/category-management.js"></script>
+   <script>
+    fetch('/api/dashboard')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('revenue').textContent = data.revenueThisMonth;
+        document.getElementById('orderCount').textContent = data.orderCountThisMonth;
+        document.getElementById('newCustomers').textContent = data.newCustomersThisMonth;
+        document.getElementById('totalProducts').textContent = data.totalProducts;
+        if (data.lowStockProducts > 0) {
+          document.getElementById('lowStockWarning').innerHTML =
+            '<i class="fas fa-exclamation-triangle me-1"></i>' +
+            data.lowStockProducts + ' sản phẩm sắp hết hàng';
+        } else {
+          document.getElementById('lowStockWarning').textContent = '';
+        }
+      })
+      .catch(err => console.error('Dashboard API error:', err));
+    </script>
 </body>
 </html>
