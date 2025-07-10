@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>43 Gundam Hobby - Mô hình Gundam chính hãng</title>
+    <title>43 Gundam Hobby - Đăng ký tài khoản</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
@@ -89,15 +89,28 @@
                 </div>
             </div>
         </div>
-    </header>    <!-- Mobile Sidebar Navigation -->
+    </header>
+
+    <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
-    <!-- Login Form -->
+    <!-- Register Form -->
     <div class="container d-flex flex-column align-items-center justify-content-center min-height-70vh">
-        <div class="login-title mt-4">Đăng nhập tài khoản</div>
+        <div class="login-title mt-4">Đăng ký tài khoản</div>
         
-        <div class="login-form-box mx-auto" id="login-form">
-            <form id="loginForm" action="/api/login" method="post" autocomplete="off">
+        <!-- Register Form -->
+        <div class="login-form-box register-form-box mx-auto" id="register-form">
+            <form id="registerForm" action="/api/register" method="post" autocomplete="off">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="firstName" class="form-label">Họ *</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" required autocomplete="off">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lastName" class="form-label">Tên *</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" required autocomplete="off">
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
                     <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
@@ -105,26 +118,48 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu *</label>
                     <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
+                    <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
                 </div>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <a href="<%=request.getContextPath()%>/forgot-password.jsp" class="forgot-password-link">Quên mật khẩu?</a>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu *</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required autocomplete="off">
                 </div>
-                <button type="submit" class="btn btn-login w-100">Đăng nhập</button>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Số điện thoại</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                        <label class="form-check-label" for="agreeTerms">
+                            Tôi đồng ý với <a href="#" class="text-primary">Điều khoản sử dụng</a> và <a href="#" class="text-primary">Chính sách bảo mật</a>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-login w-100">Đăng ký</button>
             </form>
-            <div class="login-divider">Hoặc đăng nhập bằng</div>
-            <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-in-btn">
+            
+            <div class="login-divider">Hoặc đăng ký bằng</div>
+            <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-up-btn">
                 <i class="fab fa-google me-2"></i>Google
             </button>
+            
             <div class="register-link">
-                Bạn chưa có tài khoản? <a href="<%=request.getContextPath()%>/register.jsp">Đăng ký tại đây</a>
+                Đã có tài khoản? <a href="<%=request.getContextPath()%>/login.jsp">Đăng nhập tại đây</a>
             </div>
         </div>
         
-        <!-- User Info Display (hidden by default) -->
-        <div id="user-info" class="login-form-box mx-auto d-none">
-            <!-- Content will be populated by JavaScript -->
+        <!-- Success Message Display (hidden by default) -->
+        <div id="success-message" class="login-form-box mx-auto d-none">
+            <div class="text-center">
+                <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+                <h4>Đăng ký thành công!</h4>
+                <p class="text-muted">Tài khoản của bạn đã được tạo thành công. Bạn có thể đăng nhập ngay bây giờ.</p>
+                <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Đăng nhập ngay</a>
+            </div>
         </div>
     </div>
+
     <!-- Footer -->
     <footer class="bg-dark text-white">
         <div class="footer-top py-5">
@@ -266,7 +301,7 @@
     </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<%=request.getContextPath()%>/js/login-simple.js"></script>
+    <script src="<%=request.getContextPath()%>/js/register.js"></script>
     <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script>

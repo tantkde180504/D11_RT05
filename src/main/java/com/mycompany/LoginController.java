@@ -6,7 +6,11 @@ import org.springframework.http.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 import java.sql.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
@@ -62,7 +66,20 @@ public class LoginController {
                 }
             }
             
-            String sql = "SELECT id,first_name, last_name, role, password FROM users WHERE email = ?";
+            // Check if provider column exists first
+            boolean hasProviderColumn = false;
+            try (PreparedStatement checkColStmt = connection.prepareStatement(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'provider'")) {
+                try (ResultSet rs = checkColStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        hasProviderColumn = true;
+                    }
+                }
+            }
+            
+            String sql = hasProviderColumn ? 
+                "SELECT id, first_name, last_name, role, password, provider FROM users WHERE email = ?" :
+                "SELECT id, first_name, last_name, role, password FROM users WHERE email = ?";
             
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, email);
@@ -73,39 +90,60 @@ public class LoginController {
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
                         String role = resultSet.getString("role");
+                        String provider = hasProviderColumn ? resultSet.getString("provider") : null;
                         
                         System.out.println("User found in database:");
                         System.out.println("  - Name: " + firstName + " " + lastName);
                         System.out.println("  - Role: " + role);
+                        System.out.println("  - Provider: " + provider);
                         System.out.println("  - Password from DB: " + dbPasswordFromDb);
                         System.out.println("  - Password from input: " + password);
-                        System.out.println("  - Passwords match: " + password.equals(dbPasswordFromDb));
                         
-                        if (password.equals(dbPasswordFromDb)) {
-                            // Lưu thông tin vào session
-                            request.getSession().setAttribute("userId", (long) userId); // Đảm bảo cast thành Long
-                            request.getSession().setAttribute("isLoggedIn", true);
-                            request.getSession().setAttribute("userRole", role);
-                            request.getSession().setAttribute("fullName", firstName + " " + lastName);
-                            request.getSession().setAttribute("email", email);
-                            request.getSession().setAttribute("name", firstName + " " + lastName);
-                            request.getSession().setAttribute("picture", null); // hoặc lấy từ DB nếu có
-
-                            // Kiểm tra session sau khi set
-                            System.out.println("=== SESSION AFTER LOGIN ===");
-                            System.out.println("userId: " + request.getSession().getAttribute("userId"));
-                            System.out.println("userId type: " + request.getSession().getAttribute("userId").getClass().getName());
-                            System.out.println("isLoggedIn: " + request.getSession().getAttribute("isLoggedIn"));
-                            System.out.println("userRole: " + request.getSession().getAttribute("userRole"));
-                            System.out.println("email: " + request.getSession().getAttribute("email"));
-                            System.out.println("fullName: " + request.getSession().getAttribute("fullName"));
-                            System.out.println("name: " + request.getSession().getAttribute("name"));
-                            System.out.println("Session ID: " + request.getSession().getId());
-
+                        // Check if this is an OAuth user trying to login with password
+                        if (provider != null && !provider.isEmpty() && !"OAUTH_USER".equals(dbPasswordFromDb)) {
+                            System.out.println("This is an OAuth user. Regular password login not allowed.");
+                            Map<String, Object> resp = new HashMap<>();
+                            resp.put("success", false);
+                            resp.put("message", "Tài khoản này đã được liên kết với " + provider + ". Vui lòng đăng nhập bằng " + provider + "!");
+                            return ResponseEntity.status(401)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(resp);
+                        }
+                        
+                        // Regular password check for non-OAuth users
+                        if ("OAUTH_USER".equals(dbPasswordFromDb)) {
+                            System.out.println("OAuth user trying to login with password - not allowed");
+                            Map<String, Object> resp = new HashMap<>();
+                            resp.put("success", false);
+                            resp.put("message", "Tài khoản này chỉ có thể đăng nhập bằng Google!");
+                            return ResponseEntity.status(401)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(resp);
+                        }
+                        
+                        String hashedInputPassword = hashPassword(password);
+                        boolean passwordMatch = hashedInputPassword.equals(dbPasswordFromDb) || password.equals(dbPasswordFromDb);
+                        System.out.println("  - Passwords match: " + passwordMatch);
+                        
+                        if (passwordMatch) {
+                            // Tạo session sau khi login thành công
+                            HttpSession session = request.getSession(true);
+                            session.setAttribute("isLoggedIn", true);
+                            session.setAttribute("userId", Long.valueOf(userId)); // Đảm bảo type Long
+                            session.setAttribute("userEmail", email);
+                            session.setAttribute("userRole", role);
+                            session.setAttribute("fullName", firstName + " " + lastName);
+                            
+                            System.out.println("=== SESSION CREATED ===");
+                            System.out.println("Session ID: " + session.getId());
+                            System.out.println("isLoggedIn: " + session.getAttribute("isLoggedIn"));
+                            System.out.println("userId: " + session.getAttribute("userId"));
+                            System.out.println("userRole: " + session.getAttribute("userRole"));
+                            
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);
-                            resp.put("userId", userId); // Thêm userId vào response
+                            resp.put("userId", userId);
                             resp.put("fullName", firstName + " " + lastName);
                             System.out.println("Login successful for user: " + resp.get("fullName"));
                             return ResponseEntity.ok()
@@ -141,5 +179,17 @@ public class LoginController {
         resp.put("method", "POST");
         System.out.println("Login status check");
         return ResponseEntity.ok(resp);
+    }
+    
+    // Password hashing method
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Error hashing password: " + e.getMessage());
+            return password; // Fallback to plain text in case of error
+        }
     }
 }

@@ -52,13 +52,16 @@
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
                         <div class="search-container w-100">
-                            <form class="search-form">
+                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
-                                    <input type="text" class="form-control search-input" placeholder="Tìm kiếm sản phẩm...">
+                                    <input type="text" name="q" class="form-control search-input" 
+                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
                                     <button class="btn btn-search" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
+                                <!-- Autocomplete suggestions -->
+                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
                             </form>
                         </div>
                     </div>
@@ -792,5 +795,8 @@
             }, 500);
         });
     </script>
-</body>
+    <!-- Search Autocomplete Script -->
+    <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+
+    </body>
 </html>
