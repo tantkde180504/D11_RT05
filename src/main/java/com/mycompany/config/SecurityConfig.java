@@ -94,17 +94,8 @@ public class SecurityConfig {
                 System.out.println("Name: " + name);
                 System.out.println("Picture: " + picture);
                 System.out.println("Role: " + (user != null ? user.getRole() : "CUSTOMER"));
-                // FORCE REDIRECT - sử dụng controller để handle redirect
-                 // Xác định role và redirect phù hợp
-                String role = user != null && user.getRole() != null ? user.getRole().toUpperCase() : "CUSTOMER";
-                String redirectUrl;
-                if ("ADMIN".equals(role)) {
-                    redirectUrl = request.getContextPath() + "/dashboard.jsp";
-                } else if ("STAFF".equals(role)) {
-                    redirectUrl = request.getContextPath() + "/staffsc.jsp";
-                } else {
-                    redirectUrl = request.getContextPath() + "/index.jsp";
-                }
+                  // FORCE REDIRECT - sử dụng controller để handle redirect
+                String redirectUrl = request.getContextPath() + "/";
                 System.out.println("=== FORCING REDIRECT TO CONTROLLER ===");
                 System.out.println("Context path: " + request.getContextPath());
                 System.out.println("Target URL: " + redirectUrl);
