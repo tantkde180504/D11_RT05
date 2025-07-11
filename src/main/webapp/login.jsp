@@ -315,6 +315,41 @@
                     </div>
                 </div>
             </div>
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="<%=request.getContextPath()%>/all-products.jsp">Tất cả sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="#">HÀNG MỚI VỀ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="#">HÀNG PRE-ORDER</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="phukienDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            PHỤ KIỆN & MÔ HÌNH
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="phukienDropdown">
+                            <li><a class="dropdown-item" href="#">Dụng cụ - Tool</a></li>
+                            <li><a class="dropdown-item" href="#">Phụ kiện - Base</a></li>
+                            <li><a class="dropdown-item" href="#">Mô hình Dragon Ball</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="bandaiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            BANDAI
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="bandaiDropdown">
+                            <li><a class="dropdown-item" href="#">High Grade (HG)</a></li>
+                            <li><a class="dropdown-item" href="#">Master Grade (MG)</a></li>
+                            <li><a class="dropdown-item" href="#">Real Grade (RG)</a></li>
+                            <li><a class="dropdown-item" href="#">Perfect Grade (PG)</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </footer>
 

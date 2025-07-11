@@ -1875,3 +1875,21 @@ footer {
 }
 
 /* ==== END UTILITY CLASSES ==== */
+
+/* Đậm label trong modal chỉnh sửa khách hàng */
+.modal-content label, .modal-content .form-label {
+  font-weight: 600;
+  color: #222;
+}
+
+/* Đổi màu chữ input, textarea, select trong modal */
+.modal-content .form-control, .modal-content .form-select {
+  color: #222 !important;
+  background-color: #fff !important;
+}
+
+/* Đổi màu placeholder cho input trong modal */
+.modal-content .form-control::placeholder {
+  color: #888 !important;
+  opacity: 1;
+}

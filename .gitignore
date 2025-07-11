@@ -1,56 +1,26 @@
-<<<<<<< HEAD
-# Ignore build output and IDE/workspace folders
-/target/
-/work/
+# Maven build directory
+target/
 
-# Ignore sensitive configuration files to avoid Repository rule violations
-src/main/resources/application.properties
-=======
-# -----------------------
-# Build outputs
-# -----------------------
-/target/
-out/
-build/
+# Tomcat work directory
+work/
 
-# -----------------------
-# Tomcat JSP generated
-# -----------------------
-/work/
-/work/*
-
-*.jsp.java
-*_jsp.java
-*.jsp.class
-*_jsp.class
-
-# -----------------------
-# Java compiled classes
-# -----------------------
-*.class
-
-# -----------------------
-# Logs
-# -----------------------
-*.log
-
-# -----------------------
-# IDE & Editor settings
-# -----------------------
-.idea/
-*.iml
+# VS Code settings
 .vscode/
-*.sw?
 
-# -----------------------
-# OS junk
-# -----------------------
+# IDE files
+*.iml
+.idea/
+.eclipse/
+.project
+.classpath
+.settings/
+
+# OS files
 .DS_Store
 Thumbs.db
-Desktop.ini
 
-# -----------------------
-# Environment files
-# -----------------------
-.env
->>>>>>> Tien1
+# Log files
+*.log
+
+# Compiled class files
+*.class

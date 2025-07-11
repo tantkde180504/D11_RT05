@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                         
-                        console.log('Redirecting to:', targetPage, '(Role:', data.role + ')');
+                        console.log('Redirecting to:', targetPage);
                         showAlert(`🚀 Đang chuyển đến trang chủ...`, 'info');
                         
                         setTimeout(() => {
