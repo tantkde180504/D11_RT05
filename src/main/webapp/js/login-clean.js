@@ -205,11 +205,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.forceFixNavbar();
                     }
                     
-                    // Use context path for redirect
-                    const redirectPath = (window.APP_CONTEXT_PATH || contextPath) || '/';
-                    console.log('Redirecting to:', redirectPath);
+                    // Use redirectUrl from server response or fallback to context path
+                    const redirectUrl = data.redirectUrl || ((window.APP_CONTEXT_PATH || contextPath) || '/');
+                    console.log('Redirecting to:', redirectUrl, '(Role:', data.role + ')');
                     
-                    window.location.href = redirectPath;
+                    window.location.href = redirectUrl;
                 }, 2000); // Increased delay to 2 seconds
                 
             } else {

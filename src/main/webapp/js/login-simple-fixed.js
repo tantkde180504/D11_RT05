@@ -82,10 +82,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     window.dispatchEvent(loginEvent);
                     
-                    // Redirect to home page
+                    // Redirect to appropriate page based on server response
                     setTimeout(() => {
-                        console.log('Redirecting to home...');
-                        window.location.href = '/';
+                        const redirectUrl = data.redirectUrl || '/';
+                        console.log('Redirecting to:', redirectUrl, '(Role:', data.role + ')');
+                        window.location.href = redirectUrl;
                     }, 1000);
                     
                 } else {

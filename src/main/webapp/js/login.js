@@ -172,18 +172,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                         
                         console.log('✅ Email login converted to Google format:', googleUser);
-                        console.log('🏠 Redirecting to home page...');
+                        
+                        // Use redirectUrl from server response or fallback to home page
+                        const redirectUrl = data.redirectUrl || '/';
+                        console.log('🏠 Redirecting to:', redirectUrl, '(Role:', data.role + ')');
                         
                         // Add justLoggedIn marker
                         localStorage.setItem('justLoggedIn', 'true');
                         
-                        // Always redirect to home page as requested
-                        window.location.href = '/';
+                        // Redirect based on user role
+                        window.location.href = redirectUrl;
                         
                     } catch (error) {
                         console.error('❌ Error converting to Google format:', error);
-                        // Fallback to normal redirect
-                        window.location.href = '/';
+                        // Fallback: use redirectUrl from server or default to home
+                        const redirectUrl = data.redirectUrl || '/';
+                        console.log('🏠 Fallback redirect to:', redirectUrl);
+                        window.location.href = redirectUrl;
                     }
                 } else {
                     console.warn('⚠️ Email to Google converter not available, using fallback');
@@ -198,7 +203,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.setItem('userRole', data.role);
                     localStorage.setItem('justLoggedIn', 'true');
                     
-                    window.location.href = '/';
+                    // Use redirectUrl from server response or fallback to home page
+                    const redirectUrl = data.redirectUrl || '/';
+                    console.log('🏠 Fallback redirect to:', redirectUrl, '(Role:', data.role + ')');
+                    window.location.href = redirectUrl;
                 }
             }, 1500);
         } else {

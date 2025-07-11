@@ -11,8 +11,6 @@ import java.sql.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
@@ -125,6 +123,9 @@ public class LoginController {
                             System.out.println("Email: " + email);
                             System.out.println("Role: " + role);
                             
+                            // Determine redirect URL based on role
+                            String redirectUrl = getRedirectUrlByRole(role);
+                            
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("success", true);
                             resp.put("role", role);
@@ -132,7 +133,8 @@ public class LoginController {
                             resp.put("fullName", firstName + " " + lastName);
                             resp.put("email", email);
                             resp.put("avatarUrl", ""); // Will be generated on client-side from email
-                            System.out.println("Login successful for user: " + resp.get("fullName"));
+                            resp.put("redirectUrl", redirectUrl); // Add redirect URL based on role
+                            System.out.println("Login successful for user: " + resp.get("fullName") + " - Redirecting to: " + redirectUrl);
                             return ResponseEntity.ok()
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .body(resp);
@@ -177,6 +179,26 @@ public class LoginController {
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Error hashing password: " + e.getMessage());
             return password; // Fallback to plain text in case of error
+        }
+    }
+    
+    // Method to determine redirect URL based on user role
+    private String getRedirectUrlByRole(String role) {
+        if (role == null) {
+            return "index.jsp"; // Default fallback
+        }
+        
+        switch (role.toUpperCase()) {
+            case "ADMIN":
+                return "dashboard.jsp"; // Admin dashboard page
+            case "STAFF":
+                return "staffsc.jsp"; // Staff management page
+            case "CUSTOMER":
+                return "index.jsp"; // Customer homepage
+            case "SHIPPER":
+                return "dashboard.jsp"; // Shipper dashboard (you can create a specific page later)
+            default:
+                return "index.jsp"; // Default fallback for unknown roles
         }
     }
 }
