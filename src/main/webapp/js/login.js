@@ -1,4 +1,4 @@
-s// Login Page JavaScript
+// Login Page JavaScript
 
 // Password visibility toggle
 function togglePassword() {

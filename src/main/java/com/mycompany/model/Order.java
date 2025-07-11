@@ -12,16 +12,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_number", unique = true)
-    private String orderNumber;
+    // --- Unified fields (gộp cả 2 version) ---
+    @Column(name = "order_number", unique = true, nullable = false)
+    private String orderNumber; // dùng chung cho orderNumber/orderCode
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private Long userId; // dùng chung cho userId/customerId
 
     @Column(name = "total_amount", nullable = false)
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount; // dùng chung cho totalAmount/total
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private String status;
 
     @Column(name = "shipping_address")
@@ -36,8 +37,8 @@ public class Order {
     @Column(name = "payment_method")
     private String paymentMethod;
 
-    @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    @Column(name = "order_date", nullable = false)
+    private LocalDateTime orderDate; // dùng chung cho orderDate/createdAt
 
     @Column(name = "shipped_date")
     private LocalDateTime shippedDate;
@@ -51,7 +52,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<com.mycompany.model.OrderItem> orderItems;
 
-    // Getters and setters
+    // --- Getters and setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getOrderNumber() { return orderNumber; }

@@ -34,8 +34,9 @@ public class Application extends SpringBootServletInitializer implements Command
         resolver.setViewClass(JstlView.class);
         return resolver;
     }
-    
+
     public static void main(String[] args) {
+        System.out.println("DEBUG: Đang khởi chạy ứng dụng Spring Boot");
         SpringApplication.run(Application.class, args);
     }
 

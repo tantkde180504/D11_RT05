@@ -1,26 +1,6 @@
-# Maven build directory
-target/
+# Ignore build output and IDE/workspace folders
+/target/
+/work/
 
-# Tomcat work directory
-work/
-
-# VS Code settings
-.vscode/
-
-# IDE files
-*.iml
-.idea/
-.eclipse/
-.project
-.classpath
-.settings/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Log files
-*.log
-
-# Compiled class files
-*.class
+# Ignore sensitive configuration files to avoid Repository rule violations
+src/main/resources/application.properties

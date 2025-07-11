@@ -64,8 +64,15 @@ public class ReportsRepository {
             double totalRevenue = 0;
             int totalOrders = 0;
             for (Map<String, Object> period : periodRevenue) {
-                totalRevenue += ((Number) period.get("total_revenue")).doubleValue();
-                totalOrders += ((Number) period.get("order_count")).intValue();
+                // Kiểm tra null để tránh lỗi khi không có dữ liệu
+                Number revenue = (Number) period.get("total_revenue");
+                Number orders = (Number) period.get("order_count");
+                if (revenue != null) {
+                    totalRevenue += revenue.doubleValue();
+                }
+                if (orders != null) {
+                    totalOrders += orders.intValue();
+                }
             }
             result.put("periodRevenue", periodRevenue);
             result.put("totalRevenue", totalRevenue);
