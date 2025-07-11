@@ -210,7 +210,7 @@ public class LoginController {
             case "CUSTOMER":
                 return "index.jsp"; // Customer homepage
             case "SHIPPER":
-                return "dashboard.jsp"; // Shipper dashboard (you can create a specific page later)
+                return "shippersc.jsp"; // Shipper management page
             default:
                 return "index.jsp"; // Default fallback for unknown roles
         }
