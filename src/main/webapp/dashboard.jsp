@@ -1034,6 +1034,10 @@
                 <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
                 <script src="<%=request.getContextPath()%>/js/admin-dashboard.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+                <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
+                <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
+                <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
 
                 <script>
                     // Check admin access on page load
@@ -1043,28 +1047,4 @@
                 </script>
             </body>
 
-        // Tab management
-        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-                this.classList.add('active');
-            });        });
-    </script>
-      <!-- Auth script for logout functionality -->
-    <script src="<%=request.getContextPath()%>/js/auth.js"></script>
-    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
-    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
-    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
-    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
-    
-    <script>
-        // Check admin access on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkPageAccess('ADMIN');
-        });
-    </script>
-</body>
-</html>
+            </html>
