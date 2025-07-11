@@ -620,7 +620,7 @@ window.handleQuickCall = handleQuickCall;
 window.handleQuickNote = handleQuickNote;
 window.notificationManager = notificationManager;
 function loadInventoryFromAPI() {
-    fetch('/api/products/inventory') // ← endpoint từ backend Spring Boot
+    fetch('/api/inventory/products') // ← endpoint từ backend Spring Boot
         .then(response => response.json())
         .then(data => {
             const tbody = document.querySelector('#inventory-body');
@@ -873,7 +873,7 @@ function bindUpdateStockButtons() {
 
                 const hide = showLoading(updateBtn);
 
-                fetch('/api/products/update-stock', {
+                fetch('/api/inventory/update-stock', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({
@@ -941,7 +941,7 @@ function initInventoryFilters() {
 }
 // Định nghĩa hàm chi tiết
 function viewProductDetails(productId) {
-    fetch(`/api/products/${productId}`)
+    fetch(`/api/inventory/products/{id}`)
         .then(res => {
             if (!res.ok) throw new Error('Không tìm thấy sản phẩm');
             return res.json();

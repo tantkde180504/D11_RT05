@@ -1,4 +1,5 @@
 package com.mycompany.controller;
+
 import com.mycompany.model.Product;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/inventory") // Đổi từ /api/products thành /api/inventory
 public class InventoryController {
 
     @Autowired
@@ -21,12 +22,13 @@ public class InventoryController {
     private EntityManager entityManager;
 
     // API: Lấy danh sách sản phẩm tồn kho
-    @GetMapping(value = "/inventory", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> getInventoryList() {
         return inventoryRepository.findByIsActiveTrueOrderByUpdatedAtDesc();
     }
-    // API: Xem chi tiết sản phẩm theo ID
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    // API: Xem chi tiết sản phẩm theo ID (cho quản lý tồn kho)
+    @GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> getProductDetail(@PathVariable Long id) {
         return inventoryRepository.findById(id)
                 .map(product -> ResponseEntity.ok().body(product))
@@ -36,8 +38,8 @@ public class InventoryController {
     // API: Cập nhật tồn kho thông qua stored procedure
     @PostMapping("/update-stock")
     public ResponseEntity<String> updateStock(@RequestParam Long productId,
-                                              @RequestParam int quantity,
-                                              @RequestParam String type) {
+            @RequestParam int quantity,
+            @RequestParam String type) {
         try {
             // Chuẩn hóa giá trị type
             type = type != null ? type.trim().toUpperCase() : "";
