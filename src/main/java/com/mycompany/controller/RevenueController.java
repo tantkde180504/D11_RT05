@@ -65,7 +65,7 @@ public class RevenueController {
     }
 
     // 2. Thống kê số đơn hàng theo trạng thái
-    @GetMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/orders/stats", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<OrderStats>> getOrderStats() {
         String sql = "SELECT status, COUNT(*) AS total FROM orders GROUP BY status";
         List<Object[]> rows = repo.queryBySql(sql);

@@ -202,7 +202,7 @@ function mapLabel(type) {
 }
 
 function loadOrderChart() {
-    fetch('/api/orders')
+    fetch('/api/orders/stats')
         .then(res => res.json())
         .then(data => {
             const labels = data.map(d => d.status);

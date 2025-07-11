@@ -1,8 +1,15 @@
 package com.mycompany.service;
 
-import com.mycompany.model.OAuthUser;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.springframework.stereotype.Service;
-import java.sql.*;
+
+import com.mycompany.model.OAuthUser;
 
 @Service
 public class OAuthUserService {
@@ -170,6 +177,7 @@ public class OAuthUserService {
             e.printStackTrace();
         }
     }
+    
     
     /**
      * Migrate existing OAuth users from oauth_users table to main users table

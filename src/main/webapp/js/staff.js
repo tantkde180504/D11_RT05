@@ -1108,4 +1108,393 @@ function viewLowStockProducts() {
     history.replaceState(null, '', '#inventory');
 }
 window.viewLowStockProducts = viewLowStockProducts;
+function loadOrdersFromAPI() {
+    const status = document.getElementById('order-status-filter')?.value || 'ALL';
+    fetch(`/api/orders?status=${status}`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('orders-body');
+            tbody.innerHTML = '';
 
+            data.forEach(o => {
+                const productListHtml = (o.productNames?.length > 0)
+                    ? `<ul class="mb-0 ps-3">${o.productNames.map(p => `<li>${p}</li>`).join('')}</ul>`
+                    : '—';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>#${o.orderNumber}</strong></td>
+                    <td>${o.shippingName}</td>
+                    <td>${productListHtml}</td>
+                    <td><strong>${formatCurrency(o.totalAmount)}</strong></td>
+                    <td><span class="status-badge">${o.status}</span></td>
+                    <td>${formatDate(o.orderDate)}</td>
+                    <td>
+                        ${o.status === 'PENDING' ? `
+                            <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
+                                <i class="fas fa-check"></i>
+                            </button>` : ''}
+
+                        ${o.status !== 'DELIVERED' && o.status !== 'CANCELLED' ? `
+                            <button class="btn btn-sm btn-danger me-1" onclick="cancelOrder(${o.id})">
+                                <i class="fas fa-times"></i>
+                            </button>` : ''}
+
+                        <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(err => {
+            console.error('Lỗi khi load đơn hàng:', err);
+            showErrorMessage('Không thể tải đơn hàng từ máy chủ');
+        });
+}
+
+function formatCurrency(amount) {
+    return Number(amount).toLocaleString('vi-VN') + '₫';
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+}
+
+function mapOrderStatus(status) {
+    switch (status) {
+        case 'PENDING': return 'Chờ xác nhận';
+        case 'DELIVERED': return 'Đã giao';
+        case 'CANCELLED': return 'Đã hủy';
+        default: return status;
+    }
+}
+
+function confirmOrder(orderId) {
+    if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
+
+    fetch('/api/orders/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `orderId=${orderId}`
+})
+.then(res => {
+    if (!res.ok) return res.text().then(text => { throw new Error(text); });
+    return res.text();
+})
+.then(msg => {
+    showSuccessMessage(msg);
+    loadOrdersFromAPI();
+})
+.catch(err => {
+    console.error('Xác nhận lỗi:', err.message);
+    showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
+});
+
+}
+function showUpdateStatusModal(orderId, currentStatus) {
+    const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+    document.getElementById('update-order-id').value = orderId;
+    document.getElementById('new-status').value = currentStatus;
+    modal.show();
+}
+function updateOrderStatus() {
+    const orderId = document.getElementById('update-order-id').value;
+    const newStatus = document.getElementById('new-status').value;
+
+    fetch('/api/orders/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `orderId=${orderId}&status=${newStatus}`
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(text => { throw new Error(text); });
+        return res.text();
+    })
+    .then(msg => {
+        showSuccessMessage(msg);
+        bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
+        loadOrdersFromAPI();
+    })
+    .catch(err => {
+        showErrorMessage(err.message || "❌ Không thể cập nhật trạng thái.");
+    });
+}
+function viewOrderDetail(orderId) {
+    fetch(`/api/orders/detail?id=${orderId}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Không thể lấy dữ liệu đơn hàng");
+            return res.json();
+        })
+        .then(order => {
+            window.currentOrder = order;
+
+            const productListHtml = (order.productNames || [])
+                .map(name => `<li>${name}</li>`)
+                .join('');
+
+            const html = `
+                <div class="mb-2"><strong>Mã đơn hàng:</strong> #${order.orderNumber}</div>
+                <div class="mb-2"><strong>Sản phẩm:</strong>
+                    <ul class="mb-1">${productListHtml || '<li>—</li>'}</ul>
+                </div>
+                <div class="mb-2"><strong>Khách hàng:</strong> ${order.shippingName}</div>
+                <div class="mb-2"><strong>Điện thoại:</strong> ${order.shippingPhone}</div>
+                <div class="mb-2"><strong>Email:</strong> ${order.email}</div>
+                <div class="mb-2"><strong>Địa chỉ:</strong> ${order.shippingAddress}</div>
+                <div class="mb-2"><strong>Phương thức thanh toán:</strong> ${order.paymentMethod}</div>
+                <div class="mb-2"><strong>Trạng thái:</strong> ${order.status}</div>
+                <div class="mb-2"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</div>
+                <div class="mb-2"><strong>Tổng tiền:</strong> ${formatCurrency(order.totalAmount)}</div>
+            `;
+
+            document.getElementById('order-detail-body').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('orderDetailModal')).show();
+        })
+        .catch(err => {
+            console.error("Chi tiết đơn hàng lỗi:", err);
+            showErrorMessage("❌ Không thể tải chi tiết đơn hàng.");
+        });
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date)) return '—';
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+}
+
+function printInvoice() {
+    const order = window.currentOrder;
+    if (!order) return alert('Không có dữ liệu hóa đơn.');
+
+    const productListHtml = (order.items || [])
+  .map(item => `
+    <tr>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>${formatCurrency(item.price)}</td>
+      <td>${formatCurrency(item.price * item.quantity)}</td>
+    </tr>
+  `)
+  .join('');
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Hóa đơn</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body {
+                    font-family: 'Segoe UI', sans-serif;
+                    padding: 40px;
+                    color: #333;
+                }
+                .header {
+                    background-color: #f60;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+                .info-section {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 30px;
+                }
+                .info-box {
+                    width: 48%;
+                }
+                table {
+                    width: 100%;
+                    margin-top: 20px;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border-bottom: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f60;
+                    color: white;
+                }
+                .total-row {
+                    font-weight: bold;
+                    background-color: #eee;
+                }
+                .footer {
+                    margin-top: 40px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #555;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h2>HÓA ĐƠN</h2>
+                <div>#${order.orderNumber}</div>
+                <div>${formatDate(order.orderDate)}</div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-box">
+                    <h5>KHÁCH HÀNG</h5>
+                    <p>${order.shippingName}</p>
+                    <p>${order.shippingAddress}</p>
+                    <p>${order.email}</p>
+                    <p>${order.shippingPhone}</p>
+                </div>
+                <div class="info-box">
+                    <h5>THANH TOÁN</h5>
+                    <p>Phương thức: ${order.paymentMethod}</p>
+                    <p>Trạng thái: ${mapOrderStatus(order.status)}</p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>MÔ TẢ</th>
+                        <th>SỐ LƯỢNG</th>
+                        <th>ĐƠN GIÁ</th>
+                        <th>THÀNH TIỀN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${productListHtml}
+                    <tr class="total-row">
+                        <td colspan="3">TỔNG CỘNG</td>
+                        <td>${formatCurrency(order.totalAmount)}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="footer">
+                Cảm ơn bạn đã mua hàng!<br>
+                Liên hệ: ${order.email} | ${order.shippingPhone}
+            </div>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 300);
+}
+
+
+function cancelOrder(orderId) {
+    if (!confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
+
+    fetch('/api/orders/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `orderId=${orderId}`
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(text => { throw new Error(text); });
+        return res.text();
+    })
+    .then(msg => {
+        showSuccessMessage(msg);
+        loadOrdersFromAPI();
+    })
+    .catch(err => {
+        console.error('Hủy đơn lỗi:', err.message);
+        showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
+    });
+}
+// Load returns từ API
+function loadReturns(status = 'ALL') {
+    let url = '/api/returns';
+    if (status !== 'ALL') {
+        url += `?status=${status}`;
+    }
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => renderReturnsTable(data))
+        .catch(error => console.error('Lỗi khi load returns:', error));
+}
+
+// Render danh sách returns vào bảng
+function renderReturnsTable(returns) {
+    const tableBody = document.getElementById('returns-table-body');
+    tableBody.innerHTML = '';
+
+    if (!returns || returns.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Không có dữ liệu</td></tr>';
+        return;
+    }
+
+    returns.forEach(ret => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td><strong>#${ret.orderNumber || ret.orderId}</strong></td>
+            <td>${ret.customerName || 'Không rõ'}</td>
+            <td>${ret.productName || 'Không rõ'}</td>
+            <td>${ret.reason || ''}</td>
+            <td><span class="status-badge ${mapReturnStatusClass(ret.status)}">${mapReturnStatusLabel(ret.status)}</span></td>
+            <td>${ret.requestType || ''}</td>
+            <td>${ret.createdAt || ''}</td>
+            <td>
+                <button class="btn btn-sm btn-info" title="Xem chi tiết" onclick="viewReturnDetail(${ret.id})">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Map class trạng thái
+function mapReturnStatusClass(status) {
+    if (status === 'PROCESSING') return 'status-processing';
+    if (status === 'COMPLETED') return 'status-completed';
+    return '';
+}
+
+// Map nhãn trạng thái
+function mapReturnStatusLabel(status) {
+    if (status === 'PROCESSING') return 'Chờ xử lý';
+    if (status === 'COMPLETED') return 'Đã xác nhận';
+    return status || '';
+}
+
+// Xem chi tiết return
+function viewReturnDetail(returnId) {
+    fetch(`/api/returns/detail?id=${returnId}`)
+        .then(response => response.json())
+        .then(ret => {
+            document.getElementById('returnModalOrderNumber').innerText = `#${ret.orderNumber || ret.orderId}`;
+            document.getElementById('returnModalUserId').innerText = ret.customerName || '';
+            document.getElementById('returnModalProductId').innerText = ret.productName || '';
+            document.getElementById('returnModalReason').innerText = ret.reason || '';
+            document.getElementById('returnModalRequestType').innerText = ret.requestType || '';
+            document.getElementById('returnModalStatus').innerText = mapReturnStatusLabel(ret.status);
+            document.getElementById('returnModalCreatedAt').innerText = ret.createdAt || '';
+
+            const modal = new bootstrap.Modal(document.getElementById('returnModal'));
+            modal.show();
+        })
+        .catch(error => console.error('Lỗi khi xem chi tiết:', error));
+}
+
+// Sự kiện filter
+document.getElementById('filter-return-status').addEventListener('change', function () {
+    loadReturns(this.value);
+});
+
+// Load mặc định khi vào tab
+document.addEventListener('DOMContentLoaded', function () {
+    loadReturns();
+});

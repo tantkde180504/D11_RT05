@@ -73,12 +73,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (role === 'ADMIN') {
                                 targetPage = '/dashboard.jsp';
                             } else if (role === 'STAFF') {
-                                targetPage = '/staffsc.jsp';
+                                targetPage = '/staffsc.jsp';    
+                            } else if (role === 'SHIPPER') {
+                                targetPage = '/shippersc.jsp';    
                             } else {
                                 targetPage = '/index.jsp';
                             }
-                        }
-                        
+                        }                       
                         console.log('Redirecting to:', targetPage, '(Role:', data.role + ')');
                         showAlert(`🚀 Đang chuyển đến trang chủ...`, 'info');
                         
@@ -120,6 +121,8 @@ function getRoleDisplayName(role) {
             return 'Nhân viên';
         case 'CUSTOMER':
             return 'Khách hàng';
+        case 'SHIPPER':
+            return 'Giao hàng';
         default:
             return 'Người dùng';
     }

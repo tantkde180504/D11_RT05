@@ -1,6 +1,5 @@
 package com.mycompany;
 
-import com.mycompany.service.OAuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import com.mycompany.service.OAuthUserService;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.mycompany") // ✅ FIX quan trọng

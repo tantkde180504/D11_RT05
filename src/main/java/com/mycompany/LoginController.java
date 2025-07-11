@@ -12,9 +12,23 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api")
 public class LoginController {
+
+    @Autowired
+    private HttpSession session;
 
     @GetMapping("/login-test")
     public ResponseEntity<Map<String, Object>> testLoginEndpoint() {

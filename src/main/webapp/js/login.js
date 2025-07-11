@@ -304,6 +304,8 @@ function getRoleDisplayName(role) {
             return 'Nhân viên';
         case 'CUSTOMER':
             return 'Khách hàng';
+        case 'SHIPPER':
+            return 'Giao hàng';
         default:
             return 'Người dùng';
     }
