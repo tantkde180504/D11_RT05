@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" errorPage="error.jsp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
@@ -13,13 +13,13 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-bg-orange.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-menu-white.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hamburger-menu.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-fix.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/account-menu-fix.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-avatar.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/styles.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/navbar-bg-orange.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/navbar-menu-white.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/hamburger-menu.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/navbar-fix.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/account-menu-fix.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/user-avatar.css">
     
     <style>
         .search-container {
@@ -245,8 +245,8 @@
                         </button>
                         
                         <div class="logo">
-                            <a href="${pageContext.request.contextPath}/">
-                                <img src="${pageContext.request.contextPath}/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                            <a href="<%=request.getContextPath()%>/">
+                                <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
                             </a>
                         </div>
                     </div>
@@ -256,7 +256,7 @@
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
                         <div class="search-container w-100">
-                            <form class="search-form" action="${pageContext.request.contextPath}/search.jsp" method="get" id="headerSearchForm">
+                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
                                     <input type="text" name="q" class="form-control search-input" 
                                            placeholder="Tìm kiếm sản phẩm..." value="${query}" id="headerSearchInput" autocomplete="off">
@@ -275,66 +275,22 @@
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
                     <div class="header-actions-section">
                         <div class="account-menu me-3">
-                            <!-- User Info (visible when logged in) -->
-                            <div id="nav-user-info" class="d-none">
+                            <!-- Unified Account Button -->
+                            <div id="unified-account-menu">
                                 <div class="dropdown">
-                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
-                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <div class="user-avatar-container me-2">
-                                            <img id="userAvatarImage" 
-                                                 src="${pageContext.request.contextPath}/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar rounded-circle"
-                                                 style="width: 32px; height: 32px; object-fit: cover;">
-                                        </div>
-                                        <span class="d-none d-md-inline">
-                                            <span class="greeting-text">Xin chào</span>
-                                            <span id="userDisplayName" class="fw-bold">User</span>
-                                        </span>
-                                        <span class="d-md-none">
-                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header d-flex align-items-center">
-                                            <img id="userAvatarDropdown" 
-                                                 src="${pageContext.request.contextPath}/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar-small rounded-circle me-2"
-                                                 style="width: 24px; height: 24px; object-fit: cover;">
-                                            <span id="userFullName">User Name</span>
-                                        </h6></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile.jsp">
-                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
-                                        </a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <!-- Login Button (visible when not logged in) -->
-                            <div id="nav-login-btn">
-                                <div class="dropdown">
+                                    <!-- This button will dynamically change based on login state -->
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
-                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login.jsp">
+                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                        <!-- Menu items will be updated by JavaScript -->
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/register.jsp">
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
                                             <i class="fas fa-user-plus me-2"></i>Đăng ký
                                         </a></li>
                                     </ul>
@@ -342,10 +298,16 @@
                             </div>
                         </div>
                         <div class="cart-btn">
-                            <a href="#" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 <span class="cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                            </a>
+                        </div>
+                        <div class="order-history-btn">
+                            <a href="order-history.jsp" class="btn btn-outline-secondary">
+                                <i class="fas fa-history me-1"></i>
+                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
                             </a>
                         </div>
                     </div>
@@ -354,31 +316,8 @@
         </div>
     </header>
 
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="sidebar-header">
-            <h5>Menu</h5>
-            <button class="sidebar-close" id="sidebarClose">&times;</button>
-        </div>
-        <div class="sidebar-content">
-            <nav class="mobile-nav">
-                <a href="${pageContext.request.contextPath}/" class="mobile-nav-link">
-                    <i class="fas fa-home"></i> Trang chủ
-                </a>
-                <a href="${pageContext.request.contextPath}/all-products.jsp" class="mobile-nav-link">
-                    <i class="fas fa-box"></i> Tất cả sản phẩm
-                </a>
-                <div class="mobile-nav-divider"></div>
-                <a href="#" class="mobile-nav-link">
-                    <i class="fas fa-info-circle"></i> Giới thiệu
-                </a>
-                <a href="#" class="mobile-nav-link">
-                    <i class="fas fa-phone"></i> Liên hệ
-                </a>
-            </nav>
-        </div>
-    </div>
-    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <!-- Mobile Sidebar Navigation -->
+    <jsp:include page="includes/mobile-sidebar.jsp" />
 
     <!-- Search Header -->
     <section class="search-container">
@@ -401,7 +340,7 @@
     <div class="container">
         <!-- Search Filters -->
         <div class="search-filters">
-            <form id="filterForm" method="get" action="${pageContext.request.contextPath}/search">
+            <form id="filterForm" method="get" action="<%=request.getContextPath()%>/search">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="filter-group">
@@ -516,7 +455,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Search Autocomplete Script -->
-    <script src="${pageContext.request.contextPath}/js/search-autocomplete.js"></script>
+    <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
     
     <script>
         // Search functionality
@@ -573,7 +512,7 @@
             params.append('page', page);
             params.append('size', 12);
 
-            const apiUrl = '${pageContext.request.contextPath}/search/api?' + params.toString();
+            const apiUrl = '<%=request.getContextPath()%>/search/api?' + params.toString();
             console.log('API URL:', apiUrl);
 
             fetch(apiUrl)
@@ -630,13 +569,13 @@
             productsContainer.style.display = 'block';
             
             container.innerHTML = products.map(product => {
-                const imageUrl = product.imageUrl || '${pageContext.request.contextPath}/img/placeholder.jpg';
+                const imageUrl = product.imageUrl || '<%=request.getContextPath()%>/img/placeholder.jpg';
                 const categoryDisplay = product.category ? product.category.replace(/_/g, ' ') : '';
                 const gradeDisplay = product.grade || '';
                 
                 return '<div class="product-card">' +
                     '<div class="product-image">' +
-                        '<img src="' + imageUrl + '" alt="' + (product.name || '') + '" onerror="this.src=\'${pageContext.request.contextPath}/img/placeholder.jpg\'">' +
+                        '<img src="' + imageUrl + '" alt="' + (product.name || '') + '" onerror="this.src=\'<%=request.getContextPath()%>/img/placeholder.jpg\'">' +
                         (gradeDisplay ? '<div class="product-badge">' + gradeDisplay + '</div>' : '') +
                     '</div>' +
                     '<div class="product-info">' +
@@ -646,7 +585,7 @@
                             '<span><i class="fas fa-tag me-1"></i>' + categoryDisplay + '</span>' +
                             '<span><i class="fas fa-boxes me-1"></i>' + (product.stockQuantity || 0) + '</span>' +
                         '</div>' +
-                        '<a href="${pageContext.request.contextPath}/product/' + product.id + '" class="btn view-detail-btn">' +
+                        '<a href="<%=request.getContextPath()%>/product/' + product.id + '" class="btn view-detail-btn">' +
                             '<i class="fas fa-eye me-2"></i>Xem chi tiết' +
                         '</a>' +
                     '</div>' +
@@ -798,7 +737,7 @@
                     category: 'Real Grade',
                     grade: 'RG',
                     stockQuantity: 15,
-                    imageUrl: '${pageContext.request.contextPath}/img/RGStrikeGundam.jpg'
+                    imageUrl: '<%=request.getContextPath()%>/img/RGStrikeGundam.jpg'
                 },
                 {
                     id: 2,
@@ -807,7 +746,7 @@
                     category: 'Master Grade',
                     grade: 'MG',
                     stockQuantity: 8,
-                    imageUrl: '${pageContext.request.contextPath}/img/placeholder.jpg'
+                    imageUrl: '<%=request.getContextPath()%>/img/placeholder.jpg'
                 },
                 {
                     id: 3,
@@ -816,7 +755,7 @@
                     category: 'High Grade',
                     grade: 'HG',
                     stockQuantity: 22,
-                    imageUrl: '${pageContext.request.contextPath}/img/placeholder.jpg'
+                    imageUrl: '<%=request.getContextPath()%>/img/placeholder.jpg'
                 }
             ];
             
@@ -865,14 +804,14 @@
     </style>
     
     <!-- Avatar Utils -->
-    <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
+    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
     
     <!-- Authentication and Navbar Scripts -->
-    <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
-    <script src="${pageContext.request.contextPath}/js/navbar-manager.js"></script>
-    <script src="${pageContext.request.contextPath}/js/google-oauth-clean.js"></script>
-    <script src="${pageContext.request.contextPath}/js/navbar-fix.js"></script>
-    <script src="${pageContext.request.contextPath}/js/hamburger-menu.js"></script>
+    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
+    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
+    <script src="<%=request.getContextPath()%>/js/navbar-fix.js"></script>
+    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     
     <!-- Force check auth state after page load -->
     <script>

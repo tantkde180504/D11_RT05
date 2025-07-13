@@ -12,57 +12,116 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout-sizing.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-popup.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-darkmode.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-bg-orange.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-menu-white.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hamburger-menu.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-fix.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/account-menu-fix.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-avatar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <!-- Success notification for OAuth login -->
+    <div id="oauth-success-notification" class="alert alert-success alert-dismissible fade oauth-notification">
+        <strong>🎉 Đăng nhập thành công!</strong>
+        <p class="mb-0" id="welcome-message">Chào mừng bạn quay trở lại!</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
-                <img src="${pageContext.request.contextPath}/img/logo.png" alt="Logo" width="40" height="40" class="me-2">
-                <span class="fw-bold">Gundam Hobby</span>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/all-products">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">Giới thiệu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Liên hệ</a>
-                    </li>
-                </ul>
-
-                <!-- Search Form -->
-                <form class="d-flex me-3" id="headerSearchForm" action="${pageContext.request.contextPath}/search.jsp" method="get">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="q" placeholder="Tìm kiếm sản phẩm..." 
-                               value="<%= request.getParameter("q") != null ? request.getParameter("q") : "" %>" id="headerSearchInput" autocomplete="off">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fas fa-search"></i>
+            <div class="row align-items-center py-3">
+                <!-- Logo Section with Hamburger Menu -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="header-logo-section">
+                        <!-- Hamburger Menu (Mobile) -->
+                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
                         </button>
+                        
+                        <div class="logo">
+                            <a href="${pageContext.request.contextPath}/">
+                                <img src="${pageContext.request.contextPath}/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                            </a>
+                        </div>
                     </div>
-                    <!-- Autocomplete suggestions -->
-                    <div id="headerSearchSuggestions" class="search-suggestions"></div>
-                </form>
+                </div>
+                
+                <!-- Search Section -->
+                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
+                    <div class="header-center-section">
+                        <div class="search-container w-100">
+                            <form class="search-form" action="${pageContext.request.contextPath}/search.jsp" method="get" id="headerSearchForm">
+                                <div class="input-group">
+                                    <input type="text" name="q" class="form-control search-input" 
+                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off"
+                                           value="<%= request.getParameter("q") != null ? request.getParameter("q") : "" %>">
+                                    <button class="btn btn-search" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <!-- Autocomplete suggestions -->
+                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions Section -->
+                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
+                    <div class="header-actions-section">
+                        <div class="account-menu me-3">
+                            <!-- Unified Account Button -->
+                            <div id="unified-account-menu">
+                                <div class="dropdown">
+                                    <!-- This button will dynamically change based on login state -->
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <!-- Content will be updated by JavaScript -->
+                                        <i class="fas fa-user me-1"></i>
+                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                        <!-- Menu items will be updated by JavaScript -->
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login.jsp">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/register.jsp">
+                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cart-btn">
+                            <a href="cart.jsp" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart me-1"></i>
+                                <span class="cart-count">0</span>
+                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                            </a>
+                        </div>
+                        <div class="order-history-btn">
+                            <a href="order-history.jsp" class="btn btn-outline-secondary">
+                                <i class="fas fa-history me-1"></i>
+                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
+    
+    <!-- Mobile Sidebar Navigation -->
+    <jsp:include page="includes/mobile-sidebar.jsp" />
 
     <div class="container mt-4">
         <h2>Kết quả tìm kiếm</h2>
@@ -95,6 +154,18 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Legacy navbar cleanup -->
+    <script src="${pageContext.request.contextPath}/js/legacy-navbar-cleanup.js"></script>
+    
+    <!-- MD5 for authentication -->
+    <script src="${pageContext.request.contextPath}/js/md5.min.js"></script>
+    
+    <!-- Email to Google converter -->
+    <script src="${pageContext.request.contextPath}/js/email-to-google-converter.js"></script>
+    
+    <!-- Anti-flicker unified -->
+    <script src="${pageContext.request.contextPath}/js/anti-flicker-unified.js"></script>
     
     <!-- Search Autocomplete Script -->
     <script src="${pageContext.request.contextPath}/js/search-autocomplete.js"></script>
@@ -172,7 +243,7 @@
                             '<h5 class="card-title">' + (product.name || 'Tên sản phẩm') + '</h5>' +
                             '<p class="card-text text-danger fw-bold">' + price + '</p>' +
                             '<div class="mt-auto">' +
-                                '<a href="${pageContext.request.contextPath}/product/' + product.id + '" class="btn btn-primary w-100">' +
+                                '<a href="${pageContext.request.contextPath}/product-detail.jsp?id=' + product.id + '" class="btn btn-primary w-100">' +
                                     '<i class="fas fa-eye me-2"></i>Xem chi tiết' +
                                 '</a>' +
                             '</div>' +
@@ -222,7 +293,7 @@
             position: absolute;
             top: 100%;
             left: 0;
-            right: 40px;
+            right: 0;
             background: white;
             border: 1px solid #ddd;
             border-top: none;
@@ -248,7 +319,7 @@
             border-bottom: none;
         }
 
-        .input-group {
+        .search-container {
             position: relative;
         }
     </style>
@@ -259,6 +330,15 @@
     <!-- Avatar Utils -->
     <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
     
+    <!-- Cart Manager Script -->
+    <script src="${pageContext.request.contextPath}/js/cart-manager.js"></script>
+    
+    <!-- Unified Navbar Manager -->
+    <script src="${pageContext.request.contextPath}/js/unified-navbar-manager.js"></script>
+    
+    <!-- Google OAuth Handler -->
+    <script src="${pageContext.request.contextPath}/js/google-oauth-handler.js"></script>
+    
     <!-- Authentication and Navbar Scripts -->
     <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
     <script src="${pageContext.request.contextPath}/js/navbar-manager.js"></script>
@@ -266,21 +346,52 @@
     <script src="${pageContext.request.contextPath}/js/navbar-fix.js"></script>
     <script src="${pageContext.request.contextPath}/js/hamburger-menu.js"></script>
     
+    <!-- Unified Navbar Debug -->
+    <script src="${pageContext.request.contextPath}/js/unified-navbar-debug.js"></script>
+    
     <!-- Force check auth state after page load -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📦 DOM ready, setting up unified navbar...');
+            
+            // Initialize cart count
+            if (window.cartManager) {
+                window.cartManager.updateCartCount();
+            }
+            
+            // Immediate auth state debug
+            console.log('🔍 Immediate Auth Check:');
+            console.log('- currentUser:', localStorage.getItem('currentUser'));
+            console.log('- googleUser:', localStorage.getItem('googleUser'));
+            console.log('- userLoggedIn:', localStorage.getItem('userLoggedIn'));
+            
+            // Ensure unified navbar manager is initialized
+            if (window.unifiedNavbarManager) {
+                setTimeout(() => {
+                    console.log('⚡ Manual auth state check...');
+                    window.unifiedNavbarManager.checkAuthState();
+                }, 100);
+                
+                setTimeout(() => {
+                    console.log('🔄 Refreshing navbar...');
+                    window.unifiedNavbarManager.refreshNavbar();
+                }, 200);
+            } else {
+                console.warn('⚠️ unifiedNavbarManager not found!');
+            }
+            
             // Force check auth state multiple times to ensure sync
             setTimeout(() => {
                 if (window.authSyncManager) {
                     window.authSyncManager.forceRefresh();
                 }
-            }, 100);
+            }, 300);
             
             setTimeout(() => {
                 if (window.authSyncManager) {
                     window.authSyncManager.forceRefresh();
                 }
-            }, 500);
+            }, 600);
         });
     </script>
 </body>

@@ -1,6 +1,7 @@
 package com.mycompany.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -157,6 +158,7 @@ public class Product {
         this.imageUrl = imageUrl;
     }
     
+    @JsonProperty("isActive")
     public Boolean getIsActive() {
         return isActive;
     }
@@ -165,6 +167,7 @@ public class Product {
         this.isActive = isActive;
     }
     
+    @JsonProperty("isFeatured")
     public Boolean getIsFeatured() {
         return isFeatured;
     }

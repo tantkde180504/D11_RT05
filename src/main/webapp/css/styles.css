@@ -477,16 +477,21 @@ header {
 }
 
 .category-slider {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .category-item {
     text-align: center;
     transition: transform 0.3s ease;
+    width: 100%;
+    max-width: 140px;
 }
 
 .category-item:hover {
@@ -503,31 +508,86 @@ header {
 }
 
 .category-icon {
-    width: 80px;
+    width: 120px;
     height: 80px;
-    border-radius: 50%;
+    border-radius: 12px;
     background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    overflow: hidden;
+    padding: 8px;
 }
 
 .category-icon:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     background-color: var(--primary-color);
+    transform: translateY(-2px);
 }
 
 .category-icon img {
-    width: 50px;
-    height: 50px;
-    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    object-fit: cover;
+    object-position: center;
 }
 
 .category-name {
     font-weight: 500;
     font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Responsive Category Design */
+@media (max-width: 1200px) {
+    .category-slider {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1.2rem;
+    }
+    
+    .category-icon {
+        width: 110px;
+        height: 75px;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-slider {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .category-icon {
+        width: 100px;
+        height: 70px;
+        padding: 6px;
+    }
+    
+    .category-name {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-slider {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+    
+    .category-icon {
+        width: 90px;
+        height: 60px;
+        padding: 5px;
+    }
+    
+    .category-name {
+        font-size: 0.75rem;
+        margin-top: 0.3rem;
+    }
 }
 
 /* Product Sections */

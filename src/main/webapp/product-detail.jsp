@@ -41,6 +41,7 @@
     
     <!-- Custom CSS -->
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
@@ -82,8 +83,8 @@
                 <!-- Search Section -->
                 <div class="col-lg-6 col-md-4 col-12 order-md-2 order-3">
                     <div class="header-center-section">
-                        <div class="search-container">
-                            <form class="search-form" action="<%=request.getContextPath()%>/search" method="get" id="headerSearchForm">
+                        <div class="search-container w-100">
+                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
                                     <input type="text" class="form-control search-input" name="q" 
                                            placeholder="Tìm kiếm sản phẩm..." aria-label="Search" 
@@ -505,19 +506,19 @@
                     <div class="col-md-6">
                         <h6 class="social-title mb-3">Theo dõi chúng tôi</h6>
                         <div class="social-links">
-                            <a href="#" class="social-link facebook">
+                            <a href="https://www.facebook.com/BANDAIHobbysite.EN" target="_blank" rel="noopener noreferrer" class="social-link facebook">
                                 <i class="fab fa-facebook-f"></i>
                                 <span>Facebook</span>
                             </a>
-                            <a href="#" class="social-link youtube">
+                            <a href="https://www.youtube.com/@GundamInfo" target="_blank" rel="noopener noreferrer" class="social-link youtube">
                                 <i class="fab fa-youtube"></i>
                                 <span>Youtube</span>
                             </a>
-                            <a href="#" class="social-link tiktok">
+                            <a href="https://www.tiktok.com/@bandainamcoasiahobby_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="social-link tiktok">
                                 <i class="fab fa-tiktok"></i>
                                 <span>TikTok</span>
                             </a>
-                            <a href="#" class="social-link instagram">
+                            <a href="https://www.instagram.com/bandaihobbyhk/" target="_blank" rel="noopener noreferrer" class="social-link instagram">
                                 <i class="fab fa-instagram"></i>
                                 <span>Instagram</span>
                             </a>

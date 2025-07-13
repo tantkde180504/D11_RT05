@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>Giỏ hàng | LTStore Hobby</title>
+    <link rel="stylesheet" href="css/layout-sizing.css">
     <link rel="stylesheet" href="css/cart.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>

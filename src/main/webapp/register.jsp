@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
@@ -244,19 +245,19 @@
                     <div class="col-md-6">
                         <h6 class="social-title mb-3">Theo dõi chúng tôi</h6>
                         <div class="social-links">
-                            <a href="#" class="social-link facebook">
+                            <a href="https://www.facebook.com/BANDAIHobbysite.EN" target="_blank" rel="noopener noreferrer" class="social-link facebook">
                                 <i class="fab fa-facebook-f"></i>
                                 <span>Facebook</span>
                             </a>
-                            <a href="#" class="social-link youtube">
+                            <a href="https://www.youtube.com/@GundamInfo" target="_blank" rel="noopener noreferrer" class="social-link youtube">
                                 <i class="fab fa-youtube"></i>
                                 <span>Youtube</span>
                             </a>
-                            <a href="#" class="social-link tiktok">
+                            <a href="https://www.tiktok.com/@bandainamcoasiahobby_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="social-link tiktok">
                                 <i class="fab fa-tiktok"></i>
                                 <span>TikTok</span>
                             </a>
-                            <a href="#" class="social-link instagram">
+                            <a href="https://www.instagram.com/bandaihobbyhk/" target="_blank" rel="noopener noreferrer" class="social-link instagram">
                                 <i class="fab fa-instagram"></i>
                                 <span>Instagram</span>
                             </a>

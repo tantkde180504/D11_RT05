@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
@@ -245,157 +246,26 @@
                     <span class="title-icon">🆕</span>
                     Hàng Mới Về
                 </h2>
-                <a href="#" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
+                <a href="<%=request.getContextPath()%>/all-products.jsp" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
-            <div class="row">
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=RG+RX-78" class="img-fluid" alt="RG RX-78-2">
-                            <div class="product-badges>
-                                <span class="badge bg-success">Mới</span>
-                            </div>
-                            <div class="product-overlay">
-                                <a href="<%=request.getContextPath()%>/product/1" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">RG RX-78-2 Gundam</h6>
-                            <p class="product-category">Real Grade</p>
-                            <div class="product-price">
-                                <span class="current-price">650.000₫</span>
-                                <span class="old-price">750.000₫</span>
-                                <span class="discount-percent">-13%</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100" data-product-id="1">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
+            
+            <!-- Loading state -->
+            <div id="newArrivalsLoading" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
                 </div>
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=MG+Wing" class="img-fluid" alt="MG Wing Zero">
-                            <div class="product-badges">
-                                <span class="badge bg-danger">Hot</span>
-                            </div>
-                            <div class="product-overlay">
-                                <a href="<%=request.getContextPath()%>/product/2" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">MG Wing Gundam Zero</h6>
-                            <p class="product-category">Master Grade</p>
-                            <div class="product-price">
-                                <span class="current-price">1.200.000₫</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100" data-product-id="2">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=HG+Strike" class="img-fluid" alt="HG Strike Freedom">
-                            <div class="product-overlay">
-                                <a href="<%=request.getContextPath()%>/product/3" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">HG Strike Freedom</h6>
-                            <p class="product-category">High Grade</p>
-                            <div class="product-price">
-                                <span class="current-price">450.000₫</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100" data-product-id="3">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=PG+Unicorn" class="img-fluid" alt="PG Unicorn">
-                            <div class="product-badges">
-                                <span class="badge bg-warning">Premium</span>
-                            </div>
-                            <div class="product-overlay">
-                                <a href="<%=request.getContextPath()%>/product/4" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">PG Unicorn Gundam</h6>
-                            <p class="product-category">Perfect Grade</p>
-                            <div class="product-price">
-                                <span class="current-price">3.500.000₫</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100" data-product-id="4">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=RG+Barbatos" class="img-fluid" alt="RG Barbatos">
-                            <div class="product-badges">
-                                <span class="badge bg-success">Mới</span>
-                            </div>
-                            <div class="product-overlay">
-                                <a href="<%=request.getContextPath()%>/product/5" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">RG Gundam Barbatos</h6>
-                            <p class="product-category">Real Grade</p>
-                            <div class="product-price">
-                                <span class="current-price">750.000₫</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100" data-product-id="5">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=MG+Destiny" class="img-fluid" alt="MG Destiny">
-                            <div class="product-overlay">
-                                <a href="<%=request.getContextPath()%>/product/6" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">MG Destiny Gundam</h6>
-                            <p class="product-category">Master Grade</p>
-                            <div class="product-price">
-                                <span class="current-price">1.350.000₫</span>
-                                <span class="old-price">1.500.000₫</span>
-                                <span class="discount-percent">-10%</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100" data-product-id="6">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <p class="mt-2 text-muted">Đang tải sản phẩm mới...</p>
+            </div>
+            
+            <!-- Error state -->
+            <div id="newArrivalsError" class="alert alert-warning text-center" style="display: none;">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Không thể tải danh sách sản phẩm mới. Vui lòng thử lại sau.
+            </div>
+            
+            <!-- Products container -->
+            <div class="row" id="newArrivalsContainer">
+                <!-- Products will be loaded here dynamically -->
             </div>
         </div>
     </section>
@@ -563,19 +433,19 @@
                     <div class="col-md-6">
                         <h6 class="social-title mb-3">Theo dõi chúng tôi</h6>
                         <div class="social-links">
-                            <a href="#" class="social-link facebook">
+                            <a href="https://www.facebook.com/BANDAIHobbysite.EN" target="_blank" rel="noopener noreferrer" class="social-link facebook">
                                 <i class="fab fa-facebook-f"></i>
                                 <span>Facebook</span>
                             </a>
-                            <a href="#" class="social-link youtube">
+                            <a href="https://www.youtube.com/@GundamInfo" target="_blank" rel="noopener noreferrer" class="social-link youtube">
                                 <i class="fab fa-youtube"></i>
                                 <span>Youtube</span>
                             </a>
-                            <a href="#" class="social-link tiktok">
+                            <a href="https://www.tiktok.com/@bandainamcoasiahobby_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="social-link tiktok">
                                 <i class="fab fa-tiktok"></i>
                                 <span>TikTok</span>
                             </a>
-                            <a href="#" class="social-link instagram">
+                            <a href="https://www.instagram.com/bandaihobbyhk/" target="_blank" rel="noopener noreferrer" class="social-link instagram">
                                 <i class="fab fa-instagram"></i>
                                 <span>Instagram</span>
                             </a>
@@ -682,91 +552,429 @@
             });
         });
 
-        // Add to cart functionality
-       document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', function() {
-                const productId = this.getAttribute('data-product-id');
-                fetch('<%=request.getContextPath()%>/api/cart/add', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin',
-                    body: JSON.stringify({ productId: Number(productId), quantity: 1 })
-                }) 
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
-                        this.classList.add('btn-success');
-                        this.classList.remove('btn-primary');
-                    } else {
-                        alert(data.message || 'Có lỗi xảy ra!');
+        // Initialize static add-to-cart buttons (for pre-order and tools sections)
+        function initializeStaticCartButtons() {
+            document.querySelectorAll('.add-to-cart:not([data-dynamic])').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    if (!productId) {
+                        showNotification('⚠️ Chức năng này sẽ được cập nhật sau!', 'info');
+                        return;
                     }
-                    setTimeout(() => {
-                        this.innerHTML = '<i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ';
-                        this.classList.remove('btn-success');
-                        this.classList.add('btn-primary');
-                    }, 2000);
-                })
-                .catch(() => {
-                    alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
+                    
+                    // Check if button is disabled (out of stock)
+                    if (this.disabled) {
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang thêm...';
+                    this.disabled = true;
+                    
+                    fetch('<%=request.getContextPath()%>/api/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ productId: Number(productId), quantity: 1 })
+                    }) 
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
+                            this.classList.add('btn-success');
+                            this.classList.remove('btn-primary', 'btn-warning');
+                            showNotification('✅ Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                        } else {
+                            this.innerHTML = originalHTML;
+                            this.disabled = false;
+                            showNotification('❌ ' + (data.message || 'Có lỗi xảy ra!'), 'error');
+                        }
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            if (this.classList.contains('btn-success')) {
+                                this.innerHTML = originalHTML;
+                                this.classList.remove('btn-success');
+                                this.classList.add('btn-primary');
+                                this.disabled = false;
+                            }
+                        }, 2000);
+                    })
+                    .catch(() => {
+                        this.innerHTML = originalHTML;
+                        this.disabled = false;
+                        showNotification('❌ Không thể thêm vào giỏ hàng. Vui lòng thử lại!', 'error');
+                    });
                 });
-            });
-        });
-
-        // Category popup functionality
-        const categoryBtn = document.getElementById('categoryBtn');
-        const categoryPopup = document.getElementById('categoryPopup');
-
-        if (categoryBtn && categoryPopup) {
-            categoryBtn.addEventListener('click', () => {
-                categoryPopup.classList.toggle('show');
-            });
-
-            window.addEventListener('click', (e) => {
-                if (!categoryBtn.contains(e.target) && !categoryPopup.contains(e.target)) {
-                    categoryPopup.classList.remove('show');
-                }
             });
         }
 
-        // Hiện/ẩn popup danh mục sản phẩm
-        document.addEventListener('DOMContentLoaded', function() {
-            var btn = document.getElementById('categoryBtn');
-            var popup = document.getElementById('categoryPopup');
-            if (btn && popup) {
-                btn.addEventListener('mouseenter', function() {
-                    popup.classList.add('show');
-                });
-                btn.addEventListener('mouseleave', function() {
-                    setTimeout(function(){
-                        if (!popup.matches(':hover')) popup.classList.remove('show');
-                    }, 100);
-                });
-                popup.addEventListener('mouseenter', function() {
-                    popup.classList.add('show');
-                });
-                popup.addEventListener('mouseleave', function() {
-                    popup.classList.remove('show');
-                });
-                // Mobile: click để toggle
-                btn.addEventListener('click', function(e) {
-                    if (window.innerWidth < 992) {
-                        popup.classList.toggle('show');
+        // Load New Arrivals from Database
+        function loadNewArrivals() {
+            const container = document.getElementById('newArrivalsContainer');
+            const loading = document.getElementById('newArrivalsLoading');
+            const error = document.getElementById('newArrivalsError');
+            
+            // Show loading
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            container.innerHTML = '';
+            
+            console.log('🔄 Loading new arrivals from database...');
+            
+            // Fetch latest products from API with explicit ordering
+            fetch('<%=request.getContextPath()%>/api/products/latest?limit=6')
+                .then(response => {
+                    console.log('📡 API Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                });
-                // Click ngoài để ẩn
-                document.addEventListener('click', function(e) {
-                    if (!btn.contains(e.target) && !popup.contains(e.target)) {
-                        popup.classList.remove('show');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('📊 API Response data:', data);
+                    loading.style.display = 'none';
+                    
+                    if (data.success && data.data && data.data.length > 0) {
+                        console.log('✅ Successfully loaded', data.data.length, 'products');
+                        
+                        // Enhanced debugging for each product
+                        console.log('🔍 Detailed Product Analysis:');
+                        data.data.forEach((product, index) => {
+                            console.log(`Product ${index + 1} [${product.name}]:`, {
+                                id: product.id,
+                                isActive: product.isActive,
+                                isActiveType: typeof product.isActive,
+                                stockQuantity: product.stockQuantity,
+                                stockType: typeof product.stockQuantity,
+                                createdAt: product.createdAt,
+                                price: product.price,
+                                category: product.category,
+                                grade: product.grade
+                            });
+                        });
+                        
+                        renderNewArrivals(data.data);
+                    } else {
+                        console.warn('⚠️ No products found or API returned empty data');
+                        showNewArrivalsError('Không có sản phẩm mới nào.');
                     }
+                })
+                .catch(err => {
+                    console.error('❌ Error loading new arrivals:', err);
+                    loading.style.display = 'none';
+                    showNewArrivalsError('Không thể tải danh sách sản phẩm mới. Vui lòng thử lại sau.');
                 });
+        }
+        
+        function renderNewArrivals(products) {
+            const container = document.getElementById('newArrivalsContainer');
+            container.innerHTML = '';
+            
+            console.log('🎨 Rendering New Arrivals - Products sorted by newest first:');
+            
+            // Sort products by creation date (newest first) to ensure proper order
+            const sortedProducts = products.sort((a, b) => {
+                const dateA = getProductDate(a.createdAt);
+                const dateB = getProductDate(b.createdAt);
+                return dateB - dateA; // Newest first
+            });
+            
+            sortedProducts.forEach((product, index) => {
+                console.log(`  ${index + 1}. ${product.name} - Created: ${formatProductDate(product.createdAt)}`);
+                const productCard = createProductCard(product);
+                container.appendChild(productCard);
+            });
+            
+            console.log(`✅ Rendered ${sortedProducts.length} products in newest-first order`);
+            
+            // Re-attach event listeners for new add-to-cart buttons
+            attachAddToCartListeners();
+        }
+        
+        function createProductCard(product) {
+            const col = document.createElement('div');
+            col.className = 'col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4';
+            
+            // Handle price formatting
+            let formattedPrice = '0₫';
+            if (product.price) {
+                const price = parseFloat(product.price);
+                if (!isNaN(price)) {
+                    formattedPrice = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(price);
+                }
             }
-        });
+            
+            // Handle image with multiple fallbacks
+            const contextPath = '<%=request.getContextPath()%>';
+            const defaultImage = contextPath + '/img/RGStrikeGundam.jpg';
+            const placeholderImage = 'https://via.placeholder.com/250x250/cccccc/666666?text=Gundam+Model';
+            const productImage = product.imageUrl || defaultImage;
+            
+            // Handle category display
+            const categoryDisplay = getCategoryDisplayName(product.category) || 'Gundam Model';
+            
+            // Handle grade display
+            const gradeDisplay = getGradeDisplayName(product.grade);
+            const finalCategoryDisplay = gradeDisplay || categoryDisplay;
+            
+            // Calculate if product is new (added within last 30 days)
+            const isNew = isProductNew(product.createdAt);
+            const createdDate = formatProductDate(product.createdAt);
+            const newBadge = isNew ? '<span class="badge bg-success">Mới</span>' : '';
+            
+            console.log(`📅 Product Date Info [${product.name}]: Created ${createdDate}, IsNew: ${isNew}`);
+            
+            // Handle stock status - kiểm tra cả is_active và stock_quantity
+            const isActive = product.isActive === true; // Strict check for true
+            const stockQuantity = product.stockQuantity ? parseInt(product.stockQuantity) : 0;
+            const isInStock = isActive && stockQuantity > 0;
+            
+            // Enhanced debugging stock status
+            console.log(`📦 Product Stock Debug [${product.name}]:`, {
+                isActive: product.isActive,
+                isActiveType: typeof product.isActive,
+                stockQuantity: product.stockQuantity,
+                stockQuantityType: typeof product.stockQuantity,
+                parsedStockQuantity: stockQuantity,
+                finalIsInStock: isInStock,
+                createdAt: product.createdAt
+            });
+            
+            const stockBadge = !isInStock ? '<span class="badge bg-danger">Hết hàng</span>' : '';
+            
+            col.innerHTML = `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${productImage}" class="img-fluid" alt="${product.name || 'Gundam Model'}" 
+                             onerror="this.src='${placeholderImage}'">
+                        <div class="product-badges">
+                            ${newBadge}
+                            ${stockBadge}
+                        </div>
+                        <div class="product-overlay">
+                            <a href="${contextPath}/product-detail.jsp?id=${product.id}" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-eye"></i> Xem nhanh
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">${product.name || 'Tên sản phẩm'}</h6>
+                        <p class="product-category">${finalCategoryDisplay}</p>
+                        <div class="product-price">
+                            <span class="current-price">${formattedPrice}</span>
+                        </div>
+                        <button class="btn ${isInStock ? 'btn-primary' : 'btn-secondary'} add-to-cart w-100" 
+                                data-product-id="${product.id}" 
+                                data-dynamic="true"
+                                ${!isInStock ? 'disabled' : ''}>
+                            <i class="fas fa-${isInStock ? 'cart-plus' : 'times'} me-1"></i>
+                            ${isInStock ? 'Thêm vào giỏ' : 'Hết hàng'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+        
+        function getCategoryDisplayName(category) {
+            const categoryNames = {
+                'GUNDAM_BANDAI': 'Gundam Bandai',
+                'PRE_ORDER': 'Pre-Order',
+                'TOOLS_ACCESSORIES': 'Dụng cụ & Phụ kiện'
+            };
+            return categoryNames[category] || category;
+        }
+        
+        function getGradeDisplayName(grade) {
+            const gradeNames = {
+                'HG': 'High Grade (HG)',
+                'RG': 'Real Grade (RG)', 
+                'MG': 'Master Grade (MG)',
+                'PG': 'Perfect Grade (PG)',
+                'SD': 'Super Deformed (SD)',
+                'METAL_BUILD': 'Metal Build',
+                'FULL_MECHANICS': 'Full Mechanics',
+                'TOOLS': 'Dụng cụ',
+                'PAINT': 'Sơn & Vật liệu',
+                'BASE_STAND': 'Đế & Giá đỡ',
+                'DECAL': 'Decal & Nhãn dán'
+            };
+            return gradeNames[grade] || null;
+        }
+        
+        function getProductDate(createdDate) {
+            if (!createdDate) return new Date(0); // Very old date for fallback
+            
+            try {
+                if (Array.isArray(createdDate)) {
+                    // Java LocalDateTime serialized as array [year, month, day, hour, minute, second, nano]
+                    return new Date(createdDate[0], createdDate[1] - 1, createdDate[2], 
+                                  createdDate[3] || 0, createdDate[4] || 0, createdDate[5] || 0);
+                } else {
+                    return new Date(createdDate);
+                }
+            } catch (error) {
+                console.warn('Error parsing product date:', error);
+                return new Date(0);
+            }
+        }
+        
+        function formatProductDate(createdDate) {
+            const date = getProductDate(createdDate);
+            return date.toLocaleString('vi-VN');
+        }
+        
+        function isProductNew(createdDate) {
+            if (!createdDate) return false;
+            
+            try {
+                const productDate = getProductDate(createdDate);
+                const now = new Date();
+                const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+                
+                return productDate >= thirtyDaysAgo;
+            } catch (error) {
+                console.warn('Error checking if product is new:', error);
+                return false;
+            }
+        }
+        
+        function showNewArrivalsError(message) {
+            const error = document.getElementById('newArrivalsError');
+            const messageElement = error.querySelector('i').nextSibling;
+            if (messageElement) {
+                messageElement.textContent = ' ' + message;
+            }
+            error.style.display = 'block';
+            
+            // Add retry button
+            if (!error.querySelector('.retry-btn')) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn btn-outline-warning btn-sm ms-2 retry-btn';
+                retryBtn.innerHTML = '<i class="fas fa-redo me-1"></i>Thử lại';
+                retryBtn.onclick = function() {
+                    error.style.display = 'none';
+                    loadNewArrivals();
+                };
+                error.appendChild(retryBtn);
+            }
+        }
+        
+        function attachAddToCartListeners() {
+            // Only attach to dynamically created buttons
+            document.querySelectorAll('.add-to-cart[data-dynamic="true"]').forEach(button => {
+                // Remove existing listeners to avoid duplicates
+                button.replaceWith(button.cloneNode(true));
+            });
+            
+            // Re-attach listeners to dynamic buttons only
+            document.querySelectorAll('.add-to-cart[data-dynamic="true"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Check if button is disabled (out of stock)
+                    if (this.disabled) {
+                        showNotification('⚠️ Sản phẩm này hiện đang hết hàng', 'warning');
+                        return;
+                    }
+                    
+                    const productId = this.getAttribute('data-product-id');
+                    
+                    // Show loading state
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang thêm...';
+                    this.disabled = true;
+                    
+                    fetch('<%=request.getContextPath()%>/api/cart/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ productId: Number(productId), quantity: 1 })
+                    }) 
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
+                            this.classList.add('btn-success');
+                            this.classList.remove('btn-primary');
+                            
+                            // Show success notification
+                            showNotification('✅ Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                        } else {
+                            this.innerHTML = originalHTML;
+                            this.disabled = false;
+                            showNotification('❌ ' + (data.message || 'Có lỗi xảy ra!'), 'error');
+                        }
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            if (this.classList.contains('btn-success')) {
+                                this.innerHTML = originalHTML;
+                                this.classList.remove('btn-success');
+                                this.classList.add('btn-primary');
+                                this.disabled = false;
+                            }
+                        }, 2000);
+                    })
+                    .catch(() => {
+                        this.innerHTML = originalHTML;
+                        this.disabled = false;
+                        showNotification('❌ Không thể thêm vào giỏ hàng. Vui lòng thử lại!', 'error');
+                    });
+                });
+            });
+        }
+        
+        // Simple notification function
+        function showNotification(message, type = 'info') {
+            // Create or get notification container
+            let container = document.getElementById('notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notification-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 9999;
+                    max-width: 350px;
+                `;
+                document.body.appendChild(container);
+            }
+            
+            // Create notification
+            const notification = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+            notification.className = `alert ${bgClass} text-white alert-dismissible fade show mb-2`;
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
     </script>
     <!-- Final auth state verification and cleanup -->
     <script>
         window.addEventListener('load', function() {
             console.log('🔄 Window loaded, performing final auth checks...');
+            
+            // Initialize static cart buttons first
+            initializeStaticCartButtons();
+            
+            // Load new arrivals from database
+            loadNewArrivals();
             
             // Debug auth state immediately
             console.log('📊 Initial Auth State Debug:');
