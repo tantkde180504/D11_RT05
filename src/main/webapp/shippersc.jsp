@@ -123,6 +123,69 @@
             </div>
           </div>
         </div>
+        
+        <!-- Modal: Chụp ảnh giao hàng -->
+        <div class="modal fade" id="cameraModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chụp ảnh xác nhận giao hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div id="camera-container" style="display: none;">
+                            <video id="camera-video" autoplay muted style="max-width: 100%; max-height: 400px; border-radius: 8px;"></video>
+                            <div class="mt-3">
+                                <button class="btn btn-success btn-lg" onclick="capturePhoto()">
+                                    <i class="fas fa-camera"></i> Chụp ảnh
+                                </button>
+                                <button class="btn btn-secondary btn-lg ms-2" onclick="stopCamera()">
+                                    <i class="fas fa-times"></i> Hủy
+                                </button>
+                            </div>
+                        </div>
+                        <div id="photo-preview" style="display: none;">
+                            <img id="captured-image" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid #28a745;">
+                            <div class="mt-3">
+                                <button class="btn btn-primary btn-lg" onclick="savePhoto()">
+                                    <i class="fas fa-save"></i> Lưu ảnh
+                                </button>
+                                <button class="btn btn-warning btn-lg ms-2" onclick="retakePhoto()">
+                                    <i class="fas fa-redo"></i> Chụp lại
+                                </button>
+                                <button class="btn btn-secondary btn-lg ms-2" onclick="cancelPhoto()">
+                                    <i class="fas fa-times"></i> Hủy
+                                </button>
+                            </div>
+                        </div>
+                        <div id="camera-error" style="display: none;" class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p class="mb-0">Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập camera và thử lại.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal: Xem ảnh giao hàng -->
+        <div class="modal fade" id="viewPhotoModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ảnh xác nhận giao hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div id="delivery-photos-container">
+                            <!-- Ảnh sẽ được load từ JavaScript -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/shipper.js"></script>

@@ -2,7 +2,9 @@ package com.mycompany.controller;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -12,12 +14,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.model.Order;
+import com.mycompany.model.OrderImage;
+import com.mycompany.repository.OrderImageRepository;
 import com.mycompany.repository.OrderRepository;
 
 @RestController
@@ -26,6 +31,9 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepository;
+    
+    @Autowired
+    private OrderImageRepository orderImageRepository;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -115,6 +123,26 @@ public class OrderController {
         return ResponseEntity.ok(dto);
     }
 
+    // ✅ Endpoint lấy ảnh giao hàng theo orderId
+    @GetMapping("/{orderId}/delivery-photos")
+    public ResponseEntity<List<Map<String, Object>>> getDeliveryPhotosByOrderId(@PathVariable Long orderId) {
+        try {
+            List<OrderImage> photos = orderImageRepository.findByOrderIdOrderByCreatedAtDesc(orderId);
+            
+            List<Map<String, Object>> photoList = new ArrayList<>();
+            for (OrderImage photo : photos) {
+                Map<String, Object> photoInfo = new HashMap<>();
+                photoInfo.put("id", photo.getId());
+                photoInfo.put("photoUrl", photo.getImageUrl());
+                photoInfo.put("uploadedAt", photo.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                photoList.add(photoInfo);
+            }
+            
+            return ResponseEntity.ok(photoList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
+        }
+    }
 
     private OrderDetailDTO mapToDTO(Order order) {
         OrderDetailDTO dto = new OrderDetailDTO();

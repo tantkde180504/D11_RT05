@@ -1,6 +1,16 @@
 package com.mycompany.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -13,9 +23,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.model.Order;
+import com.mycompany.model.OrderImage;
 import com.mycompany.model.Shipping;
+import com.mycompany.repository.OrderImageRepository;
 import com.mycompany.repository.OrderRepository;
 import com.mycompany.repository.ShippingRepository;
 
@@ -28,6 +41,9 @@ public class ShippingController {
 
     @Autowired
     private OrderRepository orderRepository;
+    
+    @Autowired
+    private OrderImageRepository orderImageRepository;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ShippingDTO> getAllShipping(@RequestParam(value = "status", required = false) String status) {
@@ -158,5 +174,98 @@ public class ShippingController {
         public java.math.BigDecimal unitPrice;
         public java.math.BigDecimal total;
     }
+    
+    // Upload ảnh delivery confirmation
+    @PostMapping("/upload-delivery-photo")
+    public ResponseEntity<Map<String, Object>> uploadDeliveryPhoto(
+            @RequestParam("shippingId") Long shippingId,
+            @RequestParam("photo") MultipartFile photo) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Kiểm tra shipping tồn tại
+            Optional<Shipping> shippingOpt = shippingRepository.findById(shippingId);
+            if (!shippingOpt.isPresent()) {
+                response.put("success", false);
+                response.put("message", "Không tìm thấy thông tin giao hàng");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Shipping shipping = shippingOpt.get();
+            
+            // Tạo thư mục upload nếu chưa tồn tại
+            Path uploadPath = Paths.get("src/main/webapp/uploads/delivery-photos");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            
+            // Tạo tên file unique
+            String fileExtension = "";
+            String originalFilename = photo.getOriginalFilename();
+            
+            if (originalFilename != null && originalFilename.contains(".")) {
+                fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String uniqueFilename = "delivery_" + shippingId + "_" + 
+                                  LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) +
+                                  fileExtension;
+            
+            // Lưu file
+            Path filePath = uploadPath.resolve(uniqueFilename);
+            Files.copy(photo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            
+            // Lưu thông tin vào database (sử dụng orderId từ shipping)
+            Long orderId = shipping.getOrderId();
+            String photoUrl = "/uploads/delivery-photos/" + uniqueFilename;
+            OrderImage orderImage = new OrderImage();
+            orderImage.setOrderId(orderId);
+            orderImage.setImageUrl(photoUrl);
+            orderImageRepository.save(orderImage);
+            
+            response.put("success", true);
+            response.put("message", "Upload ảnh thành công");
+            response.put("photoUrl", photoUrl);
+            response.put("photoId", orderImage.getId());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (IOException e) {
+            response.put("success", false);
+            response.put("message", "Lỗi lưu file: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Lỗi hệ thống: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    // Lấy danh sách ảnh delivery
+    @GetMapping("/delivery-photos")
+    public ResponseEntity<List<Map<String, Object>>> getDeliveryPhotos(@RequestParam("shippingId") Long shippingId) {
+        try {
+            // Tìm shipping để lấy orderId
+            Optional<Shipping> shippingOpt = shippingRepository.findById(shippingId);
+            if (!shippingOpt.isPresent()) {
+                return ResponseEntity.badRequest().body(new ArrayList<>());
+            }
+            
+            Long orderId = shippingOpt.get().getOrderId();
+            List<OrderImage> photos = orderImageRepository.findByOrderIdOrderByCreatedAtDesc(orderId);
+            
+            List<Map<String, Object>> photoList = new ArrayList<>();
+            for (OrderImage photo : photos) {
+                Map<String, Object> photoInfo = new HashMap<>();
+                photoInfo.put("id", photo.getId());
+                photoInfo.put("photoUrl", photo.getImageUrl());
+                photoInfo.put("uploadedAt", photo.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                photoList.add(photoInfo);
+            }
+            
+            return ResponseEntity.ok(photoList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
+        }
+    }
 }
-

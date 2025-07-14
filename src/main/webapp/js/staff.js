@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
     loadComplaintsFromAPI();
     initInventoryFilters();
     checkLowStockAlert();
+    loadOrdersFromAPI();
+    initOrdersTab();
+    loadReturns(); // Load returns mặc định
 });
 
 // Tab switching functionality
@@ -1108,6 +1111,49 @@ function viewLowStockProducts() {
     history.replaceState(null, '', '#inventory');
 }
 window.viewLowStockProducts = viewLowStockProducts;
+// ✅ Initialize orders tab
+function initOrdersTab() {
+    // Initialize filter change event
+    const orderFilter = document.getElementById('order-status-filter');
+    if (orderFilter) {
+        orderFilter.addEventListener('change', loadOrdersFromAPI);
+    }
+}
+
+// Function xác nhận hoàn thành đổi trả (PROCESSING → COMPLETED)
+function confirmReturnComplete(returnId, returnCode) {
+    // Hiển thị dialog xác nhận với thông tin rõ ràng
+    const isConfirmed = confirm(
+        "🔔 XÁC NHẬN HOÀN THÀNH ĐỔI TRẢ\n\n" +
+        `Mã đơn đổi trả: ${returnCode}\n` +
+        "Trạng thái hiện tại: Chờ xử lý\n" +
+        "Trạng thái mới: Đã hoàn thành\n\n" +
+        "⚠️ Sau khi xác nhận, đơn đổi trả sẽ được đánh dấu là hoàn thành.\n\n" +
+        "Bạn có chắc chắn muốn hoàn thành đơn đổi trả này?"
+    );
+
+    if (!isConfirmed) return;
+
+    // Gửi request cập nhật trạng thái sử dụng API có sẵn
+    fetch(`/api/returns/complete?returnId=${returnId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Không thể cập nhật trạng thái");
+            return res.text();
+        })
+        .then(msg => {
+            showSuccessMessage("✅ Đã xác nhận hoàn thành đơn đổi trả thành công!");
+            loadReturns(); // Reload để cập nhật giao diện
+        })
+        .catch(err => {
+            console.error("Lỗi xác nhận hoàn thành đổi trả:", err);
+            showErrorMessage("❌ Lỗi khi xác nhận hoàn thành đơn đổi trả. Vui lòng thử lại.");
+        });
+}
+
+// Function load đơn hàng từ API với chức năng xem ảnh giao hàng
 function loadOrdersFromAPI() {
     const status = document.getElementById('order-status-filter')?.value || 'ALL';
     fetch(`/api/orders?status=${status}`)
@@ -1139,7 +1185,10 @@ function loadOrdersFromAPI() {
                             <button class="btn btn-sm btn-danger me-1" onclick="cancelOrder(${o.id})">
                                 <i class="fas fa-times"></i>
                             </button>` : ''}
-
+                        ${o.status === 'DELIVERED' ? `
+                            <button class="btn btn-sm btn-primary me-1" onclick="viewDeliveryPhotos(${o.id})" title="Xem ảnh giao hàng">
+                                <i class="fas fa-images"></i>
+                            </button>` : ''}
                         <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -1157,23 +1206,23 @@ function loadOrdersFromAPI() {
         });
 }
 
-function formatCurrency(amount) {
-    return Number(amount).toLocaleString('vi-VN') + '₫';
-}
+// function formatCurrency(amount) {
+//     return Number(amount).toLocaleString('vi-VN') + '₫';
+// }
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
-}
+// function formatDate(dateStr) {
+//     const date = new Date(dateStr);
+//     return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+// }
 
-function mapOrderStatus(status) {
-    switch (status) {
-        case 'PENDING': return 'Chờ xác nhận';
-        case 'DELIVERED': return 'Đã giao';
-        case 'CANCELLED': return 'Đã hủy';
-        default: return status;
-    }
-}
+// function mapOrderStatus(status) {
+//     switch (status) {
+//         case 'PENDING': return 'Chờ xác nhận';
+//         case 'DELIVERED': return 'Đã giao';
+//         case 'CANCELLED': return 'Đã hủy';
+//         default: return status;
+//     }
+// }
 
 function confirmOrder(orderId) {
     if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
@@ -1412,6 +1461,138 @@ function cancelOrder(orderId) {
         showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
     });
 }
+function mapOrderStatus(status) {
+    switch (status) {
+        case 'PENDING': return 'Chờ xác nhận';
+        case 'DELIVERED': return 'Đã giao';
+        case 'CANCELLED': return 'Đã hủy';
+        default: return status;
+    }
+}
+
+// ✅ Function xem ảnh giao hàng của đơn hàng
+function viewDeliveryPhotos(orderId) {
+    fetch(`/api/orders/${orderId}/delivery-photos`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch delivery photos');
+            }
+            return response.json();
+        })
+        .then(data => {
+            showDeliveryPhotosModal(data, orderId);
+        })
+        .catch(err => {
+            console.error('Lỗi lấy ảnh:', err);
+            alert('❌ Lỗi lấy ảnh giao hàng: ' + err.message);
+        });
+}
+
+// ✅ Function hiển thị modal ảnh giao hàng
+function showDeliveryPhotosModal(photos, orderId) {
+    // Tạo modal nếu chưa có
+    let modal = document.getElementById('deliveryPhotosModal');
+    if (!modal) {
+        createDeliveryPhotosModal();
+        modal = document.getElementById('deliveryPhotosModal');
+    }
+    
+    const modalTitle = modal.querySelector('.modal-title');
+    const photosContainer = modal.querySelector('#delivery-photos-container');
+    
+    modalTitle.textContent = `Ảnh giao hàng - Đơn hàng #${orderId}`;
+    
+    if (photos && photos.length > 0) {
+        let photosHtml = '<div class="row">';
+        photos.forEach((photo, index) => {
+            photosHtml += `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <img src="${photo.photoUrl}" class="card-img-top" alt="Ảnh giao hàng ${index + 1}" 
+                             style="height: 300px; object-fit: cover; cursor: pointer;" 
+                             onclick="showFullPhoto('${photo.photoUrl}')">
+                        <div class="card-body p-2">
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i> ${photo.uploadedAt}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        photosHtml += '</div>';
+        photosContainer.innerHTML = photosHtml;
+    } else {
+        photosContainer.innerHTML = `
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-camera fa-3x mb-3"></i>
+                <p>Chưa có ảnh giao hàng nào cho đơn hàng này.</p>
+            </div>
+        `;
+    }
+    
+    new bootstrap.Modal(modal).show();
+}
+
+// ✅ Function tạo modal ảnh giao hàng
+function createDeliveryPhotosModal() {
+    const modalHtml = `
+        <div class="modal fade" id="deliveryPhotosModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ảnh giao hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="delivery-photos-container">
+                            <!-- Photos will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// ✅ Function hiển thị ảnh full size
+function showFullPhoto(photoUrl) {
+    const fullPhotoHtml = `
+        <div class="modal fade" id="fullPhotoModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xem ảnh chi tiết</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="${photoUrl}" class="img-fluid" alt="Ảnh giao hàng" style="max-height: 80vh;">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <a href="${photoUrl}" download class="btn btn-primary">
+                            <i class="fas fa-download"></i> Tải xuống
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('fullPhotoModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    document.body.insertAdjacentHTML('beforeend', fullPhotoHtml);
+    new bootstrap.Modal(document.getElementById('fullPhotoModal')).show();
+}
 // Load returns từ API
 function loadReturns(status = 'ALL') {
     let url = '/api/returns';
@@ -1428,6 +1609,7 @@ function loadReturns(status = 'ALL') {
 // Render danh sách returns vào bảng
 function renderReturnsTable(returns) {
     const tableBody = document.getElementById('returns-table-body');
+    if (!tableBody) return;
     tableBody.innerHTML = '';
 
     if (!returns || returns.length === 0) {
@@ -1447,11 +1629,14 @@ function renderReturnsTable(returns) {
             <td>${ret.requestType || ''}</td>
             <td>${ret.createdAt || ''}</td>
             <td>
-                <button class="btn btn-sm btn-info" title="Xem chi tiết" onclick="viewReturnDetail(${ret.id})">
+                <button class="btn btn-sm btn-info me-1" title="Xem chi tiết" onclick="viewReturnDetail(${ret.id})">
                     <i class="fas fa-eye"></i>
                 </button>
-            </td>
-        `;
+                ${ret.status === 'PROCESSING' ? `
+                <button class="btn btn-sm btn-success" title="Xác nhận hoàn thành" onclick="confirmReturnComplete(${ret.id}, '${ret.returnCode || ret.id}')">
+                    <i class="fas fa-check"></i> Xác nhận
+                </button>` : ''}
+            </td>`;
         tableBody.appendChild(row);
     });
 }
@@ -1489,12 +1674,11 @@ function viewReturnDetail(returnId) {
         .catch(error => console.error('Lỗi khi xem chi tiết:', error));
 }
 
-// Sự kiện filter
-document.getElementById('filter-return-status').addEventListener('change', function () {
-    loadReturns(this.value);
-});
-
-// Load mặc định khi vào tab
 document.addEventListener('DOMContentLoaded', function () {
-    loadReturns();
+    const filterElement = document.getElementById('filter-return-status');
+    if (filterElement) {
+        filterElement.addEventListener('change', function () {
+            loadReturns(this.value);
+        });
+    }
 });

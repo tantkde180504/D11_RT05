@@ -37,6 +37,13 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("/js/");
         registry.addResourceHandler("/img/**")
                 .addResourceLocations("/img/");
+        // Cấu hình để phục vụ ảnh upload
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:src/main/webapp/uploads/");
+        
+        // Cấu hình để phục vụ ảnh giao hàng
+        registry.addResourceHandler("/uploads/delivery-photos/**")
+                .addResourceLocations("file:src/main/webapp/uploads/delivery-photos/");
     }
     
     // COMMENT: Đã cấu hình CORS ở SecurityConfig.java, không cần ở đây để tránh conflict
