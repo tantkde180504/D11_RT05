@@ -941,7 +941,7 @@ function initInventoryFilters() {
 }
 // Định nghĩa hàm chi tiết
 function viewProductDetails(productId) {
-    fetch(`/api/inventory/products/{id}`)
+    fetch(`/api/inventory/products/${productId}`)
         .then(res => {
             if (!res.ok) throw new Error('Không tìm thấy sản phẩm');
             return res.json();

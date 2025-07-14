@@ -208,10 +208,10 @@
                             <div class="customer-list-container">
                                 <div class="search-box mb-3">
                                     <i class="fas fa-search"></i>
-                                    <input type="text" id="customer-search" class="form-control" 
-                                           placeholder="Tìm kiếm khách hàng...">
+                                    <input type="text" id="customer-search" class="form-control"
+                                        placeholder="Tìm kiếm khách hàng...">
                                 </div>
-                                
+
                                 <div id="customer-list" class="customer-list">
                                     <div class="text-center p-3 text-muted">
                                         <i class="fas fa-users fa-2x mb-2"></i>
@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Chat Area -->
                         <div class="col-lg-8">
                             <div class="chat-area">
@@ -239,22 +239,24 @@
                                         <span class="badge bg-success">Online</span>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Chat Messages -->
                                 <div id="staff-chat-messages" class="chat-messages">
                                     <div class="empty-chat">
                                         <i class="fas fa-comments fa-3x text-muted mb-3"></i>
                                         <h5 class="text-muted">Chọn khách hàng để bắt đầu chat</h5>
-                                        <p class="text-muted">Chọn một khách hàng từ danh sách bên trái để bắt đầu hội thoại</p>
+                                        <p class="text-muted">Chọn một khách hàng từ danh sách bên trái để bắt đầu hội
+                                            thoại</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Chat Input -->
                                 <div id="staff-chat-input" class="chat-input" style="display: none;">
                                     <div class="input-group">
-                                        <input type="text" id="staff-message-input" class="form-control" 
-                                               placeholder="Nhập tin nhắn..." disabled>
-                                        <button id="staff-send-button" class="btn btn-primary" onclick="sendStaffMessage()" disabled>
+                                        <input type="text" id="staff-message-input" class="form-control"
+                                            placeholder="Nhập tin nhắn..." disabled>
+                                        <button id="staff-send-button" class="btn btn-primary"
+                                            onclick="sendStaffMessage()" disabled>
                                             <i class="fas fa-paper-plane"></i>
                                         </button>
                                     </div>
@@ -508,189 +510,673 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- Support Tab -->
+            <div id="support" class="tab-content">
+                <div class="staff-card">
+                    <h5><i class="fas fa-life-ring me-2 text-primary"></i>Hỗ trợ khách hàng</h5>
 
-                <!-- Support Tab -->
-                <div id="support" class="tab-content">
-                    <div class="staff-card">
-                        <h5><i class="fas fa-life-ring me-2 text-primary"></i>Hỗ trợ khách hàng</h5>
-
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h6><i class="fas fa-question-circle me-2"></i>FAQ Quản lý</h6>
-                                <div class="accordion" id="faqAccordion">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#faq1">
-                                                Làm thế nào để xử lý khiếu nại?
-                                            </button>
-                                        </h2>
-                                        <div id="faq1" class="accordion-collapse collapse show"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                1. Đọc kỹ nội dung khiếu nại<br>
-                                                2. Liên hệ khách hàng để hiểu rõ vấn đề<br>
-                                                3. Đưa ra giải pháp phù hợp<br>
-                                                4. Theo dõi và cập nhật trạng thái
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#faq2">
-                                                Quy trình xử lý đổi trả
-                                            </button>
-                                        </h2>
-                                        <div id="faq2" class="accordion-collapse collapse"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                1. Kiểm tra điều kiện đổi trả<br>
-                                                2. Xác minh tình trạng sản phẩm<br>
-                                                3. Phê duyệt hoặc từ chối yêu cầu<br>
-                                                4. Xử lý hoàn tiền/đổi hàng
-                                            </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h6><i class="fas fa-question-circle me-2"></i>FAQ Quản lý</h6>
+                            <div class="accordion" id="faqAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#faq1">
+                                            Làm thế nào để xử lý khiếu nại?
+                                        </button>
+                                    </h2>
+                                    <div id="faq1" class="accordion-collapse collapse show"
+                                        data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            1. Đọc kỹ nội dung khiếu nại<br>
+                                            2. Liên hệ khách hàng để hiểu rõ vấn đề<br>
+                                            3. Đưa ra giải pháp phù hợp<br>
+                                            4. Theo dõi và cập nhật trạng thái
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <h6><i class="fas fa-tools me-2"></i>Công cụ hỗ trợ</h6>
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-calculator me-2"></i>Tính toán phí vận chuyển
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-search me-2"></i>Tra cứu đơn hàng
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-chart-bar me-2"></i>Báo cáo thống kê
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-file-export me-2"></i>Xuất dữ liệu
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Update Stock Modal -->
-                <div class="modal fade" id="updateStockModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Cập nhật số lượng</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="text-center mb-4">
-                                    <img id="update-product-image" src="" class="rounded mb-3" alt="Product">
-                                    <h6 id="update-product-name">Tên sản phẩm</h6>
-                                    <p class="text-muted">SKU: <span id="update-product-sku">---</span></p>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Số lượng hiện tại</label>
-                                    <input type="number" class="form-control" id="current-stock" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Số lượng mới</label>
-                                    <input type="number" class="form-control" id="new-stock"
-                                        placeholder="Nhập số lượng mới">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Lý do thay đổi</label>
-                                    <textarea class="form-control" rows="3" id="update-reason"
-                                        placeholder="Nhập lý do..."></textarea>
-                                </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button id="btn-update-stock" type="button" class="btn btn-primary">Cập nhật</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product Detail Modal -->
-                <div class="modal fade" id="productDetailModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title"><i class="fas fa-eye me-2"></i>Chi tiết sản phẩm</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-5 text-center">
-                                        <img id="detail-product-image" src="" class="img-fluid rounded"
-                                            alt="Ảnh sản phẩm">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <h4 id="detail-product-name"></h4>
-                                        <p><strong>SKU:</strong> <span id="detail-product-sku"></span></p>
-                                        <p><strong>Giá:</strong> <span id="detail-product-price"></span></p>
-                                        <p><strong>Danh mục:</strong> <span id="detail-product-category"></span></p>
-                                        <p><strong>Grade:</strong> <span id="detail-product-grade"></span></p>
-                                        <p><strong>Thương hiệu:</strong> <span id="detail-product-brand"></span></p>
-                                        <p><strong>Tồn kho:</strong> <span id="detail-product-stock"></span></p>
-                                        <p><strong>Mô tả:</strong><br><span id="detail-product-desc"></span></p>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#faq2">
+                                            Quy trình xử lý đổi trả
+                                        </button>
+                                    </h2>
+                                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            1. Kiểm tra điều kiện đổi trả<br>
+                                            2. Xác minh tình trạng sản phẩm<br>
+                                            3. Phê duyệt hoặc từ chối yêu cầu<br>
+                                            4. Xử lý hoàn tiền/đổi hàng
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <h6><i class="fas fa-tools me-2"></i>Công cụ hỗ trợ</h6>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-calculator me-2"></i>Tính toán phí vận chuyển
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-search me-2"></i>Tra cứu đơn hàng
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-chart-bar me-2"></i>Báo cáo thống kê
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-file-export me-2"></i>Xuất dữ liệu
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
+            <!-- Update Stock Modal -->
+            <div class="modal fade" id="updateStockModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Cập nhật số lượng</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center mb-4">
+                                <img id="update-product-image" src="" class="rounded mb-3" alt="Product">
+                                <h6 id="update-product-name">Tên sản phẩm</h6>
+                                <p class="text-muted">SKU: <span id="update-product-sku">---</span></p>
+                            </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="quick-action-btn d-block" title="Tin nhắn nhanh" data-bs-toggle="modal"
-                    data-bs-target="#quickMessageModal">
-                    <i class="fas fa-comment"></i>
-                </button>
-                <button class="quick-action-btn d-block" title="Gọi điện">
-                    <i class="fas fa-phone"></i>
-                </button>
-                <button class="quick-action-btn d-block" title="Ghi chú">
-                    <i class="fas fa-sticky-note"></i>
-                </button>
+                            <div class="mb-3">
+                                <label class="form-label">Số lượng hiện tại</label>
+                                <input type="number" class="form-control" id="current-stock" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số lượng mới</label>
+                                <input type="number" class="form-control" id="new-stock"
+                                    placeholder="Nhập số lượng mới">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Lý do thay đổi</label>
+                                <textarea class="form-control" rows="3" id="update-reason"
+                                    placeholder="Nhập lý do..."></textarea>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button id="btn-update-stock" type="button" class="btn btn-primary">Cập nhật</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Modals -->
-            <!-- Compose Message Modal -->
-            <div class="modal fade modal-modern" id="composeModal" tabindex="-1">
+            <!-- Product Detail Modal -->
+            <div class="modal fade" id="productDetailModal" tabindex="-1">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Soạn tin nhắn mới</h5>
+                            <h5 class="modal-title"><i class="fas fa-eye me-2"></i>Chi tiết sản phẩm</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-5 text-center">
+                                    <img id="detail-product-image" src="" class="img-fluid rounded" alt="Ảnh sản phẩm">
+                                </div>
+                                <div class="col-md-7">
+                                    <h4 id="detail-product-name"></h4>
+                                    <p><strong>SKU:</strong> <span id="detail-product-sku"></span></p>
+                                    <p><strong>Giá:</strong> <span id="detail-product-price"></span></p>
+                                    <p><strong>Danh mục:</strong> <span id="detail-product-category"></span></p>
+                                    <p><strong>Grade:</strong> <span id="detail-product-grade"></span></p>
+                                    <p><strong>Thương hiệu:</strong> <span id="detail-product-brand"></span></p>
+                                    <p><strong>Tồn kho:</strong> <span id="detail-product-stock"></span></p>
+                                    <p><strong>Mô tả:</strong><br><span id="detail-product-desc"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="quick-action-btn d-block" title="Tin nhắn nhanh" data-bs-toggle="modal"
+                data-bs-target="#quickMessageModal">
+                <i class="fas fa-comment"></i>
+            </button>
+            <button class="quick-action-btn d-block" title="Gọi điện">
+                <i class="fas fa-phone"></i>
+            </button>
+            <button class="quick-action-btn d-block" title="Ghi chú">
+                <i class="fas fa-sticky-note"></i>
+            </button>
+        </div>
+
+        <!-- Modals -->
+        <!-- Compose Message Modal -->
+        <div class="modal fade modal-modern" id="composeModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Soạn tin nhắn mới</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">Người nhận</label>
+                                <input type="email" class="form-control" placeholder="email@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tiêu đề</label>
+                                <input type="text" class="form-control" placeholder="Nhập tiêu đề...">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nội dung</label>
+                                <textarea class="form-control" rows="6"
+                                    placeholder="Nhập nội dung tin nhắn..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mức độ ưu tiên</label>
+                                <select class="form-select">
+                                    <option>Bình thường</option>
+                                    <option>Cao</option>
+                                    <option>Thấp</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary">Gửi tin nhắn</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complaint Detail Modal -->
+        <div class="modal fade modal-modern" id="complaintModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Chi tiết khiếu nại
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Thông tin khiếu nại -->
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Thông tin khiếu nại</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Khách hàng:</strong> <span
+                                                        id="complaint-customer-name"></span></p>
+                                                <p><strong>Email:</strong> <span id="complaint-email"></span></p>
+                                                <p><strong>Điện thoại:</strong> <span id="complaint-phone"></span>
+                                                </p>
+                                                <p><strong>Đơn hàng:</strong> <span id="complaint-order-number"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Ngày tạo:</strong> <span id="complaint-created-at"></span>
+                                                </p>
+                                                <p><strong>Lí do:</strong> <span id="complaint-category"></span></p>
+                                                <p><strong>Trạng thái:</strong> <span id="complaint-status"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <h6>Nội dung khiếu nại:</h6>
+                                        <p id="complaint-content"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phản hồi & xử lý -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-cog me-2"></i>Phản hồi & giải pháp</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Giải pháp</label>
+                                            <select class="form-select" id="complaint-solution">
+                                                <option value="">-- Chọn giải pháp --</option>
+                                                <option>Đổi sản phẩm mới</option>
+                                                <option>Hoàn tiền</option>
+                                                <option>Sửa chữa</option>
+                                                <option>Giảm giá đơn hàng tiếp theo</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phản hồi nhân viên</label>
+                                            <textarea class="form-control" id="complaint-staff-response" rows="4"
+                                                placeholder="Nhập phản hồi..."></textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-success w-50"
+                                                onclick="handleComplaintUpdate('PROCESSING')">
+                                                <i class="fas fa-check me-1"></i>Phê duyệt
+                                            </button>
+                                            <button class="btn btn-danger w-50"
+                                                onclick="handleComplaintUpdate('REJECTED')">
+                                                <i class="fas fa-times me-1"></i>Từ chối
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Inventory Update Modal -->
+        <div class="modal fade modal-modern" id="inventoryModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Cập nhật tồn kho</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Sản phẩm</label>
+                                        <select class="form-select">
+                                            <option>Chọn sản phẩm...</option>
+                                            <option>RG Strike Freedom Gundam</option>
+                                            <option>MG Barbatos</option>
+                                            <option>PG Unicorn Gundam</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Loại cập nhật</label>
+                                        <select class="form-select">
+                                            <option>Nhập kho</option>
+                                            <option>Xuất kho</option>
+                                            <option>Điều chỉnh</option>
+                                            <option>Kiểm kê</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Số lượng</label>
+                                        <input type="number" class="form-control" placeholder="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Lý do</label>
+                                        <select class="form-select">
+                                            <option>Nhập hàng mới</option>
+                                            <option>Bán hàng</option>
+                                            <option>Hàng lỗi</option>
+                                            <option>Mất mát</option>
+                                            <option>Khác</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ghi chú</label>
+                                        <textarea class="form-control" rows="3"
+                                            placeholder="Nhập ghi chú..."></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ngày hiệu lực</label>
+                                        <input type="date" class="form-control" value="2024-03-15">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary">Cập nhật tồn kho</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Return Detail Modal -->
+        <div class="modal fade modal-modern" id="returnModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-undo me-2"></i>Chi tiết yêu cầu đổi trả #12345</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-shopping-cart me-2"></i>Thông tin đơn hàng</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Mã đơn hàng:</strong> #12345</p>
+                                                <p><strong>Khách hàng:</strong> Nguyễn Văn A</p>
+                                                <p><strong>Email:</strong> customer@email.com</p>
+                                                <p><strong>Sản phẩm:</strong> RG Strike Freedom Gundam</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Ngày mua:</strong> 10/03/2024</p>
+                                                <p><strong>Ngày yêu cầu:</strong> 15/03/2024</p>
+                                                <p><strong>Giá trị:</strong> 850,000₫</p>
+                                                <p><strong>Trạng thái:</strong> <span
+                                                        class="status-badge status-pending">Chờ xử lý</span></p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <h6>Lý do đổi trả:</h6>
+                                        <p>Sản phẩm bị lỗi khi nhận hàng. Một số chi tiết bị gãy và hộp bị móp méo.
+                                        </p>
+
+                                        <h6 class="mt-3">Hình ảnh:</h6>
+                                        <div class="d-flex gap-2">
+                                            <img src="https://via.placeholder.com/80x80" class="rounded"
+                                                alt="Return evidence">
+                                            <img src="https://via.placeholder.com/80x80" class="rounded"
+                                                alt="Return evidence">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-cogs me-2"></i>Xử lý yêu cầu</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label class="form-label">Quyết định</label>
+                                                <select class="form-select">
+                                                    <option>Chọn quyết định...</option>
+                                                    <option>Phê duyệt đổi hàng</option>
+                                                    <option>Phê duyệt hoàn tiền</option>
+                                                    <option>Từ chối</option>
+                                                    <option>Yêu cầu thêm thông tin</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Ghi chú</label>
+                                                <textarea class="form-control" rows="4"
+                                                    placeholder="Nhập ghi chú xử lý..."></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Phí xử lý</label>
+                                                <input type="number" class="form-control" placeholder="0" value="0">
+                                            </div>
+                                            <button type="button" class="btn btn-success w-100 mb-2">Phê
+                                                duyệt</button>
+                                            <button type="button" class="btn btn-danger w-100">Từ chối</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Detail Modal -->
+            <div class="modal fade modal-modern" id="orderDetailModal" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-shopping-cart me-2"></i>Chi tiết đơn hàng
+                                #ORD001</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6><i class="fas fa-list me-2"></i>Sản phẩm trong đơn hàng</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Sản phẩm</th>
+                                                            <th>SKU</th>
+                                                            <th>Số lượng</th>
+                                                            <th>Đơn giá</th>
+                                                            <th>Thành tiền</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="https://via.placeholder.com/40x40"
+                                                                        class="rounded me-2">
+                                                                    <span>RG Strike Freedom Gundam</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>RG-001</td>
+                                                            <td>1</td>
+                                                            <td>850,000₫</td>
+                                                            <td>850,000₫</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="https://via.placeholder.com/40x40"
+                                                                        class="rounded me-2">
+                                                                    <span>Gundam Panel Line Marker</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>TOOL-001</td>
+                                                            <td>1</td>
+                                                            <td>100,000₫</td>
+                                                            <td>100,000₫</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6>Thông tin khách hàng:</h6>
+                                                    <p><strong>Tên:</strong> Nguyễn Văn A</p>
+                                                    <p><strong>Email:</strong> customer@email.com</p>
+                                                    <p><strong>Điện thoại:</strong> 0123456789</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6>Địa chỉ giao hàng:</h6>
+                                                    <p>123 Đường ABC, Quận 1<br>TP. Hồ Chí Minh<br>Việt Nam</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6><i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>Mã đơn hàng:</strong> #ORD001</p>
+                                            <p><strong>Ngày đặt:</strong> 15/03/2024</p>
+                                            <p><strong>Trạng thái:</strong> <span
+                                                    class="status-badge status-pending">Chờ xác nhận</span></p>
+                                            <p><strong>Phương thức thanh toán:</strong> COD</p>
+                                            <hr>
+                                            <div class="d-flex justify-content-between">
+                                                <span>Tạm tính:</span>
+                                                <span>950,000₫</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span>Phí vận chuyển:</span>
+                                                <span>0₫</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span>Giảm giá:</span>
+                                                <span>0₫</span>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between">
+                                                <strong>Tổng cộng:</strong>
+                                                <strong>950,000₫</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mt-3">
+                                        <div class="card-header">
+                                            <h6><i class="fas fa-truck me-2"></i>Cập nhật trạng thái</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <form>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Trạng thái mới</label>
+                                                    <select class="form-select">
+                                                        <option>Chờ xác nhận</option>
+                                                        <option>Đã xác nhận</option>
+                                                        <option>Đang chuẩn bị</option>
+                                                        <option>Đang giao</option>
+                                                        <option>Hoàn thành</option>
+                                                        <option>Đã hủy</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Ghi chú</label>
+                                                    <textarea class="form-control" rows="3"
+                                                        placeholder="Ghi chú cập nhật..."></textarea>
+                                                </div>
+                                                <button type="button" class="btn btn-primary w-100">Cập nhật trạng
+                                                    thái</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Order Modal -->
+            <div class="modal fade modal-modern" id="orderModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Tạo đơn hàng mới</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-user me-2"></i>Thông tin khách hàng</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Họ tên</label>
+                                            <input type="text" class="form-control" placeholder="Nhập họ tên...">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" placeholder="email@example.com">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Điện thoại</label>
+                                            <input type="tel" class="form-control" placeholder="0123456789">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Địa chỉ</label>
+                                            <textarea class="form-control" rows="3"
+                                                placeholder="Nhập địa chỉ giao hàng..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-box me-2"></i>Sản phẩm</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Chọn sản phẩm</label>
+                                            <select class="form-select">
+                                                <option>Chọn sản phẩm...</option>
+                                                <option>RG Strike Freedom Gundam - 850,000₫</option>
+                                                <option>MG Barbatos - 1,200,000₫</option>
+                                                <option>PG Unicorn Gundam - 4,500,000₫</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Số lượng</label>
+                                            <input type="number" class="form-control" value="1" min="1">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phương thức thanh toán</label>
+                                            <select class="form-select">
+                                                <option>COD (Thanh toán khi nhận hàng)</option>
+                                                <option>Chuyển khoản</option>
+                                                <option>Ví điện tử</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Ghi chú</label>
+                                            <textarea class="form-control" rows="3"
+                                                placeholder="Ghi chú đơn hàng..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-primary">Tạo đơn hàng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Message Modal -->
+            <div class="modal fade modal-modern" id="quickMessageModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-bolt me-2"></i>Tin nhắn nhanh</h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
                             <form>
                                 <div class="mb-3">
+                                    <label class="form-label">Mẫu tin nhắn</label>
+                                    <select class="form-select" id="messageTemplate">
+                                        <option value="">Chọn mẫu tin nhắn...</option>
+                                        <option value="order_confirm">Xác nhận đơn hàng</option>
+                                        <option value="shipping_info">Thông tin vận chuyển</option>
+                                        <option value="thank_you">Cảm ơn khách hàng</option>
+                                        <option value="follow_up">Theo dõi sau bán hàng</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Người nhận</label>
                                     <input type="email" class="form-control" placeholder="email@example.com">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Tiêu đề</label>
-                                    <input type="text" class="form-control" placeholder="Nhập tiêu đề...">
-                                </div>
-                                <div class="mb-3">
                                     <label class="form-label">Nội dung</label>
-                                    <textarea class="form-control" rows="6"
+                                    <textarea class="form-control" rows="5" id="messageContent"
                                         placeholder="Nhập nội dung tin nhắn..."></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Mức độ ưu tiên</label>
-                                    <select class="form-select">
-                                        <option>Bình thường</option>
-                                        <option>Cao</option>
-                                        <option>Thấp</option>
-                                    </select>
                                 </div>
                             </form>
                         </div>
@@ -701,912 +1187,418 @@
                     </div>
                 </div>
             </div>
+        </div> <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="js/staff.js"></script>
+        <script src="<%=request.getContextPath()%>/js/auth.js"></script>
 
-            <!-- Complaint Detail Modal -->
-            <div class="modal fade modal-modern" id="complaintModal" tabindex="-1">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Chi tiết khiếu nại
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <!-- Thông tin khiếu nại -->
-                                <div class="col-md-8">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6><i class="fas fa-info-circle me-2"></i>Thông tin khiếu nại</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>Khách hàng:</strong> <span
-                                                            id="complaint-customer-name"></span></p>
-                                                    <p><strong>Email:</strong> <span id="complaint-email"></span></p>
-                                                    <p><strong>Điện thoại:</strong> <span id="complaint-phone"></span>
-                                                    </p>
-                                                    <p><strong>Đơn hàng:</strong> <span
-                                                            id="complaint-order-number"></span>
-                                                    </p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>Ngày tạo:</strong> <span
-                                                            id="complaint-created-at"></span>
-                                                    </p>
-                                                    <p><strong>Lí do:</strong> <span id="complaint-category"></span></p>
-                                                    <p><strong>Trạng thái:</strong> <span id="complaint-status"></span>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <h6>Nội dung khiếu nại:</h6>
-                                            <p id="complaint-content"></p>
-                                        </div>
-                                    </div>
-                                </div>
+        <!-- Chat WebSocket Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-                                <!-- Phản hồi & xử lý -->
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6><i class="fas fa-cog me-2"></i>Phản hồi & giải pháp</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Giải pháp</label>
-                                                <select class="form-select" id="complaint-solution">
-                                                    <option value="">-- Chọn giải pháp --</option>
-                                                    <option>Đổi sản phẩm mới</option>
-                                                    <option>Hoàn tiền</option>
-                                                    <option>Sửa chữa</option>
-                                                    <option>Giảm giá đơn hàng tiếp theo</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Phản hồi nhân viên</label>
-                                                <textarea class="form-control" id="complaint-staff-response" rows="4"
-                                                    placeholder="Nhập phản hồi..."></textarea>
-                                            </div>
-                                            <div class="d-flex gap-2">
-                                                <button class="btn btn-success w-50"
-                                                    onclick="handleComplaintUpdate('PROCESSING')">
-                                                    <i class="fas fa-check me-1"></i>Phê duyệt
-                                                </button>
-                                                <button class="btn btn-danger w-50"
-                                                    onclick="handleComplaintUpdate('REJECTED')">
-                                                    <i class="fas fa-times me-1"></i>Từ chối
-                                                </button>
-                                            </div>
+        <style>
+            /* Staff Chat Styles */
+            .customer-list-container {
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                height: 500px;
+                overflow: hidden;
+            }
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            .customer-list {
+                height: calc(100% - 60px);
+                overflow-y: auto;
+            }
 
+            .customer-item {
+                padding: 12px 15px;
+                border-bottom: 1px solid #f0f0f0;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
 
-            <!-- Inventory Update Modal -->
-            <div class="modal fade modal-modern" id="inventoryModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Cập nhật tồn kho</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Sản phẩm</label>
-                                            <select class="form-select">
-                                                <option>Chọn sản phẩm...</option>
-                                                <option>RG Strike Freedom Gundam</option>
-                                                <option>MG Barbatos</option>
-                                                <option>PG Unicorn Gundam</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Loại cập nhật</label>
-                                            <select class="form-select">
-                                                <option>Nhập kho</option>
-                                                <option>Xuất kho</option>
-                                                <option>Điều chỉnh</option>
-                                                <option>Kiểm kê</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Số lượng</label>
-                                            <input type="number" class="form-control" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Lý do</label>
-                                            <select class="form-select">
-                                                <option>Nhập hàng mới</option>
-                                                <option>Bán hàng</option>
-                                                <option>Hàng lỗi</option>
-                                                <option>Mất mát</option>
-                                                <option>Khác</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Ghi chú</label>
-                                            <textarea class="form-control" rows="3"
-                                                placeholder="Nhập ghi chú..."></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Ngày hiệu lực</label>
-                                            <input type="date" class="form-control" value="2024-03-15">
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="button" class="btn btn-primary">Cập nhật tồn kho</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            .customer-item:hover {
+                background-color: #f8f9fa;
+            }
 
+            .customer-item.active {
+                background-color: #007bff;
+                color: white;
+            }
 
-            <!-- Return Detail Modal -->
-            <div class="modal fade modal-modern" id="returnModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><i class="fas fa-undo me-2"></i>Chi tiết yêu cầu đổi trả #12345</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6><i class="fas fa-shopping-cart me-2"></i>Thông tin đơn hàng</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>Mã đơn hàng:</strong> #12345</p>
-                                                    <p><strong>Khách hàng:</strong> Nguyễn Văn A</p>
-                                                    <p><strong>Email:</strong> customer@email.com</p>
-                                                    <p><strong>Sản phẩm:</strong> RG Strike Freedom Gundam</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>Ngày mua:</strong> 10/03/2024</p>
-                                                    <p><strong>Ngày yêu cầu:</strong> 15/03/2024</p>
-                                                    <p><strong>Giá trị:</strong> 850,000₫</p>
-                                                    <p><strong>Trạng thái:</strong> <span
-                                                            class="status-badge status-pending">Chờ xử lý</span></p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <h6>Lý do đổi trả:</h6>
-                                            <p>Sản phẩm bị lỗi khi nhận hàng. Một số chi tiết bị gãy và hộp bị móp méo.
-                                            </p>
+            .customer-item.active .text-muted {
+                color: rgba(255, 255, 255, 0.8) !important;
+            }
 
-                                            <h6 class="mt-3">Hình ảnh:</h6>
-                                            <div class="d-flex gap-2">
-                                                <img src="https://via.placeholder.com/80x80" class="rounded"
-                                                    alt="Return evidence">
-                                                <img src="https://via.placeholder.com/80x80" class="rounded"
-                                                    alt="Return evidence">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6><i class="fas fa-cogs me-2"></i>Xử lý yêu cầu</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <form>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Quyết định</label>
-                                                    <select class="form-select">
-                                                        <option>Chọn quyết định...</option>
-                                                        <option>Phê duyệt đổi hàng</option>
-                                                        <option>Phê duyệt hoàn tiền</option>
-                                                        <option>Từ chối</option>
-                                                        <option>Yêu cầu thêm thông tin</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Ghi chú</label>
-                                                    <textarea class="form-control" rows="4"
-                                                        placeholder="Nhập ghi chú xử lý..."></textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Phí xử lý</label>
-                                                    <input type="number" class="form-control" placeholder="0" value="0">
-                                                </div>
-                                                <button type="button" class="btn btn-success w-100 mb-2">Phê
-                                                    duyệt</button>
-                                                <button type="button" class="btn btn-danger w-100">Từ chối</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            .customer-avatar {
+                width: 40px;
+                height: 40px;
+                background: #007bff;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                flex-shrink: 0;
+            }
 
-                <!-- Order Detail Modal -->
-                <div class="modal fade modal-modern" id="orderDetailModal" tabindex="-1">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title"><i class="fas fa-shopping-cart me-2"></i>Chi tiết đơn hàng
-                                    #ORD001</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6><i class="fas fa-list me-2"></i>Sản phẩm trong đơn hàng</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Sản phẩm</th>
-                                                                <th>SKU</th>
-                                                                <th>Số lượng</th>
-                                                                <th>Đơn giá</th>
-                                                                <th>Thành tiền</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="d-flex align-items-center">
-                                                                        <img src="https://via.placeholder.com/40x40"
-                                                                            class="rounded me-2">
-                                                                        <span>RG Strike Freedom Gundam</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td>RG-001</td>
-                                                                <td>1</td>
-                                                                <td>850,000₫</td>
-                                                                <td>850,000₫</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="d-flex align-items-center">
-                                                                        <img src="https://via.placeholder.com/40x40"
-                                                                            class="rounded me-2">
-                                                                        <span>Gundam Panel Line Marker</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td>TOOL-001</td>
-                                                                <td>1</td>
-                                                                <td>100,000₫</td>
-                                                                <td>100,000₫</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <h6>Thông tin khách hàng:</h6>
-                                                        <p><strong>Tên:</strong> Nguyễn Văn A</p>
-                                                        <p><strong>Email:</strong> customer@email.com</p>
-                                                        <p><strong>Điện thoại:</strong> 0123456789</p>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <h6>Địa chỉ giao hàng:</h6>
-                                                        <p>123 Đường ABC, Quận 1<br>TP. Hồ Chí Minh<br>Việt Nam</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6><i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <p><strong>Mã đơn hàng:</strong> #ORD001</p>
-                                                <p><strong>Ngày đặt:</strong> 15/03/2024</p>
-                                                <p><strong>Trạng thái:</strong> <span
-                                                        class="status-badge status-pending">Chờ xác nhận</span></p>
-                                                <p><strong>Phương thức thanh toán:</strong> COD</p>
-                                                <hr>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Tạm tính:</span>
-                                                    <span>950,000₫</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Phí vận chuyển:</span>
-                                                    <span>0₫</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Giảm giá:</span>
-                                                    <span>0₫</span>
-                                                </div>
-                                                <hr>
-                                                <div class="d-flex justify-content-between">
-                                                    <strong>Tổng cộng:</strong>
-                                                    <strong>950,000₫</strong>
-                                                </div>
-                                            </div>
-                                        </div>
+            .customer-item.active .customer-avatar {
+                background: rgba(255, 255, 255, 0.2);
+            }
 
-                                        <div class="card mt-3">
-                                            <div class="card-header">
-                                                <h6><i class="fas fa-truck me-2"></i>Cập nhật trạng thái</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <form>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Trạng thái mới</label>
-                                                        <select class="form-select">
-                                                            <option>Chờ xác nhận</option>
-                                                            <option>Đã xác nhận</option>
-                                                            <option>Đang chuẩn bị</option>
-                                                            <option>Đang giao</option>
-                                                            <option>Hoàn thành</option>
-                                                            <option>Đã hủy</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Ghi chú</label>
-                                                        <textarea class="form-control" rows="3"
-                                                            placeholder="Ghi chú cập nhật..."></textarea>
-                                                    </div>
-                                                    <button type="button" class="btn btn-primary w-100">Cập nhật trạng
-                                                        thái</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            .customer-info {
+                flex: 1;
+                min-width: 0;
+            }
 
-                <!-- Create Order Modal -->
-                <div class="modal fade modal-modern" id="orderModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Tạo đơn hàng mới</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h6><i class="fas fa-user me-2"></i>Thông tin khách hàng</h6>
-                                            <div class="mb-3">
-                                                <label class="form-label">Họ tên</label>
-                                                <input type="text" class="form-control" placeholder="Nhập họ tên...">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" class="form-control"
-                                                    placeholder="email@example.com">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Điện thoại</label>
-                                                <input type="tel" class="form-control" placeholder="0123456789">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Địa chỉ</label>
-                                                <textarea class="form-control" rows="3"
-                                                    placeholder="Nhập địa chỉ giao hàng..."></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6><i class="fas fa-box me-2"></i>Sản phẩm</h6>
-                                            <div class="mb-3">
-                                                <label class="form-label">Chọn sản phẩm</label>
-                                                <select class="form-select">
-                                                    <option>Chọn sản phẩm...</option>
-                                                    <option>RG Strike Freedom Gundam - 850,000₫</option>
-                                                    <option>MG Barbatos - 1,200,000₫</option>
-                                                    <option>PG Unicorn Gundam - 4,500,000₫</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Số lượng</label>
-                                                <input type="number" class="form-control" value="1" min="1">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Phương thức thanh toán</label>
-                                                <select class="form-select">
-                                                    <option>COD (Thanh toán khi nhận hàng)</option>
-                                                    <option>Chuyển khoản</option>
-                                                    <option>Ví điện tử</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Ghi chú</label>
-                                                <textarea class="form-control" rows="3"
-                                                    placeholder="Ghi chú đơn hàng..."></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-primary">Tạo đơn hàng</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            .customer-info h6 {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 600;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
 
-                <!-- Quick Message Modal -->
-                <div class="modal fade modal-modern" id="quickMessageModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title"><i class="fas fa-bolt me-2"></i>Tin nhắn nhanh</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                    data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="mb-3">
-                                        <label class="form-label">Mẫu tin nhắn</label>
-                                        <select class="form-select" id="messageTemplate">
-                                            <option value="">Chọn mẫu tin nhắn...</option>
-                                            <option value="order_confirm">Xác nhận đơn hàng</option>
-                                            <option value="shipping_info">Thông tin vận chuyển</option>
-                                            <option value="thank_you">Cảm ơn khách hàng</option>
-                                            <option value="follow_up">Theo dõi sau bán hàng</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Người nhận</label>
-                                        <input type="email" class="form-control" placeholder="email@example.com">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Nội dung</label>
-                                        <textarea class="form-control" rows="5" id="messageContent"
-                                            placeholder="Nhập nội dung tin nhắn..."></textarea>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-primary">Gửi tin nhắn</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> <!-- Scripts -->
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <script src="js/staff.js"></script>
-                <script src="<%=request.getContextPath()%>/js/auth.js"></script>
-                
-                <!-- Chat WebSocket Scripts -->
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+            .customer-info small {
+                font-size: 12px;
+                opacity: 0.8;
+            }
 
-                <style>
-                /* Staff Chat Styles */
-                .customer-list-container {
-                    border: 1px solid #e0e0e0;
-                    border-radius: 8px;
-                    height: 500px;
-                    overflow: hidden;
+            .unread-indicator {
+                width: 8px;
+                height: 8px;
+                background: #dc3545;
+                border-radius: 50%;
+                flex-shrink: 0;
+            }
+
+            .chat-area {
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                height: 500px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            .chat-header {
+                padding: 15px 20px;
+                border-bottom: 1px solid #e0e0e0;
+                background: #f8f9fa;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .chat-messages {
+                flex: 1;
+                padding: 15px;
+                overflow-y: auto;
+                overflow-x: hidden;
+                background: #fafafa;
+                max-height: 350px;
+                scroll-behavior: smooth;
+            }
+
+            /* Custom scrollbar cho staff chat */
+            .chat-messages::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .chat-messages::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+
+            .chat-messages::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 4px;
+            }
+
+            .chat-messages::-webkit-scrollbar-thumb:hover {
+                background: #a8a8a8;
+            }
+
+            .chat-messages::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+            .empty-chat {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .staff-message {
+                margin-bottom: 15px;
+                display: flex;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .staff-message.sent {
+                flex-direction: row-reverse;
+            }
+
+            .staff-message.sent .message-bubble {
+                background: #007bff;
+                color: white;
+                border-radius: 18px 18px 4px 18px;
+                float: right;
+                clear: both;
+            }
+
+            .staff-message.received .message-bubble {
+                background: white;
+                color: #333;
+                border: 1px solid #e0e0e0;
+                border-radius: 18px 18px 18px 4px;
+                float: left;
+                clear: both;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+                padding: 12px 16px;
+                word-wrap: break-word;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                white-space: pre-wrap;
+                font-size: 14px;
+                line-height: 1.4;
+                display: inline-block;
+            }
+
+            .message-time {
+                font-size: 11px;
+                color: #999;
+                margin-top: 6px;
+                text-align: center;
+                font-style: italic;
+                opacity: 0.7;
+            }
+
+            .chat-input {
+                padding: 15px 20px;
+                border-top: 1px solid #e0e0e0;
+                background: white;
+            }
+
+            .chat-input .input-group {
+                gap: 10px;
+            }
+
+            .chat-input input {
+                border-radius: 20px;
+                border: 1px solid #ddd;
+                padding: 10px 15px;
+            }
+
+            .chat-input button {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #staff-connection-status.bg-success {
+                background-color: #28a745 !important;
+            }
+
+            #staff-connection-status.bg-warning {
+                background-color: #ffc107 !important;
+                color: #212529 !important;
+            }
+
+            #staff-connection-status.bg-danger {
+                background-color: #dc3545 !important;
+            }
+        </style>
+
+        <script>
+            let staffStompClient = null;
+            let staffCurrentUserId = null;
+            let staffCurrentUserType = 'STAFF';
+            let selectedCustomerId = null;
+            let customerListData = [];
+
+            // Khởi tạo staff chat
+            function initStaffChat(userId, userType) {
+                staffCurrentUserId = userId;
+                staffCurrentUserType = userType;
+
+                if (userType === 'STAFF') {
+                    connectStaffChat();
+                    loadCustomerList();
                 }
+            }
 
-                .customer-list {
-                    height: calc(100% - 60px);
-                    overflow-y: auto;
-                }
+            // Kết nối WebSocket cho staff
+            function connectStaffChat() {
+                const statusElement = document.getElementById('staff-connection-status');
+                statusElement.textContent = 'Đang kết nối...';
+                statusElement.className = 'badge bg-warning';
 
-                .customer-item {
-                    padding: 12px 15px;
-                    border-bottom: 1px solid #f0f0f0;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
+                console.log('🔌 Connecting staff chat WebSocket for user:', staffCurrentUserId);
 
-                .customer-item:hover {
-                    background-color: #f8f9fa;
-                }
+                const socket = new SockJS('/ws-chat');
+                staffStompClient = Stomp.over(socket);
 
-                .customer-item.active {
-                    background-color: #007bff;
-                    color: white;
-                }
+                staffStompClient.connect({}, function (frame) {
+                    console.log('✅ Staff chat connected:', frame);
 
-                .customer-item.active .text-muted {
-                    color: rgba(255, 255, 255, 0.8) !important;
-                }
+                    // Subscribe để nhận tin nhắn
+                    const subscriptionUrl = '/user/' + staffCurrentUserId + '/queue/messages';
+                    console.log('📡 Subscribing to:', subscriptionUrl);
 
-                .customer-avatar {
-                    width: 40px;
-                    height: 40px;
-                    background: #007bff;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    flex-shrink: 0;
-                }
-
-                .customer-item.active .customer-avatar {
-                    background: rgba(255, 255, 255, 0.2);
-                }
-
-                .customer-info {
-                    flex: 1;
-                    min-width: 0;
-                }
-
-                .customer-info h6 {
-                    margin: 0;
-                    font-size: 14px;
-                    font-weight: 600;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                .customer-info small {
-                    font-size: 12px;
-                    opacity: 0.8;
-                }
-
-                .unread-indicator {
-                    width: 8px;
-                    height: 8px;
-                    background: #dc3545;
-                    border-radius: 50%;
-                    flex-shrink: 0;
-                }
-
-                .chat-area {
-                    border: 1px solid #e0e0e0;
-                    border-radius: 8px;
-                    height: 500px;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
-                }
-
-                .chat-header {
-                    padding: 15px 20px;
-                    border-bottom: 1px solid #e0e0e0;
-                    background: #f8f9fa;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-
-                .chat-messages {
-                    flex: 1;
-                    padding: 15px;
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                    background: #fafafa;
-                    max-height: 350px;
-                    scroll-behavior: smooth;
-                }
-
-                /* Custom scrollbar cho staff chat */
-                .chat-messages::-webkit-scrollbar {
-                    width: 8px;
-                }
-
-                .chat-messages::-webkit-scrollbar-track {
-                    background: #f1f1f1;
-                    border-radius: 4px;
-                }
-
-                .chat-messages::-webkit-scrollbar-thumb {
-                    background: #c1c1c1;
-                    border-radius: 4px;
-                }
-
-                .chat-messages::-webkit-scrollbar-thumb:hover {
-                    background: #a8a8a8;
-                }
-
-                .chat-messages::after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                }
-
-                .empty-chat {
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                }
-
-                .staff-message {
-                    margin-bottom: 15px;
-                    display: flex;
-                    gap: 10px;
-                    width: 100%;
-                }
-
-                .staff-message.sent {
-                    flex-direction: row-reverse;
-                }
-
-                .staff-message.sent .message-bubble {
-                    background: #007bff;
-                    color: white;
-                    border-radius: 18px 18px 4px 18px;
-                    float: right;
-                    clear: both;
-                }
-
-                .staff-message.received .message-bubble {
-                    background: white;
-                    color: #333;
-                    border: 1px solid #e0e0e0;
-                    border-radius: 18px 18px 18px 4px;
-                    float: left;
-                    clear: both;
-                }
-
-                .message-bubble {
-                    max-width: 85%;
-                    padding: 12px 16px;
-                    word-wrap: break-word;
-                    word-break: break-word;
-                    overflow-wrap: break-word;
-                    white-space: pre-wrap;
-                    font-size: 14px;
-                    line-height: 1.4;
-                    display: inline-block;
-                }
-
-                .message-time {
-                    font-size: 11px;
-                    color: #999;
-                    margin-top: 6px;
-                    text-align: center;
-                    font-style: italic;
-                    opacity: 0.7;
-                }
-
-                .chat-input {
-                    padding: 15px 20px;
-                    border-top: 1px solid #e0e0e0;
-                    background: white;
-                }
-
-                .chat-input .input-group {
-                    gap: 10px;
-                }
-
-                .chat-input input {
-                    border-radius: 20px;
-                    border: 1px solid #ddd;
-                    padding: 10px 15px;
-                }
-
-                .chat-input button {
-                    border-radius: 50%;
-                    width: 40px;
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-
-                #staff-connection-status.bg-success {
-                    background-color: #28a745 !important;
-                }
-
-                #staff-connection-status.bg-warning {
-                    background-color: #ffc107 !important;
-                    color: #212529 !important;
-                }
-
-                #staff-connection-status.bg-danger {
-                    background-color: #dc3545 !important;
-                }
-                </style>
-
-                <script>
-                let staffStompClient = null;
-                let staffCurrentUserId = null;
-                let staffCurrentUserType = 'STAFF';
-                let selectedCustomerId = null;
-                let customerListData = [];
-
-                // Khởi tạo staff chat
-                function initStaffChat(userId, userType) {
-                    staffCurrentUserId = userId;
-                    staffCurrentUserType = userType;
-                    
-                    if (userType === 'STAFF') {
-                        connectStaffChat();
-                        loadCustomerList();
-                    }
-                }
-
-                // Kết nối WebSocket cho staff
-                function connectStaffChat() {
-                    const statusElement = document.getElementById('staff-connection-status');
-                    statusElement.textContent = 'Đang kết nối...';
-                    statusElement.className = 'badge bg-warning';
-                    
-                    console.log('🔌 Connecting staff chat WebSocket for user:', staffCurrentUserId);
-                    
-                    const socket = new SockJS('/ws-chat');
-                    staffStompClient = Stomp.over(socket);
-                    
-                    staffStompClient.connect({}, function(frame) {
-                        console.log('✅ Staff chat connected:', frame);
-                        
-                        // Subscribe để nhận tin nhắn
-                        const subscriptionUrl = '/user/' + staffCurrentUserId + '/queue/messages';
-                        console.log('📡 Subscribing to:', subscriptionUrl);
-                        
-                        staffStompClient.subscribe(subscriptionUrl, function(message) {
-                            console.log('📩 Staff received message:', message.body);
-                            const messageData = JSON.parse(message.body);
-                            handleStaffIncomingMessage(messageData);
-                        });
-                        
-                        // Cập nhật trạng thái kết nối
-                        statusElement.textContent = 'Đã kết nối';
-                        statusElement.className = 'badge bg-success';
-                        
-                        // Enable input nếu đã chọn customer
-                        if (selectedCustomerId) {
-                            enableStaffInput();
-                        }
-                        
-                    }, function(error) {
-                        console.error('❌ Staff chat connection error:', error);
-                        statusElement.textContent = 'Mất kết nối';
-                        statusElement.className = 'badge bg-danger';
+                    staffStompClient.subscribe(subscriptionUrl, function (message) {
+                        console.log('📩 Staff received message:', message.body);
+                        const messageData = JSON.parse(message.body);
+                        handleStaffIncomingMessage(messageData);
                     });
-                }
 
-                // Load danh sách customer
-                function loadCustomerList() {
-                    console.log('🔍 Loading customer list...');
-                    fetch('/api/chat/customers')
-                        .then(response => {
-                            console.log('📡 Customer API response status:', response.status);
-                            return response.json();
-                        })
-                        .then(customers => {
-                            console.log('👥 Customers received:', customers);
-                            customerListData = customers;
-                            displayCustomerList(customers);
-                        })
-                        .catch(error => {
-                            console.error('❌ Error loading customers:', error);
-                            document.getElementById('customer-list').innerHTML = `
+                    // Cập nhật trạng thái kết nối
+                    statusElement.textContent = 'Đã kết nối';
+                    statusElement.className = 'badge bg-success';
+
+                    // Enable input nếu đã chọn customer
+                    if (selectedCustomerId) {
+                        enableStaffInput();
+                    }
+
+                }, function (error) {
+                    console.error('❌ Staff chat connection error:', error);
+                    statusElement.textContent = 'Mất kết nối';
+                    statusElement.className = 'badge bg-danger';
+                });
+            }
+
+            // Load danh sách customer
+            function loadCustomerList() {
+                console.log('🔍 Loading customer list...');
+                fetch('/api/chat/customers')
+                    .then(response => {
+                        console.log('📡 Customer API response status:', response.status);
+                        return response.json();
+                    })
+                    .then(customers => {
+                        console.log('👥 Customers received:', customers);
+                        customerListData = customers;
+                        displayCustomerList(customers);
+                    })
+                    .catch(error => {
+                        console.error('❌ Error loading customers:', error);
+                        document.getElementById('customer-list').innerHTML = `
                                 <div class="text-center p-3 text-danger">
                                     <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
                                     <p>Không thể tải danh sách khách hàng</p>
                                     <small>Error: ${error.message}</small>
                                 </div>
                             `;
-                        });
-                }
+                    });
+            }
 
-                // Hiển thị danh sách customer
-                function displayCustomerList(customers) {
-                    const listContainer = document.getElementById('customer-list');
-                    
-                    if (customers.length === 0) {
-                        listContainer.innerHTML = `
+            // Hiển thị danh sách customer
+            function displayCustomerList(customers) {
+                const listContainer = document.getElementById('customer-list');
+
+                if (customers.length === 0) {
+                    listContainer.innerHTML = `
                             <div class="text-center p-3 text-muted">
                                 <i class="fas fa-users fa-2x mb-2"></i>
                                 <p>Chưa có khách hàng nào</p>
                             </div>
                         `;
-                        return;
-                    }
-                    
-                    listContainer.innerHTML = customers.map(customer => 
-                        '<div class="customer-item" onclick="selectCustomer(' + customer.id + ', \'' + customer.fullName + '\', \'' + customer.email + '\')">' +
-                            '<div class="customer-avatar">' +
-                                '<i class="fas fa-user"></i>' +
-                            '</div>' +
-                            '<div class="customer-info">' +
-                                '<h6>' + customer.fullName + '</h6>' +
-                                '<small class="text-muted">' + customer.email + '</small>' +
-                            '</div>' +
-                        '</div>'
-                    ).join('');
+                    return;
                 }
 
-                // Chọn customer để chat
-                function selectCustomer(customerId, customerName, customerEmail) {
-                    // Remove active class from all items
-                    document.querySelectorAll('.customer-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    
-                    // Add active class to selected item
-                    event.currentTarget.classList.add('active');
-                    
-                    selectedCustomerId = customerId;
-                    
-                    // Update chat header
-                    document.getElementById('selected-customer-name').textContent = customerName;
-                    document.getElementById('selected-customer-email').textContent = customerEmail;
-                    document.getElementById('chat-header').style.display = 'flex';
-                    document.getElementById('staff-chat-input').style.display = 'block';
-                    
-                    // Clear messages and load history
-                    const messagesContainer = document.getElementById('staff-chat-messages');
-                    messagesContainer.innerHTML = '';
-                    
-                    // Enable input if connected
-                    if (staffStompClient && staffStompClient.connected) {
-                        enableStaffInput();
-                    }
-                    
-                    // Load chat history for this customer (from any staff)
-                    loadCustomerChatHistory(customerId);
+                listContainer.innerHTML = customers.map(customer =>
+                    '<div class="customer-item" onclick="selectCustomer(' + customer.id + ', \'' + customer.fullName + '\', \'' + customer.email + '\')">' +
+                    '<div class="customer-avatar">' +
+                    '<i class="fas fa-user"></i>' +
+                    '</div>' +
+                    '<div class="customer-info">' +
+                    '<h6>' + customer.fullName + '</h6>' +
+                    '<small class="text-muted">' + customer.email + '</small>' +
+                    '</div>' +
+                    '</div>'
+                ).join('');
+            }
+
+            // Chọn customer để chat
+            function selectCustomer(customerId, customerName, customerEmail) {
+                // Remove active class from all items
+                document.querySelectorAll('.customer-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Add active class to selected item
+                event.currentTarget.classList.add('active');
+
+                selectedCustomerId = customerId;
+
+                // Update chat header
+                document.getElementById('selected-customer-name').textContent = customerName;
+                document.getElementById('selected-customer-email').textContent = customerEmail;
+                document.getElementById('chat-header').style.display = 'flex';
+                document.getElementById('staff-chat-input').style.display = 'block';
+
+                // Clear messages and load history
+                const messagesContainer = document.getElementById('staff-chat-messages');
+                messagesContainer.innerHTML = '';
+
+                // Enable input if connected
+                if (staffStompClient && staffStompClient.connected) {
+                    enableStaffInput();
                 }
 
-                // Load lịch sử chat của customer với bất kỳ staff nào
-                function loadCustomerChatHistory(customerId) {
-                    console.log('📚 Loading chat history for customer:', customerId);
-                    fetch('/api/chat/customer-messages/' + customerId)
-                        .then(response => response.json())
-                        .then(messages => {
-                            console.log('📝 Customer chat history loaded:', messages.length, 'messages');
-                            messages.forEach(message => {
-                                displayStaffMessage(message, false);
-                            });
-                            scrollStaffChatToBottom();
-                        })
-                        .catch(error => {
-                            console.error('❌ Error loading customer chat history:', error);
+                // Load chat history for this customer (from any staff)
+                loadCustomerChatHistory(customerId);
+            }
+
+            // Load lịch sử chat của customer với bất kỳ staff nào
+            function loadCustomerChatHistory(customerId) {
+                console.log('📚 Loading chat history for customer:', customerId);
+                fetch('/api/chat/customer-messages/' + customerId)
+                    .then(response => response.json())
+                    .then(messages => {
+                        console.log('📝 Customer chat history loaded:', messages.length, 'messages');
+                        messages.forEach(message => {
+                            displayStaffMessage(message, false);
                         });
-                }
+                        scrollStaffChatToBottom();
+                    })
+                    .catch(error => {
+                        console.error('❌ Error loading customer chat history:', error);
+                    });
+            }
 
-                // Hiển thị tin nhắn trong staff chat
-                function displayStaffMessage(message, isNew = true) {
-                    const messagesContainer = document.getElementById('staff-chat-messages');
-                    const messageWrapper = document.createElement('div');
-                    messageWrapper.style.width = '100%';
-                    messageWrapper.style.marginBottom = '10px';
-                    messageWrapper.style.display = 'block';
-                    
-                    const messageDiv = document.createElement('div');
-                    
-                    const isSent = message.senderId == staffCurrentUserId;
-                    messageDiv.className = 'staff-message ' + (isSent ? 'sent' : 'received');
-                    
-                    const avatar = isSent ? `
+            // Hiển thị tin nhắn trong staff chat
+            function displayStaffMessage(message, isNew = true) {
+                const messagesContainer = document.getElementById('staff-chat-messages');
+                const messageWrapper = document.createElement('div');
+                messageWrapper.style.width = '100%';
+                messageWrapper.style.marginBottom = '10px';
+                messageWrapper.style.display = 'block';
+
+                const messageDiv = document.createElement('div');
+
+                const isSent = message.senderId == staffCurrentUserId;
+                messageDiv.className = 'staff-message ' + (isSent ? 'sent' : 'received');
+
+                const avatar = isSent ? `
                         <div class="customer-avatar" style="background: #28a745;">
                             <i class="fas fa-user-tie"></i>
                         </div>
@@ -1615,15 +1607,15 @@
                             <i class="fas fa-user"></i>
                         </div>
                     `;
-                    
-                    // Escape HTML và xử lý text properly
-                    const messageText = escapeStaffHtml(message.message);
-                    const formattedTime = new Date(message.timestamp).toLocaleTimeString('vi-VN', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    messageDiv.innerHTML = `
+
+                // Escape HTML và xử lý text properly
+                const messageText = escapeStaffHtml(message.message);
+                const formattedTime = new Date(message.timestamp).toLocaleTimeString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                messageDiv.innerHTML = `
                         ` + avatar + `
                         <div>
                             <div class="message-bubble">
@@ -1635,160 +1627,160 @@
                             </div>
                         </div>
                     `;
-                    
-                    messageWrapper.appendChild(messageDiv);
-                    messagesContainer.appendChild(messageWrapper);
-                    
-                    if (isNew) {
-                        scrollStaffChatToBottom();
-                    }
+
+                messageWrapper.appendChild(messageDiv);
+                messagesContainer.appendChild(messageWrapper);
+
+                if (isNew) {
+                    scrollStaffChatToBottom();
+                }
+            }
+
+            // Helper function để escape HTML cho staff
+            function escapeStaffHtml(unsafe) {
+                if (!unsafe) return '';
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // Gửi tin nhắn từ staff
+            function sendStaffMessage() {
+                const input = document.getElementById('staff-message-input');
+                const message = input.value.trim();
+
+                if (message && staffStompClient && selectedCustomerId) {
+                    const messageData = {
+                        senderId: staffCurrentUserId,
+                        receiverId: selectedCustomerId,
+                        message: message,
+                        senderType: 'STAFF',
+                        receiverType: 'CUSTOMER'
+                    };
+
+                    // Temporarily disable button và clear input
+                    const sendButton = document.getElementById('staff-send-button');
+                    sendButton.disabled = true;
+                    input.value = '';
+
+                    staffStompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
+
+                    // Hiển thị tin nhắn vừa gửi lên UI ngay lập tức
+                    displayStaffMessage({
+                        senderId: staffCurrentUserId,
+                        message: message,
+                        timestamp: new Date()
+                    }, true);
+
+                    // Re-enable button sau 1 giây
+                    setTimeout(() => {
+                        sendButton.disabled = false;
+                    }, 1000);
+                }
+            }
+
+            // Xử lý tin nhắn đến cho staff
+            function handleStaffIncomingMessage(messageData) {
+                // Nếu đang chat với customer này, hiển thị tin nhắn
+                if (selectedCustomerId && messageData.senderId == selectedCustomerId) {
+                    displayStaffMessage(messageData);
                 }
 
-                // Helper function để escape HTML cho staff
-                function escapeStaffHtml(unsafe) {
-                    if (!unsafe) return '';
-                    return unsafe
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#039;");
-                }
+                // Update notification badge if needed
+                // This could be enhanced to show unread count per customer
+            }
 
-                // Gửi tin nhắn từ staff
-                function sendStaffMessage() {
-                    const input = document.getElementById('staff-message-input');
-                    const message = input.value.trim();
-                    
-                    if (message && staffStompClient && selectedCustomerId) {
-                        const messageData = {
-                            senderId: staffCurrentUserId,
-                            receiverId: selectedCustomerId,
-                            message: message,
-                            senderType: 'STAFF',
-                            receiverType: 'CUSTOMER'
-                        };
-                        
-                        // Temporarily disable button và clear input
-                        const sendButton = document.getElementById('staff-send-button');
-                        sendButton.disabled = true;
-                        input.value = '';
-                        
-                        staffStompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
-                        
-                        // Hiển thị tin nhắn vừa gửi lên UI ngay lập tức
-                        displayStaffMessage({
-                            senderId: staffCurrentUserId,
-                            message: message,
-                            timestamp: new Date()
-                        }, true);
-                        
-                        // Re-enable button sau 1 giây
-                        setTimeout(() => {
-                            sendButton.disabled = false;
-                        }, 1000);
-                    }
-                }
+            // Enable staff input
+            function enableStaffInput() {
+                document.getElementById('staff-message-input').disabled = false;
+                document.getElementById('staff-send-button').disabled = false;
+            }
 
-                // Xử lý tin nhắn đến cho staff
-                function handleStaffIncomingMessage(messageData) {
-                    // Nếu đang chat với customer này, hiển thị tin nhắn
-                    if (selectedCustomerId && messageData.senderId == selectedCustomerId) {
-                        displayStaffMessage(messageData);
-                    }
-                    
-                    // Update notification badge if needed
-                    // This could be enhanced to show unread count per customer
-                }
+            // Refresh customer list
+            function refreshCustomerList() {
+                loadCustomerList();
+            }
 
-                // Enable staff input
-                function enableStaffInput() {
-                    document.getElementById('staff-message-input').disabled = false;
-                    document.getElementById('staff-send-button').disabled = false;
-                }
+            // Scroll to bottom
+            function scrollStaffChatToBottom() {
+                const messagesContainer = document.getElementById('staff-chat-messages');
+                if (messagesContainer) {
+                    const scrollHeight = messagesContainer.scrollHeight;
+                    const height = messagesContainer.clientHeight;
+                    const maxScrollTop = scrollHeight - height;
 
-                // Refresh customer list
-                function refreshCustomerList() {
-                    loadCustomerList();
-                }
-
-                // Scroll to bottom
-                function scrollStaffChatToBottom() {
-                    const messagesContainer = document.getElementById('staff-chat-messages');
-                    if (messagesContainer) {
-                        const scrollHeight = messagesContainer.scrollHeight;
-                        const height = messagesContainer.clientHeight;
-                        const maxScrollTop = scrollHeight - height;
-                        
-                        // Smooth scroll animation
-                        messagesContainer.scrollTo({
-                            top: maxScrollTop,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Fallback for older browsers
-                        setTimeout(() => {
-                            messagesContainer.scrollTop = maxScrollTop;
-                        }, 100);
-                    }
-                }
-
-                // Search customers
-                document.addEventListener('DOMContentLoaded', function() {
-                    const searchInput = document.getElementById('customer-search');
-                    if (searchInput) {
-                        searchInput.addEventListener('input', function(e) {
-                            const searchTerm = e.target.value.toLowerCase();
-                            const filteredCustomers = customerListData.filter(customer => 
-                                customer.fullName.toLowerCase().includes(searchTerm) ||
-                                customer.email.toLowerCase().includes(searchTerm)
-                            );
-                            displayCustomerList(filteredCustomers);
-                        });
-                    }
-                    
-                    // Enter to send message
-                    const messageInput = document.getElementById('staff-message-input');
-                    if (messageInput) {
-                        messageInput.addEventListener('keypress', function(e) {
-                            if (e.key === 'Enter') {
-                                sendStaffMessage();
-                            }
-                        });
-                    }
-                });
-                </script>
-
-                <script>
-                    // Check staff access on page load and initialize chat
-                    document.addEventListener('DOMContentLoaded', function () {
-                        checkPageAccess('STAFF');
-                        
-                        // Initialize staff chat with Staff Member (ID: 8) from session
-                        console.log('🔍 Initializing staff chat for logged in staff...');
-                        
-                        // Staff info from login session: Staff Member (staff@gundam.com) - ID: 8
-                        const staffUserId = 8; // Staff Member ID from database
-                        const staffUserType = 'STAFF';
-                        
-                        // Set sessionStorage for consistency
-                        sessionStorage.setItem('userId', staffUserId.toString());
-                        sessionStorage.setItem('userType', staffUserType);
-                        sessionStorage.setItem('userName', 'Staff Member');
-                        sessionStorage.setItem('userEmail', 'staff@gundam.com');
-                        
-                        console.log('✅ Staff session set:', {
-                            userId: staffUserId,
-                            userType: staffUserType,
-                            userName: 'Staff Member',
-                            userEmail: 'staff@gundam.com'
-                        });
-                        
-                        // Initialize staff chat
-                        initStaffChat(staffUserId, staffUserType);
-                        console.log('✅ Staff chat initialized with ID:', staffUserId);
+                    // Smooth scroll animation
+                    messagesContainer.scrollTo({
+                        top: maxScrollTop,
+                        behavior: 'smooth'
                     });
-                </script>
+
+                    // Fallback for older browsers
+                    setTimeout(() => {
+                        messagesContainer.scrollTop = maxScrollTop;
+                    }, 100);
+                }
+            }
+
+            // Search customers
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchInput = document.getElementById('customer-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function (e) {
+                        const searchTerm = e.target.value.toLowerCase();
+                        const filteredCustomers = customerListData.filter(customer =>
+                            customer.fullName.toLowerCase().includes(searchTerm) ||
+                            customer.email.toLowerCase().includes(searchTerm)
+                        );
+                        displayCustomerList(filteredCustomers);
+                    });
+                }
+
+                // Enter to send message
+                const messageInput = document.getElementById('staff-message-input');
+                if (messageInput) {
+                    messageInput.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            sendStaffMessage();
+                        }
+                    });
+                }
+            });
+        </script>
+
+        <script>
+            // Check staff access on page load and initialize chat
+            document.addEventListener('DOMContentLoaded', function () {
+                checkPageAccess('STAFF');
+
+                // Initialize staff chat with Staff Member (ID: 8) from session
+                console.log('🔍 Initializing staff chat for logged in staff...');
+
+                // Staff info from login session: Staff Member (staff@gundam.com) - ID: 8
+                const staffUserId = 8; // Staff Member ID from database
+                const staffUserType = 'STAFF';
+
+                // Set sessionStorage for consistency
+                sessionStorage.setItem('userId', staffUserId.toString());
+                sessionStorage.setItem('userType', staffUserType);
+                sessionStorage.setItem('userName', 'Staff Member');
+                sessionStorage.setItem('userEmail', 'staff@gundam.com');
+
+                console.log('✅ Staff session set:', {
+                    userId: staffUserId,
+                    userType: staffUserType,
+                    userName: 'Staff Member',
+                    userEmail: 'staff@gundam.com'
+                });
+
+                // Initialize staff chat
+                initStaffChat(staffUserId, staffUserType);
+                console.log('✅ Staff chat initialized with ID:', staffUserId);
+            });
+        </script>
     </body>
 
     </html>
