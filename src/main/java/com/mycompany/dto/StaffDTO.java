@@ -3,10 +3,20 @@ package com.mycompany.dto;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class StaffDTO {
     private Long id;
+    @NotBlank(message = "Họ không được để trống")
+    @Size(max = 50, message = "Họ tối đa 50 ký tự")
+    @Pattern(regexp = "^[A-Za-zÀ-ỹ ]+$", message = "Họ chỉ được chứa chữ và khoảng trắng")
     private String firstName;
+
+    @NotBlank(message = "Tên không được để trống")
+    @Size(max = 50, message = "Tên tối đa 50 ký tự")
+    @Pattern(regexp = "^[A-Za-zÀ-ỹ ]+$", message = "Tên chỉ được chứa chữ và khoảng trắng")
     private String lastName;
     private String email;
     private String phone;
@@ -15,6 +25,7 @@ public class StaffDTO {
     private String address;
     private String role;
     private Date createdAt;
+    private Boolean isActive;
 
     // ✅ Trường hiển thị ngày định dạng sẵn (fix Locale deprecated)
     public String getCreatedAtFormatted() {
@@ -44,4 +55,6 @@ public class StaffDTO {
     public void setRole(String role) { this.role = role; }
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 }

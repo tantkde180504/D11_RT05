@@ -48,4 +48,8 @@ public class User {
 
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 }

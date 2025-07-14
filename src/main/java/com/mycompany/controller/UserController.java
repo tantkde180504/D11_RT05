@@ -1,4 +1,9 @@
+
 package com.mycompany.controller;
+
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +23,21 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
+@Validated
 public class UserController {
+    @org.springframework.web.bind.annotation.ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationExceptions(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        java.util.List<Map<String, String>> errors = new java.util.ArrayList<>();
+        for (org.springframework.validation.FieldError error : ex.getBindingResult().getFieldErrors()) {
+            Map<String, String> err = new HashMap<>();
+            err.put("field", error.getField());
+            err.put("defaultMessage", error.getDefaultMessage());
+            errors.add(err);
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("errors", errors);
+        return ResponseEntity.badRequest().body(response);
+    }
     // --- Phần 1: API kiểm tra thông tin người dùng từ session ---
     /**
      * Endpoint để kiểm tra thông tin người dùng từ session
@@ -70,24 +89,18 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/staffs/create")
-    public ResponseEntity<?> createStaff(@RequestBody User user) {
-        try {
-            System.out.println("[DEBUG] Dữ liệu nhận được khi tạo nhân viên:");
-            System.out.println("  Họ: " + user.getFirstName());
-            System.out.println("  Tên: " + user.getLastName());
-            System.out.println("  Email: " + user.getEmail());
-            System.out.println("  Ngày sinh (dateOfBirth): " + user.getDateOfBirth());
-            System.out.println("  Số điện thoại: " + user.getPhone());
-            System.out.println("  Giới tính: " + user.getGender());
-            System.out.println("  Địa chỉ: " + user.getAddress());
-            System.out.println("  Ngày tạo (createdAt): " + user.getCreatedAt());
-            User created = userService.createStaffAccount(user);
-            return ResponseEntity.ok(created);
-        } catch (RuntimeException ex) {
-            return ResponseEntity.badRequest().body(java.util.Collections.singletonMap("message", ex.getMessage()));
-        } catch (Exception ex) {
-            return ResponseEntity.status(500).body(java.util.Collections.singletonMap("message", "Lỗi hệ thống: " + ex.getMessage()));
-        }
+    public ResponseEntity<?> createStaff(@Valid @RequestBody StaffDTO dto) {
+        System.out.println("[DEBUG] Dữ liệu nhận được khi tạo nhân viên:");
+        System.out.println("  Họ: " + dto.getFirstName());
+        System.out.println("  Tên: " + dto.getLastName());
+        System.out.println("  Email: " + dto.getEmail());
+        System.out.println("  Ngày sinh (dateOfBirth): " + dto.getDateOfBirth());
+        System.out.println("  Số điện thoại: " + dto.getPhone());
+        System.out.println("  Giới tính: " + dto.getGender());
+        System.out.println("  Địa chỉ: " + dto.getAddress());
+        System.out.println("  Ngày tạo (createdAt): " + dto.getCreatedAt());
+        User created = userService.createStaffAccountFromDTO(dto);
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping("/staffs/list")
@@ -118,7 +131,7 @@ public class UserController {
     }
 
     @PutMapping("/staffs/{id}")
-    public ResponseEntity<?> updateStaff(@PathVariable("id") Long id, @RequestBody StaffDTO dto) {
+    public ResponseEntity<?> updateStaff(@PathVariable("id") Long id, @Valid @RequestBody StaffDTO dto) {
         try {
             System.out.println("[DEBUG] Cập nhật nhân viên ID: " + id);
             System.out.println("[DEBUG] Dữ liệu nhận được:");
@@ -171,7 +184,15 @@ public class UserController {
     }
 
     @PutMapping("/staffs/customers/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id, @RequestBody CustomerDTO dto) {
+    public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id, @Valid @RequestBody CustomerDTO dto) {
+        System.out.println("[DEBUG] Dữ liệu nhận được khi cập nhật khách hàng:");
+        System.out.println("  Họ: " + dto.getFirstName());
+        System.out.println("  Tên: " + dto.getLastName());
+        System.out.println("  Email: " + dto.getEmail());
+        System.out.println("  Số điện thoại: " + dto.getPhone());
+        System.out.println("  Ngày sinh: " + dto.getDateOfBirth());
+        System.out.println("  Giới tính: " + dto.getGender());
+        System.out.println("  Địa chỉ: " + dto.getAddress());
         try {
             boolean updated = userService.updateCustomer(id, dto);
             if (updated) return ResponseEntity.ok().build();
@@ -198,6 +219,18 @@ public class UserController {
         if (user.getCreatedAt() != null) {
             dto.setCreatedAt(Date.from(user.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant()));
         }
+        dto.setIsActive(user.getIsActive());
         return dto;
+    }
+      // API chuyển trạng thái hoạt động/tạm ngưng cho nhân viên
+    @PutMapping("/staffs/{id}/toggle-active")
+    public ResponseEntity<?> toggleStaffActive(@PathVariable("id") Long id) {
+        try {
+            boolean result = userService.toggleStaffActive(id);
+            if (result) return ResponseEntity.ok().body(java.util.Collections.singletonMap("message", "Cập nhật trạng thái thành công"));
+            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("message", "Không tìm thấy nhân viên"));
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(java.util.Collections.singletonMap("message", "Lỗi cập nhật trạng thái: " + ex.getMessage()));
+        }
     }
 }

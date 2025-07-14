@@ -1224,6 +1224,7 @@
                                                     </div>
                                                     <div id="customerActiveFilters" class="d-flex gap-1 flex-wrap">
                                                         <!-- Active filter badges will be shown here -->
+                                                        <span id="customerGenderBadgeContainer"></span>
                                                     </div>
                                                 </div>
                                             </div>
