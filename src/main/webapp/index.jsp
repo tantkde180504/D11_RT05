@@ -186,7 +186,7 @@
                 <div class="col-12">
                     <div class="category-slider">
                         <div class="category-item">
-                            <a href="#" class="category-link">
+                            <a href="<%=request.getContextPath()%>/grade.jsp?grade=HG" class="category-link">
                                 <div class="category-icon">
                                     <img src="<%=request.getContextPath()%>/img/coll_2.jpg" alt="High Grade">
                                 </div>
@@ -194,7 +194,7 @@
                             </a>
                         </div>
                         <div class="category-item">
-                            <a href="#" class="category-link">
+                            <a href="<%=request.getContextPath()%>/grade.jsp?grade=RG" class="category-link">
                                 <div class="category-icon">
                                     <img src="<%=request.getContextPath()%>/img/coll_4.jpg" alt="Real Grade">
                                 </div>
@@ -202,7 +202,7 @@
                             </a>
                         </div>
                         <div class="category-item">
-                            <a href="#" class="category-link">
+                            <a href="<%=request.getContextPath()%>/grade.jsp?grade=MG" class="category-link">
                                 <div class="category-icon">
                                     <img src="<%=request.getContextPath()%>/img/coll_3.jpg" alt="Master Grade">
                                 </div>
@@ -210,7 +210,7 @@
                             </a>
                         </div>
                         <div class="category-item">
-                            <a href="#" class="category-link">
+                            <a href="<%=request.getContextPath()%>/grade.jsp?grade=PG" class="category-link">
                                 <div class="category-icon">
                                     <img src="<%=request.getContextPath()%>/img/coll_5.jpg" alt="Perfect Grade">
                                 </div>
@@ -218,7 +218,7 @@
                             </a>
                         </div>
                         <div class="category-item">
-                            <a href="#" class="category-link">
+                            <a href="<%=request.getContextPath()%>/grade.jsp?grade=METAL_BUILD" class="category-link">
                                 <div class="category-icon">
                                     <img src="<%=request.getContextPath()%>/img/coll_1.jpg" alt="Metal Build">
                                 </div>
@@ -226,7 +226,7 @@
                             </a>
                         </div>
                         <div class="category-item">
-                            <a href="#" class="category-link">
+                            <a href="<%=request.getContextPath()%>/grade.jsp?grade=SD" class="category-link">
                                 <div class="category-icon">
                                     <img src="<%=request.getContextPath()%>/img/coll_11.jpg" alt="Super Deformed">
                                 </div>

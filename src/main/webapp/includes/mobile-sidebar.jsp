@@ -42,10 +42,12 @@
                 <i class="fas fa-robot me-2"></i>Bandai Collection <i class="fas fa-chevron-down float-end"></i>
             </a>
             <ul class="collapse submenu" id="bandaiSubmenu">
-                <li><a href="#"><i class="fas fa-award me-2"></i>High Grade (HG)</a></li>
-                <li><a href="#"><i class="fas fa-trophy me-2"></i>Master Grade (MG)</a></li>
-                <li><a href="#"><i class="fas fa-medal me-2"></i>Real Grade (RG)</a></li>
-                <li><a href="#"><i class="fas fa-crown me-2"></i>Perfect Grade (PG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG"><i class="fas fa-award me-2"></i>High Grade (HG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG"><i class="fas fa-trophy me-2"></i>Master Grade (MG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG"><i class="fas fa-medal me-2"></i>Real Grade (RG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG"><i class="fas fa-crown me-2"></i>Perfect Grade (PG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=SD"><i class="fas fa-smile me-2"></i>Super Deformed (SD)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=METAL_BUILD"><i class="fas fa-gem me-2"></i>Metal Build</a></li>
             </ul>
         </li>
         <li><a href="favorites.jsp"><i class="fas fa-heart me-2"></i>Yêu thích</a></li>
