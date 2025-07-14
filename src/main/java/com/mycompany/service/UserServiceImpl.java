@@ -1,3 +1,4 @@
+
 package com.mycompany.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,62 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
+    // ...existing code...
+
+    @Override
+    public boolean toggleStaffActive(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) return false;
+        User user = userOpt.get();
+        if (!"STAFF".equalsIgnoreCase(user.getRole())) return false;
+        user.setIsActive(user.getIsActive() == null ? false : !user.getIsActive());
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+        return true;
+    }
+    // ...existing code...
+    @Override
+    public User createStaffAccountFromDTO(StaffDTO dto) {
+        // Đã dùng @Valid ở controller, không cần kiểm tra thủ công các trường required nữa
+
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email đã tồn tại.");
+        }
+        if (userRepository.existsByPhone(dto.getPhone())) {
+            throw new RuntimeException("Số điện thoại đã tồn tại.");
+        }
+        if (userRepository.existsByFirstNameAndLastNameAndEmail(dto.getFirstName(), dto.getLastName(), dto.getEmail())) {
+            throw new RuntimeException("Tên và email đã tồn tại cùng nhau.");
+        }
+        if (userRepository.existsByFirstNameAndLastNameAndPhone(dto.getFirstName(), dto.getLastName(), dto.getPhone())) {
+            throw new RuntimeException("Tên và số điện thoại đã tồn tại cùng nhau.");
+        }
+
+        User user = new User();
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        if (dto.getDateOfBirth() != null && !dto.getDateOfBirth().isEmpty()) {
+            try {
+                user.setDateOfBirth(java.time.LocalDate.parse(dto.getDateOfBirth()));
+            } catch (Exception ignored) {}
+        }
+        String validGender = null;
+        if (dto.getGender() != null) {
+            String gender = dto.getGender().toUpperCase();
+            if ("MALE".equals(gender) || "FEMALE".equals(gender) || "OTHER".equals(gender)) {
+                validGender = gender;
+            }
+        }
+        user.setGender(validGender);
+        user.setAddress(dto.getAddress());
+        user.setRole("STAFF");
+        user.setCreatedAt(java.time.LocalDateTime.now());
+        user.setUpdatedAt(java.time.LocalDateTime.now());
+        // Không set password vì StaffDTO không có trường này
+        return userRepository.save(user);
+    }
 
     @Autowired
     private UserRepository userRepository;

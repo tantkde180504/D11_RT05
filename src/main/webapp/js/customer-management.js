@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (activeTab && !customerLoaded) {
     loadCustomerList();
   }
+  // Badge filter gender elements
+  const genderBadgeContainer = document.getElementById('customerGenderBadgeContainer');
 
   // Gán sự kiện submit cho form sửa khách hàng (đặt trong DOMContentLoaded để luôn hoạt động)
   const editForm = document.getElementById('editCustomerForm');
@@ -55,7 +57,29 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(async res => {
         if (!res.ok) {
           let msg = await res.text();
-          throw new Error('Lỗi cập nhật: ' + msg);
+          // Try to parse validation errors from backend
+          let errorObj = null;
+          try {
+            errorObj = JSON.parse(msg);
+          } catch (e) {}
+          if (errorObj && errorObj.errors) {
+            // Show field-specific errors
+            let errorMsg = 'Cập nhật thất bại!\n';
+            errorObj.errors.forEach(err => {
+              errorMsg += `- ${err.field}: ${err.defaultMessage}\n`;
+              // Optionally, highlight the field
+              const field = editForm.querySelector(`[name='${err.field}']`);
+              if (field) {
+                field.classList.add('is-invalid');
+                // Show error below field (if you have .invalid-feedback element)
+                let feedback = field.parentElement.querySelector('.invalid-feedback');
+                if (feedback) feedback.textContent = err.defaultMessage;
+              }
+            });
+            throw new Error(errorMsg);
+          } else {
+            throw new Error('Lỗi cập nhật: ' + msg);
+          }
         }
         // Nếu không có nội dung trả về (status 200, 204), không cần gọi res.json()
         if (res.status === 204 || res.headers.get('content-length') === '0') {
@@ -78,9 +102,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 300);
       })
       .catch(err => {
-        alert('Cập nhật thất bại!\n' + err);
+        alert(err);
         console.error(err);
         if (submitBtn) submitBtn.disabled = false;
+        // Remove previous invalid highlights after error
+        ['editCusFirstName','editCusLastName','editCusEmail','editCusPhone','editCusDob','editCusGender','editCusAddress'].forEach(fid => {
+          const field = document.getElementById(fid);
+          if (field) field.classList.remove('is-invalid');
+          let feedback = field && field.parentElement.querySelector('.invalid-feedback');
+          if (feedback) feedback.textContent = '';
+        });
       });
     });
   }
@@ -126,6 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchValue = advSearchInput ? advSearchInput.value.toLowerCase() : '';
     const rows = document.querySelectorAll('#customerTableBody tr');
     const now = new Date();
+    let filteredCount = 0;
     rows.forEach(row => {
       // Lấy dữ liệu từng cột
       const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
@@ -173,13 +205,56 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
       row.style.display = visible ? '' : 'none';
+      if (visible) filteredCount++;
     });
+    // Cập nhật bộ đếm số lượng khách hàng đã lọc/tổng số
+    document.getElementById('customerFilteredCount').textContent = filteredCount;
+    document.getElementById('customerTotalCount').textContent = rows.length;
   }
 
   if (genderFilter) genderFilter.addEventListener('change', filterCustomerRows);
   if (orderFilter) orderFilter.addEventListener('change', filterCustomerRows);
   if (dateFilter) dateFilter.addEventListener('change', filterCustomerRows);
   if (advSearchInput) advSearchInput.addEventListener('input', filterCustomerRows);
+
+  // Hiển thị badge filter giới tính
+  if (genderFilter) {
+    genderFilter.addEventListener('change', function() {
+      showGenderBadge();
+    });
+    // Hiển thị badge khi load lại trang nếu filter đã chọn
+    showGenderBadge();
+  }
+
+  function showGenderBadge() {
+    if (!genderBadgeContainer) return;
+    const gender = genderFilter ? genderFilter.value : '';
+    genderBadgeContainer.innerHTML = '';
+    if (gender) {
+      let label = '';
+      let badgeClass = 'status-badge';
+      let customStyle = '';
+      if (gender === 'MALE') {
+        label = 'Giới tính: Nam';
+        customStyle = 'background: linear-gradient(90deg, #e55a00 0%, #d94e13 100%); color: #fff;';
+      } else if (gender === 'FEMALE') {
+        label = 'Giới tính: Nữ';
+        customStyle = 'background: linear-gradient(90deg, #e55a00 0%, #d94e13 100%); color: #fff;';
+      } else if (gender === 'OTHER') {
+        label = 'Giới tính: Khác';
+        customStyle = 'background: linear-gradient(90deg, #e55a00 0%, #d94e13 100%); color: #fff;';
+      }
+      genderBadgeContainer.innerHTML = `<span class="${badgeClass} ms-2" style="${customStyle} font-size:1rem;">${label} <button type="button" class="btn btn-sm btn-close ms-1 p-0" aria-label="Xóa" id="clearGenderFilterBtn" style="filter: invert(1);"></button></span>`;
+      const clearBtn = document.getElementById('clearGenderFilterBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+          genderFilter.value = '';
+          showGenderBadge();
+          filterCustomerRows();
+        });
+      }
+    }
+  }
 });
 
 function apiUrl(path) {
@@ -245,6 +320,7 @@ function loadCustomerList() {
         tr.classList.add('table-row-hover');
       });
       filterCustomerRows(); // Lọc lại khi tải xong danh sách
+      showGenderBadge(); // Hiển thị lại badge khi load danh sách
     })
     .catch(err => {
       // Đã xóa alert thông báo lỗi

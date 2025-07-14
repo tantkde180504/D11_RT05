@@ -25,6 +25,19 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
+     // Validate firstName & lastName: chỉ cho phép chữ và khoảng trắng, tối đa 50 ký tự
+     const namePattern = /^[A-Za-zÀ-ỹ ]{1,50}$/;
+     const firstName = form.querySelector('input[name="firstName"]').value.trim();
+     const lastName = form.querySelector('input[name="lastName"]').value.trim();
+     if (!namePattern.test(firstName)) {
+         alert("Họ chỉ được chứa chữ, khoảng trắng và tối đa 50 ký tự!");
+         return;
+     }
+     if (!namePattern.test(lastName)) {
+         alert("Tên chỉ được chứa chữ, khoảng trắng và tối đa 50 ký tự!");
+         return;
+     }
+
       // Validate email phải chứa @
       const emailValue = form.querySelector('input[name="email"]').value;
       if (!emailValue.includes("@")) {
@@ -322,13 +335,16 @@ window.saveStaffUpdate = function () {
     if (res.ok) {
       alert("Cập nhật thành công");
       bootstrap.Modal.getInstance(document.getElementById("editStaffModal")).hide();
-      loadStaffList(); // Reload danh sách thay vì reload toàn trang
+      loadStaffList();
     } else {
-      // Xử lý lỗi chi tiết
+      // Xử lý lỗi chi tiết từ backend (validation)
       let errorMessage = "Lỗi khi cập nhật nhân viên";
       try {
         const errorData = await res.json();
-        if (errorData.message) {
+        if (typeof errorData === 'object' && errorData !== null) {
+          // Nếu là lỗi validation dạng { field: message, ... }
+          errorMessage = Object.values(errorData).join('\n');
+        } else if (errorData.message) {
           errorMessage = errorData.message;
         }
       } catch (e) {
@@ -498,16 +514,21 @@ function renderStaffTable(staffToRender) {
         const fullName = `${staff.firstName} ${staff.lastName}`;
         const joinDate = staff.createdAtFormatted || "";
         const roleLabel = staff.role === "STAFF" ? "Nhân viên" : (staff.role || "Nhân viên");
-        
+
         let deleteBtn = '';
         if (staff.id !== undefined && staff.id !== null && staff.id !== "" && !isNaN(staff.id)) {
             deleteBtn = `<button class="btn btn-sm btn-danger" onclick="deleteStaff(${staff.id})"><i class="fas fa-trash"></i></button>`;
         }
-        
+
+        // Nút chuyển trạng thái
+        const toggleBtn = `<button class="btn btn-sm ${staff.isActive === false ? 'btn-success' : 'btn-secondary'}" title="${staff.isActive === false ? 'Kích hoạt' : 'Tạm ngưng'}" onclick="toggleStaffActive(${staff.id})">
+            <i class="fas ${staff.isActive === false ? 'fa-power-off' : 'fa-ban'}"></i>
+        </button>`;
+
         const statusBadge = staff.isActive === false ? 
             '<span class="badge bg-secondary">Tạm ngưng</span>' : 
             '<span class="badge bg-success">Hoạt động</span>';
-        
+
         const row = `
             <tr>
                 <td>${staff.id || ''}</td>
@@ -518,12 +539,32 @@ function renderStaffTable(staffToRender) {
                 <td>${joinDate}</td>
                 <td>${statusBadge}</td>
                 <td>
+                    ${toggleBtn}
                     <button class="btn btn-sm btn-warning" onclick="openEditModal(${staff.id})"><i class="fas fa-edit"></i></button>
                     ${deleteBtn}
                 </td>
             </tr>
         `;
         tbody.insertAdjacentHTML("beforeend", row);
+    });
+}
+
+// Hàm gọi API chuyển trạng thái hoạt động/tạm ngưng
+function toggleStaffActive(id) {
+    if (!id) return;
+    if (!confirm("Bạn có chắc muốn chuyển trạng thái nhân viên này?")) return;
+    fetch(apiUrl(`/api/staffs/${id}/toggle-active`), {
+        method: "PUT",
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.message) alert(data.message);
+        loadStaffList();
+    })
+    .catch(err => {
+        alert("Lỗi khi chuyển trạng thái nhân viên!");
+        console.error(err);
     });
 }
 
