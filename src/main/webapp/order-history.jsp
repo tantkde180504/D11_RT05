@@ -50,6 +50,13 @@
                             <label for="complaintContent" class="form-label">Nội dung khiếu nại *</label>
                             <textarea class="form-control" id="complaintContent" rows="4" required></textarea>
                         </div>
+                        <div class="mb-3">
+                            <label for="complaintMedia" class="form-label">Ảnh/Video kèm theo (tùy chọn)</label>
+                            <input class="form-control" type="file" id="complaintMedia" name="mediaFiles"
+                                accept="image/*,video/*" multiple>
+                            <div class="form-text">Chỉ hỗ trợ ảnh (jpg, png) và video (mp4). Có thể chọn nhiều file.
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Gửi khiếu nại</button>
@@ -181,11 +188,11 @@
 
                     console.log("===> Response status:", resp.status);
                     console.log("===> Response ok:", resp.ok);
-                    
+
                     //const data = await resp.json();
                     const text = await resp.text();
                     console.log("===> complaints response text:", text);
-                    
+
                     let data;
                     try {
                         data = JSON.parse(text);
@@ -214,7 +221,7 @@
 
                     data.forEach(c => {
                         console.log("📦 Complaint object:", c);
-                        
+
                         // Xử lý an toàn cho các field
                         const productImage = c.productImage || 'img/logo.png';
                         const productName = c.productName || 'N/A';
@@ -225,7 +232,7 @@
                         const status = c.status || 'UNKNOWN';
                         const staffResponse = c.staffResponse || '-';
                         const createdAt = c.createdAt || '-';
-                        
+
                         html += '<tr>' +
                             '<td><div class="d-flex align-items-center"><img src="' + productImage + '" alt="' + productName + '" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"><div class="text-start"><strong>' + productName + '</strong><br><small class="text-muted">SL: ' + totalItems + '</small></div></div></td>' +
                             '<td>' + orderNumber + '</td>' +

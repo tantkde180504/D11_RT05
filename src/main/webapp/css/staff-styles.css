@@ -733,3 +733,9 @@
   border-radius: 10px;
   margin: 0 auto;
 }
+#update-product-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}

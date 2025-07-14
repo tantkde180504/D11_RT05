@@ -739,6 +739,18 @@
                                         <hr>
                                         <h6>Nội dung khiếu nại:</h6>
                                         <p id="complaint-content"></p>
+                                        <!-- Thẻ này thay cho dòng "Hình ảnh/Video đính kèm:" -->
+                                        <div class="card mt-3">
+                                            <div class="card-header py-2">
+                                                <h6 class="mb-0"><i class="fas fa-photo-video me-2"></i>Hình ảnh/Video
+                                                    đính kèm</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div id="complaint-media-gallery" class="d-flex flex-wrap gap-2">
+                                                    <!-- Ảnh/video sẽ được render tại đây -->
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
