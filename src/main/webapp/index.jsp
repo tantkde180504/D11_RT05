@@ -490,6 +490,9 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
+    <!-- Include Chat Widget -->
+    <jsp:include page="chat-widget.jsp" />
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
@@ -1038,6 +1041,21 @@
                 console.warn('⚠️ unifiedNavbarManager not found!');
             }
         });
+    </script>
+    
+    <!-- Chat Widget Functions -->
+    <script>
+    // Function to open chat widget - called from dropdown menu
+    function openChatWidget() {
+        console.log('🔗 openChatWidget called from dropdown menu');
+        
+        // Gọi toggleChatWidget từ chat-widget.jsp
+        if (typeof toggleChatWidget === 'function') {
+            toggleChatWidget();
+        } else {
+            console.log('❌ toggleChatWidget function not found');
+        }
+    }
     </script>
     </body>
 </html>

@@ -49,6 +49,14 @@ class UnifiedNavbarManager {
                 event.preventDefault();
                 this.handleLogout();
             }
+            
+            // Handle chat button clicks
+            if (event.target.closest('[data-action="openChat"]')) {
+                event.preventDefault();
+                if (window.openChatWidget) {
+                    window.openChatWidget();
+                }
+            }
         });
     }
 
@@ -86,6 +94,7 @@ class UnifiedNavbarManager {
                     
                     // Convert server data to client format
                     this.currentUser = {
+                        id: data.email, // Use email as ID for chat system
                         fullName: data.name,
                         name: data.name,
                         email: data.email,
@@ -153,6 +162,20 @@ class UnifiedNavbarManager {
     updateNavbarForLoggedInUser() {
         console.log('🔄 Updating navbar for logged in user');
         
+        // Set session storage for chat widget
+        if (this.currentUser) {
+            // Use email as userId for chat system to match backend logic
+            const userId = this.currentUser.email || this.currentUser.id || this.currentUser.customerId || '1';
+            sessionStorage.setItem('userId', userId);
+            sessionStorage.setItem('userType', 'CUSTOMER');
+            sessionStorage.setItem('userName', this.currentUser.name || this.currentUser.fullName || 'User');
+            console.log('✅ Session storage set:', {
+                userId: userId,
+                userType: 'CUSTOMER',
+                userName: this.currentUser.name || this.currentUser.fullName
+            });
+        }
+        
         const dropdown = document.getElementById('unifiedAccountDropdown');
         const menu = document.getElementById('unifiedAccountDropdownMenu');
         
@@ -203,6 +226,10 @@ class UnifiedNavbarManager {
             </a></li>
             <li><a class="dropdown-item" href="#">
                 <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
+            </a></li>
+            <li><a class="dropdown-item" href="#" data-action="openChat">
+                <i class="fas fa-comments me-2"></i>Chat hỗ trợ
+                <span id="navbar-chat-badge" class="badge bg-danger ms-1" style="display: none;">0</span>
             </a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="#" id="unifiedLogoutBtn">
@@ -392,6 +419,46 @@ window.userLogout = function() {
     if (unifiedNavbarManager) {
         unifiedNavbarManager.handleLogout();
     }
+};
+
+// Global openChatWidget function for dropdown menu
+window.openChatWidget = function() {
+    console.log('🔗 openChatWidget called from dropdown menu');
+    console.log('📊 Current sessionStorage:', {
+        userId: sessionStorage.getItem('userId'),
+        userType: sessionStorage.getItem('userType'),
+        userName: sessionStorage.getItem('userName')
+    });
+    
+    const userId = sessionStorage.getItem('userId');
+    const userType = sessionStorage.getItem('userType');
+    
+    console.log('Auth check - userId:', userId, 'userType:', userType);
+    
+    if (!userId || userType !== 'CUSTOMER') {
+        console.log('❌ Auth failed - userId:', userId, 'userType:', userType);
+        alert('Vui lòng đăng nhập để sử dụng chat hỗ trợ!');
+        return false; // Prevent navigation
+    }
+    
+    // Check if we're on index.jsp
+    const currentPath = window.location.pathname;
+    if (!currentPath.includes('index.jsp') && currentPath !== '/') {
+        console.log('🔄 Redirecting to index.jsp to access chat widget...');
+        window.location.href = window.contextPath + '/index.jsp#chat';
+        return false;
+    }
+    
+    // Directly call toggleChatWidget function
+    if (typeof toggleChatWidget === 'function') {
+        console.log('✅ Calling toggleChatWidget function...');
+        toggleChatWidget();
+    } else {
+        console.log('❌ toggleChatWidget function not found');
+        alert('Chat widget không khả dụng. Vui lòng refresh trang!');
+    }
+    
+    return false; // Prevent navigation
 };
 
 console.log('📦 Unified Navbar Manager script loaded');

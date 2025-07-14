@@ -12,6 +12,7 @@ import com.mycompany.model.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -20,6 +21,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Kiểm tra email đã tồn tại hay chưa
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Tìm user theo email
+     */
+    Optional<User> findByEmail(String email);
 
     /**
      * Kiểm tra số điện thoại đã tồn tại hay chưa
@@ -64,4 +70,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         @Param("gender") String gender,
                         @Param("address") String address,
                         @Param("updatedAt") LocalDateTime updatedAt);
+
+    /**
+     * Tìm tất cả staff cho chat system
+     */
+    @Query("SELECT u FROM User u WHERE u.role = 'STAFF'")
+    List<User> findAllStaffForChat();
+    
+    /**
+     * Tìm tất cả customer cho chat system
+     */
+    @Query("SELECT u FROM User u WHERE u.role = 'CUSTOMER'")
+    List<User> findAllCustomersForChat();
+    
+    /**
+     * Tìm user info theo danh sách IDs (cho chat)
+     */
+    @Query("SELECT u.id, u.firstName, u.lastName, u.email FROM User u WHERE u.id IN :userIds")
+    List<Object[]> findUserInfoByIds(@Param("userIds") List<Long> userIds);
+    
+    /**
+     * Lấy danh sách user theo role, sắp xếp theo firstName và lastName
+     */
+    @Query("SELECT u FROM User u WHERE u.role = :role ORDER BY u.firstName ASC, u.lastName ASC")
+    List<User> findByRoleOrderByFullNameAsc(@Param("role") String role);
 }

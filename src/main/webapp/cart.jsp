@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    
 <div class="cart-container">
     <div class="cart-title">Giỏ hàng của bạn</div>
     <table class="cart-table" width="100%">

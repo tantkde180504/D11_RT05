@@ -41,11 +41,46 @@ public class User {
 
     @Builder.Default
     @Column(nullable = false)
-    private String role = "STAFF";
+    private String role = "CUSTOMER"; // Đổi default từ STAFF thành CUSTOMER
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
+    
+    // Enum cho Role (để hỗ trợ chat system)
+    public enum Role {
+        CUSTOMER, STAFF, ADMIN
+    }
+    
+    // Enum cho Gender
+    public enum Gender {
+        MALE, FEMALE, OTHER
+    }
+    
+    // Helper method để lấy tên đầy đủ
+    public String getFullName() {
+        if (firstName != null && lastName != null) {
+            return firstName + " " + lastName;
+        } else if (firstName != null) {
+            return firstName;
+        } else if (lastName != null) {
+            return lastName;
+        }
+        return email; // Fallback to email
+    }
+    
+    // Helper method để kiểm tra role
+    public boolean isCustomer() {
+        return "CUSTOMER".equals(role);
+    }
+    
+    public boolean isStaff() {
+        return "STAFF".equals(role);
+    }
+    
+    public boolean isAdmin() {
+        return "ADMIN".equals(role);
+    }
 }

@@ -189,87 +189,77 @@
                 </div>
             </div>
 
-            <!-- Messages Tab -->
+            <!-- Messages Tab - Real-time Chat -->
             <div id="messages" class="tab-content">
                 <div class="staff-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5><i class="fas fa-comments me-2 text-primary"></i>Quản lý tin nhắn khách hàng</h5>
-                        <button class="btn btn-primary action-btn" data-bs-toggle="modal"
-                            data-bs-target="#composeModal">
-                            <i class="fas fa-plus me-2"></i>Soạn tin nhắn
-                        </button>
-                    </div>
-
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control"
-                            placeholder="Tìm kiếm tin nhắn theo tên khách hàng, email...">
-                    </div>
-
-                    <div class="message-item">
-                        <div class="message-header">
-                            <div>
-                                <h6 class="mb-1">Nguyễn Văn A</h6>
-                                <small class="text-muted">customer@email.com</small>
-                            </div>
-                            <div>
-                                <span class="message-priority priority-high">Ưu tiên cao</span>
-                                <small class="text-muted ms-2">10:30 AM</small>
-                            </div>
-                        </div>
-                        <p class="mb-3">Xin chào, tôi muốn hỏi về sản phẩm RG Strike Freedom Gundam. Sản phẩm này có còn
-                            hàng không ạ?</p>
+                        <h5><i class="fas fa-comments me-2 text-primary"></i>Chat với khách hàng</h5>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-reply action-btn">
-                                <i class="fas fa-reply me-2"></i>Trả lời
-                            </button>
-                            <button class="btn btn-close action-btn">
-                                <i class="fas fa-check me-2"></i>Đóng
+                            <span id="staff-connection-status" class="badge bg-secondary">Đang kết nối...</span>
+                            <button class="btn btn-outline-primary btn-sm" onclick="refreshCustomerList()">
+                                <i class="fas fa-sync-alt me-1"></i>Làm mới
                             </button>
                         </div>
                     </div>
 
-                    <div class="message-item">
-                        <div class="message-header">
-                            <div>
-                                <h6 class="mb-1">Trần Thị B</h6>
-                                <small class="text-muted">customer2@email.com</small>
-                            </div>
-                            <div>
-                                <span class="message-priority priority-medium">Bình thường</span>
-                                <small class="text-muted ms-2">09:15 AM</small>
-                            </div>
-                        </div>
-                        <p class="mb-3">Đơn hàng của tôi đã được giao chưa? Mã đơn hàng là #12345.</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-reply action-btn">
-                                <i class="fas fa-reply me-2"></i>Trả lời
-                            </button>
-                            <button class="btn btn-close action-btn">
-                                <i class="fas fa-check me-2"></i>Đóng
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="message-item">
-                        <div class="message-header">
-                            <div>
-                                <h6 class="mb-1">Lê Văn C</h6>
-                                <small class="text-muted">customer3@email.com</small>
-                            </div>
-                            <div>
-                                <span class="message-priority priority-low">Thấp</span>
-                                <small class="text-muted ms-2">08:45 AM</small>
+                    <div class="row">
+                        <!-- Customer List -->
+                        <div class="col-lg-4">
+                            <div class="customer-list-container">
+                                <div class="search-box mb-3">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="customer-search" class="form-control" 
+                                           placeholder="Tìm kiếm khách hàng...">
+                                </div>
+                                
+                                <div id="customer-list" class="customer-list">
+                                    <div class="text-center p-3 text-muted">
+                                        <i class="fas fa-users fa-2x mb-2"></i>
+                                        <p>Đang tải danh sách khách hàng...</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <p class="mb-3">Cảm ơn shop đã hỗ trợ tôi. Sản phẩm rất chất lượng!</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-reply action-btn">
-                                <i class="fas fa-reply me-2"></i>Trả lời
-                            </button>
-                            <button class="btn btn-close action-btn">
-                                <i class="fas fa-check me-2"></i>Đóng
-                            </button>
+                        
+                        <!-- Chat Area -->
+                        <div class="col-lg-8">
+                            <div class="chat-area">
+                                <!-- Chat Header -->
+                                <div id="chat-header" class="chat-header" style="display: none;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="customer-avatar me-3">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0" id="selected-customer-name">Chọn khách hàng</h6>
+                                            <small class="text-muted" id="selected-customer-email"></small>
+                                        </div>
+                                    </div>
+                                    <div class="chat-status">
+                                        <span class="badge bg-success">Online</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Chat Messages -->
+                                <div id="staff-chat-messages" class="chat-messages">
+                                    <div class="empty-chat">
+                                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">Chọn khách hàng để bắt đầu chat</h5>
+                                        <p class="text-muted">Chọn một khách hàng từ danh sách bên trái để bắt đầu hội thoại</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Chat Input -->
+                                <div id="staff-chat-input" class="chat-input" style="display: none;">
+                                    <div class="input-group">
+                                        <input type="text" id="staff-message-input" class="form-control" 
+                                               placeholder="Nhập tin nhắn..." disabled>
+                                        <button id="staff-send-button" class="btn btn-primary" onclick="sendStaffMessage()" disabled>
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1210,11 +1200,593 @@
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                 <script src="js/staff.js"></script>
                 <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+                
+                <!-- Chat WebSocket Scripts -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+                <style>
+                /* Staff Chat Styles */
+                .customer-list-container {
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    height: 500px;
+                    overflow: hidden;
+                }
+
+                .customer-list {
+                    height: calc(100% - 60px);
+                    overflow-y: auto;
+                }
+
+                .customer-item {
+                    padding: 12px 15px;
+                    border-bottom: 1px solid #f0f0f0;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .customer-item:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .customer-item.active {
+                    background-color: #007bff;
+                    color: white;
+                }
+
+                .customer-item.active .text-muted {
+                    color: rgba(255, 255, 255, 0.8) !important;
+                }
+
+                .customer-avatar {
+                    width: 40px;
+                    height: 40px;
+                    background: #007bff;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    flex-shrink: 0;
+                }
+
+                .customer-item.active .customer-avatar {
+                    background: rgba(255, 255, 255, 0.2);
+                }
+
+                .customer-info {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .customer-info h6 {
+                    margin: 0;
+                    font-size: 14px;
+                    font-weight: 600;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .customer-info small {
+                    font-size: 12px;
+                    opacity: 0.8;
+                }
+
+                .unread-indicator {
+                    width: 8px;
+                    height: 8px;
+                    background: #dc3545;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+
+                .chat-area {
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    height: 500px;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+
+                .chat-header {
+                    padding: 15px 20px;
+                    border-bottom: 1px solid #e0e0e0;
+                    background: #f8f9fa;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .chat-messages {
+                    flex: 1;
+                    padding: 15px;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    background: #fafafa;
+                    max-height: 350px;
+                    scroll-behavior: smooth;
+                }
+
+                /* Custom scrollbar cho staff chat */
+                .chat-messages::-webkit-scrollbar {
+                    width: 8px;
+                }
+
+                .chat-messages::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    border-radius: 4px;
+                }
+
+                .chat-messages::-webkit-scrollbar-thumb {
+                    background: #c1c1c1;
+                    border-radius: 4px;
+                }
+
+                .chat-messages::-webkit-scrollbar-thumb:hover {
+                    background: #a8a8a8;
+                }
+
+                .chat-messages::after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+
+                .empty-chat {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                }
+
+                .staff-message {
+                    margin-bottom: 15px;
+                    display: flex;
+                    gap: 10px;
+                    width: 100%;
+                }
+
+                .staff-message.sent {
+                    flex-direction: row-reverse;
+                }
+
+                .staff-message.sent .message-bubble {
+                    background: #007bff;
+                    color: white;
+                    border-radius: 18px 18px 4px 18px;
+                    float: right;
+                    clear: both;
+                }
+
+                .staff-message.received .message-bubble {
+                    background: white;
+                    color: #333;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 18px 18px 18px 4px;
+                    float: left;
+                    clear: both;
+                }
+
+                .message-bubble {
+                    max-width: 85%;
+                    padding: 12px 16px;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                    white-space: pre-wrap;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    display: inline-block;
+                }
+
+                .message-time {
+                    font-size: 11px;
+                    color: #999;
+                    margin-top: 6px;
+                    text-align: center;
+                    font-style: italic;
+                    opacity: 0.7;
+                }
+
+                .chat-input {
+                    padding: 15px 20px;
+                    border-top: 1px solid #e0e0e0;
+                    background: white;
+                }
+
+                .chat-input .input-group {
+                    gap: 10px;
+                }
+
+                .chat-input input {
+                    border-radius: 20px;
+                    border: 1px solid #ddd;
+                    padding: 10px 15px;
+                }
+
+                .chat-input button {
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                #staff-connection-status.bg-success {
+                    background-color: #28a745 !important;
+                }
+
+                #staff-connection-status.bg-warning {
+                    background-color: #ffc107 !important;
+                    color: #212529 !important;
+                }
+
+                #staff-connection-status.bg-danger {
+                    background-color: #dc3545 !important;
+                }
+                </style>
 
                 <script>
-                    // Check staff access on page load
+                let staffStompClient = null;
+                let staffCurrentUserId = null;
+                let staffCurrentUserType = 'STAFF';
+                let selectedCustomerId = null;
+                let customerListData = [];
+
+                // Khởi tạo staff chat
+                function initStaffChat(userId, userType) {
+                    staffCurrentUserId = userId;
+                    staffCurrentUserType = userType;
+                    
+                    if (userType === 'STAFF') {
+                        connectStaffChat();
+                        loadCustomerList();
+                    }
+                }
+
+                // Kết nối WebSocket cho staff
+                function connectStaffChat() {
+                    const statusElement = document.getElementById('staff-connection-status');
+                    statusElement.textContent = 'Đang kết nối...';
+                    statusElement.className = 'badge bg-warning';
+                    
+                    console.log('🔌 Connecting staff chat WebSocket for user:', staffCurrentUserId);
+                    
+                    const socket = new SockJS('/ws-chat');
+                    staffStompClient = Stomp.over(socket);
+                    
+                    staffStompClient.connect({}, function(frame) {
+                        console.log('✅ Staff chat connected:', frame);
+                        
+                        // Subscribe để nhận tin nhắn
+                        const subscriptionUrl = '/user/' + staffCurrentUserId + '/queue/messages';
+                        console.log('📡 Subscribing to:', subscriptionUrl);
+                        
+                        staffStompClient.subscribe(subscriptionUrl, function(message) {
+                            console.log('📩 Staff received message:', message.body);
+                            const messageData = JSON.parse(message.body);
+                            handleStaffIncomingMessage(messageData);
+                        });
+                        
+                        // Cập nhật trạng thái kết nối
+                        statusElement.textContent = 'Đã kết nối';
+                        statusElement.className = 'badge bg-success';
+                        
+                        // Enable input nếu đã chọn customer
+                        if (selectedCustomerId) {
+                            enableStaffInput();
+                        }
+                        
+                    }, function(error) {
+                        console.error('❌ Staff chat connection error:', error);
+                        statusElement.textContent = 'Mất kết nối';
+                        statusElement.className = 'badge bg-danger';
+                    });
+                }
+
+                // Load danh sách customer
+                function loadCustomerList() {
+                    console.log('🔍 Loading customer list...');
+                    fetch('/api/chat/customers')
+                        .then(response => {
+                            console.log('📡 Customer API response status:', response.status);
+                            return response.json();
+                        })
+                        .then(customers => {
+                            console.log('👥 Customers received:', customers);
+                            customerListData = customers;
+                            displayCustomerList(customers);
+                        })
+                        .catch(error => {
+                            console.error('❌ Error loading customers:', error);
+                            document.getElementById('customer-list').innerHTML = `
+                                <div class="text-center p-3 text-danger">
+                                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                    <p>Không thể tải danh sách khách hàng</p>
+                                    <small>Error: ${error.message}</small>
+                                </div>
+                            `;
+                        });
+                }
+
+                // Hiển thị danh sách customer
+                function displayCustomerList(customers) {
+                    const listContainer = document.getElementById('customer-list');
+                    
+                    if (customers.length === 0) {
+                        listContainer.innerHTML = `
+                            <div class="text-center p-3 text-muted">
+                                <i class="fas fa-users fa-2x mb-2"></i>
+                                <p>Chưa có khách hàng nào</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    listContainer.innerHTML = customers.map(customer => 
+                        '<div class="customer-item" onclick="selectCustomer(' + customer.id + ', \'' + customer.fullName + '\', \'' + customer.email + '\')">' +
+                            '<div class="customer-avatar">' +
+                                '<i class="fas fa-user"></i>' +
+                            '</div>' +
+                            '<div class="customer-info">' +
+                                '<h6>' + customer.fullName + '</h6>' +
+                                '<small class="text-muted">' + customer.email + '</small>' +
+                            '</div>' +
+                        '</div>'
+                    ).join('');
+                }
+
+                // Chọn customer để chat
+                function selectCustomer(customerId, customerName, customerEmail) {
+                    // Remove active class from all items
+                    document.querySelectorAll('.customer-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to selected item
+                    event.currentTarget.classList.add('active');
+                    
+                    selectedCustomerId = customerId;
+                    
+                    // Update chat header
+                    document.getElementById('selected-customer-name').textContent = customerName;
+                    document.getElementById('selected-customer-email').textContent = customerEmail;
+                    document.getElementById('chat-header').style.display = 'flex';
+                    document.getElementById('staff-chat-input').style.display = 'block';
+                    
+                    // Clear messages and load history
+                    const messagesContainer = document.getElementById('staff-chat-messages');
+                    messagesContainer.innerHTML = '';
+                    
+                    // Enable input if connected
+                    if (staffStompClient && staffStompClient.connected) {
+                        enableStaffInput();
+                    }
+                    
+                    // Load chat history for this customer (from any staff)
+                    loadCustomerChatHistory(customerId);
+                }
+
+                // Load lịch sử chat của customer với bất kỳ staff nào
+                function loadCustomerChatHistory(customerId) {
+                    console.log('📚 Loading chat history for customer:', customerId);
+                    fetch('/api/chat/customer-messages/' + customerId)
+                        .then(response => response.json())
+                        .then(messages => {
+                            console.log('📝 Customer chat history loaded:', messages.length, 'messages');
+                            messages.forEach(message => {
+                                displayStaffMessage(message, false);
+                            });
+                            scrollStaffChatToBottom();
+                        })
+                        .catch(error => {
+                            console.error('❌ Error loading customer chat history:', error);
+                        });
+                }
+
+                // Hiển thị tin nhắn trong staff chat
+                function displayStaffMessage(message, isNew = true) {
+                    const messagesContainer = document.getElementById('staff-chat-messages');
+                    const messageWrapper = document.createElement('div');
+                    messageWrapper.style.width = '100%';
+                    messageWrapper.style.marginBottom = '10px';
+                    messageWrapper.style.display = 'block';
+                    
+                    const messageDiv = document.createElement('div');
+                    
+                    const isSent = message.senderId == staffCurrentUserId;
+                    messageDiv.className = 'staff-message ' + (isSent ? 'sent' : 'received');
+                    
+                    const avatar = isSent ? `
+                        <div class="customer-avatar" style="background: #28a745;">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                    ` : `
+                        <div class="customer-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    `;
+                    
+                    // Escape HTML và xử lý text properly
+                    const messageText = escapeStaffHtml(message.message);
+                    const formattedTime = new Date(message.timestamp).toLocaleTimeString('vi-VN', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    messageDiv.innerHTML = `
+                        ` + avatar + `
+                        <div>
+                            <div class="message-bubble">
+                                <div style="word-break: break-word; overflow-wrap: break-word; hyphens: none;">` + messageText + `</div>
+                            </div>
+                            <div class="message-time">
+                                ` + formattedTime + `
+                                ` + (isSent && message.isRead ? ' ✓✓' : '') + `
+                            </div>
+                        </div>
+                    `;
+                    
+                    messageWrapper.appendChild(messageDiv);
+                    messagesContainer.appendChild(messageWrapper);
+                    
+                    if (isNew) {
+                        scrollStaffChatToBottom();
+                    }
+                }
+
+                // Helper function để escape HTML cho staff
+                function escapeStaffHtml(unsafe) {
+                    if (!unsafe) return '';
+                    return unsafe
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                }
+
+                // Gửi tin nhắn từ staff
+                function sendStaffMessage() {
+                    const input = document.getElementById('staff-message-input');
+                    const message = input.value.trim();
+                    
+                    if (message && staffStompClient && selectedCustomerId) {
+                        const messageData = {
+                            senderId: staffCurrentUserId,
+                            receiverId: selectedCustomerId,
+                            message: message,
+                            senderType: 'STAFF',
+                            receiverType: 'CUSTOMER'
+                        };
+                        
+                        // Temporarily disable button và clear input
+                        const sendButton = document.getElementById('staff-send-button');
+                        sendButton.disabled = true;
+                        input.value = '';
+                        
+                        staffStompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
+                        
+                        // Hiển thị tin nhắn vừa gửi lên UI ngay lập tức
+                        displayStaffMessage({
+                            senderId: staffCurrentUserId,
+                            message: message,
+                            timestamp: new Date()
+                        }, true);
+                        
+                        // Re-enable button sau 1 giây
+                        setTimeout(() => {
+                            sendButton.disabled = false;
+                        }, 1000);
+                    }
+                }
+
+                // Xử lý tin nhắn đến cho staff
+                function handleStaffIncomingMessage(messageData) {
+                    // Nếu đang chat với customer này, hiển thị tin nhắn
+                    if (selectedCustomerId && messageData.senderId == selectedCustomerId) {
+                        displayStaffMessage(messageData);
+                    }
+                    
+                    // Update notification badge if needed
+                    // This could be enhanced to show unread count per customer
+                }
+
+                // Enable staff input
+                function enableStaffInput() {
+                    document.getElementById('staff-message-input').disabled = false;
+                    document.getElementById('staff-send-button').disabled = false;
+                }
+
+                // Refresh customer list
+                function refreshCustomerList() {
+                    loadCustomerList();
+                }
+
+                // Scroll to bottom
+                function scrollStaffChatToBottom() {
+                    const messagesContainer = document.getElementById('staff-chat-messages');
+                    if (messagesContainer) {
+                        const scrollHeight = messagesContainer.scrollHeight;
+                        const height = messagesContainer.clientHeight;
+                        const maxScrollTop = scrollHeight - height;
+                        
+                        // Smooth scroll animation
+                        messagesContainer.scrollTo({
+                            top: maxScrollTop,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Fallback for older browsers
+                        setTimeout(() => {
+                            messagesContainer.scrollTop = maxScrollTop;
+                        }, 100);
+                    }
+                }
+
+                // Search customers
+                document.addEventListener('DOMContentLoaded', function() {
+                    const searchInput = document.getElementById('customer-search');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function(e) {
+                            const searchTerm = e.target.value.toLowerCase();
+                            const filteredCustomers = customerListData.filter(customer => 
+                                customer.fullName.toLowerCase().includes(searchTerm) ||
+                                customer.email.toLowerCase().includes(searchTerm)
+                            );
+                            displayCustomerList(filteredCustomers);
+                        });
+                    }
+                    
+                    // Enter to send message
+                    const messageInput = document.getElementById('staff-message-input');
+                    if (messageInput) {
+                        messageInput.addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                sendStaffMessage();
+                            }
+                        });
+                    }
+                });
+                </script>
+
+                <script>
+                    // Check staff access on page load and initialize chat
                     document.addEventListener('DOMContentLoaded', function () {
                         checkPageAccess('STAFF');
+                        
+                        // Initialize staff chat with Staff Member (ID: 8) from session
+                        console.log('🔍 Initializing staff chat for logged in staff...');
+                        
+                        // Staff info from login session: Staff Member (staff@gundam.com) - ID: 8
+                        const staffUserId = 8; // Staff Member ID from database
+                        const staffUserType = 'STAFF';
+                        
+                        // Set sessionStorage for consistency
+                        sessionStorage.setItem('userId', staffUserId.toString());
+                        sessionStorage.setItem('userType', staffUserType);
+                        sessionStorage.setItem('userName', 'Staff Member');
+                        sessionStorage.setItem('userEmail', 'staff@gundam.com');
+                        
+                        console.log('✅ Staff session set:', {
+                            userId: staffUserId,
+                            userType: staffUserType,
+                            userName: 'Staff Member',
+                            userEmail: 'staff@gundam.com'
+                        });
+                        
+                        // Initialize staff chat
+                        initStaffChat(staffUserId, staffUserType);
+                        console.log('✅ Staff chat initialized with ID:', staffUserId);
                     });
                 </script>
     </body>
