@@ -83,4 +83,9 @@ public class User {
     public boolean isAdmin() {
         return "ADMIN".equals(role);
     }
+
+    
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 }

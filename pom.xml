@@ -175,7 +175,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
         </dependency>
-    </dependencies>
+    
         <!-- Validation for @Valid, @NotBlank, @Pattern, ... -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
