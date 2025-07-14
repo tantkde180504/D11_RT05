@@ -77,42 +77,91 @@
 
                     /* Sidebar */
                     .admin-sidebar {
-                        background-color: var(--admin-white);
-                        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+                        background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+                        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
                         border-right: 1px solid var(--admin-border);
                         min-height: calc(100vh - 76px);
                     }
 
                     .sidebar-nav {
-                        padding: 1.5rem 0;
+                        padding: 2rem 1rem;
+                    }
+
+                    .sidebar-nav::before {
+                        content: '';
+                        display: block;
+                        width: 80%;
+                        height: 3px;
+                        background: linear-gradient(90deg, var(--admin-primary) 0%, #e55a00 100%);
+                        margin: 0 auto 2rem auto;
+                        border-radius: 2px;
+                    }
+
+                    .sidebar-header h6 {
+                        font-size: 0.85rem;
+                        letter-spacing: 1px;
+                        color: #6c757d !important;
+                        margin-bottom: 1rem;
+                        padding-bottom: 0.5rem;
+                        border-bottom: 1px solid #e9ecef;
+                    }
+
+                    .tracking-wide {
+                        letter-spacing: 0.05em;
                     }
 
                     .sidebar-nav .nav-link {
-                        color: var(--admin-dark);
+                        color: #2c3e50;
                         padding: 1rem 1.5rem;
-                        border-radius: 0;
-                        border-left: 3px solid transparent;
-                        font-weight: 500;
+                        border-radius: 8px;
+                        border-left: 4px solid transparent;
+                        font-weight: 600;
                         transition: all 0.3s ease;
-                        margin-bottom: 0.25rem;
+                        margin-bottom: 0.5rem;
+                        margin-left: 0.5rem;
+                        margin-right: 0.5rem;
+                        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                        border: 1px solid #dee2e6;
+                        text-decoration: none;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+                        font-size: 0.95rem;
                     }
 
                     .sidebar-nav .nav-link:hover {
-                        background-color: rgba(255, 102, 0, 0.1);
+                        background: linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.2) 100%);
                         border-left-color: var(--admin-primary);
                         color: var(--admin-primary);
+                        transform: translateX(5px);
+                        box-shadow: 0 4px 12px rgba(255, 102, 0, 0.25);
+                        border-color: var(--admin-primary);
+                        font-weight: 700;
                     }
 
                     .sidebar-nav .nav-link.active {
-                        background-color: rgba(255, 102, 0, 0.15);
+                        background: linear-gradient(135deg, var(--admin-primary) 0%, #e55a00 100%);
                         border-left-color: var(--admin-primary);
-                        color: var(--admin-primary);
-                        font-weight: 600;
+                        color: var(--admin-white) !important;
+                        font-weight: 700;
+                        box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+                        border-color: var(--admin-primary);
                     }
 
                     .sidebar-nav .nav-link i {
                         width: 20px;
                         margin-right: 0.75rem;
+                        font-size: 1.1rem;
+                        color: var(--admin-primary);
+                        opacity: 0.8;
+                    }
+
+                    .sidebar-nav .nav-link.active i {
+                        color: var(--admin-white);
+                        opacity: 1;
+                    }
+
+                    .sidebar-nav .nav-link:hover i {
+                        color: var(--admin-primary);
+                        opacity: 1;
                     }
 
                     /* Main Content */
@@ -604,6 +653,11 @@
                         <!-- Sidebar -->
                         <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
                             <div class="position-sticky sidebar-nav">
+                                <div class="sidebar-header mb-3">
+                                    <h6 class="text-center text-muted fw-bold text-uppercase tracking-wide">
+                                        <i class="fas fa-cogs me-2"></i>Menu Quản Lý
+                                    </h6>
+                                </div>
                                 <ul class="nav flex-column" id="adminSidebar" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false">
@@ -819,63 +873,8 @@
                                                         <th>Thao tác</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><strong>001</strong></td>
-                                                        <td><img src="https://via.placeholder.com/50x50/cccccc/666666?text=RG"
-                                                                class="img-thumbnail" alt="Product"></td>
-                                                        <td><strong>RG RX-78-2 Gundam</strong></td>
-                                                        <td><span class="badge bg-info">Real Grade</span></td>
-                                                        <td><strong>650,000₫</strong></td>
-                                                        <td>25</td>
-                                                        <td><span class="badge bg-success">Có sẵn</span></td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-warning me-1"
-                                                                onclick="editProduct(1)">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger"
-                                                                onclick="deleteProduct(1)">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>002</strong></td>
-                                                        <td><img src="https://via.placeholder.com/50x50/cccccc/666666?text=MG"
-                                                                class="img-thumbnail" alt="Product"></td>
-                                                        <td><strong>MG Wing Gundam Zero</strong></td>
-                                                        <td><span class="badge bg-primary">Master Grade</span></td>
-                                                        <td><strong>1,200,000₫</strong></td>
-                                                        <td>15</td>
-                                                        <td><span class="badge bg-success">Có sẵn</span></td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-warning me-1">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>003</strong></td>
-                                                        <td><img src="https://via.placeholder.com/50x50/cccccc/666666?text=PG"
-                                                                class="img-thumbnail" alt="Product"></td>
-                                                        <td><strong>PG Unicorn Gundam</strong></td>
-                                                        <td><span class="badge bg-warning">Perfect Grade</span></td>
-                                                        <td><strong>3,500,000₫</strong></td>
-                                                        <td>3</td>
-                                                        <td><span class="badge bg-warning">Sắp hết</span></td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-warning me-1">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                <tbody id="productTableBody">
+                                                    <!-- Products will be loaded dynamically -->
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1784,7 +1783,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div> <!-- Add Product Modal -->
+                                </div>                                <!-- Add Product Modal -->
                                 <div class="modal fade" id="addProductModal" tabindex="-1">
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
@@ -1799,24 +1798,31 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="productName" class="form-label">Tên sản
-                                                                    phẩm</label>
-                                                                <input type="text" class="form-control" id="productName"
-                                                                    required>
+                                                                <label for="productName" class="form-label">Tên sản phẩm *</label>
+                                                                <input type="text" class="form-control" id="productName" name="name" required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="productCategory" class="form-label">Danh
-                                                                    mục</label>
-                                                                <select class="form-select" id="productCategory" required>
+                                                                <label for="productBrand" class="form-label">Thương hiệu</label>
+                                                                <input type="text" class="form-control" id="productBrand" name="brand" value="Bandai">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="productCategory" class="form-label">Danh mục</label>
+                                                                <select class="form-select" id="productCategory" name="category">
                                                                     <option value="">Chọn danh mục</option>
-                                                                    <option value="RG">Real Grade (RG)</option>
-                                                                    <option value="MG">Master Grade (MG)</option>
-                                                                    <option value="PG">Perfect Grade (PG)</option>
-                                                                    <option value="HG">High Grade (HG)</option>
-                                                                    <option value="SD">Super Deformed (SD)</option>
-                                                                    <option value="MB">Metal Build (MB)</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="productGrade" class="form-label">Grade</label>
+                                                                <select class="form-select" id="productGrade" name="grade">
+                                                                    <option value="">Chọn grade</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -1824,31 +1830,45 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="productPrice" class="form-label">Giá
-                                                                    (VNĐ)</label>
-                                                                <input type="number" class="form-control" id="productPrice"
-                                                                    required>
+                                                                <label for="productPrice" class="form-label">Giá (VNĐ) *</label>
+                                                                <input type="number" class="form-control" id="productPrice" name="price" step="1000" min="0" required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="productStock" class="form-label">Số lượng tồn
-                                                                    kho</label>
-                                                                <input type="number" class="form-control" id="productStock"
-                                                                    required>
+                                                                <label for="productStock" class="form-label">Số lượng tồn kho</label>
+                                                                <input type="number" class="form-control" id="productStock" name="stockQuantity" min="0" value="0">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="productDescription" class="form-label">Mô tả</label>
-                                                        <textarea class="form-control" id="productDescription" rows="3"
+                                                        <textarea class="form-control" id="productDescription" name="description" rows="3" 
                                                             placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="productImage" class="form-label">Hình ảnh</label>
-                                                        <input type="file" class="form-control" id="productImage"
-                                                            accept="image/*">
-                                                        <div class="form-text">Chỉ chấp nhận file ảnh (JPG, PNG, GIF)</div>
+                                                        <label for="productImageUrl" class="form-label">URL hình ảnh</label>
+                                                        <input type="url" class="form-control" id="productImageUrl" name="imageUrl" 
+                                                            placeholder="https://example.com/image.jpg">
+                                                        <div class="form-text">Nhập đường dẫn đến hình ảnh sản phẩm</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="productActive" name="isActive" checked>
+                                                                <label class="form-check-label" for="productActive">
+                                                                    Kích hoạt sản phẩm
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="productFeatured" name="isFeatured">
+                                                                <label class="form-check-label" for="productFeatured">
+                                                                    Sản phẩm nổi bật
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </form>
                                             </div>
@@ -1856,8 +1876,108 @@
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     <i class="fas fa-times me-2"></i>Hủy
                                                 </button>
-                                                <button type="button" class="btn btn-admin-primary" onclick="saveProduct()">
+                                                <button type="button" class="btn btn-admin-primary" id="saveProductBtn">
                                                     <i class="fas fa-save me-2"></i>Lưu sản phẩm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Edit Product Modal -->
+                                <div class="modal fade" id="editProductModal" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-warning text-dark">
+                                                <h5 class="modal-title">
+                                                    <i class="fas fa-edit me-2"></i>Chỉnh sửa sản phẩm
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="editProductForm">
+                                                    <input type="hidden" id="editProductId" name="id">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="editProductName" class="form-label">Tên sản phẩm *</label>
+                                                                <input type="text" class="form-control" id="editProductName" name="name" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="editProductBrand" class="form-label">Thương hiệu</label>
+                                                                <input type="text" class="form-control" id="editProductBrand" name="brand">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="editProductCategory" class="form-label">Danh mục</label>
+                                                                <select class="form-select" id="editProductCategory" name="category">
+                                                                    <option value="">Chọn danh mục</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="editProductGrade" class="form-label">Grade</label>
+                                                                <select class="form-select" id="editProductGrade" name="grade">
+                                                                    <option value="">Chọn grade</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="editProductPrice" class="form-label">Giá (VNĐ) *</label>
+                                                                <input type="number" class="form-control" id="editProductPrice" name="price" step="1000" min="0" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="editProductStock" class="form-label">Số lượng tồn kho</label>
+                                                                <input type="number" class="form-control" id="editProductStock" name="stockQuantity" min="0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editProductDescription" class="form-label">Mô tả</label>
+                                                        <textarea class="form-control" id="editProductDescription" name="description" rows="3"></textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editProductImageUrl" class="form-label">URL hình ảnh</label>
+                                                        <input type="url" class="form-control" id="editProductImageUrl" name="imageUrl">
+                                                        <div class="form-text">Nhập đường dẫn đến hình ảnh sản phẩm</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="editProductActive" name="isActive">
+                                                                <label class="form-check-label" for="editProductActive">
+                                                                    Kích hoạt sản phẩm
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="editProductFeatured" name="isFeatured">
+                                                                <label class="form-check-label" for="editProductFeatured">
+                                                                    Sản phẩm nổi bật
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    <i class="fas fa-times me-2"></i>Hủy
+                                                </button>
+                                                <button type="button" class="btn btn-warning" id="updateProductBtn">
+                                                    <i class="fas fa-save me-2"></i>Cập nhật sản phẩm
                                                 </button>
                                             </div>
                                         </div>
@@ -1895,29 +2015,7 @@
                                                 }
                                             }
                                         });
-                                    });        // Admin functions
-                                    function editProduct(id) {
-                                        alert('Chức năng chỉnh sửa sản phẩm #' + id);
-                                    }
-
-                                    function deleteProduct(id) {
-                                        if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-                                            alert('Đã xóa sản phẩm #' + id);
-                                        }
-                                    }
-
-                                    function saveProduct() {
-                                        const form = document.getElementById('addProductForm');
-                                        if (form.checkValidity()) {
-                                            alert('Đã thêm sản phẩm mới thành công!');
-                                            bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-                                            form.reset();
-                                        } else {
-                                            form.reportValidity();
-                                        }
-                                    }
-
-                                    // Tab management
+                                    });        // Tab management
                                     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
                                         tab.addEventListener('click', function (e) {
                                             e.preventDefault();
@@ -2060,6 +2158,7 @@
                                 <script src="<%=request.getContextPath()%>/js/staff-management.js"></script>
                                 <script src="<%=request.getContextPath()%>/js/customer-management.js"></script>
                                 <script src="<%=request.getContextPath()%>/js/category-management.js"></script>
+                                <script src="<%=request.getContextPath()%>/js/product-management.js"></script>
 
                                 <script>
                                     fetch('/api/dashboard', {
