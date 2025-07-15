@@ -16,7 +16,7 @@ This system is an e-commerce platform built for model product enthusiasts. It pr
 
 * Register, login, and manage personal profile
 * Browse and search products by category, price, scale, brand
-* Add to cart, place order, and choose payment method (VNPay/COD)
+* Add to cart, place order, and choose payment method (PayOS/COD)
 * Track order status and view order history
 * Submit product reviews and contact store support
 
