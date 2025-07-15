@@ -90,9 +90,9 @@ npm start
 
 | Role     | Username   | Password |
 | -------- | ---------- | -------- |
-| Customer | customer01 | 123456   |
-| Staff    | staff01    | 123456   |
-| Admin    | admin01    | 123456   |
+| Customer | customer@gundam.com | customer123   |
+| Staff    | staff@gundam.com    | staff123   |
+| Admin    | admin@gundam.com    | admin123   |
 
 ---
 
