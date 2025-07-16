@@ -17,6 +17,13 @@
     <script>
         // Khai báo contextPath để sử dụng trong JavaScript
         const contextPath = '<%= contextPath %>';
+        
+        // Debug localStorage ngay khi trang load
+        console.log('=== PAYMENT PAGE LOADED ===');
+        console.log('URL:', window.location.href);
+        console.log('localStorage buyNowMode:', localStorage.getItem('buyNowMode'));
+        console.log('localStorage buyNowItem:', localStorage.getItem('buyNowItem'));
+        console.log('URL params:', window.location.search);
     </script>
         <div class="row justify-content-center">
             <div class="col-lg-7">
@@ -78,7 +85,10 @@
                         <div class="text-muted">Đang tải giỏ hàng...</div>
                     </div>
                 </div>
-                <a href="cart.jsp" class="btn btn-outline-secondary w-100"><i class="fas fa-arrow-left me-1"></i>Quay lại giỏ hàng</a>
+                <a href="#" class="btn btn-outline-secondary w-100" onclick="goBackToPrevious()">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    <span id="backButtonText">Quay lại giỏ hàng</span>
+                </a>
             </div>
         </div>
     </div>
@@ -94,8 +104,9 @@
                     <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
                     <p class="mb-4">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được ghi nhận.</p>
                     <div class="d-grid gap-2">
-                        <a href="index.jsp" class="btn btn-primary">Quay về trang chủ</a>
-                        <a href="order-history.jsp" class="btn btn-outline-secondary">Đơn hàng</a>
+                        <a href="<%=request.getContextPath()%>/index.jsp" class="btn btn-primary">Quay về trang chủ</a>
+                        <a href="<%=request.getContextPath()%>/order-history.jsp" class="btn btn-outline-secondary">Lịch sử đơn hàng</a>
+                        <a href="<%=request.getContextPath()%>/all-products.jsp" class="btn btn-outline-success">Tiếp tục mua sắm</a>
                     </div>
                 </div>
             </div>
@@ -134,123 +145,119 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            // Nếu chọn PayOS, chuyển đến PayOS payment
-            if (paymentMethod === 'BANK_TRANSFER') {
-                // Lấy thông tin giỏ hàng
-                let cartItems = [];
-                let grandTotal = 0;
-                
-                // Debug: Log để kiểm tra
-                console.log('Checking localStorage for cartItems...');
-                
-                if (localStorage.getItem('cartItems')) {
-                    try {
-                        cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                        grandTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                        console.log('Found cart in localStorage:', cartItems, 'Total:', grandTotal);
-                    } catch (e) { 
-                        console.error('Error parsing localStorage cart:', e);
-                        cartItems = []; 
-                        grandTotal = 0; 
-                    }
-                } else {
-                    console.log('No cart in localStorage, trying API...');
-                    // Lấy từ API
-                    try {
-                        const resp = await fetch('/api/cart', { headers: { 'Accept': 'application/json' } });
-                        const data = await resp.json();
-                        if (data.success) {
-                            cartItems = data.cartItems;
-                            grandTotal = data.grandTotal;
-                            console.log('Found cart from API:', cartItems, 'Total:', grandTotal);
-                        } else {
-                            console.log('API returned no cart data');
-                        }
-                    } catch (err) {
-                        console.error('Error fetching cart from API:', err);
-                    }
-                }
-
-                // Nếu vẫn không có cart, thử lấy từ order summary hiện tại
-                if (!cartItems.length || grandTotal <= 0) {
-                    console.log('No cart found, trying to get from DOM...');
-                    // Fallback: lấy từ order summary đã render
-                    const orderSummaryItems = document.querySelectorAll('#order-summary-list .d-flex');
-                    if (orderSummaryItems.length > 0) {
-                        // Lấy tổng tiền từ DOM
-                        const totalElement = document.querySelector('#order-summary-list .text-danger .fw-bold');
-                        if (totalElement) {
-                            const totalText = totalElement.textContent.replace(/[^\d]/g, '');
-                            grandTotal = parseInt(totalText) || 0;
-                            console.log('Got total from DOM:', grandTotal);
-                        }
-                    }
-                }
-
-                // Nếu vẫn không có, dùng giá trị mặc định để test
-                if (grandTotal <= 0) {
-                    console.log('No valid cart found, using default values for testing...');
-                    grandTotal = 299999; // Giá trị mặc định để test
-                    cartItems = [{ name: 'Test Product', quantity: 1, price: 299999 }];
-                }
-
-                console.log('Final cart data:', cartItems, 'Final total:', grandTotal);
-
-                // Tạo request để gửi đến PayOS
-                const payosPayload = {
-                    fullName: fullName,
-                    phone: phone,
-                    address: address,
-                    note: note,
-                    paymentMethod: 'BANK_TRANSFER'
-                };
-
-                console.log('Sending to PayOS with payload:', payosPayload);
-
-                // Gửi request đến PayOS API
-                const payosResponse = await fetch('/api/payment', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payosPayload)
-                });
-
-                const payosData = await payosResponse.json();
-                console.log('PayOS response:', payosData);
-                console.log('PayOS response checkoutUrl:', payosData.checkoutUrl);
-                console.log('PayOS response success:', payosData.success);
-
-                if (payosData.success && payosData.checkoutUrl) {
-                    console.log('Redirecting to PayOS:', payosData.checkoutUrl);
-                    // Chuyển hướng đến PayOS checkout
-                    window.location.href = payosData.checkoutUrl;
-                } else {
-                    console.error('PayOS error:', payosData);
-                    alert('Lỗi tạo link thanh toán PayOS: ' + (payosData.message || 'Vui lòng thử lại'));
+            const paymentMethod = bankRadio.checked ? 'BANK_TRANSFER' : 'COD';
+            
+            // Kiểm tra chế độ mua hàng
+            const urlParams = new URLSearchParams(window.location.search);
+            const isBuyNowMode = urlParams.get('mode') === 'buynow' || localStorage.getItem('buyNowMode') === 'true';
+            
+            // Chuẩn bị payload tùy theo chế độ
+            let payload = {
+                fullName, phone, address, note, paymentMethod
+            };
+            
+            if (isBuyNowMode) {
+                // Mua ngay - gửi thông tin sản phẩm trực tiếp
+                const buyNowItem = localStorage.getItem('buyNowItem');
+                if (!buyNowItem) {
+                    alert('Không tìm thấy thông tin sản phẩm!');
+                    return;
                 }
                 
+                const item = JSON.parse(buyNowItem);
+                payload.buyNowMode = true;
+                payload.productId = item.productId || item.id;
+                payload.quantity = item.quantity;
+                payload.items = [item]; // Để PayOS tính tổng tiền
             } else {
-                // Xử lý COD
-                const payload = {
-                    fullName, phone, address, note, paymentMethod
-                };
+                // Từ giỏ hàng - gửi thông tin các sản phẩm được chọn
+                payload.buyNowMode = false;
                 
-                const response = await fetch('/api/payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                // Lấy danh sách sản phẩm được chọn từ localStorage
+                let selectedCartIds = [];
+                try {
+                    selectedCartIds = JSON.parse(localStorage.getItem('selectedCartIds')) || [];
+                } catch (e) { 
+                    selectedCartIds = []; 
+                }
                 
-                const data = await response.json();
+                // Gửi danh sách ID sản phẩm được chọn để backend xử lý
+                payload.selectedCartIds = selectedCartIds;
                 
-                if (data.success) {
+                // Lấy thông tin cart từ API để gửi kèm
+                try {
+                    const cartResponse = await fetch('/api/cart');
+                    if (cartResponse.ok) {
+                        const cartData = await cartResponse.json();
+                        if (cartData.success) {
+                            // Lọc chỉ những sản phẩm được chọn
+                            let selectedItems = cartData.cartItems;
+                            if (selectedCartIds.length > 0) {
+                                selectedItems = cartData.cartItems.filter(item => 
+                                    selectedCartIds.includes(item.productId)
+                                );
+                            }
+                            payload.items = selectedItems;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Failed to fetch cart for payment:', e);
+                    payload.items = [];
+                }
+                
+                console.log('Cart mode - Selected cart IDs:', selectedCartIds);
+                console.log('Cart mode - Items being sent:', payload.items);
+                console.log('Cart mode - Payload being sent:', payload);
+            }
+            
+            // Gửi request đến API
+            console.log('Sending payment request with payload:', payload);
+            
+            const response = await fetch('/api/payment', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Payment response:', data);
+
+            if (data.success) {
+                if (paymentMethod === 'BANK_TRANSFER' && data.checkoutUrl) {
+                    // PayOS - chuyển hướng đến checkout
+                    console.log('Redirecting to PayOS:', data.checkoutUrl);
+                    
+                    // KHÔNG xóa selectedCartIds ở đây - cần giữ lại để xử lý khi thanh toán thành công
+                    // selectedCartIds sẽ được xóa trong confirmPayOSPayment sau khi thanh toán thành công
+                    
+                    window.location.href = data.checkoutUrl;
+                } else {
+                    // COD - hiển thị modal thành công
+                    // Xóa dữ liệu sau khi đặt hàng thành công
+                    if (isBuyNowMode) {
+                        localStorage.removeItem('buyNowItem');
+                        localStorage.removeItem('buyNowMode');
+                    } else {
+                        // Xóa thông tin các sản phẩm đã thanh toán khỏi localStorage
+                        localStorage.removeItem('selectedCartIds');
+                    }
+                    
                     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
                     successModal.show();
-                } else {
-                    alert(data.message || 'Đặt hàng thất bại!');
                 }
+            } else {
+                console.error('Payment error:', data);
+                alert(data.message || 'Đặt hàng thất bại! Vui lòng thử lại.');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -263,28 +270,169 @@ document.addEventListener('DOMContentLoaded', function() {
         const orderSummaryList = document.getElementById('order-summary-list');
         let cartItems = [];
         let grandTotal = 0;
-        // Ưu tiên lấy cart từ localStorage nếu có
-        if (localStorage.getItem('cartItems')) {
-            try {
-                cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                grandTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            } catch (e) { cartItems = []; grandTotal = 0; }
+        
+        // Kiểm tra nếu đang ở chế độ "Mua ngay"
+        const urlParams = new URLSearchParams(window.location.search);
+        const isBuyNowMode = urlParams.get('mode') === 'buynow' || localStorage.getItem('buyNowMode') === 'true';
+        
+        console.log('=== PAYMENT DEBUG ===');
+        console.log('URL params mode:', urlParams.get('mode'));
+        console.log('localStorage buyNowMode:', localStorage.getItem('buyNowMode'));
+        console.log('isBuyNowMode:', isBuyNowMode);
+        console.log('localStorage buyNowItem:', localStorage.getItem('buyNowItem'));
+        
+        if (isBuyNowMode) {
+            // Lấy sản phẩm từ "Mua ngay"
+            const buyNowItem = localStorage.getItem('buyNowItem');
+            console.log('Buy now item from localStorage:', buyNowItem);
+            
+            if (buyNowItem) {
+                try {
+                    const item = JSON.parse(buyNowItem);
+                    console.log('Parsed buy now item:', item);
+                    cartItems = [item];
+                    grandTotal = item.price * item.quantity;
+                    
+                    // Cập nhật text nút quay lại
+                    const backButtonText = document.getElementById('backButtonText');
+                    if (backButtonText) {
+                        backButtonText.textContent = 'Quay lại sản phẩm';
+                    }
+                    console.log('Buy now cart setup successful:', cartItems, 'total:', grandTotal);
+                } catch (e) {
+                    console.error('Error parsing buyNowItem:', e);
+                    cartItems = [];
+                    grandTotal = 0;
+                }
+            } else {
+                console.error('No buyNowItem found in localStorage!');
+                
+                // Thử phục hồi từ URL params
+                const productId = urlParams.get('productId');
+                const quantity = urlParams.get('quantity');
+                const price = urlParams.get('price');
+                
+                if (productId && quantity && price) {
+                    console.log('Trying to recover from URL params...');
+                    try {
+                        // Tạo lại item từ URL params
+                        const recoveredItem = {
+                            id: parseInt(productId),
+                            productId: parseInt(productId),
+                            name: 'Sản phẩm #' + productId, // Tên tạm thời
+                            productName: 'Sản phẩm #' + productId,
+                            price: parseFloat(price),
+                            quantity: parseInt(quantity),
+                            imageUrl: contextPath + '/img/RGStrikeGundam.jpg'
+                        };
+                        
+                        // Lưu lại vào localStorage
+                        localStorage.setItem('buyNowItem', JSON.stringify(recoveredItem));
+                        localStorage.setItem('buyNowMode', 'true');
+                        
+                        cartItems = [recoveredItem];
+                        grandTotal = recoveredItem.price * recoveredItem.quantity;
+                        
+                        console.log('Successfully recovered item from URL params:', recoveredItem);
+                        
+                        // Cập nhật text nút quay lại
+                        const backButtonText = document.getElementById('backButtonText');
+                        if (backButtonText) {
+                            backButtonText.textContent = 'Quay lại sản phẩm';
+                        }
+                    } catch (e) {
+                        console.error('Failed to recover from URL params:', e);
+                        // Hiển thị thông báo lỗi
+                        orderSummaryList.innerHTML = `
+                            <div class="alert alert-warning text-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <div>Không thể khôi phục thông tin sản phẩm!</div>
+                                <div class="mt-2">
+                                    <a href="${contextPath}/all-products.jsp" class="btn btn-sm btn-primary">
+                                        Quay lại mua sắm
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+                } else {
+                    // Hiển thị thông báo lỗi cụ thể cho chế độ mua ngay
+                    orderSummaryList.innerHTML = `
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div>Không tìm thấy thông tin sản phẩm!</div>
+                            <div class="mt-2">
+                                <a href="${contextPath}/all-products.jsp" class="btn btn-sm btn-primary">
+                                    Quay lại mua sắm
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+            }
         } else {
-            // Nếu không có localStorage thì lấy từ API
+            // Lấy cart từ API
             try {
                 const resp = await fetch('/api/cart', { headers: { 'Accept': 'application/json' } });
                 const data = await resp.json();
                 if (data.success) {
-                    cartItems = data.cartItems;
-                    grandTotal = data.grandTotal;
+                    const allCartItems = data.cartItems;
+                    
+                    // Lấy danh sách sản phẩm được chọn từ localStorage
+                    let selectedCartIds = [];
+                    try {
+                        selectedCartIds = JSON.parse(localStorage.getItem('selectedCartIds')) || [];
+                    } catch (e) { 
+                        selectedCartIds = []; 
+                    }
+                    
+                    // Nếu không có sản phẩm nào được chọn, mặc định chọn tất cả
+                    if (selectedCartIds.length === 0) {
+                        cartItems = allCartItems;
+                    } else {
+                        // Chỉ lấy những sản phẩm được chọn
+                        cartItems = allCartItems.filter(item => 
+                            selectedCartIds.includes(item.productId)
+                        );
+                    }
+                    
+                    grandTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    
+                    console.log('Selected cart IDs:', selectedCartIds);
+                    console.log('All cart items:', allCartItems);
+                    console.log('Filtered cart items for payment:', cartItems);
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error('Error fetching cart:', err);
+                cartItems = [];
+                grandTotal = 0;
+            }
         }
+        
         if (!cartItems.length) {
-            orderSummaryList.innerHTML = '<div class="text-danger">Giỏ hàng trống!</div>';
+            orderSummaryList.innerHTML = '<div class="text-danger">Không có sản phẩm nào!</div>';
             return;
         }
+        
         let html = '';
+        
+        // Thêm thông báo nếu đang ở chế độ cart và có sản phẩm được chọn
+        if (!isBuyNowMode) {
+            let selectedCartIds = [];
+            try {
+                selectedCartIds = JSON.parse(localStorage.getItem('selectedCartIds')) || [];
+            } catch (e) { selectedCartIds = []; }
+            
+            if (selectedCartIds.length > 0) {
+                html += '<div class="alert alert-info text-center py-2 mb-3">';
+                html += '<i class="fas fa-info-circle me-2"></i>';
+                html += '<small>Bạn đang thanh toán ' + cartItems.length + ' sản phẩm đã chọn</small>';
+                html += '</div>';
+            }
+        }
+        
         cartItems.forEach(item => {
             html += '<div class="d-flex justify-content-between mb-2">'
                 + '<span>' + (item.productName || item.name) + ' x ' + item.quantity + '</span>'
@@ -310,7 +458,37 @@ document.addEventListener('DOMContentLoaded', function() {
     function formatCurrency(num) {
         return num.toLocaleString('vi-VN');
     }
+    
+    // Function để xử lý nút quay lại
+    function goBackToPrevious() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isBuyNowMode = urlParams.get('mode') === 'buynow' || localStorage.getItem('buyNowMode') === 'true';
+        
+        if (isBuyNowMode) {
+            // Xóa dữ liệu "Mua ngay" khỏi localStorage
+            localStorage.removeItem('buyNowItem');
+            localStorage.removeItem('buyNowMode');
+            
+            // Quay lại trang trước đó hoặc trang chủ
+            if (document.referrer && document.referrer.includes('/product-detail.jsp')) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = contextPath + '/all-products.jsp';
+            }
+        } else {
+            // Quay lại giỏ hàng
+            window.location.href = contextPath + '/cart.jsp';
+        }
+    }
+    
+    // Load order summary when page loads
     renderOrderSummary();
+    
+    // Also set timeout để đảm bảo load sau khi DOM sẵn sàng
+    setTimeout(() => {
+        console.log('Timeout - rendering order summary again...');
+        renderOrderSummary();
+    }, 100);
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -141,7 +141,7 @@
                 <button type="submit" class="btn btn-login w-100">Đăng ký</button>
             </form>
             
-            <div class="login-divider">Hoặc đăng ký bằng</div>
+            <!--<div class="login-divider">Hoặc đăng ký bằng</div>-->
             <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-up-btn">
                 <i class="fab fa-google me-2"></i>Google
             </button>

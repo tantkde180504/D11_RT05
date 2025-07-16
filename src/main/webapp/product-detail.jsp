@@ -895,10 +895,58 @@
             });
             
             // Buy now button
-            document.getElementById('buyNowBtn').addEventListener('click', function() {
-                const quantity = document.getElementById('quantityInput').value;
-                // Add your buy now logic here
-                alert(`Mua ngay ${quantity} sản phẩm`);
+            document.getElementById('buyNowBtn').addEventListener('click', async function() {
+                const quantity = parseInt(document.getElementById('quantityInput').value);
+                // Kiểm tra đăng nhập
+                const sessionUserId = getUserIdFromSession();
+                if (!sessionUserId || sessionUserId === 'null') {
+                    showToast('Bạn cần đăng nhập để mua hàng!', 'warning');
+                    setTimeout(() => {
+                        window.location.href = contextPath + '/login.jsp?returnUrl=' + encodeURIComponent(window.location.href);
+                    }, 1500);
+                    return;
+                }
+                // Kiểm tra tồn kho
+                const stockElement = document.getElementById('stockStatus');
+                if (stockElement.classList.contains('out-of-stock')) {
+                    showToast('Sản phẩm đã hết hàng!', 'error');
+                    return;
+                }
+                let originalContent = this.innerHTML;
+                try {
+                    // Disable button and show loading
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+                    this.disabled = true;
+                    // Lấy thông tin sản phẩm hiện tại
+                    const productResponse = await fetch(contextPath + '/api/products/' + productId);
+                    const productData = await productResponse.json();
+                    if (!productData.success || !productData.data) {
+                        showToast('Không thể lấy thông tin sản phẩm!', 'error');
+                        return;
+                    }
+                    const product = productData.data;
+                    // --- Lưu vào localStorage cho chế độ mua ngay ---
+                    const buyNowItem = {
+                        id: product.id,
+                        productId: product.id,
+                        name: product.name,
+                        productName: product.name,
+                        price: parseFloat(product.price),
+                        quantity: quantity,
+                        imageUrl: product.imageUrl || contextPath + '/img/RGStrikeGundam.jpg'
+                    };
+                    localStorage.setItem('buyNowItem', JSON.stringify(buyNowItem));
+                    localStorage.setItem('buyNowMode', 'true');
+                    // Chuyển đến trang thanh toán
+                    window.location.href = contextPath + '/payment.jsp?mode=buynow';
+                } catch (error) {
+                    console.error('Error during buy now:', error);
+                    showToast('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
+                } finally {
+                    // Restore button state
+                    this.innerHTML = originalContent;
+                    this.disabled = false;
+                }
             });
             
             // Wishlist button

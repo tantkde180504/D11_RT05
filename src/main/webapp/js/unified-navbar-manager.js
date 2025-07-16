@@ -221,10 +221,10 @@ class UnifiedNavbarManager {
             <li><a class="dropdown-item" href="${this.contextPath}/profile.jsp">
                 <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
             </a></li>
-            <li><a class="dropdown-item" href="#">
+            <li><a class="dropdown-item" href="${this.contextPath}/order-history.jsp">
                 <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
             </a></li>
-            <li><a class="dropdown-item" href="#">
+            <li><a class="dropdown-item" href="${this.contextPath}/favorites.jsp">
                 <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
             </a></li>
             <li><a class="dropdown-item" href="#" data-action="openChat">

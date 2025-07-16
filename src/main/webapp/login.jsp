@@ -170,7 +170,7 @@
                 <br>
                 <a href="<%=request.getContextPath()%>/forgot-password.jsp" class="text-primary">Khôi phục mật khẩu</a>
             </div>
-            <div class="login-divider">Hoặc đăng nhập bằng</div>
+            <!-- <div class="login-divider">Hoặc đăng nhập bằng</div>-->
             <button type="button" class="btn btn-outline-danger social-login-btn" id="google-sign-in-btn">
                 <i class="fab fa-google me-2"></i>Google
             </button>
