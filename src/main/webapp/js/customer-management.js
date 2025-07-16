@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   // Badge filter gender elements
   const genderBadgeContainer = document.getElementById('customerGenderBadgeContainer');
+  const orderBadgeContainer = document.getElementById('customerOrderBadgeContainer');
+  const dateBadgeContainer = document.getElementById('customerDateBadgeContainer');
 
   // Gán sự kiện submit cho form sửa khách hàng (đặt trong DOMContentLoaded để luôn hoạt động)
   const editForm = document.getElementById('editCustomerForm');
@@ -250,6 +252,74 @@ document.addEventListener("DOMContentLoaded", function () {
         clearBtn.addEventListener('click', function(e) {
           genderFilter.value = '';
           showGenderBadge();
+          filterCustomerRows();
+        });
+      }
+    }
+  }
+
+  // Hiển thị badge filter số đơn hàng
+  if (orderFilter) {
+    orderFilter.addEventListener('change', function() {
+      showOrderBadge();
+    });
+    showOrderBadge();
+  }
+  function showOrderBadge() {
+    if (!orderBadgeContainer) return;
+    const order = orderFilter ? orderFilter.value : '';
+    orderBadgeContainer.innerHTML = '';
+    if (order) {
+      let label = '';
+      let badgeClass = 'status-badge';
+      let customStyle = 'background: linear-gradient(90deg, #ff9800 0%, #ff6600 100%); color: #fff;';
+      switch (order) {
+        case 'new': label = 'Đơn hàng: Mới'; break;
+        case 'low': label = 'Đơn hàng: Thấp'; break;
+        case 'medium': label = 'Đơn hàng: Trung bình'; break;
+        case 'high': label = 'Đơn hàng: Cao'; break;
+        default: label = 'Đơn hàng: ' + order;
+      }
+      orderBadgeContainer.innerHTML = `<span class="${badgeClass} ms-2" style="${customStyle} font-size:1rem;">${label} <button type="button" class="btn btn-sm btn-close ms-1 p-0" aria-label="Xóa" id="clearOrderFilterBtn" style="filter: invert(1);"></button></span>`;
+      const clearBtn = document.getElementById('clearOrderFilterBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+          orderFilter.value = '';
+          showOrderBadge();
+          filterCustomerRows();
+        });
+      }
+    }
+  }
+
+  // Hiển thị badge filter ngày đăng ký
+  if (dateFilter) {
+    dateFilter.addEventListener('change', function() {
+      showDateBadge();
+    });
+    showDateBadge();
+  }
+  function showDateBadge() {
+    if (!dateBadgeContainer) return;
+    const date = dateFilter ? dateFilter.value : '';
+    dateBadgeContainer.innerHTML = '';
+    if (date) {
+      let label = '';
+      let badgeClass = 'status-badge';
+      let customStyle = 'background: linear-gradient(90deg, #00bcd4 0%, #2196f3 100%); color: #fff;';
+      switch (date) {
+        case 'today': label = 'Ngày đăng ký: Hôm nay'; break;
+        case 'week': label = 'Ngày đăng ký: Tuần này'; break;
+        case 'month': label = 'Ngày đăng ký: Tháng này'; break;
+        case 'old': label = 'Ngày đăng ký: Cũ'; break;
+        default: label = 'Ngày đăng ký: ' + date;
+      }
+      dateBadgeContainer.innerHTML = `<span class="${badgeClass} ms-2" style="${customStyle} font-size:1rem;">${label} <button type="button" class="btn btn-sm btn-close ms-1 p-0" aria-label="Xóa" id="clearDateFilterBtn" style="filter: invert(1);"></button></span>`;
+      const clearBtn = document.getElementById('clearDateFilterBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+          dateFilter.value = '';
+          showDateBadge();
           filterCustomerRows();
         });
       }

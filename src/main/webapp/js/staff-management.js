@@ -456,8 +456,8 @@ function applyStaffFilters() {
                     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
                     return joinDate >= weekAgo;
                 case 'month':
-                    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                    return joinDate >= monthAgo;
+                    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                    return joinDate >= startOfMonth;
                 case 'quarter':
                     const quarterAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
                     return joinDate >= quarterAgo;

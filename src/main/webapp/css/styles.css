@@ -791,7 +791,8 @@ footer {
 }
 
 .bg-darker {
-    background-color: #222222 !important;
+    background-color: #e0e7ff !important;
+    /* Nếu muốn nhẹ hơn có thể dùng #f3f6fd hoặc #f8f9fa */
 }
 
 .social-links {
@@ -1123,10 +1124,11 @@ footer {
 
 .tab-content {
     background: #fff;
-    border-radius: 0 12px 12px 12px;
+    border-radius: 0 18px 18px 18px;
     padding: 2rem;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.08);
     min-height: 300px;
+    border: 1.5px solid #e0e7ff;
 }
 
 /* Loading States */
@@ -1387,19 +1389,22 @@ footer {
 
 /* Main Content */
 .admin-main {
-    background-color: var(--admin-light);
+    background: linear-gradient(120deg, #f8f9fa 60%, #e0e7ff 100%);
     min-height: calc(100vh - 76px);
     padding: 2rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+    border: 2px solid #e0e7ff;
 }
 
 /* Page Headers */
 .page-header {
-    background: linear-gradient(135deg, var(--admin-white) 0%, #f8f9fa 100%);
-    border-radius: 12px;
-    padding: 2rem;
+    background: linear-gradient(135deg, #fff 60%, #e0e7ff 100%);
+    border-radius: 18px;
+    padding: 2rem 2.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border-left: 4px solid var(--admin-primary);
+    box-shadow: 0 2px 12px 0 rgba(31, 38, 135, 0.07);
+    border: 1.5px solid #e0e7ff;
 }
 
 .page-title {

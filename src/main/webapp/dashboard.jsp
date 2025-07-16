@@ -708,11 +708,7 @@
                                             <h1 class="page-title">
                                                 <i class="fas fa-tachometer-alt me-3"></i>Dashboard Tổng Quan
                                             </h1>
-                                            <div class="btn-toolbar">
-                                                <button type="button" class="btn btn-admin-primary">
-                                                    <i class="fas fa-download me-2"></i>Xuất báo cáo
-                                                </button>
-                                            </div>
+                                            <!-- Đã xóa nút Xuất báo cáo theo yêu cầu -->
                                         </div>
                                         <p class="text-muted mb-0">Tổng quan hoạt động kinh doanh của 43 Gundam Hobby
                                         </p>
@@ -1225,6 +1221,8 @@
                                                     <div id="customerActiveFilters" class="d-flex gap-1 flex-wrap">
                                                         <!-- Active filter badges will be shown here -->
                                                         <span id="customerGenderBadgeContainer"></span>
+                                                        <span id="customerOrderBadgeContainer"></span>
+                                                        <span id="customerDateBadgeContainer"></span>
                                                     </div>
                                                 </div>
                                             </div>
