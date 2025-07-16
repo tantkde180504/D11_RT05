@@ -406,8 +406,8 @@
                             <ul class="footer-links">
                                 <li><a href="#">Chính sách bảo mật</a></li>
                                 <li><a href="#">Chính sách thanh toán</a></li>
-                                <li><a href="#">Chính sách vận chuyển</a></li>
-                                <li><a href="#">Chính sách đổi trả</a></li>
+                                <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
+                                <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>
                                 <li><a href="#">Quy định sử dụng</a></li>
                             </ul>
                         </div>

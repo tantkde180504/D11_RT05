@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>43 Gundam Hobby - Mô hình Gundam chính hãng</title>
+    <title>Chính sách vận chuyển - 43 Gundam Hobby</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
@@ -16,10 +16,60 @@
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .policy-content {
+            line-height: 1.8;
+        }
+        .policy-section {
+            margin-bottom: 2rem;
+        }
+        .policy-title {
+            color: #0d6efd;
+            border-bottom: 3px solid #0d6efd;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .subsection-title {
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        .policy-list {
+            padding-left: 1.5rem;
+        }
+        .policy-list li {
+            margin-bottom: 0.5rem;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #0d6efd;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        .contact-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .breadcrumb-custom {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -142,97 +192,239 @@
                 </div>
             </div>
         </div>
-    </header>    <!-- Mobile Sidebar Navigation -->
+    </header>
+    
+    <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
-    <!-- Login Form -->
-    <div class="container-fluid bg-light py-5">
-        <div class="container">
-            <div class="row justify-content-center align-items-center min-vh-75">
-                <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-                    <!-- Login Card -->
-                    <div class="card shadow-lg border-0 rounded-4">
-                        <div class="card-body p-4 p-sm-5">
-                            <!-- Login Header -->
-                            <div class="text-center mb-4">
-                                <h2 class="fw-bold text-primary mb-2">Đăng nhập tài khoản</h2>
-                                <p class="text-muted mb-0">Chào mừng bạn quay trở lại!</p>
-                            </div>
-                            
-                            <!-- Login Form -->
-                            <form id="loginForm" action="<%=request.getContextPath()%>/api/login" method="post" autocomplete="off">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label fw-semibold">
-                                        <i class="fas fa-envelope me-2 text-primary"></i>Email
-                                    </label>
-                                    <input type="email" class="form-control form-control-lg rounded-3" 
-                                           id="email" name="email" 
-                                           placeholder="Nhập email của bạn..." 
-                                           required autocomplete="off">
-                                </div>
-                                
-                                <div class="mb-4">
-                                    <label for="password" class="form-label fw-semibold">
-                                        <i class="fas fa-lock me-2 text-primary"></i>Mật khẩu
-                                    </label>
-                                    <input type="password" class="form-control form-control-lg rounded-3" 
-                                           id="password" name="password" 
-                                           placeholder="Nhập mật khẩu..." 
-                                           required autocomplete="off">
-                                </div>
-                                
-                                <div class="d-grid mb-3">
-                                    <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-semibold">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                    </button>
-                                </div>
-                            </form>
-                            
-                            <!-- Forgot Password Section -->
-                            <div class="text-center mb-4">
-                                <button type="button" class="btn btn-link p-0 text-decoration-none small" 
-                                        onclick="window.location.href='<%=request.getContextPath()%>/forgot-password.jsp'">
-                                    <i class="fas fa-question-circle me-1"></i>Quên mật khẩu?
-                                </button>
-                            </div>
-                            
-                            <!-- Divider -->
-                            <div class="position-relative mb-4">
-                                <hr class="border-secondary-subtle">
-                                <div class="position-absolute top-50 start-50 translate-middle bg-white px-3">
-                                    <small class="text-muted fw-medium">Hoặc đăng nhập bằng</small>
-                                </div>
-                            </div>
-                            
-                            <!-- Social Login -->
-                            <div class="d-grid mb-4">
-                                <button type="button" class="btn btn-outline-danger btn-lg rounded-3" id="google-sign-in-btn">
-                                    <i class="fab fa-google me-2"></i>
-                                    <span class="fw-semibold">Đăng nhập với Google</span>
-                                </button>
-                            </div>
-                            
-                            <!-- Register Link -->
-                            <div class="text-center">
-                                <p class="mb-0 text-muted">
-                                    Bạn chưa có tài khoản? 
-                                    <a href="<%=request.getContextPath()%>/register.jsp" 
-                                       class="text-primary text-decoration-none fw-semibold">
-                                        Đăng ký ngay
-                                    </a>
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb-custom" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="<%=request.getContextPath()%>/" class="text-decoration-none">
+                        <i class="fas fa-home me-1"></i>Trang chủ
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-shipping-fast me-1"></i>Chính sách vận chuyển
+                </li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-12">
+                <!-- Page Header -->
+                <div class="text-center mb-5">
+                    <h1 class="policy-title display-5 fw-bold">
+                        <i class="fas fa-shipping-fast me-3 text-primary"></i>
+                        Chính sách vận chuyển, giao nhận và kiểm hàng
+                    </h1>
+                    <p class="lead text-muted">Quy định về việc giao hàng, nhận hàng và kiểm hàng tại 43 Gundam Hobby</p>
+                </div>
+
+                <!-- Policy Content -->
+                <div class="policy-content">
+                    <!-- Section I -->
+                    <div class="policy-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-truck me-2 text-primary"></i>
+                            I. CHÍNH SÁCH VẬN CHUYỂN - GIAO, NHẬN HÀNG VÀ KIỂM HÀNG
+                        </h2>
+
+                        <!-- Subsection 1 -->
+                        <div class="mb-4">
+                            <h4 class="subsection-title">
+                                <i class="fas fa-map-marked-alt me-2"></i>
+                                1. Phạm vi áp dụng:
+                            </h4>
+                            <div class="highlight-box">
+                                <p class="mb-0">
+                                    <strong>Phạm vi áp dụng:</strong> tất cả mọi tỉnh thành trên cả nước.
                                 </p>
+                            </div>
+                        </div>
+
+                        <!-- Subsection 2 -->
+                        <div class="mb-4">
+                            <h4 class="subsection-title">
+                                <i class="fas fa-clock me-2"></i>
+                                2. Thời gian giao – nhận hàng
+                            </h4>
+                            <ul class="policy-list">
+                                <li>Đơn hàng sau khi được tiếp nhận xử lý xong sẽ được giao ngay trong vòng <strong>24h</strong> hoặc theo tiến độ hợp đồng.</li>
+                                <li>Đối với khách hàng ở tỉnh xa, sau khi tiếp nhận đơn hàng thời gian nhận hàng dự kiến từ <strong>3 - 5 ngày</strong>. Tuy nhiên, tùy vào tình trạng hàng hóa điều kiện thời tiết,... mà ngày nhận hàng sẽ có sự thay đổi.</li>
+                                <li>Thời gian giao hàng được tính từ lúc hoàn tất thủ tục đặt hàng với nhân viên tư vấn đến khi nhận được hàng.</li>
+                            </ul>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Lưu ý:</strong> Trường hợp phát sinh chậm trễ trong việc giao hàng hoặc sản phẩm không được bán quá 10 ngày, khách hàng có thể hủy đơn hàng mà không chịu bất kỳ chi phí nào.
+                            </div>
+                        </div>
+
+                        <!-- Subsection 3 -->
+                        <div class="mb-4">
+                            <h4 class="subsection-title">
+                                <i class="fas fa-shipping-fast me-2"></i>
+                                3. Hình thức giao hàng:
+                            </h4>
+                            
+                            <div class="highlight-box">
+                                <p><strong>43gundamhobby.com</strong> sử dụng đơn vị giao hàng là <strong>Sapo Express</strong>. Mọi sự cố xảy ra trong quá trình vận chuyển trước khi sản phẩm tới tay quý khách, chúng tôi sẽ giải quyết với các đơn vị giao hàng.</p>
+                            </div>
+
+                            <ul class="policy-list">
+                                <li>Trong trường hợp bên giao hàng liên lạc quý khách không được (đối với Sapo Express sẽ liên lạc quý khách 2-3 lần trong thời gian 2-3 ngày) hoặc quý khách không chấp nhận nhận hàng dẫn đến sản phẩm bị hoàn về cửa hàng, mọi chi phí liên quan tới việc trả hàng, giao hàng lại sẽ do quý khách trả.</li>
+                                <li>Quý khách vui lòng <strong>đồng kiểm</strong> với bên giao hàng để đảm bảo nhận được sản phẩm đẹp, tốt, và có sự chứng kiến của bên giao hàng trong trường hợp sản phẩm có sự cố.</li>
+                                <li><strong>Đối với khách tỉnh xa:</strong> Sử dụng dịch vụ giao hàng.</li>
+                                <li><strong>Đối với khách nội thành/ ngoại thành:</strong> Sử dụng dịch vụ giao hàng.</li>
+                            </ul>
+
+                            <!-- Responsibility Section -->
+                            <div class="card mt-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-file-contract me-2"></i>
+                                        Phân định trách nhiệm về cung cấp chứng từ hàng hóa
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li><strong>43gundamhobby.com</strong> có trách nhiệm cung cấp đầy đủ và chính xác các chứng từ liên quan đến hàng hóa cho tổ chức cung cấp dịch vụ logistics và bên nhận hàng.</li>
+                                        <li>Tất cả các đơn hàng đều được đóng gói sẵn sàng trước khi vận chuyển, được niêm phong bởi <strong>43gundamhobby.com</strong></li>
+                                        <li>Đơn vị vận chuyển (ĐVVC) sẽ chỉ chịu trách nhiệm vận chuyển hàng hóa theo nguyên tắc <strong>"nguyên đai, nguyên kiện"</strong>, cung cấp chứng từ là phiếu giao hàng trong đó có thông tin như: Thông tin Người nhận, bao gồm: Tên người nhận, số điện thoại và địa chỉ người nhận, tên hàng hóa.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Package Information -->
+                            <div class="alert alert-info mt-4">
+                                <h6><i class="fas fa-box me-2"></i>Thông tin trên bao bì:</h6>
+                                <ul class="mb-0">
+                                    <li>Thông tin Người nhận, bao gồm: Tên người nhận, số điện thoại và địa chỉ người nhận.</li>
+                                    <li>Để đảm bảo an toàn cho hàng hóa, <strong>43gundamhobby.com</strong> sẽ gửi kèm Phiếu bán hàng hợp lệ của sản phẩm trong bưu kiện (nếu có), sau khi khách hàng xác nhận 43gundamhobby.com sẽ xuất hóa đơn điện tử và gửi qua mail của khách hàng cung cấp.</li>
+                                    <li>Phiếu bán hàng là căn cứ hỗ trợ quá trình xử lý khiếu nại như: xác định giá trị thị trường của hàng hóa, đảm bảo hàng hóa lưu thông hợp lệ v.v..</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section II -->
+                    <div class="policy-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-search me-2 text-success"></i>
+                            II. CHÍNH SÁCH KIỂM HÀNG
+                        </h2>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-eye me-2"></i>
+                                            Quyền kiểm hàng
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Khi nhận hàng quý khách có quyền yêu cầu nhân viên giao hàng mở cho kiểm.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6">
+                                <div class="card h-100">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-exchange-alt me-2"></i>
+                                            Trường hợp giao sai hàng
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Trường hợp đơn hàng đặt mà bên bán giao không đúng loại sản phẩm quý khách có quyền trả hàng và không thanh toán tiền.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Chính sách hoàn tiền và đổi hàng
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p>Trường hợp quý khách đã thanh toán trước nhưng đơn hàng không đúng quý khách yêu cầu hoàn toàn hoặc giao lại đơn mới như đã đặt.</p>
+                                
+                                <div class="contact-info">
+                                    <h6 class="fw-bold mb-3">
+                                        <i class="fas fa-headset me-2"></i>
+                                        Liên hệ hỗ trợ:
+                                    </h6>
+                                    <p class="mb-0">Trong trường hợp yêu cầu hoàn tiền hoặc đổi đơn quý khách liên hệ:</p>
+                                    <ul class="mt-2 mb-0">
+                                        <li>
+                                            <i class="fas fa-envelope me-2 text-primary"></i>
+                                            Email: <a href="mailto:43gundamhobby@gmail.com" class="text-decoration-none fw-bold">43gundamhobby@gmail.com</a>
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-phone me-2 text-success"></i>
+                                            Hotline: <a href="tel:0385546145" class="text-decoration-none fw-bold">0385546145</a>
+                                        </li>
+                                    </ul>
+                                    <div class="alert alert-success mt-3 mb-0">
+                                        <i class="fas fa-shield-alt me-2"></i>
+                                        <strong>Cam kết:</strong> Chúng tôi cam kết sẽ giải quyết mọi yêu cầu của quý khách.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Section -->
+                    <div class="text-center mt-5">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    <i class="fas fa-handshake me-2"></i>
+                                    43 Gundam Hobby - Cam kết chất lượng dịch vụ
+                                </h5>
+                                <p class="card-text">
+                                    Chúng tôi luôn đặt sự hài lòng của khách hàng lên hàng đầu với dịch vụ giao hàng nhanh chóng, 
+                                    an toàn và chính sách hỗ trợ tận tình.
+                                </p>
+                                <div class="row text-center mt-4">
+                                    <div class="col-md-4">
+                                        <div class="feature-item">
+                                            <i class="fas fa-shipping-fast fa-2x text-primary mb-2"></i>
+                                            <h6>Giao hàng nhanh</h6>
+                                            <small class="text-muted">24h nội thành</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="feature-item">
+                                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                                            <h6>An toàn bảo mật</h6>
+                                            <small class="text-muted">Đóng gói cẩn thận</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="feature-item">
+                                            <i class="fas fa-headset fa-2x text-info mb-2"></i>
+                                            <h6>Hỗ trợ 24/7</h6>
+                                            <small class="text-muted">Luôn sẵn sàng giúp đỡ</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- User Info Display (hidden by default) -->
-        <div id="user-info" class="d-none">
-            <!-- Content will be populated by JavaScript -->
-        </div>
     </div>
+
     <!-- Footer -->
     <footer class="bg-dark text-white">
         <div class="footer-top py-5">
@@ -333,7 +525,6 @@
                                 <span>Instagram</span>
                             </a>
                         </div>
-                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="newsletter">
@@ -366,41 +557,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Menu -->
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="<%=request.getContextPath()%>/all-products.jsp">Tất cả sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="#">HÀNG MỚI VỀ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="#">HÀNG PRE-ORDER</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="phukienDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            PHỤ KIỆN & MÔ HÌNH
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="phukienDropdown">
-                            <li><a class="dropdown-item" href="#">Dụng cụ - Tool</a></li>
-                            <li><a class="dropdown-item" href="#">Phụ kiện - Base</a></li>
-                            <li><a class="dropdown-item" href="#">Mô hình Dragon Ball</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="bandaiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            BANDAI
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="bandaiDropdown">
-                            <li><a class="dropdown-item" href="#">High Grade (HG)</a></li>
-                            <li><a class="dropdown-item" href="#">Master Grade (MG)</a></li>
-                            <li><a class="dropdown-item" href="#">Real Grade (RG)</a></li>
-                            <li><a class="dropdown-item" href="#">Perfect Grade (PG)</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
         </div>
     </footer>
 
@@ -411,41 +567,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- MD5 Library for Gravatar -->
-    <script src="<%=request.getContextPath()%>/js/md5.min.js"></script>
-    
-    <!-- Email to Google Converter -->
-    <script src="<%=request.getContextPath()%>/js/email-to-google-converter.js"></script>
-    
     <!-- Unified Navbar Manager -->
     <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
     
-    <!-- Google OAuth Handler -->
-    <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
-    
-    <!-- Login Script -->
-    <script src="<%=request.getContextPath()%>/js/login-clean.js"></script>
-    
     <!-- Hamburger Menu -->
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
-    
-    <!-- Login Fallback Handler (if API is not available) -->
-    <!-- <script src="<%=request.getContextPath()%>/js/login-fallback.js"></script> -->
-    
-    <!-- Hamburger Menu Script -->
-    <!-- <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script> -->
-    
-    <!-- Login Debug Helper (Development Only) -->
-    <!-- <script src="<%=request.getContextPath()%>/js/login-debug-helper.js"></script> -->
-    
-    <!-- Login Debug Fix - Sửa lỗi navbar sau login -->
-    <!-- <script src="<%=request.getContextPath()%>/js/login-debug-fix.js"></script> -->
-    
-    <!-- Comprehensive Auth Manager - Đảm bảo auth state luôn đúng -->
-    <!-- <script src="<%=request.getContextPath()%>/js/comprehensive-auth-manager.js"></script> -->
-    
-    <!-- Context Path Test Script (Development Only) -->
-    <!-- <script src="<%=request.getContextPath()%>/js/context-path-test.js"></script> -->
     
     <script>
         // Back to top functionality
@@ -468,40 +594,6 @@
         
         // Set context path globally for JavaScript access
         window.APP_CONTEXT_PATH = '<%=request.getContextPath()%>';
-        console.log('App context path from JSP:', window.APP_CONTEXT_PATH);
-        
-        // Debug: Add click handler for forgot password link
-        document.addEventListener('DOMContentLoaded', function() {
-            const forgotPasswordLink = document.getElementById('forgot-password-link');
-            if (forgotPasswordLink) {
-                console.log('Forgot password link found:', forgotPasswordLink);
-                console.log('Link href:', forgotPasswordLink.href);
-                
-                // Add click event listener to debug
-                forgotPasswordLink.addEventListener('click', function(e) {
-                    console.log('🔗 Forgot password link clicked!');
-                    console.log('Event:', e);
-                    console.log('Target:', e.target);
-                    console.log('Default prevented?', e.defaultPrevented);
-                    
-                    // Force navigation if something is preventing it
-                    if (e.defaultPrevented) {
-                        console.log('⚠️ Default prevented! Forcing navigation...');
-                        window.location.href = this.href;
-                    }
-                });
-                
-                // Test click programmatically
-                setTimeout(() => {
-                    console.log('Testing programmatic click...');
-                    console.log('Link is:', forgotPasswordLink);
-                    console.log('Link href is:', forgotPasswordLink.href);
-                }, 2000);
-                
-            } else {
-                console.error('❌ Forgot password link not found!');
-            }
-        });
     </script>
 </body>
 </html>

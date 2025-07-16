@@ -61,8 +61,25 @@
             <div class="cart-info-desc cart-hotline">0343970667</div>
         </div>
     </div>
-    
-    
+    <div class="cart-policy-links">
+        <a href="#">Chính sách bảo mật</a> |
+        <a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a> |
+        <a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a> |
+        <a href="#">Quy định sử dụng</a>
+    </div>
+    <div class="cart-policy-links" style="margin-top:10px;">
+        <a href="https://www.facebook.com/LTSTORE24/" target="_blank">Facebook</a> |
+        <a href="https://shope.ee/7pS5Ry0Zv9" target="_blank">Shopee</a> |
+        <a href="#" target="_blank">Tiktok</a>
+    </div>
+    <div class="cart-payment-icons" style="margin-top:18px;">
+        <img src="img/sale.png" alt="Payment 1">
+        <img src="img/logo.png" alt="Payment 2">
+        <!-- Thêm các icon thanh toán khác nếu có -->
+    </div>
+    <div class="cart-footer">
+        © Bản quyền thuộc về LTStore | Cung cấp bởi Sapo
+    </div>
 </div>
 <script>
 let cartData = [];
