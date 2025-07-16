@@ -791,8 +791,7 @@ footer {
 }
 
 .bg-darker {
-    background-color: #e0e7ff !important;
-    /* Nếu muốn nhẹ hơn có thể dùng #f3f6fd hoặc #f8f9fa */
+    background-color: #222222 !important;
 }
 
 .social-links {
@@ -822,6 +821,20 @@ footer {
 .social-link.youtube:hover { background-color: #ff0000; }
 .social-link.tiktok:hover { background-color: #000000; }
 .social-link.instagram:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+
+/* Footer social section styles */
+.footer-social .social-title,
+.footer-social .newsletter-title {
+    color: white !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.footer-social .copyright {
+    color: #cccccc !important;
+    font-size: 0.9rem;
+}
 
 .newsletter-form .input-group {
     max-width: 300px;
