@@ -8,11 +8,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -44,13 +48,16 @@
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
                         <div class="search-container w-100">
-                            <form class="search-form">
+                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
-                                    <input type="text" class="form-control search-input" placeholder="Tìm kiếm sản phẩm...">
+                                    <input type="text" name="q" class="form-control search-input" 
+                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
                                     <button class="btn btn-search" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
+                                <!-- Autocomplete suggestions -->
+                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
                             </form>
                         </div>
                     </div>
@@ -60,40 +67,18 @@
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
                     <div class="header-actions-section">
                         <div class="account-menu me-3">
-                            <%
-                                Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                String userName = (String) session.getAttribute("userName");
-                                String userPicture = (String) session.getAttribute("userPicture");
-                                
-                                if (isLoggedIn != null && isLoggedIn) {
-                            %>
-                                <!-- User logged in -->
+                            <!-- Unified Account Button -->
+                            <div id="unified-account-menu">
                                 <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle text-decoration-none d-flex align-items-center" data-bs-toggle="dropdown">
-                                        <% if (userPicture != null && !userPicture.isEmpty()) { %>
-                                            <img src="<%= userPicture %>" alt="Avatar" class="rounded-circle me-2 avatar-32">
-                                        <% } else { %>
-                                            <i class="fas fa-user-circle me-2 user-icon-32"></i>
-                                        <% } %>
-                                        <span class="text-dark d-none d-md-inline">Xin chào, <%= userName != null ? userName : "User" %></span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end z-index-1050">
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Hồ sơ khách hàng</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
-                                    </ul>
-                                </div>
-                            <%
-                                } else {
-                            %>
-                                <!-- User not logged in -->
-                                <div class="dropdown">
+                                    <!-- This button will dynamically change based on login state -->
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
-                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                        <!-- Menu items will be updated by JavaScript -->
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
@@ -102,18 +87,26 @@
                                         </a></li>
                                     </ul>
                                 </div>
-                            <%
-                                }
-                            %>
+                            </div>
                         </div>
-                        
-                        <div class="cart-section">
-                            <a href="<%=request.getContextPath()%>/cart.jsp" class="btn btn-outline-primary position-relative">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    0
-                                    <span class="visually-hidden">items in cart</span>
-                                </span>
+                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
+                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
+                            <a href="#" class="btn btn-warning" id="workDashboardLink">
+                                <i class="fas fa-briefcase me-1"></i>
+                                <span class="d-none d-lg-inline">Trang làm việc</span>
+                            </a>
+                        </div>
+                        <div class="cart-btn">
+                            <a href="cart.jsp" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart me-1"></i>
+                                <span class="cart-count">0</span>
+                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                            </a>
+                        </div>
+                        <div class="order-history-btn">
+                            <a href="order-history.jsp" class="btn btn-outline-secondary">
+                                <i class="fas fa-history me-1"></i>
+                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
                             </a>
                         </div>
                     </div>
@@ -122,8 +115,8 @@
         </div>
     </header>
 
-    <!-- Include Mobile Sidebar -->
-    <%@ include file="includes/mobile-sidebar.jsp" %>
+    <!-- Mobile Sidebar Navigation -->
+    <jsp:include page="includes/mobile-sidebar.jsp" />
 
     <!-- Main Content -->
     <main class="container py-4">
@@ -179,22 +172,138 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>43 Gundam Hobby</h5>
-                    <p class="mb-0">Chuyên cung cấp mô hình Gundam chính hãng</p>
+    <footer class="bg-dark text-white">
+        <div class="footer-top py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h5 class="footer-title">43 Gundam Hobby</h5>
+                            <p class="footer-desc">Chuyên cung cấp mô hình Gundam chính hãng với giá tốt nhất. Uy tín - Chất lượng - Dịch vụ tận tâm.</p>
+                            <div class="store-info">
+                                <div class="info-item mb-2">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <span>59 Lê Đình Diên, Cẩm Lệ, Đà Nẵng</span>
+                                </div>
+                                <div class="info-item mb-2">
+                                    <i class="fas fa-phone me-2"></i>
+                                    <a href="tel:0385546145" class="text-white">0385546145 (8h-20h)</a>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <a href="mailto:43gundamhobby@gmail.com" class="text-white">43gundamhobby@gmail.com</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Sản phẩm</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">Gundam Bandai</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG">High Grade (HG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG">Master Grade (MG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG">Real Grade (RG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG">Perfect Grade (PG)</a></li>
+                                <li><a href="#">Metal Build</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Dịch vụ</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">Hàng Pre-Order</a></li>
+                                <li><a href="#">Dụng cụ & Phụ kiện</a></li>
+                                <li><a href="#">Hướng dẫn lắp ráp</a></li>
+                                <li><a href="#">Sơn & Trang trí</a></li>
+                                <li><a href="#">Bảo hành sản phẩm</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Chính sách</h6>
+                            <ul class="footer-links">
+                                <li><a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a></li>
+                                <li><a href="<%=request.getContextPath()%>/payment-policy.jsp">Chính sách thanh toán</a></li>
+                                <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
+                                <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>
+                                <li><a href="#">Quy định sử dụng</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6 class="footer-title">Hỗ trợ</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">Liên hệ</a></li>
+                                <li><a href="#">FAQ</a></li>
+                                <li><a href="#">Hướng dẫn đặt hàng</a></li>
+                                <li><a href="#">Tra cứu đơn hàng</a></li>
+                                <li><a href="#">Hỗ trợ kỹ thuật</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h5>Liên hệ</h5>
-                    <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i>59 Lê Đình Diên, Cẩm Lệ, Đà Nẵng</p>
-                    <p class="mb-1"><i class="fas fa-phone me-2"></i>0385 546 145</p>
-                    <p class="mb-0"><i class="fas fa-envelope me-2"></i>43gundamhobby@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-social py-4 bg-darker">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h6 class="social-title mb-3">Theo dõi chúng tôi</h6>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/BANDAIHobbysite.EN" target="_blank" rel="noopener noreferrer" class="social-link facebook">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>Facebook</span>
+                            </a>
+                            <a href="https://www.youtube.com/@GundamInfo" target="_blank" rel="noopener noreferrer" class="social-link youtube">
+                                <i class="fab fa-youtube"></i>
+                                <span>Youtube</span>
+                            </a>
+                            <a href="https://www.tiktok.com/@bandainamcoasiahobby_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="social-link tiktok">
+                                <i class="fab fa-tiktok"></i>
+                                <span>TikTok</span>
+                            </a>
+                            <a href="https://www.instagram.com/bandaihobbyhk/" target="_blank" rel="noopener noreferrer" class="social-link instagram">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="newsletter-section">
+                            <h6 class="newsletter-title mb-3">Đăng ký nhận thông tin</h6>
+                            <p class="newsletter-desc">Nhận tin tức về sản phẩm mới và khuyến mãi</p>
+                            <form class="newsletter-form">
+                                <div class="input-group">
+                                    <input type="email" class="form-control newsletter-input" placeholder="Email của bạn...">
+                                    <button class="btn btn-primary newsletter-btn" type="submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h5>Giờ mở cửa</h5>
-                    <p class="mb-0">8:00 - 22:00 hàng ngày</p>
+            </div>
+        </div>
+        <div class="footer-bottom py-3 bg-darker border-top border-secondary">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright-text mb-0">© 2024 43 Gundam Hobby. Tất cả quyền được bảo lưu.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="payment-methods text-md-end">
+                            <span class="me-2">Phương thức thanh toán:</span>
+                            <i class="fab fa-cc-visa payment-icon"></i>
+                            <i class="fab fa-cc-mastercard payment-icon"></i>
+                            <i class="fas fa-mobile-alt payment-icon"></i>
+                            <i class="fas fa-university payment-icon"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
