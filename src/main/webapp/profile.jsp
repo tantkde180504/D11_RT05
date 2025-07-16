@@ -434,6 +434,73 @@
             width: 1rem;
             height: 1rem;
         }
+        
+        /* Password Change Form Styles */
+        .password-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .password-card .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+        }
+        
+        .password-input-group {
+            position: relative;
+        }
+        
+        .password-input-group .form-control {
+            padding-right: 50px;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .password-toggle-btn:hover {
+            color: #495057;
+        }
+        
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .password-strength .strength-bar {
+            height: 4px;
+            background-color: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+        
+        .password-strength .strength-fill {
+            height: 100%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        
+        .password-strength .strength-fill.weak {
+            background-color: #dc3545;
+        }
+        
+        .password-strength .strength-fill.medium {
+            background-color: #ffc107;
+        }
+        
+        .password-strength .strength-fill.strong {
+            background-color: #28a745;
+        }
     </style>
 </head>
 <body class="profile-body">    <header class="bg-white shadow-sm sticky-top">
@@ -1179,13 +1246,241 @@
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             this.classList.add('active');
             
-            document.getElementById('profileContent').innerHTML = 
-                '<h4><i class="fas fa-key me-2"></i>Đổi mật khẩu</h4>' +
-                '<div class="alert alert-warning mt-4">' +
-                    '<i class="fas fa-exclamation-triangle me-2"></i>' +
-                    'Chức năng này sẽ được cập nhật trong phiên bản tiếp theo.' +
-                '</div>';
+            // Check if user is OAuth user
+            const loginType = '<%= session.getAttribute("loginType") != null ? session.getAttribute("loginType") : "local" %>';
+            
+            if (loginType === 'google') {
+                document.getElementById('profileContent').innerHTML = 
+                    '<h4><i class="fas fa-key me-2"></i>Đổi mật khẩu</h4>' +
+                    '<div class="alert alert-info mt-4">' +
+                        '<i class="fas fa-info-circle me-2"></i>' +
+                        'Tài khoản Google không thể đổi mật khẩu. Vui lòng đổi mật khẩu trực tiếp trong tài khoản Google của bạn.' +
+                    '</div>';
+            } else {
+                document.getElementById('profileContent').innerHTML = `
+                    <h4><i class="fas fa-key me-2"></i>Đổi mật khẩu</h4>
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form id="changePasswordForm">
+                                        <div class="mb-3">
+                                            <label for="currentPassword" class="form-label">Mật khẩu hiện tại *</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                                <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label">Mật khẩu mới *</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                                <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới *</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>Lưu ý:</strong> Sau khi đổi mật khẩu, bạn sẽ cần đăng nhập lại với mật khẩu mới.
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-save me-2"></i>Đổi mật khẩu
+                                            </button>
+                                            <button type="reset" class="btn btn-secondary">
+                                                <i class="fas fa-undo me-2"></i>Đặt lại
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="fas fa-shield-alt me-2"></i>Bảo mật mật khẩu</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Ít nhất 6 ký tự</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Nên có chữ hoa và chữ thường</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Nên có số và ký tự đặc biệt</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Không sử dụng thông tin cá nhân</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Setup password change form handlers
+                setupPasswordChangeHandlers();
+            }
         };
+        
+        // Setup password change form handlers
+        function setupPasswordChangeHandlers() {
+            // Toggle password visibility
+            document.getElementById('toggleCurrentPassword').addEventListener('click', function() {
+                togglePasswordVisibility('currentPassword', this);
+            });
+            
+            document.getElementById('toggleNewPassword').addEventListener('click', function() {
+                togglePasswordVisibility('newPassword', this);
+            });
+            
+            document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+                togglePasswordVisibility('confirmPassword', this);
+            });
+            
+            // Form submission
+            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                changePassword();
+            });
+        }
+        
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Change password function
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+            
+            // Client-side validation
+            if (!currentPassword) {
+                showNotification('Vui lòng nhập mật khẩu hiện tại!', 'error');
+                return;
+            }
+            
+            if (!newPassword) {
+                showNotification('Vui lòng nhập mật khẩu mới!', 'error');
+                return;
+            }
+            
+            if (!confirmPassword) {
+                showNotification('Vui lòng xác nhận mật khẩu mới!', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('Mật khẩu mới và xác nhận mật khẩu không khớp!', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showNotification('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+                return;
+            }
+            
+            if (currentPassword === newPassword) {
+                showNotification('Mật khẩu mới phải khác mật khẩu hiện tại!', 'error');
+                return;
+            }
+            
+            // Show loading
+            const submitBtn = document.querySelector('#changePasswordForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+            submitBtn.disabled = true;
+            
+            // Prepare data
+            const changeData = {
+                currentPassword: currentPassword,
+                newPassword: newPassword,
+                confirmPassword: confirmPassword
+            };
+            
+            // Get context path
+            let contextPath = '';
+            if (window.APP_CONTEXT_PATH !== undefined) {
+                contextPath = window.APP_CONTEXT_PATH;
+            }
+            
+            // Send request
+            fetch(contextPath + '/api/profile/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(changeData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Change password response:', data);
+                
+                if (data.success) {
+                    showNotification('Đổi mật khẩu thành công! Bạn sẽ được chuyển về trang đăng nhập.', 'success');
+                    
+                    // Clear form
+                    document.getElementById('changePasswordForm').reset();
+                    
+                    // Redirect to login after 3 seconds
+                    setTimeout(() => {
+                        // Clear session and redirect to login
+                        fetch('/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            }
+                        }).then(() => {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            window.location.href = '/login.jsp';
+                        }).catch(() => {
+                            // Fallback
+                            window.location.href = '/login.jsp';
+                        });
+                    }, 3000);
+                } else {
+                    console.error('Change password failed:', data.message);
+                    showNotification(data.message || 'Đổi mật khẩu thất bại!', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Change password error:', error);
+                showNotification('Lỗi kết nối máy chủ: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        }
         
         // Xử lý đăng xuất
         document.getElementById('profileLogoutBtn').onclick = function(e) {
