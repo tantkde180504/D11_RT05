@@ -227,6 +227,7 @@
         </div>
     </section>
 
+    <!-- Product Sections -->
     <!-- Category Navigation -->
     <section class="category-nav py-4 bg-light">
         <div class="container">
@@ -285,7 +286,8 @@
                 </div>
             </div>
         </div>
-    </section>    <!-- Product Sections -->
+    </section>
+    
     <!-- New Arrivals -->
     <section class="product-section py-5">
         <div class="container">
@@ -362,40 +364,30 @@
         </div>
     </section>
 
-    <!-- Tools & Accessories Section -->
+    <!-- Recently Viewed Section -->
     <section class="product-section py-5">
         <div class="container">
             <div class="section-header mb-4">
                 <h2 class="section-title">
-                    <span class="title-icon">🛠️</span>
-                    Phụ Kiện & Mô Hình
+                    <span class="title-icon">�️</span>
+                    Sản phẩm đã xem
                 </h2>
-                <a href="#" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
+                <a href="#" class="view-all-btn" onclick="clearRecentlyViewed()">Xóa lịch sử <i class="fas fa-trash ms-1"></i></a>
             </div>
-            <div class="row">
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=Paint+Set" class="img-fluid" alt="Paint Set">
-                            <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
-                                </button>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">Mr. Color Paint Set</h6>
-                            <p class="product-category">Dụng cụ sơn</p>
-                            <div class="product-price">
-                                <span class="current-price">210.000₫</span>
-                            </div>
-                            <button class="btn btn-primary add-to-cart w-100">
-                                <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Add more tools and accessories as needed -->
+            
+            <!-- Empty state -->
+            <div id="recentlyViewedEmpty" class="text-center py-5" style="display: none;">
+                <i class="fas fa-eye-slash text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 text-muted">Chưa có sản phẩm nào được xem</h5>
+                <p class="text-muted">Các sản phẩm bạn đã xem sẽ hiển thị tại đây</p>
+                <a href="<%=request.getContextPath()%>/all-products.jsp" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag me-2"></i>Khám phá sản phẩm
+                </a>
+            </div>
+            
+            <!-- Products container -->
+            <div class="row" id="recentlyViewedContainer">
+                <!-- Recently viewed products will be loaded here -->
             </div>
         </div>
     </section>    <!-- Footer -->
@@ -573,6 +565,9 @@
     
     <!-- Search Autocomplete Script -->
     <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+    
+    <!-- Recently Viewed Tracker -->
+    <script src="<%=request.getContextPath()%>/js/recently-viewed-tracker.js"></script>
     
     <!-- Unified Navbar Debug Tool -->
     <script src="<%=request.getContextPath()%>/js/unified-navbar-debug.js"></script>
@@ -801,8 +796,10 @@
             col.innerHTML = `
                 <div class="product-card">
                     <div class="product-image">
-                        <img src="${productImage}" class="img-fluid" alt="${product.name || 'Gundam Model'}" 
-                             onerror="this.src='${placeholderImage}'">
+                        <a href="${contextPath}/product-detail.jsp?id=${product.id}">
+                            <img src="${productImage}" class="img-fluid" alt="${product.name || 'Gundam Model'}" 
+                                 onerror="this.src='${placeholderImage}'">
+                        </a>
                         <div class="product-badges">
                             ${newBadge}
                             ${stockBadge}
@@ -814,7 +811,11 @@
                         </div>
                     </div>
                     <div class="product-info">
-                        <h6 class="product-title">${product.name || 'Tên sản phẩm'}</h6>
+                        <h6 class="product-title">
+                            <a href="${contextPath}/product-detail.jsp?id=${product.id}" class="text-decoration-none text-dark">
+                                ${product.name || 'Tên sản phẩm'}
+                            </a>
+                        </h6>
                         <p class="product-category">${finalCategoryDisplay}</p>
                         <div class="product-price">
                             <span class="current-price">${formattedPrice}</span>
@@ -1015,6 +1016,194 @@
                 }
             }, 4000);
         }
+        
+        // Recently Viewed Products Management
+        function loadRecentlyViewed() {
+            console.log('👁️ Loading recently viewed products...');
+            
+            const container = document.getElementById('recentlyViewedContainer');
+            const emptyState = document.getElementById('recentlyViewedEmpty');
+            
+            if (!container || !emptyState) {
+                console.warn('Recently viewed elements not found');
+                return;
+            }
+            
+            // Get recently viewed products from localStorage
+            const recentlyViewed = getRecentlyViewedProducts();
+            
+            if (recentlyViewed.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Fetch product details for recently viewed items
+            Promise.all(recentlyViewed.map(item => 
+                fetch(`<%=request.getContextPath()%>/api/products/${item.id}`)
+                    .then(response => response.json())
+                    .then(data => ({ ...data.data, viewedAt: item.viewedAt }))
+                    .catch(error => {
+                        console.error('Error fetching product:', error);
+                        return null;
+                    })
+            ))
+            .then(products => {
+                // Filter out null products and sort by view time (most recent first)
+                const validProducts = products.filter(product => product !== null)
+                    .sort((a, b) => new Date(b.viewedAt) - new Date(a.viewedAt));
+                
+                console.log(`✅ Loaded ${validProducts.length} recently viewed products`);
+                renderRecentlyViewed(validProducts);
+            });
+        }
+        
+        function renderRecentlyViewed(products) {
+            const container = document.getElementById('recentlyViewedContainer');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = createRecentlyViewedCard(product);
+                container.appendChild(productCard);
+            });
+            
+            // Re-attach event listeners for add-to-cart buttons
+            attachAddToCartListeners();
+        }
+        
+        function createRecentlyViewedCard(product) {
+            const col = document.createElement('div');
+            col.className = 'col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4';
+            
+            // Handle price formatting
+            let formattedPrice = '0₫';
+            if (product.price) {
+                const price = parseFloat(product.price);
+                if (!isNaN(price)) {
+                    formattedPrice = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(price);
+                }
+            }
+            
+            // Handle image
+            const contextPath = '<%=request.getContextPath()%>';
+            const defaultImage = contextPath + '/img/RGStrikeGundam.jpg';
+            const placeholderImage = 'https://via.placeholder.com/250x250/cccccc/666666?text=Gundam+Model';
+            const productImage = product.imageUrl || defaultImage;
+            
+            // Handle category display
+            const categoryDisplay = getCategoryDisplayName(product.category) || 'Gundam Model';
+            const gradeDisplay = getGradeDisplayName(product.grade);
+            const finalCategoryDisplay = gradeDisplay || categoryDisplay;
+            
+            // Handle stock status
+            const isActive = product.isActive === true;
+            const stockQuantity = product.stockQuantity ? parseInt(product.stockQuantity) : 0;
+            const isInStock = isActive && stockQuantity > 0;
+            
+            // Format viewed time
+            const viewedAt = new Date(product.viewedAt).toLocaleString('vi-VN');
+            
+            const stockBadge = !isInStock ? '<span class="badge bg-danger">Hết hàng</span>' : '';
+            
+            col.innerHTML = `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${productImage}" class="img-fluid" alt="${product.name || 'Gundam Model'}" 
+                             onerror="this.src='${placeholderImage}'">
+                        <div class="product-badges">
+                            <span class="badge bg-info">Đã xem</span>
+                            ${stockBadge}
+                        </div>
+                        <div class="product-overlay">
+                            <a href="${contextPath}/product-detail.jsp?id=${product.id}" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-eye"></i> Xem lại
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">${product.name || 'Tên sản phẩm'}</h6>
+                        <p class="product-category">${finalCategoryDisplay}</p>
+                        <p class="product-viewed-time text-muted small">
+                            <i class="fas fa-clock me-1"></i>Xem lúc: ${viewedAt}
+                        </p>
+                        <div class="product-price">
+                            <span class="current-price">${formattedPrice}</span>
+                        </div>
+                        <div class="product-actions d-flex">
+                            <button class="btn ${isInStock ? 'btn-primary' : 'btn-secondary'} add-to-cart flex-grow-1" 
+                                    data-product-id="${product.id}" 
+                                    data-dynamic="true"
+                                    ${!isInStock ? 'disabled' : ''}>
+                                <i class="fas fa-${isInStock ? 'cart-plus' : 'times'} me-1"></i>
+                                ${isInStock ? 'Thêm vào giỏ' : 'Hết hàng'}
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm ms-2" 
+                                    onclick="removeFromRecentlyViewed(${product.id})"
+                                    title="Xóa khỏi danh sách đã xem">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+        
+        function getRecentlyViewedProducts() {
+            const stored = localStorage.getItem('recentlyViewed');
+            return stored ? JSON.parse(stored) : [];
+        }
+        
+        function addToRecentlyViewed(productId) {
+            let recentlyViewed = getRecentlyViewedProducts();
+            
+            // Remove existing entry if present
+            recentlyViewed = recentlyViewed.filter(item => item.id !== productId);
+            
+            // Add to beginning of array
+            recentlyViewed.unshift({
+                id: productId,
+                viewedAt: new Date().toISOString()
+            });
+            
+            // Keep only last 12 items
+            recentlyViewed = recentlyViewed.slice(0, 12);
+            
+            localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+            
+            console.log(`👁️ Added product ${productId} to recently viewed`);
+        }
+        
+        function removeFromRecentlyViewed(productId) {
+            let recentlyViewed = getRecentlyViewedProducts();
+            recentlyViewed = recentlyViewed.filter(item => item.id !== productId);
+            
+            localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+            
+            console.log(`🗑️ Removed product ${productId} from recently viewed`);
+            
+            // Reload the recently viewed section
+            loadRecentlyViewed();
+        }
+        
+        function clearRecentlyViewed() {
+            if (confirm('Bạn có chắc chắn muốn xóa tất cả lịch sử xem sản phẩm?')) {
+                localStorage.removeItem('recentlyViewed');
+                console.log('🗑️ Cleared all recently viewed products');
+                loadRecentlyViewed();
+            }
+        }
+        
+        // Make functions available globally
+        window.addToRecentlyViewed = addToRecentlyViewed;
+        window.removeFromRecentlyViewed = removeFromRecentlyViewed;
+        window.clearRecentlyViewed = clearRecentlyViewed;
     </script>
     <!-- Final auth state verification and cleanup -->
     <script>
@@ -1024,8 +1213,17 @@
             // Initialize static cart buttons first
             initializeStaticCartButtons();
             
-            // Load new arrivals from database
-            loadNewArrivals();
+            // Load new arrivals from database (backup load)
+            if (document.getElementById('newArrivalsContainer').innerHTML.trim() === '') {
+                console.log('🔄 Backup: Loading new arrivals from database...');
+                loadNewArrivals();
+            }
+            
+            // Load recently viewed products (backup load)
+            if (document.getElementById('recentlyViewedContainer').innerHTML.trim() === '') {
+                console.log('🔄 Backup: Loading recently viewed products...');
+                loadRecentlyViewed();
+            }
             
             // Debug auth state immediately
             console.log('📊 Initial Auth State Debug:');
@@ -1072,6 +1270,15 @@
         // DOM ready handlers
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📦 DOM ready, setting up unified navbar...');
+            
+            // Initialize static cart buttons first
+            initializeStaticCartButtons();
+            
+            // Load new arrivals from database
+            loadNewArrivals();
+            
+            // Load recently viewed products
+            loadRecentlyViewed();
             
             // Check for logout parameter in URL
             const urlParams = new URLSearchParams(window.location.search);

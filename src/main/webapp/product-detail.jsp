@@ -1957,5 +1957,8 @@
     
     <!-- Search Autocomplete Script -->
     <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+    
+    <!-- Recently Viewed Tracker -->
+    <script src="<%=request.getContextPath()%>/js/recently-viewed-tracker.js"></script>
 </body>
 </html>
