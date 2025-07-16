@@ -1204,6 +1204,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="js/staff.js"></script>
         <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+        <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
 
         <!-- Chat WebSocket Scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
@@ -1764,6 +1765,41 @@
         </script>
 
         <script>
+            // Staff logout function using enhanced logout system
+            function logout() {
+                console.log('🚪 Staff logout initiated');
+                
+                // Use the enhanced logout from unified-navbar-manager.js
+                if (typeof handleLogout === 'function') {
+                    handleLogout();
+                } else {
+                    // Fallback if unified logout not available
+                    console.log('⚠️ Unified logout not available, using fallback');
+                    
+                    // Clear all client-side data
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    // Clear cookies
+                    document.cookie.split(";").forEach(function(c) { 
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                    });
+                    
+                    // Logout from server and redirect
+                    fetch('<%=request.getContextPath()%>/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }
+                    }).then(() => {
+                        window.location.href = '<%=request.getContextPath()%>/index.jsp?logout=1&t=' + Date.now();
+                    }).catch(() => {
+                        // Force redirect even if logout fails
+                        window.location.href = '<%=request.getContextPath()%>/index.jsp?logout=1&t=' + Date.now();
+                    });
+                }
+            }
+
             // Check staff access on page load and initialize chat
             document.addEventListener('DOMContentLoaded', function () {
                 checkPageAccess('STAFF');

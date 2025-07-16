@@ -2127,6 +2127,7 @@
 
                                 <!-- Auth script for logout functionality -->
                                 <script src="<%=request.getContextPath()%>/js/auth.js"></script>
+                                <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
                                 <script src="<%=request.getContextPath()%>/js/google-oauth-handler.js"></script>
                                 <script src="<%=request.getContextPath()%>/js/admin-dashboard.js"></script>
                                 <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
@@ -2135,6 +2136,41 @@
                                 <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
 
                                 <script>
+                                    // Admin logout function using enhanced logout system
+                                    function logout() {
+                                        console.log('🚪 Admin logout initiated');
+                                        
+                                        // Use the enhanced logout from unified-navbar-manager.js
+                                        if (typeof handleLogout === 'function') {
+                                            handleLogout();
+                                        } else {
+                                            // Fallback if unified logout not available
+                                            console.log('⚠️ Unified logout not available, using fallback');
+                                            
+                                            // Clear all client-side data
+                                            localStorage.clear();
+                                            sessionStorage.clear();
+                                            
+                                            // Clear cookies
+                                            document.cookie.split(";").forEach(function(c) { 
+                                                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                                            });
+                                            
+                                            // Logout from server and redirect
+                                            fetch('<%=request.getContextPath()%>/logout', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                                }
+                                            }).then(() => {
+                                                window.location.href = '<%=request.getContextPath()%>/index.jsp?logout=1&t=' + Date.now();
+                                            }).catch(() => {
+                                                // Force redirect even if logout fails
+                                                window.location.href = '<%=request.getContextPath()%>/index.jsp?logout=1&t=' + Date.now();
+                                            });
+                                        }
+                                    }
+
                                     // Check admin access on page load
                                     document.addEventListener('DOMContentLoaded', function () {
                                         checkPageAccess('ADMIN');

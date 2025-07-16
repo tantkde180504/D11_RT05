@@ -214,10 +214,10 @@
                             <h6 class="footer-title">Sản phẩm</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Gundam Bandai</a></li>
-                                <li><a href="#">High Grade (HG)</a></li>
-                                <li><a href="#">Master Grade (MG)</a></li>
-                                <li><a href="#">Real Grade (RG)</a></li>
-                                <li><a href="#">Perfect Grade (PG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG">High Grade (HG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG">Master Grade (MG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG">Real Grade (RG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG">Perfect Grade (PG)</a></li>
                                 <li><a href="#">Metal Build</a></li>
                             </ul>
                         </div>
@@ -238,7 +238,7 @@
                         <div class="footer-section">
                             <h6 class="footer-title">Chính sách</h6>
                             <ul class="footer-links">
-                                <li><a href="#">Chính sách bảo mật</a></li>
+                                <li><a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a></li>
                                 <li><a href="#">Chính sách thanh toán</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>

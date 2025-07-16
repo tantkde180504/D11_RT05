@@ -20,6 +20,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+    /* Work Dashboard Button Styles */
+    .work-dashboard-btn .btn {
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .work-dashboard-btn .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .work-dashboard-btn .btn i {
+        font-size: 1.1em;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 991.98px) {
+        .work-dashboard-btn {
+            margin-right: 0.5rem !important;
+        }
+        
+        .work-dashboard-btn .btn {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .work-dashboard-btn .btn span {
+            display: none !important;
+        }
+        
+        .work-dashboard-btn .btn {
+            padding: 0.5rem;
+            min-width: 44px;
+        }
+    }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -65,62 +107,18 @@
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
                     <div class="header-actions-section">
                         <div class="account-menu me-3">
-                            <!-- User Info (visible when logged in) -->
-                            <div id="nav-user-info" class="d-none">
+                            <!-- Unified Account Button -->
+                            <div id="unified-account-menu">
                                 <div class="dropdown">
-                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
-                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <div class="user-avatar-container me-2">
-                                            <img id="userAvatarImage" 
-                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar rounded-circle"
-                                                 style="width: 32px; height: 32px; object-fit: cover;">
-                                        </div>
-                                        <span class="d-none d-md-inline">
-                                            <span class="greeting-text">Xin chào</span>
-                                            <span id="userDisplayName" class="fw-bold">User</span>
-                                        </span>
-                                        <span class="d-md-none">
-                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header d-flex align-items-center">
-                                            <img id="userAvatarDropdown" 
-                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar-small rounded-circle me-2"
-                                                 style="width: 24px; height: 24px; object-fit: cover;">
-                                            <span id="userFullName">User Name</span>
-                                        </h6></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
-                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
-                                        </a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <!-- Login Button (visible when not logged in) -->
-                            <div id="nav-login-btn">
-                                <div class="dropdown">
+                                    <!-- This button will dynamically change based on login state -->
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
-                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                        <!-- Menu items will be updated by JavaScript -->
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
@@ -130,6 +128,13 @@
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
+                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
+                            <a href="#" class="btn btn-warning" id="workDashboardLink">
+                                <i class="fas fa-briefcase me-1"></i>
+                                <span class="d-none d-lg-inline">Trang làm việc</span>
+                            </a>
                         </div>
                         <div class="cart-btn">
                             <a href="#" class="btn btn-primary">
@@ -263,10 +268,10 @@
                             <h6 class="footer-title">Sản phẩm</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Gundam Bandai</a></li>
-                                <li><a href="#">High Grade (HG)</a></li>
-                                <li><a href="#">Master Grade (MG)</a></li>
-                                <li><a href="#">Real Grade (RG)</a></li>
-                                <li><a href="#">Perfect Grade (PG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG">High Grade (HG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG">Master Grade (MG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG">Real Grade (RG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG">Perfect Grade (PG)</a></li>
                                 <li><a href="#">Metal Build</a></li>
                             </ul>
                         </div>
@@ -287,8 +292,8 @@
                         <div class="footer-section">
                             <h6 class="footer-title">Chính sách</h6>
                             <ul class="footer-links">
-                                <li><a href="#">Chính sách bảo mật</a></li>
-                                <li><a href="#">Chính sách thanh toán</a></li>
+                                <li><a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a></li>
+                                <li><a href="<%=request.getContextPath()%>/payment-policy.jsp">Chính sách thanh toán</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>
                                 <li><a href="#">Quy định sử dụng</a></li>
@@ -393,10 +398,10 @@
                             BANDAI
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="bandaiDropdown">
-                            <li><a class="dropdown-item" href="#">High Grade (HG)</a></li>
-                            <li><a class="dropdown-item" href="#">Master Grade (MG)</a></li>
-                            <li><a class="dropdown-item" href="#">Real Grade (RG)</a></li>
-                            <li><a class="dropdown-item" href="#">Perfect Grade (PG)</a></li>
+                            <li><a class="dropdown-item" href="<%=request.getContextPath()%>/grade.jsp?grade=HG">High Grade (HG)</a></li>
+                            <li><a class="dropdown-item" href="<%=request.getContextPath()%>/grade.jsp?grade=MG">Master Grade (MG)</a></li>
+                            <li><a class="dropdown-item" href="<%=request.getContextPath()%>/grade.jsp?grade=RG">Real Grade (RG)</a></li>
+                            <li><a class="dropdown-item" href="<%=request.getContextPath()%>/grade.jsp?grade=PG">Perfect Grade (PG)</a></li>
                         </ul>
                     </li>
                 </ul>

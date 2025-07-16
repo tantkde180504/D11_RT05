@@ -346,7 +346,7 @@
                         <div class="footer-section">
                             <h6 class="footer-title">Chính sách</h6>
                             <ul class="footer-links">
-                                <li><a href="#">Chính sách bảo mật</a></li>
+                                <li><a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a></li>
                                 <li><a href="#">Chính sách thanh toán</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>

@@ -62,7 +62,7 @@
         </div>
     </div>
     <div class="cart-policy-links">
-        <a href="#">Chính sách bảo mật</a> |
+        <a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a> |
         <a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a> |
         <a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a> |
         <a href="#">Quy định sử dụng</a>

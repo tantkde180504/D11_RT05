@@ -237,6 +237,9 @@ class UnifiedNavbarManager {
             </a></li>
         `;
         
+        // Show/hide work dashboard button based on user role
+        this.updateWorkDashboardButton();
+        
         console.log('✅ Navbar updated for logged in user:', displayName);
     }
 
@@ -267,6 +270,9 @@ class UnifiedNavbarManager {
                 <i class="fas fa-user-plus me-2"></i>Đăng ký
             </a></li>
         `;
+        
+        // Hide work dashboard button for guests
+        this.hideWorkDashboardButton();
         
         console.log('✅ Navbar updated for guest user');
     }
@@ -319,12 +325,24 @@ class UnifiedNavbarManager {
                 console.warn('⚠️ Server logout error:', serverError, 'but continuing with client cleanup');
             }
             
-            // Clear all client-side user data
-            console.log('🧹 Clearing client-side data...');
+            // Clear ALL client-side user data
+            console.log('🧹 Clearing ALL client-side data...');
+            localStorage.clear(); // Clear everything
+            sessionStorage.clear(); // Clear session storage too
+            
+            // Remove specific items to be extra sure
             localStorage.removeItem('currentUser');
             localStorage.removeItem('googleUser');
             localStorage.removeItem('userRole');
             localStorage.removeItem('justLoggedIn');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userPicture');
+            localStorage.removeItem('userLoggedIn');
+            
+            sessionStorage.removeItem('userId');
+            sessionStorage.removeItem('userType');
+            sessionStorage.removeItem('userName');
             
             // Sign out from Google if it's a Google user
             if (this.currentUser && (this.currentUser.googleId || this.currentUser.sub)) {
@@ -347,18 +365,28 @@ class UnifiedNavbarManager {
             
             console.log('✅ Logout completed successfully');
             
-            // Redirect to home page immediately
-            console.log('🏠 Redirecting to home page...');
-            window.location.href = this.contextPath + '/';
+            // Force redirect to home page with cache busting and immediate reload
+            console.log('🏠 Redirecting to home page with force reload...');
+            
+            // Add a small delay to ensure all cleanup is done
+            setTimeout(() => {
+                // Use replace instead of href to prevent back button issues
+                window.location.replace(this.contextPath + '/?logout=1&t=' + Date.now());
+            }, 100);
             
         } catch (error) {
             console.error('❌ Error during logout:', error);
             
             // Even if there's an error, still try to clean up and redirect
             this.currentUser = null;
-            localStorage.clear(); // Clear everything to be safe
+            localStorage.clear();
+            sessionStorage.clear();
             this.updateNavbarForGuest();
-            window.location.href = this.contextPath + '/';
+            
+            // Force redirect even on error
+            setTimeout(() => {
+                window.location.replace(this.contextPath + '/?logout=1&error=1&t=' + Date.now());
+            }, 100);
         }
     }
 
@@ -459,6 +487,84 @@ window.openChatWidget = function() {
     }
     
     return false; // Prevent navigation
+};
+
+// Function to update work dashboard button based on user role
+UnifiedNavbarManager.prototype.updateWorkDashboardButton = function() {
+    const workDashboardBtn = document.getElementById('workDashboardBtn');
+    const workDashboardLink = document.getElementById('workDashboardLink');
+    
+    if (!workDashboardBtn || !workDashboardLink) {
+        console.log('⚠️ Work dashboard button elements not found');
+        return;
+    }
+    
+    // Check if user has staff/admin/shipper role
+    const userRole = this.currentUser?.role;
+    const workRoles = ['STAFF', 'ADMIN', 'SHIPPER'];
+    
+    if (userRole && workRoles.includes(userRole.toUpperCase())) {
+        console.log('✅ Showing work dashboard button for role:', userRole);
+        
+        // Show the button
+        workDashboardBtn.style.display = 'block';
+        
+        // Set the appropriate link based on role
+        let workUrl = '';
+        let buttonText = '';
+        let buttonIcon = '';
+        
+        switch (userRole.toUpperCase()) {
+            case 'STAFF':
+                workUrl = this.contextPath + '/staffsc.jsp';
+                buttonText = 'Trang Staff';
+                buttonIcon = 'fas fa-user-tie';
+                break;
+            case 'ADMIN':
+                workUrl = this.contextPath + '/dashboard.jsp';
+                buttonText = 'Trang Admin';
+                buttonIcon = 'fas fa-user-shield';
+                break;
+            case 'SHIPPER':
+                workUrl = this.contextPath + '/shippersc.jsp';
+                buttonText = 'Trang Shipper';
+                buttonIcon = 'fas fa-truck';
+                break;
+            default:
+                workUrl = this.contextPath + '/dashboard.jsp';
+                buttonText = 'Trang làm việc';
+                buttonIcon = 'fas fa-briefcase';
+        }
+        
+        // Update link and button content
+        workDashboardLink.href = workUrl;
+        workDashboardLink.innerHTML = `
+            <i class="${buttonIcon} me-1"></i>
+            <span class="d-none d-lg-inline">${buttonText}</span>
+        `;
+        
+        // Update button color based on role
+        workDashboardLink.className = userRole.toUpperCase() === 'ADMIN' ? 
+            'btn btn-danger' : 
+            userRole.toUpperCase() === 'STAFF' ? 
+                'btn btn-success' : 
+                'btn btn-info';
+        
+        console.log(`✅ Work dashboard button configured: ${buttonText} -> ${workUrl}`);
+    } else {
+        // Hide the button for regular customers
+        workDashboardBtn.style.display = 'none';
+        console.log('ℹ️ Work dashboard button hidden for role:', userRole);
+    }
+};
+
+// Function to hide work dashboard button (called when user logs out)
+UnifiedNavbarManager.prototype.hideWorkDashboardButton = function() {
+    const workDashboardBtn = document.getElementById('workDashboardBtn');
+    if (workDashboardBtn) {
+        workDashboardBtn.style.display = 'none';
+        console.log('✅ Work dashboard button hidden');
+    }
 };
 
 console.log('📦 Unified Navbar Manager script loaded');

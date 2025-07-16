@@ -21,6 +21,47 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Work Dashboard Button Styles */
+        .work-dashboard-btn .btn {
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .work-dashboard-btn .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .work-dashboard-btn .btn i {
+            font-size: 1.1em;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .work-dashboard-btn {
+                margin-right: 0.5rem !important;
+            }
+            
+            .work-dashboard-btn .btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .work-dashboard-btn .btn span {
+                display: none !important;
+            }
+            
+            .work-dashboard-btn .btn {
+                padding: 0.5rem;
+                min-width: 44px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Success notification for OAuth login -->
@@ -96,6 +137,13 @@
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
+                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
+                            <a href="#" class="btn btn-warning" id="workDashboardLink">
+                                <i class="fas fa-briefcase me-1"></i>
+                                <span class="d-none d-lg-inline">Trang làm việc</span>
+                            </a>
                         </div>
                         <div class="cart-btn">
                             <a href="cart.jsp" class="btn btn-primary">
@@ -380,10 +428,10 @@
                             <h6 class="footer-title">Sản phẩm</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Gundam Bandai</a></li>
-                                <li><a href="#">High Grade (HG)</a></li>
-                                <li><a href="#">Master Grade (MG)</a></li>
-                                <li><a href="#">Real Grade (RG)</a></li>
-                                <li><a href="#">Perfect Grade (PG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG">High Grade (HG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG">Master Grade (MG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG">Real Grade (RG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG">Perfect Grade (PG)</a></li>
                                 <li><a href="#">Metal Build</a></li>
                             </ul>
                         </div>
@@ -404,8 +452,8 @@
                         <div class="footer-section">
                             <h6 class="footer-title">Chính sách</h6>
                             <ul class="footer-links">
-                                <li><a href="#">Chính sách bảo mật</a></li>
-                                <li><a href="#">Chính sách thanh toán</a></li>
+                                <li><a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a></li>
+                                <li><a href="<%=request.getContextPath()%>/payment-policy.jsp">Chính sách thanh toán</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
                                 <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>
                                 <li><a href="#">Quy định sử dụng</a></li>
@@ -1024,6 +1072,38 @@
         // DOM ready handlers
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📦 DOM ready, setting up unified navbar...');
+            
+            // Check for logout parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const logoutParam = urlParams.get('logout');
+            
+            if (logoutParam) {
+                console.log('🚪 Logout parameter detected, forcing complete cleanup...');
+                
+                // Force clear all auth data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Remove specific items
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('googleUser');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('justLoggedIn');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userPicture');
+                localStorage.removeItem('userLoggedIn');
+                
+                sessionStorage.removeItem('userId');
+                sessionStorage.removeItem('userType');
+                sessionStorage.removeItem('userName');
+                
+                // Clean URL by removing logout parameter
+                const cleanUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, document.title, cleanUrl);
+                
+                console.log('✅ Forced logout cleanup completed');
+            }
             
             // Immediate auth state debug
             console.log('🔍 Immediate Auth Check:');

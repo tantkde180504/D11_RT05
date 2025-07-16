@@ -1,5 +1,5 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!-- Chat Widget cho Customer (hiển thị ở góc dưới phải) -->
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div id="chat-widget" class="chat-widget" style="display: block;">
     <!-- Chat Widget Button -->
     <div id="chat-widget-button" class="chat-widget-button" onclick="toggleChatWidget()">
