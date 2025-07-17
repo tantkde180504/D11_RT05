@@ -44,13 +44,14 @@
                 </div>
                 
                 <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
+                <div class="col-lg-6 col-md-4 col-12 order-md-2 order-3">
                     <div class="header-center-section">
                         <div class="search-container w-100">
                             <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
+                                    <input type="text" class="form-control search-input" name="q" 
+                                           placeholder="Tìm kiếm sản phẩm..." aria-label="Search" 
+                                           id="headerSearchInput" autocomplete="off">
                                     <button class="btn btn-search" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -62,66 +63,19 @@
                     </div>
                 </div>
                 
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
+                <!-- User Actions Section -->
+                <div class="col-lg-3 col-md-4 col-6 order-md-3 order-2">
                     <div class="header-actions-section">
+                        <!-- Account Menu & Cart Button (giống index.jsp) -->
                         <div class="account-menu me-3">
-                            <!-- User Info (visible when logged in) -->
-                            <div id="nav-user-info" class="d-none">
-                                <div class="dropdown">
-                                    <a href="#" class="btn btn-outline-success dropdown-toggle d-flex align-items-center" 
-                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <div class="user-avatar-container me-2">
-                                            <img id="userAvatarImage" 
-                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar rounded-circle"
-                                                 style="width: 32px; height: 32px; object-fit: cover;">
-                                        </div>
-                                        <span class="d-none d-md-inline">
-                                            <span class="greeting-text">Xin chào</span>
-                                            <span id="userDisplayName" class="fw-bold">User</span>
-                                        </span>
-                                        <span class="d-md-none">
-                                            <span id="userDisplayNameMobile" class="fw-bold">User</span>
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><h6 class="dropdown-header d-flex align-items-center">
-                                            <img id="userAvatarDropdown" 
-                                                 src="<%=request.getContextPath()%>/img/placeholder.jpg" 
-                                                 alt="User Avatar" 
-                                                 class="user-avatar-small rounded-circle me-2"
-                                                 style="width: 24px; height: 24px; object-fit: cover;">
-                                            <span id="userFullName">User Name</span>
-                                        </h6></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
-                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
-                                        </a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <!-- Login Button (visible when not logged in) -->
-                            <div id="nav-login-btn">
+                            <div id="unified-account-menu">
                                 <div class="dropdown">
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <i class="fas fa-user me-1"></i>
-                                        <span class="d-none d-md-inline">Tài khoản</span>
+                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                             <i class="fas fa-user me-1"></i>
+                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
@@ -607,5 +561,6 @@
             }, 500);
         });
     </script>
+    <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
 </body>
 </html>

@@ -45,13 +45,14 @@
                 </div>
                 
                 <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
+                <div class="col-lg-6 col-md-4 col-12 order-md-2 order-3">
                     <div class="header-center-section">
                         <div class="search-container w-100">
                             <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
                                 <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
+                                    <input type="text" class="form-control search-input" name="q" 
+                                           placeholder="Tìm kiếm sản phẩm..." aria-label="Search" 
+                                           id="headerSearchInput" autocomplete="off">
                                     <button class="btn btn-search" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -63,22 +64,19 @@
                     </div>
                 </div>
                 
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
+                <!-- User Actions Section -->
+                <div class="col-lg-3 col-md-4 col-6 order-md-3 order-2">
                     <div class="header-actions-section">
+                        <!-- Account Menu & Cart Button (giống index.jsp) -->
                         <div class="account-menu me-3">
-                            <!-- Unified Account Button -->
                             <div id="unified-account-menu">
                                 <div class="dropdown">
-                                    <!-- This button will dynamically change based on login state -->
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
                                        id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <!-- Content will be updated by JavaScript -->
-                                        <i class="fas fa-user me-1"></i>
+                                             <i class="fas fa-user me-1"></i>
                                         <span class="account-text d-none d-md-inline">Tài khoản</span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
-                                        <!-- Menu items will be updated by JavaScript -->
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
@@ -89,24 +87,11 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
-                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
-                            <a href="#" class="btn btn-warning" id="workDashboardLink">
-                                <i class="fas fa-briefcase me-1"></i>
-                                <span class="d-none d-lg-inline">Trang làm việc</span>
-                            </a>
-                        </div>
                         <div class="cart-btn">
                             <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 <span class="cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
-                            </a>
-                        </div>
-                        <div class="order-history-btn">
-                            <a href="order-history.jsp" class="btn btn-outline-secondary">
-                                <i class="fas fa-history me-1"></i>
-                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
                             </a>
                         </div>
                     </div>
@@ -316,5 +301,6 @@
     <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script src="<%=request.getContextPath()%>/js/auth.js"></script>
     <script src="<%=request.getContextPath()%>/js/favorites-manager.js"></script>
+    <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
 </body>
 </html>
