@@ -123,17 +123,17 @@
                     </div>
                     <div class="stat-card stat-card-2">
                         <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div class="number">8</div>
+                        <div class="number"></div>
                         <div class="label">Khiếu nại mới</div>
                     </div>
                     <div class="stat-card stat-card-3">
                         <div class="icon"><i class="fas fa-undo"></i></div>
-                        <div class="number">15</div>
+                        <div class="number"></div>
                         <div class="label">Yêu cầu đổi trả</div>
                     </div>
                     <div class="stat-card stat-card-4">
                         <div class="icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="number">156</div>
+                        <div class="number"></div>
                         <div class="label">Hoàn thành hôm nay</div>
                     </div>
                 </div>

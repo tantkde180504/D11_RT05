@@ -8,7 +8,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import com.mycompany.model.ComplaintDTO;
 
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -70,7 +69,7 @@ public class ComplaintController {
 
             if (status == null || staffResponse == null || staffResponse.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("❌ Vui lòng nhập phản hồi của nhân viên.");
-}
+            }
 
             if ("PROCESSING".equals(status) && (solution == null || solution.trim().isEmpty())) {
                 return ResponseEntity.badRequest().body("❌ Vui lòng chọn giải pháp khi phê duyệt khiếu nại.");
@@ -118,7 +117,7 @@ public class ComplaintController {
         } else if (sessionValue instanceof Long) {
             userId = (Long) sessionValue;
         }
-        
+
         // 🔧 Nếu vẫn null, tìm userId qua email (cho email login)
         if (userId == null && session != null) {
             String userEmail = (String) session.getAttribute("userEmail");
@@ -160,14 +159,15 @@ public class ComplaintController {
                     .setParameter(1, orderId)
                     .setParameter(2, userId)
                     .getSingleResult();
-if (result == null || ((Number) result).intValue() == 0) {
+            if (result == null || ((Number) result).intValue() == 0) {
                 resp.put("success", false);
                 resp.put("message", "Chỉ có thể khiếu nại đơn hàng đã giao và thuộc về bạn.");
                 return ResponseEntity.ok(resp);
             }
 
             String complaintCode = "CP" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
-            String insertSql = "INSERT INTO complaints (complaint_code, user_id, order_id, category, content, status, created_at, updated_at) " +
+            String insertSql = "INSERT INTO complaints (complaint_code, user_id, order_id, category, content, status, created_at, updated_at) "
+                    +
                     "VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?)";
 
             entityManager.createNativeQuery(insertSql)
@@ -216,9 +216,11 @@ if (result == null || ((Number) result).intValue() == 0) {
             String sql = "SELECT c.complaint_code, " +
                     "       o.order_number, c.category, c.content, c.status, " +
                     "       c.staff_response, c.created_at, " +
-                    "       (SELECT TOP 1 p.name FROM order_items oi2 INNER JOIN products p ON oi2.product_id = p.id WHERE oi2.order_id = o.id) as product_name, " +
-                    "       (SELECT TOP 1 p.image_url FROM order_items oi2 INNER JOIN products p ON oi2.product_id = p.id WHERE oi2.order_id = o.id) as product_image, " +
-"       (SELECT COUNT(*) FROM order_items oi2 WHERE oi2.order_id = o.id) as total_items " +
+                    "       (SELECT TOP 1 p.name FROM order_items oi2 INNER JOIN products p ON oi2.product_id = p.id WHERE oi2.order_id = o.id) as product_name, "
+                    +
+                    "       (SELECT TOP 1 p.image_url FROM order_items oi2 INNER JOIN products p ON oi2.product_id = p.id WHERE oi2.order_id = o.id) as product_image, "
+                    +
+                    "       (SELECT COUNT(*) FROM order_items oi2 WHERE oi2.order_id = o.id) as total_items " +
                     "FROM complaints c " +
                     "INNER JOIN orders o ON c.order_id = o.id " +
                     "WHERE c.user_id = ? " +
@@ -253,5 +255,31 @@ if (result == null || ((Number) result).intValue() == 0) {
             errorResponse.put("message", "Lỗi máy chủ: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
+    }
+
+    @GetMapping("/summary")
+    public Map<String, Integer> getComplaintSummary() {
+        Map<String, Integer> stats = new HashMap<>();
+
+        try {
+            String complaintSql = "SELECT COUNT(*) FROM complaints WHERE status = 'PENDING'";
+            Number complaints = (Number) entityManager.createNativeQuery(complaintSql).getSingleResult();
+            stats.put("newComplaints", complaints.intValue());
+
+            String returnSql = "SELECT COUNT(*) FROM returns WHERE status = 'PROCESSING'";
+            Number returns = (Number) entityManager.createNativeQuery(returnSql).getSingleResult();
+            stats.put("returnRequests", returns.intValue());
+
+            String completeSql = "SELECT COUNT(*) FROM orders WHERE status = 'DELIVERED' AND CAST(delivered_date AS DATE) = CAST(GETDATE() AS DATE)";
+            Number completed = (Number) entityManager.createNativeQuery(completeSql).getSingleResult();
+            stats.put("completedToday", completed.intValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+            stats.put("newComplaints", 0);
+            stats.put("returnRequests", 0);
+            stats.put("completedToday", 0);
+        }
+
+        return stats;
     }
 }

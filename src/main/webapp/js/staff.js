@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
     checkLowStockAlert();
     loadOrdersFromAPI();
     initOrdersTab();
-    loadReturns(); // Load returns mặc định
+    loadReturns();
+    loadDashboardStats() // Load returns mặc định
 });
 
 // Tab switching functionality
@@ -1682,3 +1683,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+function loadDashboardStats() {
+    fetch('/api/complaints/summary') // Hoặc /api/dashboard/stats nếu bạn đổi tên
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.stat-card-2 .number').textContent = data.newComplaints ?? 0;
+            document.querySelector('.stat-card-3 .number').textContent = data.returnRequests ?? 0;
+            document.querySelector('.stat-card-4 .number').textContent = data.completedToday ?? 0;
+        })
+        .catch(error => {
+            console.error('❌ Lỗi khi load thống kê dashboard:', error);
+        });
+}
