@@ -17,8 +17,6 @@
             <li><a href="#"><i class="fas fa-gem me-2"></i>Metal Build - Diecast</a></li>
             <li><a href="#"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
             <li><a href="#"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
-            <li><a href="#"><i class="fas fa-dragon me-2"></i>Mô hình Dragon Ball</a></li>
-            <li><a href="#"><i class="fas fa-palette me-2"></i>Sơn - Decal</a></li>
         </ul>
     </div>
     
@@ -51,7 +49,7 @@
             </ul>
         </li>
         <li><a href="favorites.jsp"><i class="fas fa-heart me-2"></i>Yêu thích</a></li>
-        <li><a href="#"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
+        <li><a href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
     </ul>
     
     <!-- Additional Info Section for Desktop -->
