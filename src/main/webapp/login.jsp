@@ -281,7 +281,7 @@
                             <h6 class="footer-title">Dịch vụ</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Hàng Pre-Order</a></li>
-                                <li><a href="#">Dụng cụ & Phụ kiện</a></li>
+                                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp">Dụng cụ & Phụ kiện</a></li>
                                 <li><a href="#">Hướng dẫn lắp ráp</a></li>
                                 <li><a href="#">Sơn & Trang trí</a></li>
                                 <li><a href="#">Bảo hành sản phẩm</a></li>
