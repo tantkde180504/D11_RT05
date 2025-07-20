@@ -1,0 +1,118 @@
+/* Mobile Sidebar Z-Index Fix */
+/* Ensure mobile sidebar always appears above header */
+
+/* Highest z-index for mobile sidebar and related elements */
+.mobile-sidebar {
+    z-index: 99999 !important;
+    position: fixed !important;
+}
+
+.mobile-overlay {
+    z-index: 99998 !important;
+    position: fixed !important;
+}
+
+.sidebar-close {
+    z-index: 99999 !important;
+    position: absolute !important;
+}
+
+.hamburger-menu {
+    z-index: 99999 !important;
+    position: relative !important;
+}
+
+/* Ensure header doesn't interfere */
+.modern-header {
+    z-index: 9999 !important;
+}
+
+.modern-header .container {
+    z-index: 10000 !important;
+}
+
+.modern-header .dropdown-menu,
+.modern-header .popover,
+.modern-header .tooltip,
+.modern-suggestions,
+.search-suggestions {
+    z-index: 10003 !important;
+}
+
+/* Additional mobile sidebar protection */
+.mobile-sidebar.active {
+    z-index: 99999 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.mobile-overlay.active {
+    z-index: 99998 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Ensure no other elements can interfere */
+body.sidebar-open {
+    overflow: hidden;
+}
+
+/* Mobile sidebar backdrop should be below sidebar but above everything else */
+.mobile-overlay {
+    background: rgba(0, 0, 0, 0.5) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+/* Make sure sidebar content is visible */
+.mobile-sidebar * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Additional safety for header elements */
+.modern-header,
+.modern-header *,
+.navbar,
+.navbar * {
+    z-index: 9999 !important;
+}
+
+/* Override any potential conflicts */
+.modal,
+.modal-backdrop {
+    z-index: 9998 !important;
+}
+
+/* Chat widget stays low */
+.chat-widget-container,
+.chat-widget,
+.chat-bubble {
+    z-index: 9990 !important;
+}
+
+/* Tooltip and popover fixes */
+.tooltip,
+.popover,
+.dropdown-menu {
+    z-index: 10001 !important;
+}
+
+/* Ensure mobile sidebar is always on top of everything */
+@media (max-width: 991.98px) {
+    .mobile-sidebar {
+        z-index: 999999 !important;
+    }
+    
+    .mobile-overlay {
+        z-index: 999998 !important;
+    }
+    
+    .sidebar-close {
+        z-index: 999999 !important;
+    }
+    
+    .hamburger-menu {
+        z-index: 999999 !important;
+    }
+}

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     String contextPath = request.getContextPath();
 %>
@@ -6,11 +6,18 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Thanh toán bị hủy</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán bị hủy | 43 Gundam Hobby</title>
+    
+    <jsp:include page="includes/unified-css.jsp" />
 </head>
 <body style="background:#f5f5f5;">
+    <!-- Header -->
+    <jsp:include page="includes/unified-header.jsp" />
+
+    <!-- Mobile Sidebar Navigation -->
+    <jsp:include page="includes/mobile-sidebar.jsp" />
+
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -60,5 +67,13 @@
               });
         }
     </script>
+
+    <!-- Scripts -->
+    <jsp:include page="includes/unified-scripts.jsp" />
 </body>
 </html>
+
+
+
+
+

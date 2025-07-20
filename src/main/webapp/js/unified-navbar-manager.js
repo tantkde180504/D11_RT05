@@ -7,7 +7,14 @@ class UnifiedNavbarManager {
         this.contextPath = window.contextPath || '';
         this.currentUser = null;
         this.init();
-
+        // Tự động cập nhật navbar và cart-count khi script được load trên bất kỳ trang nà    refreshNavbar() {
+        console.log('🔄 Forced navbar refresh requested');
+        this.checkAuthState();
+        
+        // Also force avatar refresh after a delay
+        this.contextPath = window.contextPath || '';
+        this.currentUser = null;
+        this.init();
         // Tự động cập nhật navbar và cart-count khi script được load trên bất kỳ trang nào
         if (document.readyState !== 'loading') {
             this.checkAuthState();
@@ -210,12 +217,9 @@ class UnifiedNavbarManager {
                      class="user-avatar rounded-circle"
                      style="width: 32px; height: 32px; object-fit: cover;">
             </div>
-            <span class="d-none d-md-inline">
-                <span class="greeting-text">Xin chào</span>
-                <span class="fw-bold">${displayName}</span>
-            </span>
+            <span class="account-text d-none d-md-inline">${displayName}</span>
             <span class="d-md-none">
-                <span class="fw-bold">${displayName}</span>
+                <i class="fas fa-user"></i>
             </span>
         `;
         
@@ -251,7 +255,6 @@ class UnifiedNavbarManager {
         // Show/hide work dashboard button based on user role
         this.updateWorkDashboardButton();
         this.updateCartCountFromAPI();
-
         
         console.log('✅ Navbar updated for logged in user:', displayName);
     }
@@ -287,7 +290,6 @@ class UnifiedNavbarManager {
         // Hide work dashboard button for guests
         this.hideWorkDashboardButton();
         this.updateCartCountFromAPI();
-
         
         console.log('✅ Navbar updated for guest user');
     }
@@ -308,10 +310,25 @@ class UnifiedNavbarManager {
     getUserAvatarUrl() {
         if (!this.currentUser) return `${this.contextPath}/img/placeholder.jpg`;
         
-        return this.currentUser.picture || 
-               this.currentUser.avatar || 
-               this.currentUser.avatarUrl || 
-               `${this.contextPath}/img/placeholder.jpg`;
+        // If user already has picture/avatar URL, use it
+        if (this.currentUser.picture || this.currentUser.avatar || this.currentUser.avatarUrl) {
+            return this.currentUser.picture || this.currentUser.avatar || this.currentUser.avatarUrl;
+        }
+        
+        // For email users, generate Gravatar
+        if (this.currentUser.email) {
+            if (window.md5) {
+                const emailHash = window.md5(this.currentUser.email.trim().toLowerCase());
+                return `https://www.gravatar.com/avatar/${emailHash}?s=200&d=identicon`;
+            }
+            
+            // Fallback to initials avatar
+            const fullName = this.currentUser.fullName || this.currentUser.name || this.currentUser.email.split('@')[0];
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&size=200&background=0d6efd&color=ffffff&bold=true`;
+        }
+        
+        // Ultimate fallback
+        return `${this.contextPath}/img/placeholder.jpg`;
     }
 
     async handleLogout() {
@@ -409,6 +426,16 @@ class UnifiedNavbarManager {
     refreshNavbar() {
         console.log('🔄 Manual navbar refresh requested');
         this.checkAuthState();
+        
+        // Also force avatar refresh after a delay
+        setTimeout(() => {
+            if (this.currentUser) {
+                console.log('🖼️ Force refreshing avatar for user:', this.currentUser);
+                const avatarUrl = this.getUserAvatarUrl();
+                console.log('🖼️ Generated avatar URL:', avatarUrl);
+                this.updateNavbarForLoggedInUser();
+            }
+        }, 500);
     }
 
     // Public method to get current user
@@ -596,6 +623,28 @@ UnifiedNavbarManager.prototype.updateWorkDashboardButton = function() {
         workDashboardBtn.style.display = 'none';
         console.log('ℹ️ Work dashboard button hidden for role:', userRole);
     }
+};
+
+// Debug function to test avatar generation
+window.debugAvatarGeneration = function(email, name) {
+    console.log('🔍 Debug Avatar Generation:');
+    console.log('Email:', email);
+    console.log('Name:', name);
+    
+    if (window.md5) {
+        const emailHash = window.md5(email.trim().toLowerCase());
+        const gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?s=200&d=identicon`;
+        console.log('Gravatar URL:', gravatarUrl);
+        
+        // Test if gravatar exists
+        const img = new Image();
+        img.onload = () => console.log('✅ Gravatar loaded successfully');
+        img.onerror = () => console.log('❌ Gravatar failed to load');
+        img.src = gravatarUrl;
+    }
+    
+    const initialsUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=0d6efd&color=ffffff&bold=true`;
+    console.log('Initials Avatar URL:', initialsUrl);
 };
 
 // Function to hide work dashboard button (called when user logs out)

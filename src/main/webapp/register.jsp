@@ -1,100 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>43 Gundam Hobby - Đăng ký tài khoản</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <%@ include file="/includes/unified-css.jsp" %>
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top">
-        <div class="container">
-            <div class="row align-items-center py-3">
-                <!-- Logo Section with Hamburger Menu -->
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="header-logo-section">
-                        <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
-                            <span class="line"></span>
-                            <span class="line"></span>
-                            <span class="line"></span>
-                        </button>
-                        
-                        <div class="logo">
-                            <a href="<%=request.getContextPath()%>/">
-                                <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
-                    <div class="header-center-section">
-                        <div class="search-container w-100">
-                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
-                                    <button class="btn btn-search" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section">
-                        <div class="account-menu me-3">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                   id="accountDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span class="d-none d-md-inline">Tài khoản</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                    </a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="cart-btn">
-                            <a href="#" class="btn btn-primary">
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count">0</span>
-                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Mobile Sidebar Navigation -->
-    <jsp:include page="includes/mobile-sidebar.jsp" />
+    <%@ include file="/includes/unified-header.jsp" %>
 
     <!-- Register Form -->
     <div class="container d-flex flex-column align-items-center justify-content-center min-height-70vh">
@@ -205,7 +120,7 @@
                             <h6 class="footer-title">Dịch vụ</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Hàng Pre-Order</a></li>
-                                <li><a href="#">Dụng cụ & Phụ kiện</a></li>
+                                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp">Dụng cụ & Phụ kiện</a></li>
                                 <li><a href="#">Hướng dẫn lắp ráp</a></li>
                                 <li><a href="#">Sơn & Trang trí</a></li>
                                 <li><a href="#">Bảo hành sản phẩm</a></li>
@@ -302,11 +217,11 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <%@ include file="/includes/unified-scripts.jsp" %>
+    
+    <!-- Register-specific script -->
     <script src="<%=request.getContextPath()%>/js/register.js"></script>
-    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
-    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
+    
     <script>
         // Back to top functionality
         const backToTopBtn = document.getElementById('backToTop');
@@ -326,8 +241,11 @@
             });
         });
     </script>
-    
-    <!-- Navbar Fix Script -->
-    <script src="<%=request.getContextPath()%>/js/navbar-fix.js"></script>
 </body>
 </html>
+
+
+
+
+
+

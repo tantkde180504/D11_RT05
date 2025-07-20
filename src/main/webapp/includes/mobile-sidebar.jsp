@@ -15,7 +15,7 @@
             <li><a href="#"><i class="fas fa-robot me-2"></i>Gundam Bandai</a></li>
             <li><a href="#"><i class="fas fa-industry me-2"></i>Mô hình Trung</a></li>
             <li><a href="#"><i class="fas fa-gem me-2"></i>Metal Build - Diecast</a></li>
-            <li><a href="#"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
+            <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
             <li><a href="#"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
         </ul>
     </div>
@@ -30,9 +30,8 @@
                 <i class="fas fa-cubes me-2"></i>Phụ kiện & Mô hình <i class="fas fa-chevron-down float-end"></i>
             </a>
             <ul class="collapse submenu" id="phukienSubmenu">
-                <li><a href="#"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
-                <li><a href="#"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
-                <li><a href="#"><i class="fas fa-dragon me-2"></i>Mô hình Dragon Ball</a></li>
+                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
+                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp?category=BASE_STAND"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
             </ul>
         </li>
         <li>

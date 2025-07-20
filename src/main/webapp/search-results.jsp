@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" errorPage="error.jsp" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" errorPage="error.jsp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
@@ -7,246 +7,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết quả tìm kiếm - Gundam Hobby</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/styles.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/navbar-bg-orange.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/navbar-menu-white.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/hamburger-menu.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/navbar-fix.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/account-menu-fix.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/user-avatar.css">
-    
-    <style>
-        .search-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-        }
-        
-        .search-filters {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .filter-group {
-            margin-bottom: 1rem;
-        }
-        
-        .filter-group label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-        
-        .price-range {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .price-input {
-            flex: 1;
-            max-width: 120px;
-        }
-        
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e9ecef;
-        }
-        
-        .sort-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .product-image {
-            position: relative;
-            overflow: hidden;
-            height: 250px;
-        }
-        
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .product-card:hover .product-image img {
-            transform: scale(1.05);
-        }
-        
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ff6b35;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-        
-        .product-info {
-            padding: 1.2rem;
-        }
-        
-        .product-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #e74c3c;
-            margin-bottom: 0.8rem;
-        }
-        
-        .product-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        
-        .view-detail-btn {
-            width: 100%;
-            background: linear-gradient(45deg, #ff6b35, #f7931e);
-            border: none;
-            color: white;
-            padding: 0.8rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .view-detail-btn:hover {
-            background: linear-gradient(45deg, #e55a2b, #e8841a);
-            transform: translateY(-2px);
-            color: white;
-        }
-        
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 3rem;
-            color: #6c757d;
-        }
-        
-        .no-results i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #dee2e6;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .spinner-border {
-            color: #ff6b35;
-        }
-        
-        @media (max-width: 768px) {
-            .search-filters {
-                padding: 1rem;
-            }
-            
-            .results-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
-            }
-            
-            .sort-controls {
-                justify-content: center;
-            }
-            
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-            
-            .price-range {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .price-input {
-                max-width: 100%;
-            }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/modern-ecommerce.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/modern-header.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/header-z-index-fix.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top">
+    <header class="bg-white shadow-sm sticky-top modern-header">
         <div class="container">
             <div class="row align-items-center py-3">
                 <!-- Logo Section with Hamburger Menu -->
                 <div class="col-lg-3 col-md-4 col-6">
                     <div class="header-logo-section">
                         <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
+                        <button class="hamburger-menu modern-hamburger" id="hamburgerBtn" aria-label="Menu">
                             <span class="line"></span>
                             <span class="line"></span>
                             <span class="line"></span>
                         </button>
                         
-                        <div class="logo">
+                        <div class="logo modern-logo">
                             <a href="<%=request.getContextPath()%>/">
                                 <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                                <div class="logo-glow"></div>
                             </a>
                         </div>
                     </div>
@@ -255,17 +53,21 @@
                 <!-- Search Section -->
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
-                        <div class="search-container w-100">
+                        <div class="search-container w-100 modern-search">
                             <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." value="${query}" id="headerSearchInput" autocomplete="off">
-                                    <button class="btn btn-search" type="submit">
+                                <div class="input-group modern-input-group">
+                                    <span class="input-group-text search-icon">
                                         <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" name="q" class="form-control search-input modern-search-input" 
+                                           placeholder="Tìm kiếm sản phẩm Gundam..." id="headerSearchInput" autocomplete="off">
+                                    <button class="btn btn-search modern-search-btn" type="submit">
+                                        <i class="fas fa-rocket"></i>
+                                        <span class="btn-text">Tìm</span>
                                     </button>
                                 </div>
                                 <!-- Autocomplete suggestions -->
-                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
+                                <div id="headerSearchSuggestions" class="search-suggestions modern-suggestions"></div>
                             </form>
                         </div>
                     </div>
@@ -273,47 +75,53 @@
                 
                 <!-- Actions Section -->
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section">
+                    <div class="header-actions-section modern-actions">
                         <div class="account-menu me-3">
                             <!-- Unified Account Button -->
                             <div id="unified-account-menu">
                                 <div class="dropdown">
                                     <!-- This button will dynamically change based on login state -->
-                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle modern-account-btn" 
                                        id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
                                         <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
                                         <span class="account-text d-none d-md-inline">Tài khoản</span>
+                                        <div class="btn-ripple"></div>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                    <ul class="dropdown-menu dropdown-menu-end modern-dropdown" id="unifiedAccountDropdownMenu">
                                         <!-- Menu items will be updated by JavaScript -->
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
+                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
                                             <i class="fas fa-user-plus me-2"></i>Đăng ký
                                         </a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
+                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
+                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
+                            <a href="#" class="btn btn-warning modern-work-btn" id="workDashboardLink">
+                                <i class="fas fa-briefcase me-1"></i>
+                                <span class="d-none d-lg-inline">Trang làm việc</span>
+                                <div class="btn-ripple"></div>
+                            </a>
+                        </div>
                         <div class="cart-btn">
-                            <a href="cart.jsp" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary modern-cart-btn">
                                 <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count">0</span>
+                                <span class="cart-count modern-cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                                <div class="btn-ripple"></div>
+                                <div class="cart-notification" id="cartNotification"></div>
                             </a>
-                        </div>
-                        <div class="order-history-btn">
-                            <a href="order-history.jsp" class="btn btn-outline-secondary">
-                                <i class="fas fa-history me-1"></i>
-                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
-                            </a>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
         </div>
+        <div class="header-shadow"></div>
     </header>
 
     <!-- Mobile Sidebar Navigation -->
@@ -830,5 +638,12 @@
             }, 500);
         });
     </script>
+    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
 </body>
 </html>
+
+
+
+
+
+

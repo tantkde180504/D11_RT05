@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     String contextPath = request.getContextPath();
 %>
@@ -7,13 +7,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Thanh toán đơn hàng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="css/payment.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán đơn hàng | 43 Gundam Hobby</title>
+    <%@ include file="/includes/unified-css.jsp" %>
 </head>
 
 <body style="background:#f5f5f5;">
+    <!-- Header Section -->
+    <%@ include file="/includes/unified-header.jsp" %>
+
+    <div class="container mt-4">
     <script>
         // Khai báo contextPath để sử dụng trong JavaScript
         const contextPath = '<%= contextPath %>';
@@ -491,6 +494,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</div> <!-- End container -->
+
+<%@ include file="/includes/unified-scripts.jsp" %>
 </body>
 </html>
+
+
+
+

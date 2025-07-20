@@ -18,50 +18,12 @@
     <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/modern-ecommerce.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/modern-header.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/header-z-index-fix.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* Work Dashboard Button Styles */
-        .work-dashboard-btn .btn {
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .work-dashboard-btn .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
-        .work-dashboard-btn .btn i {
-            font-size: 1.1em;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .work-dashboard-btn {
-                margin-right: 0.5rem !important;
-            }
-            
-            .work-dashboard-btn .btn {
-                padding: 0.5rem 0.8rem;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 767.98px) {
-            .work-dashboard-btn .btn span {
-                display: none !important;
-            }
-            
-            .work-dashboard-btn .btn {
-                padding: 0.5rem;
-                min-width: 44px;
-            }
-        }
-    </style>
 </head>
 <body>
     <!-- Success notification for OAuth login -->
@@ -72,22 +34,23 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top">
+    <header class="bg-white shadow-sm sticky-top modern-header">
         <div class="container">
             <div class="row align-items-center py-3">
                 <!-- Logo Section with Hamburger Menu -->
                 <div class="col-lg-3 col-md-4 col-6">
                     <div class="header-logo-section">
                         <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
+                        <button class="hamburger-menu modern-hamburger" id="hamburgerBtn" aria-label="Menu">
                             <span class="line"></span>
                             <span class="line"></span>
                             <span class="line"></span>
                         </button>
                         
-                        <div class="logo">
+                        <div class="logo modern-logo">
                             <a href="<%=request.getContextPath()%>/">
                                 <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                                <div class="logo-glow"></div>
                             </a>
                         </div>
                     </div>
@@ -96,17 +59,21 @@
                 <!-- Search Section -->
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
-                        <div class="search-container w-100">
+                        <div class="search-container w-100 modern-search">
                             <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
-                                    <button class="btn btn-search" type="submit">
+                                <div class="input-group modern-input-group">
+                                    <span class="input-group-text search-icon">
                                         <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" name="q" class="form-control search-input modern-search-input" 
+                                           placeholder="Tìm kiếm sản phẩm Gundam..." id="headerSearchInput" autocomplete="off">
+                                    <button class="btn btn-search modern-search-btn" type="submit">
+                                        <i class="fas fa-rocket"></i>
+                                        <span class="btn-text">Tìm</span>
                                     </button>
                                 </div>
                                 <!-- Autocomplete suggestions -->
-                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
+                                <div id="headerSearchSuggestions" class="search-suggestions modern-suggestions"></div>
                             </form>
                         </div>
                     </div>
@@ -114,24 +81,25 @@
                 
                 <!-- Actions Section -->
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section">
+                    <div class="header-actions-section modern-actions">
                         <div class="account-menu me-3">
                             <!-- Unified Account Button -->
                             <div id="unified-account-menu">
                                 <div class="dropdown">
                                     <!-- This button will dynamically change based on login state -->
-                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle modern-account-btn" 
                                        id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
                                         <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
                                         <span class="account-text d-none d-md-inline">Tài khoản</span>
+                                        <div class="btn-ripple"></div>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                    <ul class="dropdown-menu dropdown-menu-end modern-dropdown" id="unifiedAccountDropdownMenu">
                                         <!-- Menu items will be updated by JavaScript -->
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
+                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
                                             <i class="fas fa-user-plus me-2"></i>Đăng ký
                                         </a></li>
                                     </ul>
@@ -140,22 +108,26 @@
                         </div>
                         <!-- Work Dashboard Button (for staff/admin/shipper) -->
                         <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
-                            <a href="#" class="btn btn-warning" id="workDashboardLink">
+                            <a href="#" class="btn btn-warning modern-work-btn" id="workDashboardLink">
                                 <i class="fas fa-briefcase me-1"></i>
                                 <span class="d-none d-lg-inline">Trang làm việc</span>
+                                <div class="btn-ripple"></div>
                             </a>
                         </div>
                         <div class="cart-btn">
-                            <a href="cart.jsp" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary modern-cart-btn">
                                 <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count">0</span>
+                                <span class="cart-count modern-cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                                <div class="btn-ripple"></div>
+                                <div class="cart-notification" id="cartNotification"></div>
                             </a>
-                        </div>                       
+                        </div>                        
                     </div>
                 </div>
             </div>
         </div>
+        <div class="header-shadow"></div>
     </header>    <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
@@ -281,79 +253,272 @@
             </div>
         </div>
     </section>
-    
-    <!-- New Arrivals -->
-    <section class="product-section py-5">
-        <div class="container">
-            <div class="section-header mb-4">
-                <h2 class="section-title">
-                    <span class="title-icon">🆕</span>
-                    Hàng Mới Về
-                </h2>
-                <a href="<%=request.getContextPath()%>/all-products.jsp" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
-            
-            <!-- Loading state -->
-            <div id="newArrivalsLoading" class="text-center py-4">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Đang tải...</span>
-                </div>
-                <p class="mt-2 text-muted">Đang tải sản phẩm mới...</p>
-            </div>
-            
-            <!-- Error state -->
-            <div id="newArrivalsError" class="alert alert-warning text-center" style="display: none;">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Không thể tải danh sách sản phẩm mới. Vui lòng thử lại sau.
-            </div>
-            
-            <!-- Products container -->
-            <div class="row" id="newArrivalsContainer">
-                <!-- Products will be loaded here dynamically -->
-            </div>
-        </div>
-    </section>
 
     <!-- Pre-Order Section -->
     <section class="product-section py-5 bg-light">
         <div class="container">
             <div class="section-header mb-4">
                 <h2 class="section-title">
-                    <span class="title-icon">📦</span>
+                    <span class="title-icon">�</span>
                     Hàng Pre-Order
                 </h2>
                 <a href="#" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
             <div class="row">
+                <!-- Enhanced Pre-Order Product Card -->
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card">
+                    <div class="product-card preorder-card">
                         <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/cccccc/666666?text=MG+RX-78" class="img-fluid" alt="MG RX-78-2 Fat Cat">
+                            <img src="https://via.placeholder.com/250x250/667eea/ffffff?text=MG+RX-78" class="img-fluid" alt="MG RX-78-2 Fat Cat">
                             <div class="product-badges">
-                                <span class="badge bg-info">Pre-Order</span>
-                                <span class="badge bg-danger">-86%</span>
+                                <span class="badge bg-gradient-primary">🎯 Pre-Order</span>
+                                <span class="badge bg-gradient-danger">💥 -86%</span>
                             </div>
                             <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-eye"></i> Xem nhanh
+                                <button class="btn btn-outline-light btn-lg">
+                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
                                 </button>
+                            </div>
+                            <!-- Countdown Timer for Pre-Order -->
+                            <div class="preorder-countdown">
+                                <div class="countdown-timer">
+                                    <span class="countdown-label">Kết thúc sau:</span>
+                                    <div class="countdown-display">
+                                        <span class="time-unit">
+                                            <span class="time-value">15</span>
+                                            <span class="time-label">ngày</span>
+                                        </span>
+                                        <span class="time-separator">:</span>
+                                        <span class="time-unit">
+                                            <span class="time-value">08</span>
+                                            <span class="time-label">giờ</span>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="product-info">
-                            <h6 class="product-title">MG RX-78-2 2.0 Fat Cat</h6>
-                            <p class="product-category">Master Grade</p>
+                            <h6 class="product-title">MG RX-78-2 2.0 Fat Cat Limited Edition</h6>
+                            <p class="product-category">🏆 Master Grade Premium</p>
                             <div class="product-price">
                                 <span class="current-price">100.000₫</span>
                                 <span class="old-price">680.000₫</span>
                                 <span class="discount-percent">-86%</span>
                             </div>
-                            <button class="btn btn-warning add-to-cart w-100">
-                                <i class="fas fa-clock me-1"></i>Đặt trước
+                            <div class="preorder-progress mb-3">
+                                <div class="progress-label">
+                                    <span>🎯 Đã đặt: 45/100</span>
+                                    <span class="text-success">Còn 55 suất</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px;">
+                                    <div class="progress-bar bg-gradient-success" style="width: 45%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-gradient-warning add-to-cart w-100">
+                                <i class="fas fa-rocket me-2"></i>Đặt trước ngay
                             </button>
                         </div>
                     </div>
                 </div>
-                <!-- Add more pre-order products as needed -->
+                
+                <!-- Second Pre-Order Product -->
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="product-card preorder-card">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/250x250/764ba2/ffffff?text=PG+Strike" class="img-fluid" alt="PG Strike Freedom">
+                            <div class="product-badges">
+                                <span class="badge bg-gradient-info">🔥 Hot Pre-Order</span>
+                                <span class="badge bg-gradient-warning">⭐ Limited</span>
+                            </div>
+                            <div class="product-overlay">
+                                <button class="btn btn-outline-light btn-lg">
+                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                </button>
+                            </div>
+                            <div class="preorder-countdown">
+                                <div class="countdown-timer">
+                                    <span class="countdown-label">Ra mắt:</span>
+                                    <div class="countdown-display">
+                                        <span class="time-unit">
+                                            <span class="time-value">Mar</span>
+                                            <span class="time-label">2025</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h6 class="product-title">PG Strike Freedom Gundam 2.0</h6>
+                            <p class="product-category">👑 Perfect Grade Unleashed</p>
+                            <div class="product-price">
+                                <span class="current-price">2.500.000₫</span>
+                            </div>
+                            <div class="preorder-progress mb-3">
+                                <div class="progress-label">
+                                    <span>🎯 Đã đặt: 78/150</span>
+                                    <span class="text-warning">Còn 72 suất</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px;">
+                                    <div class="progress-bar bg-gradient-info" style="width: 52%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-gradient-info add-to-cart w-100">
+                                <i class="fas fa-star me-2"></i>Đặt trước VIP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Third Pre-Order Product -->
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="product-card preorder-card">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/250x250/f093fb/ffffff?text=Metal+Build" class="img-fluid" alt="Metal Build Barbatos">
+                            <div class="product-badges">
+                                <span class="badge bg-gradient-dark">💎 Premium</span>
+                                <span class="badge bg-gradient-success">✨ New</span>
+                            </div>
+                            <div class="product-overlay">
+                                <button class="btn btn-outline-light btn-lg">
+                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                </button>
+                            </div>
+                            <div class="preorder-countdown coming-soon">
+                                <div class="countdown-timer">
+                                    <span class="countdown-label">Coming Soon</span>
+                                    <div class="countdown-display">
+                                        <span class="time-unit">
+                                            <span class="time-value">🔜</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h6 class="product-title">Metal Build Gundam Barbatos Lupus Rex</h6>
+                            <p class="product-category">💎 Metal Build Series</p>
+                            <div class="product-price">
+                                <span class="current-price">4.200.000₫</span>
+                            </div>
+                            <div class="preorder-progress mb-3">
+                                <div class="progress-label">
+                                    <span>📋 Đăng ký quan tâm</span>
+                                    <span class="text-info">245 người quan tâm</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px;">
+                                    <div class="progress-bar bg-gradient-purple" style="width: 35%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-gradient-purple add-to-cart w-100">
+                                <i class="fas fa-bell me-2"></i>Đăng ký thông báo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add more pre-order products -->
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="product-card preorder-card">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/250x250/20c997/ffffff?text=RG+Nu" class="img-fluid" alt="RG Nu Gundam">
+                            <div class="product-badges">
+                                <span class="badge bg-gradient-success">🆕 New Arrival</span>
+                            </div>
+                            <div class="product-overlay">
+                                <button class="btn btn-outline-light btn-lg">
+                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h6 class="product-title">RG Nu Gundam Clear Color</h6>
+                            <p class="product-category">🌟 Real Grade Special</p>
+                            <div class="product-price">
+                                <span class="current-price">750.000₫</span>
+                            </div>
+                            <div class="preorder-progress mb-3">
+                                <div class="progress-label">
+                                    <span>🎯 Còn hàng</span>
+                                    <span class="text-success">Sẵn sàng giao hàng</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px;">
+                                    <div class="progress-bar bg-gradient-success" style="width: 100%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-gradient-success add-to-cart w-100">
+                                <i class="fas fa-shopping-cart me-2"></i>Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Store Features Section -->
+    <section class="features-section py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h5 class="feature-title">Giao hàng siêu tốc</h5>
+                        <p class="feature-desc">
+                            Giao hàng nhanh trong 2-24h tại Đà Nẵng. 
+                            Toàn quốc 1-3 ngày.
+                        </p>
+                        <div class="feature-highlight">
+                            ⚡ FREE SHIP đơn từ 500K
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h5 class="feature-title">Hàng chính hãng 100%</h5>
+                        <p class="feature-desc">
+                            Cam kết chỉ bán hàng chính hãng Bandai. 
+                            Bảo hành đổi trả trong 30 ngày.
+                        </p>
+                        <div class="feature-highlight">
+                            🏆 Uy tín từ 2020
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h5 class="feature-title">Dịch vụ tư vấn</h5>
+                        <p class="feature-desc">
+                            Tư vấn lắp ráp, sơn, trang trí miễn phí. 
+                            Hướng dẫn chi tiết cho người mới.
+                        </p>
+                        <div class="feature-highlight">
+                            💬 Hỗ trợ 24/7
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h5 class="feature-title">Thanh toán linh hoạt</h5>
+                        <p class="feature-desc">
+                            Hỗ trợ nhiều hình thức thanh toán: 
+                            COD, chuyển khoản, ví điện tử.
+                        </p>
+                        <div class="feature-highlight">
+                            💳 An toàn & Bảo mật
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -427,7 +592,7 @@
                             <h6 class="footer-title">Dịch vụ</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Hàng Pre-Order</a></li>
-                                <li><a href="#">Dụng cụ & Phụ kiện</a></li>
+                                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp">Dụng cụ & Phụ kiện</a></li>
                                 <li><a href="#">Hướng dẫn lắp ráp</a></li>
                                 <li><a href="#">Sơn & Trang trí</a></li>
                                 <li><a href="#">Bảo hành sản phẩm</a></li>
@@ -650,8 +815,7 @@
             });
         }
 
-        // Load New Arrivals from Database
-        function loadNewArrivals() {
+        // Recently Viewed Products Functions
             const container = document.getElementById('newArrivalsContainer');
             const loading = document.getElementById('newArrivalsLoading');
             const error = document.getElementById('newArrivalsError');
@@ -706,7 +870,7 @@
                     loading.style.display = 'none';
                     showNewArrivalsError('Không thể tải danh sách sản phẩm mới. Vui lòng thử lại sau.');
                 });
-        }
+        
         
         function renderNewArrivals(products) {
             const container = document.getElementById('newArrivalsContainer');
@@ -906,7 +1070,7 @@
                 retryBtn.innerHTML = '<i class="fas fa-redo me-1"></i>Thử lại';
                 retryBtn.onclick = function() {
                     error.style.display = 'none';
-                    loadNewArrivals();
+                    // Reload function removed
                 };
                 error.appendChild(retryBtn);
             }
@@ -1207,12 +1371,6 @@
             // Initialize static cart buttons first
             initializeStaticCartButtons();
             
-            // Load new arrivals from database (backup load)
-            if (document.getElementById('newArrivalsContainer').innerHTML.trim() === '') {
-                console.log('🔄 Backup: Loading new arrivals from database...');
-                loadNewArrivals();
-            }
-            
             // Load recently viewed products (backup load)
             if (document.getElementById('recentlyViewedContainer').innerHTML.trim() === '') {
                 console.log('🔄 Backup: Loading recently viewed products...');
@@ -1268,11 +1426,13 @@
             // Initialize static cart buttons first
             initializeStaticCartButtons();
             
-            // Load new arrivals from database
-            loadNewArrivals();
-            
             // Load recently viewed products
             loadRecentlyViewed();
+            
+            // Initialize modern e-commerce features
+            if (typeof initializeModernFeatures === 'function') {
+                initializeModernFeatures();
+            }
             
             // Check for logout parameter in URL
             const urlParams = new URLSearchParams(window.location.search);
@@ -1338,5 +1498,8 @@
         }
     }
     </script>
+    
+    <script src="<%=request.getContextPath()%>/js/modern-ecommerce.js"></script>
+    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
     </body>
 </html>

@@ -3,12 +3,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .user-avatar {
     border: 2px solid #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
 .user-avatar:hover {
@@ -19,6 +21,25 @@
 .user-avatar-small {
     border: 1px solid #dee2e6;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+/* Account button styling to prevent overflow */
+.modern-account-btn {
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-account-btn .account-text {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Greeting text styling */

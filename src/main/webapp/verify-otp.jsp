@@ -1,63 +1,23 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác thực OTP - 43 Gundam Hobby</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/login.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
-    <style>
-        .otp-container {
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .otp-input {
-            width: 50px;
-            height: 60px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin: 0 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .otp-input:focus {
-            border-color: #FF6600;
-            box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
-            outline: none;
-        }
-        
-        .countdown {
-            font-size: 18px;
-            color: #FF6600;
-            font-weight: bold;
-        }
-        
-        .expired {
-            color: #dc3545;
-        }
-        
-        .verification-icon {
-            font-size: 4rem;
-            color: #FF6600;
-            margin-bottom: 1rem;
-        }
-    </style>
+    <title>Xác thực OTP | 43 Gundam Hobby</title>
+    <jsp:include page="includes/unified-css.jsp" />
+    <link href="<%=request.getContextPath()%>/css/forgot-password-otp.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+    <!-- Header -->
+    <jsp:include page="includes/unified-header.jsp" />
+
+    <!-- Mobile Sidebar Navigation -->
+    <jsp:include page="includes/mobile-sidebar.jsp" />
+
     <div class="container d-flex align-items-center justify-content-center min-vh-100">
         <div class="otp-container">
-            <!-- Header -->
+            <!-- OTP Form Header -->
             <div class="text-center mb-4">
                 <i class="fas fa-shield-alt verification-icon"></i>
                 <h2 class="fw-bold text-dark">Xác thực OTP</h2>
@@ -112,7 +72,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <jsp:include page="includes/unified-scripts.jsp" />
+    
+    <!-- OTP specific scripts -->
     <script>
         // Get email from URL parameters or localStorage
         const urlParams = new URLSearchParams(window.location.search);
@@ -296,6 +258,19 @@
 
         // Focus first input on load
         otpInputs[0].focus();
+        
+        // Set context path for unified scripts
+        window.contextPath = '<%=request.getContextPath()%>';
     </script>
 </body>
 </html>
+
+    <!-- Bootstrap & Modern Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
+</body>
+</html>
+
+
+
+

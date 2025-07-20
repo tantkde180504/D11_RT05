@@ -1,29 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết quả tìm kiếm - Gundam Hobby</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout-sizing.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-popup.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-darkmode.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-bg-orange.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-menu-white.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hamburger-menu.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-fix.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/account-menu-fix.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-avatar.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <%@ include file="/includes/unified-css.jsp" %>
 </head>
 <body>
     <!-- Success notification for OAuth login -->
@@ -34,95 +16,8 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top">
-        <div class="container">
-            <div class="row align-items-center py-3">
-                <!-- Logo Section with Hamburger Menu -->
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="header-logo-section">
-                        <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
-                            <span class="line"></span>
-                            <span class="line"></span>
-                            <span class="line"></span>
-                        </button>
-                        
-                        <div class="logo">
-                            <a href="${pageContext.request.contextPath}/">
-                                <img src="${pageContext.request.contextPath}/img/logo.png" alt="43 Gundam Logo" class="logo-img">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
-                    <div class="header-center-section">
-                        <div class="search-container w-100">
-                            <form class="search-form" action="${pageContext.request.contextPath}/search.jsp" method="get" id="headerSearchForm">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off"
-                                           value="<%= request.getParameter("q") != null ? request.getParameter("q") : "" %>">
-                                    <button class="btn btn-search" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                                <!-- Autocomplete suggestions -->
-                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section">
-                        <div class="account-menu me-3">
-                            <!-- Unified Account Button -->
-                            <div id="unified-account-menu">
-                                <div class="dropdown">
-                                    <!-- This button will dynamically change based on login state -->
-                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <!-- Content will be updated by JavaScript -->
-                                        <i class="fas fa-user me-1"></i>
-                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
-                                        <!-- Menu items will be updated by JavaScript -->
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login.jsp">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                        </a></li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/register.jsp">
-                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cart-btn">
-                            <a href="cart.jsp" class="btn btn-primary">
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count">0</span>
-                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
-                            </a>
-                        </div>
-                        <div class="order-history-btn">
-                            <a href="order-history.jsp" class="btn btn-outline-secondary">
-                                <i class="fas fa-history me-1"></i>
-                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <%@ include file="/includes/unified-header.jsp" %>
     
-    <!-- Mobile Sidebar Navigation -->
-    <jsp:include page="includes/mobile-sidebar.jsp" />
-
     <div class="container mt-4">
         <h2>Kết quả tìm kiếm</h2>
         <p id="searchQueryDisplay"></p>
@@ -152,23 +47,12 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <%@ include file="/includes/unified-scripts.jsp" %>
     
-    <!-- Legacy navbar cleanup -->
-    <script src="${pageContext.request.contextPath}/js/legacy-navbar-cleanup.js"></script>
-    
-    <!-- MD5 for authentication -->
-    <script src="${pageContext.request.contextPath}/js/md5.min.js"></script>
-    
-    <!-- Email to Google converter -->
-    <script src="${pageContext.request.contextPath}/js/email-to-google-converter.js"></script>
-    
-    <!-- Anti-flicker unified -->
-    <script src="${pageContext.request.contextPath}/js/anti-flicker-unified.js"></script>
-    
-    <!-- Search Autocomplete Script -->
-    <script src="${pageContext.request.contextPath}/js/search-autocomplete.js"></script>
+    <!-- Search-specific scripts -->
+    <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
+    <script src="${pageContext.request.contextPath}/js/cart-manager.js"></script>
+    <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
     
     <script>
         // Initialize when page loads
@@ -396,3 +280,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+

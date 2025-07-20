@@ -1,0 +1,99 @@
+/* Enhanced Cart Button Hover Effects */
+/* This file provides smooth and elegant hover effects for cart buttons */
+
+/* Global cart button improvements */
+.btn-add-cart,
+.add-to-cart,
+.modern-cart-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle hover effect without aggressive scaling */
+.btn-add-cart:hover,
+.add-to-cart:hover {
+    transform: translateY(-1px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+/* Smooth ripple effect for modern cart button */
+.modern-cart-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    pointer-events: none;
+}
+
+.modern-cart-btn:hover::after {
+    width: 100px;
+    height: 100px;
+}
+
+/* Gentle glow effect */
+.btn-add-cart:hover,
+.add-to-cart:hover,
+.modern-cart-btn:hover {
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        0 0 20px rgba(79, 172, 254, 0.2);
+}
+
+/* Color transition for cart buttons */
+.modern-cart-btn:hover {
+    background: linear-gradient(135deg, #3d9bfe, #00e0fe);
+}
+
+/* Icon animation for cart buttons */
+.btn-add-cart i,
+.add-to-cart i,
+.modern-cart-btn i {
+    transition: transform 0.3s ease;
+}
+
+.btn-add-cart:hover i,
+.add-to-cart:hover i,
+.modern-cart-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Prevent excessive movement */
+.btn-add-cart,
+.add-to-cart,
+.modern-cart-btn {
+    transform-origin: center;
+}
+
+/* Focus states for accessibility */
+.btn-add-cart:focus,
+.add-to-cart:focus,
+.modern-cart-btn:focus {
+    outline: 2px solid #4facfe;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+}
+
+/* Active state */
+.btn-add-cart:active,
+.add-to-cart:active,
+.modern-cart-btn:active {
+    transform: translateY(0) scale(0.98);
+    transition: all 0.1s ease;
+}
+
+/* Cart count badge smooth animation */
+.modern-cart-count {
+    transition: all 0.3s ease;
+}
+
+.modern-cart-btn:hover .modern-cart-count {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #ff5252, #e53935);
+}

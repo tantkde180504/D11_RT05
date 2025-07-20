@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" errorPage="error.jsp"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
@@ -35,21 +35,11 @@
     <meta name="description" content="Xem chi tiết sản phẩm mô hình Gundam chính hãng tại 43 Gundam Hobby">
     <meta name="keywords" content="gundam, mô hình, bandai, chi tiết sản phẩm">
     
-    <!-- Bootstrap & FontAwesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
+    <jsp:include page="includes/unified-css.jsp" />
     <link href="<%=request.getContextPath()%>/css/product-detail.css" rel="stylesheet">
     
     <!-- Google OAuth Handler -->
-    
+    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
     <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
     
     <!-- Google Fonts -->
@@ -103,16 +93,48 @@
                 <!-- User Actions Section -->
                 <div class="col-lg-3 col-md-4 col-6 order-md-3 order-2">
                     <div class="header-actions-section">
-                        <!-- Account Menu & Cart Button (giống index.jsp) -->
+                        <!-- Account Menu -->
                         <div class="account-menu me-3">
-                            <div id="unified-account-menu">
+                            <!-- User Info (visible when logged in) -->
+                            <div id="nav-user-info" class="d-none">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-outline-success dropdown-toggle" 
+                                       id="userAccountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle me-1"></i>
+                                        <span id="userDisplayName">User</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><h6 class="dropdown-header">
+                                            <i class="fas fa-user me-2"></i>
+                                            <span id="userFullName">User Name</span>
+                                        </h6></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/profile.jsp">
+                                            <i class="fas fa-user-edit me-2"></i>Thông tin tài khoản
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="fas fa-heart me-2"></i>Sản phẩm yêu thích
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="userLogout()">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Login Button (visible when not logged in) -->
+                            <div id="nav-login-btn">
                                 <div class="dropdown">
                                     <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                            <i class="fas fa-user me-1"></i>
-                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
+                                       id="accountDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        <span class="d-none d-md-inline">Tài khoản</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                    <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
@@ -123,6 +145,8 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Cart Button -->
                         <div class="cart-btn">
                             <a href="cart.jsp" class="btn btn-primary">
                                 <i class="fas fa-shopping-cart me-1"></i>
@@ -432,7 +456,7 @@
                             <h6 class="footer-title">Dịch vụ</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Hàng Pre-Order</a></li>
-                                <li><a href="#">Dụng cụ & Phụ kiện</a></li>
+                                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp">Dụng cụ & Phụ kiện</a></li>
                                 <li><a href="#">Hướng dẫn lắp ráp</a></li>
                                 <li><a href="#">Sơn & Trang trí</a></li>
                                 <li><a href="#">Bảo hành sản phẩm</a></li>
@@ -529,10 +553,7 @@
     </button>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Hamburger Menu Script -->
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
+    <jsp:include page="includes/unified-scripts.jsp" />
     
     <!-- Product Detail Script -->
     <script>
@@ -1932,3 +1953,6 @@
     <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
 </body>
 </html>
+
+
+
