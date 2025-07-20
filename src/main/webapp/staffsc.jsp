@@ -424,6 +424,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5><i class="fas fa-shopping-cart me-2 text-success"></i>Quản lý đơn hàng</h5>
                         <div class="d-flex gap-2">
+                            <button class="btn btn-outline-info" onclick="loadOrdersFromAPI()" title="Làm mới danh sách">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
                             <select id="order-status-filter" class="form-select auto-width"
                                 onchange="loadOrdersFromAPI()">
                                 <option value="ALL">Tất cả trạng thái</option>

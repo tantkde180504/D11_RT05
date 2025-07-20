@@ -550,6 +550,10 @@ class ProductDetailManager {
         }
     }    // Update cart count in navbar
     updateCartCount() {
+        if (window.unifiedNavbarManager && typeof window.unifiedNavbarManager.updateCartCountFromAPI === 'function') {
+            window.unifiedNavbarManager.updateCartCountFromAPI();
+            return;
+        }
         // This would typically get the count from localStorage or a backend API
         const cartCount = document.querySelector('.cart-count');
         if (cartCount) {

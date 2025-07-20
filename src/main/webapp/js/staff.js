@@ -223,10 +223,16 @@ function initKeyboardShortcuts() {
 
 // Real-time stats update
 function initRealTimeUpdates() {
-    // Auto-refresh notifications
+    // Auto-refresh notifications, stats, and orders
     setInterval(function () {
         updateNotificationCounts();
         updateStats();
+        
+        // Auto-refresh orders if orders tab is active
+        const ordersTab = document.getElementById('orders');
+        if (ordersTab && ordersTab.classList.contains('active')) {
+            loadOrdersFromAPI();
+        }
     }, 30000); // Update every 30 seconds
 }
 
@@ -1157,13 +1163,25 @@ function confirmReturnComplete(returnId, returnCode) {
 // Function load đơn hàng từ API với chức năng xem ảnh giao hàng
 function loadOrdersFromAPI() {
     const status = document.getElementById('order-status-filter')?.value || 'ALL';
+    console.log('🔄 Loading orders from API with status filter:', status);
+    
     fetch(`/api/orders?status=${status}`)
         .then(res => res.json())
         .then(data => {
+            console.log('📦 Orders API response:', data);
+            
             const tbody = document.getElementById('orders-body');
             tbody.innerHTML = '';
 
-            data.forEach(o => {
+            data.forEach((o, index) => {
+                console.log(`📋 Order #${index + 1}:`, {
+                    id: o.id,
+                    orderNumber: o.orderNumber,
+                    status: o.status,
+                    mappedStatus: mapOrderStatus(o.status),
+                    statusClass: getOrderStatusClass(o.status)
+                });
+                
                 const productListHtml = (o.productNames?.length > 0)
                     ? `<ul class="mb-0 ps-3">${o.productNames.map(p => `<li>${p}</li>`).join('')}</ul>`
                     : '—';
@@ -1174,7 +1192,7 @@ function loadOrdersFromAPI() {
                     <td>${o.shippingName}</td>
                     <td>${productListHtml}</td>
                     <td><strong>${formatCurrency(o.totalAmount)}</strong></td>
-                    <td><span class="status-badge">${o.status}</span></td>
+                    <td><span class="status-badge ${getOrderStatusClass(o.status)}">${mapOrderStatus(o.status)}</span></td>
                     <td>${formatDate(o.orderDate)}</td>
                     <td>
                         ${o.status === 'PENDING' ? `
@@ -1465,9 +1483,22 @@ function cancelOrder(orderId) {
 function mapOrderStatus(status) {
     switch (status) {
         case 'PENDING': return 'Chờ xác nhận';
+        case 'CONFIRMED': return 'Đã xác nhận';
+        case 'SHIPPING': return 'Đang giao hàng';
         case 'DELIVERED': return 'Đã giao';
         case 'CANCELLED': return 'Đã hủy';
         default: return status;
+    }
+}
+
+function getOrderStatusClass(status) {
+    switch (status) {
+        case 'PENDING': return 'status-warning';  // Vàng
+        case 'CONFIRMED': return 'status-info';   // Xanh dương
+        case 'SHIPPING': return 'status-primary'; // Xanh đậm
+        case 'DELIVERED': return 'status-success'; // Xanh lá
+        case 'CANCELLED': return 'status-danger';  // Đỏ
+        default: return 'status-secondary';
     }
 }
 

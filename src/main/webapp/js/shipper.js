@@ -4,6 +4,66 @@
 console.log('🚚 Shipper.js loaded successfully!');
 
 let orders = [];
+let currentView = 'Khu vực Đà Nẵng';
+let allOrdersGlobal = [];
+
+// Load dashboard statistics from filtered data
+function loadDashboardStats() {
+  // Tính từ dữ liệu đã filter chỉ lấy đơn Đà Nẵng
+  const daNangOrders = orders.filter(order => {
+    const address = (order.address || '').toLowerCase();
+    return address.includes('đà nẵng') || address.includes('da nang') || 
+           address.includes('danang') || address.includes('dn') || 
+           address.includes('ngũ hành sơn') || address.includes('hòa lạc') ||
+           address.includes('non nước');
+  });
+  
+  const stats = {
+    pending: daNangOrders.filter(o => o.status === 'PENDING').length,
+    shipping: daNangOrders.filter(o => o.status === 'SHIPPING').length,
+    delivered: daNangOrders.filter(o => o.status === 'DELIVERED').length,
+    cancelled: daNangOrders.filter(o => o.status === 'CANCELLED').length
+  };
+  
+  console.log('📈 Local Stats calculated:', stats);
+  updateStatsDisplay(stats);
+}
+
+// Update stats display with animation
+function updateStatsDisplay(stats) {
+  // Animate numbers
+  animateNumber('stat-pending', stats.pending || 0);
+  animateNumber('stat-shipping', stats.shipping || 0);
+  animateNumber('stat-delivered', stats.delivered || 0);
+  animateNumber('stat-cancelled', stats.cancelled || 0);
+}
+
+// Animate number counting up
+function animateNumber(elementId, targetNumber) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+  
+  const startNumber = 0;
+  const duration = 1000; // 1 second
+  const startTime = performance.now();
+  
+  function updateNumber(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // Easing function (ease out)
+    const easeOut = 1 - Math.pow(1 - progress, 3);
+    const currentNumber = Math.round(startNumber + (targetNumber - startNumber) * easeOut);
+    
+    element.textContent = currentNumber;
+    
+    if (progress < 1) {
+      requestAnimationFrame(updateNumber);
+    }
+  }
+  
+  requestAnimationFrame(updateNumber);
+}
 
 // Lấy danh sách shipping từ backend
 function fetchShippingOrders(filter = 'ALL') {
@@ -44,6 +104,9 @@ function fetchShippingOrders(filter = 'ALL') {
       
       console.log('✅ Mapped orders:', orders);
       renderOrders(filter);
+      
+      // Reload stats after data update
+      loadDashboardStats();
     })
     .catch(err => {
       console.error('❌ Lỗi lấy shipping:', err);
@@ -67,9 +130,42 @@ function fetchShippingOrders(filter = 'ALL') {
 function renderOrders(filter = 'ALL') {
   const tbody = document.getElementById('orders-table-body');
   tbody.innerHTML = '';
-  const filteredOrders = orders.filter(order => filter === 'ALL' || order.status === filter);
   
-  console.log('🎨 Rendering orders:', filteredOrders.length);
+  // Filter theo status trước
+  let filteredOrders = orders.filter(order => filter === 'ALL' || order.status === filter);
+  
+  // Filter chỉ lấy đơn hàng Đà Nẵng
+  filteredOrders = filteredOrders.filter(order => {
+    const address = (order.address || '').toLowerCase();
+    
+    // Các biến thể có thể có của Đà Nẵng
+    const daNangVariants = [
+      'đà nẵng',
+      'da nang', 
+      'danang',
+      'đà nẳng',  // lỗi chính tả phổ biến
+      'da năng',  // lỗi chính tả
+      'dn',       // viết tắt
+      'd.nang',   // viết tắt có dấu chấm
+      'tp đà nẵng',
+      'thành phố đà nẵng',
+      'tp.đà nẵng'
+    ];
+    
+    // Kiểm tra xem địa chỉ có chứa bất kỳ biến thể nào không
+    const isDaNang = daNangVariants.some(variant => address.includes(variant));
+    
+    // Log để debug
+    if (address && !isDaNang) {
+      console.log('🚫 Filtered out (not Đà Nẵng):', address);
+    } else if (isDaNang) {
+      console.log('✅ Đà Nẵng order found:', address);
+    }
+    
+    return isDaNang;
+  });
+  
+  console.log('🎨 Rendering orders (Đà Nẵng only):', filteredOrders.length);
   if (filteredOrders.length > 0) {
     console.log('📅 First order date field:', filteredOrders[0].date);
   }
@@ -78,9 +174,14 @@ function renderOrders(filter = 'ALL') {
   if (filteredOrders.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" class="text-center text-muted py-4">
-          <i class="fas fa-inbox me-2"></i>
-          ${filter === 'ALL' ? 'Chưa có đơn hàng nào cần giao' : `Không có đơn hàng với trạng thái "${filter}"`}
+        <td colspan="7" class="text-center py-5">
+          <div class="empty-state">
+            <i class="fas fa-truck-loading"></i>
+            <h6 class="mt-3 mb-2 text-muted">
+              ${filter === 'ALL' ? 'Không có đơn hàng nào ở Đà Nẵng cần giao' : `Không có đơn hàng ở Đà Nẵng với trạng thái "${filter}"`}
+            </h6>
+            <p class="text-muted small mb-0">Vui lòng kiểm tra lại sau hoặc thử bộ lọc khác</p>
+          </div>
         </td>
       </tr>
     `;
@@ -89,18 +190,61 @@ function renderOrders(filter = 'ALL') {
   
   filteredOrders.forEach(order => {
       const tr = document.createElement('tr');
+      tr.className = 'align-middle';
+      
+      // Tạo action buttons với tooltips đẹp hơn
+      let actionButtons = `
+        <div class="btn-group" role="group">
+          <button class="btn btn-outline-info btn-sm" onclick="showOrderDetail('${order.shippingId}')" title="Xem chi tiết">
+            <i class="fas fa-eye"></i>
+          </button>
+          ${order.status === 'SHIPPING' ? `
+          <button class="btn btn-outline-success btn-sm" onclick="openCamera('${order.shippingId}')" title="Chụp ảnh xác nhận giao hàng">
+            <i class="fas fa-camera"></i>
+          </button>` : ''}
+          ${order.status === 'DELIVERED' ? `
+          <button class="btn btn-outline-primary btn-sm" onclick="viewDeliveryPhotos('${order.shippingId}')" title="Xem ảnh đã giao">
+            <i class="fas fa-images"></i>
+          </button>` : ''}
+          <button class="btn btn-outline-warning btn-sm" onclick="showUpdateStatus('${order.shippingId}')" title="Cập nhật trạng thái">
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+      `;
+      
       tr.innerHTML = `
-<td><strong>${order.orderId}</strong></td>
-        <td>${order.customer}</td>
-        <td>${order.address}</td>
-        <td>${order.phone}</td>
-        <td>${statusBadge(order.status)}</td>
-        <td>${order.date}</td>
         <td>
-          <button class="btn btn-sm btn-info me-1" onclick="showOrderDetail('${order.shippingId}')"><i class="fas fa-eye"></i></button>
-          ${order.status === 'SHIPPING' ? `<button class="btn btn-sm btn-success me-1" onclick="openCamera('${order.shippingId}')" title="Chụp ảnh xác nhận"><i class="fas fa-camera"></i></button>` : ''}
-          ${order.status === 'DELIVERED' ? `<button class="btn btn-sm btn-primary me-1" onclick="viewDeliveryPhotos('${order.shippingId}')" title="Xem ảnh giao hàng"><i class="fas fa-images"></i></button>` : ''}
-          <button class="btn btn-sm btn-warning" onclick="showUpdateStatus('${order.shippingId}')"><i class="fas fa-edit"></i></button>
+          <span class="fw-bold text-primary">#${order.orderId}</span>
+        </td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
+              <i class="fas fa-user text-muted"></i>
+            </div>
+            <span class="fw-medium">${order.customer}</span>
+          </div>
+        </td>
+        <td>
+          <div class="text-truncate" style="max-width: 200px;" title="${order.address}">
+            <i class="fas fa-map-marker-alt text-muted me-1"></i>
+            ${order.address}
+          </div>
+        </td>
+        <td>
+          <a href="tel:${order.phone}" class="text-decoration-none">
+            <i class="fas fa-phone text-success me-1"></i>
+            ${order.phone}
+          </a>
+        </td>
+        <td>${statusBadge(order.status)}</td>
+        <td>
+          <small class="text-muted">
+            <i class="fas fa-calendar-alt me-1"></i>
+            ${order.date}
+          </small>
+        </td>
+        <td>
+          ${actionButtons}
         </td>
       `;
       tbody.appendChild(tr);
@@ -109,12 +253,11 @@ function renderOrders(filter = 'ALL') {
 
 function statusBadge(status) {
   switch(status) {
-    case 'PENDING': return '<span class="badge bg-secondary">Chờ giao</span>';
-    case 'SHIPPING': return '<span class="badge bg-primary">Đang giao</span>';
-    case 'DELIVERED': return '<span class="badge bg-success">Đã giao</span>';
-    case 'FAILED':
-    case 'CANCELLED': return '<span class="badge bg-danger">Hủy giao hàng</span>';
-    default: return status;
+    case 'PENDING': return '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Chờ giao</span>';
+    case 'SHIPPING': return '<span class="badge bg-primary"><i class="fas fa-truck me-1"></i>Đang giao</span>';
+    case 'DELIVERED': return '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Đã giao</span>';
+    case 'CANCELLED': return '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Hủy giao</span>';
+    default: return `<span class="badge bg-secondary">${status}</span>`;
   }
 }
 
@@ -217,29 +360,39 @@ const month = String(dateObj.getMonth() + 1).padStart(2, '0');
 }
 
 function showUpdateStatus(orderId) {
-  document.getElementById('update-order-id').value = orderId;
+  console.log('🔧 showUpdateStatus called with orderId:', orderId);
+  document.getElementById('shipping-id').value = orderId;
   new bootstrap.Modal(document.getElementById('updateStatusModal')).show();
 }
 
 
-function updateOrderStatus() {
-  const orderId = document.getElementById('update-order-id').value;
+function updateShippingStatus() {
+  console.log('⚙️ updateShippingStatus called');
+  const orderId = document.getElementById('shipping-id').value;
   const newStatus = document.getElementById('new-status').value;
-  const note = document.getElementById('note').value;
+  const note = document.getElementById('status-note').value;
+  
+  console.log('📝 Update data:', { orderId, newStatus, note });
+  
   // Gửi cập nhật trạng thái shipping lên backend
   fetch('/api/shipping/update-status', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `shippingId=${encodeURIComponent(orderId)}&status=${encodeURIComponent(newStatus)}&note=${encodeURIComponent(note)}`
   })
-    .then(res => res.text())
+    .then(res => {
+      console.log('📡 API Response status:', res.status);
+      return res.text();
+    })
     .then(msg => {
+      console.log('✅ API Response:', msg);
       alert(msg);
       fetchShippingOrders(document.getElementById('order-status-filter').value);
       bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
     })
     .catch(err => {
-      alert('Lỗi cập nhật trạng thái shipping!');
+      console.error('❌ Update error:', err);
+      alert('Lỗi cập nhật trạng thái shipping: ' + err.message);
     });
 }
 
@@ -250,13 +403,19 @@ let capturedImageData = null;
 
 // Mở camera để chụp ảnh
 function openCamera(shippingId) {
+    console.log('📷 Opening camera for shipping ID:', shippingId);
     currentShippingId = shippingId;
-    const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
     
     // Reset modal state
-    document.getElementById('camera-container').style.display = 'none';
-    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('camera-video').style.display = 'none';
+    document.getElementById('captured-photo').style.display = 'none';
     document.getElementById('camera-error').style.display = 'none';
+    document.getElementById('camera-controls').style.display = 'block';
+    document.getElementById('photo-controls').style.display = 'none';
+    
+    // Show modal first
+    const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
+    modal.show();
     
     // Request camera access
     navigator.mediaDevices.getUserMedia({ 
@@ -267,42 +426,82 @@ function openCamera(shippingId) {
         } 
     })
     .then(stream => {
+        console.log('📹 Camera access granted');
         currentStream = stream;
         const video = document.getElementById('camera-video');
         video.srcObject = stream;
-        document.getElementById('camera-container').style.display = 'block';
-        modal.show();
+        video.style.display = 'block';
+        
+        // Wait for video metadata to load
+        video.addEventListener('loadedmetadata', () => {
+            console.log('📺 Video metadata loaded:', video.videoWidth, 'x', video.videoHeight);
+            video.play();
+        });
+        
+        // Enable capture button when video is ready
+        video.addEventListener('playing', () => {
+            console.log('▶️ Video is playing and ready');
+            document.getElementById('camera-controls').style.display = 'block';
+        });
     })
     .catch(err => {
-        console.error('Lỗi truy cập camera:', err);
+        console.error('❌ Lỗi truy cập camera:', err);
         document.getElementById('camera-error').style.display = 'block';
-        modal.show();
+        document.getElementById('camera-controls').style.display = 'none';
     });
 }
 
 // Chụp ảnh từ video stream
 function capturePhoto() {
+    console.log('📸 Capture photo clicked');
     const video = document.getElementById('camera-video');
-const canvas = document.createElement('canvas');
+    const captureBtn = document.getElementById('capture-btn');
+    
+    // Disable button during capture
+    captureBtn.disabled = true;
+    captureBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang chụp...';
+    
+    if (!video.videoWidth || !video.videoHeight) {
+        console.error('❌ Video not ready');
+        alert('Camera chưa sẵn sàng. Vui lòng thử lại!');
+        // Re-enable button
+        captureBtn.disabled = false;
+        captureBtn.innerHTML = '<i class="fas fa-camera"></i> Chụp ảnh';
+        return;
+    }
+    
+    const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     
     // Set canvas dimensions to match video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
+    console.log('📐 Canvas size:', canvas.width, 'x', canvas.height);
+    
     // Draw video frame to canvas
     context.drawImage(video, 0, 0);
     
     // Get image data
     capturedImageData = canvas.toDataURL('image/jpeg', 0.8);
+    console.log('💾 Image captured, size:', capturedImageData.length);
     
     // Show preview
-    document.getElementById('captured-image').src = capturedImageData;
-    document.getElementById('camera-container').style.display = 'none';
-    document.getElementById('photo-preview').style.display = 'block';
+    const preview = document.getElementById('photo-preview');
+    preview.src = capturedImageData;
+    
+    // Hide video, show photo preview
+    document.getElementById('camera-video').style.display = 'none';
+    document.getElementById('captured-photo').style.display = 'block';
+    document.getElementById('camera-controls').style.display = 'none';
+    document.getElementById('photo-controls').style.display = 'block';
     
     // Stop camera stream
     stopCamera();
+    
+    // Re-enable button (for next time)
+    captureBtn.disabled = false;
+    captureBtn.innerHTML = '<i class="fas fa-camera"></i> Chụp ảnh';
 }
 
 // Lưu ảnh lên server
@@ -457,7 +656,11 @@ document.getElementById('cameraModal').addEventListener('hidden.bs.modal', funct
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🎯 DOM loaded, initializing shipper dashboard...');
-fetchShippingOrders();
+  
+  // Load dashboard stats
+  loadDashboardStats();
+  
+  fetchShippingOrders();
   document.getElementById('order-status-filter').addEventListener('change', function() {
     console.log('🔄 Filter changed to:', this.value);
     fetchShippingOrders(this.value);

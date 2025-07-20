@@ -22,8 +22,8 @@ public class CustomerDTO {
     private String lastName;
     private String email;
     @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^09\\d{8}$", message = "Số điện thoại phải bắt đầu bằng 09 và đủ 10 số")
-    private String phone;
+@Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại phải bắt đầu bằng 0 và đủ 10 số")
+private String phone;
     private String dateOfBirth; // đổi sang String để nhận yyyy-MM-dd từ frontend
     private String gender;
     private String address;

@@ -7,6 +7,17 @@ class UnifiedNavbarManager {
         this.contextPath = window.contextPath || '';
         this.currentUser = null;
         this.init();
+
+        // Tự động cập nhật navbar và cart-count khi script được load trên bất kỳ trang nào
+        if (document.readyState !== 'loading') {
+            this.checkAuthState();
+            setTimeout(() => this.refreshNavbar(), 1000);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.checkAuthState();
+                setTimeout(() => this.refreshNavbar(), 1000);
+            });
+        }
     }
 
     init() {
@@ -239,6 +250,8 @@ class UnifiedNavbarManager {
         
         // Show/hide work dashboard button based on user role
         this.updateWorkDashboardButton();
+        this.updateCartCountFromAPI();
+
         
         console.log('✅ Navbar updated for logged in user:', displayName);
     }
@@ -273,6 +286,8 @@ class UnifiedNavbarManager {
         
         // Hide work dashboard button for guests
         this.hideWorkDashboardButton();
+        this.updateCartCountFromAPI();
+
         
         console.log('✅ Navbar updated for guest user');
     }
@@ -422,6 +437,31 @@ class UnifiedNavbarManager {
         })
         .catch(error => {
             console.log('- Server Error:', error);
+        });
+    }
+
+    // Thêm hàm mới cập nhật số lượng giỏ hàng từ API
+    updateCartCountFromAPI() {
+        const cartCountElem = document.querySelector('.cart-count');
+        if (!cartCountElem) return;
+        fetch(`${this.contextPath}/api/cart`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Not logged in or error');
+            return res.json();
+        })
+        .then(data => {
+            if (data && Array.isArray(data.cartItems)) {
+                cartCountElem.textContent = data.cartItems.length;
+            } else {
+                cartCountElem.textContent = '0';
+            }
+        })
+        .catch(() => {
+            cartCountElem.textContent = '0';
         });
     }
 }

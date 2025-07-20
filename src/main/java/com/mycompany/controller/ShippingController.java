@@ -18,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,6 +58,7 @@ public class ShippingController {
     }
 
     @PostMapping("/update-status")
+    @Transactional
     public ResponseEntity<String> updateShippingStatus(@RequestParam Long shippingId, @RequestParam String status, @RequestParam(required = false) String note) {
         Optional<Shipping> shippingOpt = shippingRepository.findById(shippingId);
         if (shippingOpt.isEmpty()) {
@@ -79,7 +82,11 @@ public class ShippingController {
         }
         if ("SHIPPING".equalsIgnoreCase(status)) {
             if (shipping.getOrderId() != null) {
-                orderRepository.updateOrderStatus(shipping.getOrderId(), "CONFIRMED");
+                System.out.println("🚚 SHIPPING: Cập nhật Order #" + shipping.getOrderId() + " từ trạng thái cũ sang SHIPPING");
+                int updated = orderRepository.updateOrderStatus(shipping.getOrderId(), "SHIPPING");
+                System.out.println("📝 Order cập nhật kết quả: " + updated + " bản ghi được thay đổi");
+            } else {
+                System.out.println("⚠️ SHIPPING: Không có OrderId để cập nhật");
             }
         }
         if ("DELIVERED".equalsIgnoreCase(status)) {
@@ -90,6 +97,7 @@ public class ShippingController {
         }
         if ("CANCELLED".equalsIgnoreCase(status)) {
             if (shipping.getOrderId() != null) {
+                System.out.println("❌ CANCELLED: Cập nhật Order #" + shipping.getOrderId() + " sang trạng thái CANCELLED");
                 orderRepository.updateOrderStatus(shipping.getOrderId(), "CANCELLED");
             }
         }
@@ -266,6 +274,32 @@ public class ShippingController {
             return ResponseEntity.ok(photoList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
+        }
+    }
+
+    @GetMapping("/stats")
+    @ResponseBody
+    public ResponseEntity<?> getShippingStats() {
+        try {
+            List<Shipping> allShippings = shippingRepository.findAll();
+            
+            long pending = allShippings.stream().filter(s -> "PENDING".equals(s.getStatus())).count();
+            long shipping = allShippings.stream().filter(s -> "SHIPPING".equals(s.getStatus())).count();
+            long delivered = allShippings.stream().filter(s -> "DELIVERED".equals(s.getStatus())).count();
+            long cancelled = allShippings.stream().filter(s -> "CANCELLED".equals(s.getStatus())).count();
+            
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("pending", pending);
+            stats.put("shipping", shipping);
+            stats.put("delivered", delivered);
+            stats.put("cancelled", cancelled);
+            stats.put("total", allShippings.size());
+            
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            System.err.println("❌ Lỗi lấy thống kê: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi lấy thống kê shipping");
         }
     }
 }
