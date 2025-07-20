@@ -1,0 +1,118 @@
+/* Final Override - Smooth Cart Button Effects */
+/* This file ensures all cart-related buttons have consistent, smooth hover effects */
+
+/* Override all aggressive transforms */
+.btn:hover,
+.button:hover,
+.btn-add-cart:hover,
+.add-to-cart:hover,
+.cart-btn:hover,
+.modern-cart-btn:hover,
+.modern-account-btn:hover,
+.modern-work-btn:hover {
+    transform: translateY(-1px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Prevent excessive scaling */
+.product-card:hover,
+.product-item:hover,
+.cart-item:hover {
+    transform: scale(1.02) !important;
+    transition: transform 0.3s ease !important;
+}
+
+/* Smooth shadow transitions */
+.btn-add-cart:hover,
+.add-to-cart:hover {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Icon smooth animation */
+.btn-add-cart:hover i,
+.add-to-cart:hover i,
+.cart-btn:hover i {
+    transform: translateX(2px) !important;
+    transition: transform 0.3s ease !important;
+}
+
+/* Text effects */
+.btn-add-cart:hover,
+.add-to-cart:hover {
+    letter-spacing: 0.3px !important;
+}
+
+/* Color transitions only */
+.modern-cart-btn:hover {
+    background: linear-gradient(135deg, #5eb6ff, #20dafe) !important;
+    border-color: #4facfe !important;
+}
+
+/* Ripple effect size control */
+.btn-ripple {
+    max-width: 120px !important;
+    max-height: 120px !important;
+}
+
+/* Prevent button jumping on specific elements */
+.navbar .btn:hover,
+.header .btn:hover,
+.top-bar .btn:hover {
+    transform: none !important;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+    .btn:hover,
+    .btn-add-cart:hover,
+    .add-to-cart:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Focus states for accessibility */
+.btn-add-cart:focus,
+.add-to-cart:focus,
+.modern-cart-btn:focus {
+    outline: 2px solid #4facfe !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2) !important;
+}
+
+/* Active states */
+.btn-add-cart:active,
+.add-to-cart:active,
+.modern-cart-btn:active {
+    transform: translateY(0) scale(0.98) !important;
+    transition: all 0.1s ease !important;
+}
+
+/* Ensure smooth transitions on all cart elements */
+.cart-count,
+.badge,
+.notification {
+    transition: all 0.3s ease !important;
+}
+
+.cart-count:hover,
+.badge:hover {
+    transform: scale(1.05) !important;
+}
+
+/* Additional smoothness for product interactions */
+.product-image:hover {
+    transform: scale(1.03) !important;
+    transition: transform 0.4s ease !important;
+}
+
+/* Prevent layout shift during hover */
+* {
+    box-sizing: border-box;
+}
+
+.btn,
+.btn-add-cart,
+.add-to-cart {
+    will-change: transform, box-shadow, background-color;
+}

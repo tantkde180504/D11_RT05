@@ -266,8 +266,8 @@
 .modern-account-btn:hover .btn-ripple,
 .modern-work-btn:hover .btn-ripple,
 .modern-cart-btn:hover .btn-ripple {
-    width: 300px;
-    height: 300px;
+    width: 120px;
+    height: 120px;
 }
 
 /* Account Button */
@@ -278,8 +278,8 @@
 }
 
 .modern-account-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102,126,234,0.3);
     border-color: #5a6fd8;
 }
 
@@ -290,8 +290,8 @@
 }
 
 .modern-work-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(240,147,251,0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(240,147,251,0.3);
     border-color: #ee82f0;
 }
 
@@ -303,8 +303,8 @@
 }
 
 .modern-cart-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(79,172,254,0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79,172,254,0.3);
     border-color: #3d9bfe;
 }
 
@@ -557,7 +557,7 @@
 
 /* Mobile sidebar override */
 .mobile-sidebar {
-    z-index: 9998; /* Slightly lower than header */
+    z-index: 10050; /* Higher than header to appear on top */
 }
 
 /* Chat widget should be lower than header */

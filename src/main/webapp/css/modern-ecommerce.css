@@ -57,6 +57,7 @@
 .carousel-caption {
     background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.4));
     border-radius: 15px;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     padding: 2rem;
     bottom: 2rem;
@@ -418,8 +419,8 @@
 }
 
 .add-to-cart:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 .add-to-cart.btn-primary {

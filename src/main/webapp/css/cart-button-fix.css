@@ -1,0 +1,118 @@
+/* Cart Button Hover Fix - Smooth and Elegant Effects */
+/* This file overrides aggressive hover effects and provides subtle animations */
+
+/* Reset aggressive transform effects */
+.btn-add-cart:hover,
+.add-to-cart:hover,
+.modern-cart-btn:hover,
+.modern-account-btn:hover,
+.modern-work-btn:hover {
+    transform: translateY(-1px) !important;
+}
+
+/* Reduce ripple effect size */
+.modern-account-btn:hover .btn-ripple,
+.modern-work-btn:hover .btn-ripple,
+.modern-cart-btn:hover .btn-ripple {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+/* Gentle shadow effects */
+.btn-add-cart:hover {
+    box-shadow: 0 3px 12px rgba(255, 102, 0, 0.25) !important;
+}
+
+.add-to-cart:hover {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12) !important;
+}
+
+.modern-cart-btn:hover {
+    box-shadow: 0 3px 12px rgba(79, 172, 254, 0.25) !important;
+}
+
+.modern-account-btn:hover {
+    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.25) !important;
+}
+
+.modern-work-btn:hover {
+    box-shadow: 0 3px 12px rgba(240, 147, 251, 0.25) !important;
+}
+
+/* Smooth color transitions instead of aggressive transforms */
+.btn-add-cart:hover {
+    filter: brightness(1.05) saturate(1.1);
+}
+
+.add-to-cart:hover {
+    filter: brightness(1.05) contrast(1.05);
+}
+
+/* Reduce button movement on product cards */
+.product-item:hover .btn-add-cart,
+.product-card:hover .add-to-cart {
+    transform: translateY(0) !important;
+}
+
+/* Icon subtle animation */
+.btn-add-cart:hover i,
+.add-to-cart:hover i,
+.modern-cart-btn:hover i {
+    transform: scale(1.05) rotate(5deg);
+    transition: transform 0.2s ease;
+}
+
+/* Text subtle effect */
+.btn-add-cart:hover,
+.add-to-cart:hover {
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+/* Prevent zoom on mobile touch */
+@media (hover: none) and (pointer: coarse) {
+    .btn-add-cart:hover,
+    .add-to-cart:hover,
+    .modern-cart-btn:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Smooth border animation */
+.btn-add-cart,
+.add-to-cart {
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    border-color: rgba(255, 102, 0, 0.3);
+}
+
+.add-to-cart:hover {
+    border-color: rgba(79, 172, 254, 0.3);
+}
+
+/* Gradient shift effect */
+.modern-cart-btn:hover {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #4facfe 100%) !important;
+    background-size: 200% 200%;
+    animation: gradientShift 2s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Pulse effect for cart count */
+.modern-cart-btn:hover .modern-cart-count {
+    animation: gentlePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
