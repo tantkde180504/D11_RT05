@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" errorPage="error.jsp"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ page import="java.util.*" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -18,213 +18,32 @@
     <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/modern-ecommerce.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/modern-header.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/header-z-index-fix.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <style>
-        .policy-content {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .policy-header {
-            border-bottom: 3px solid #007bff;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .policy-title {
-            color: #007bff;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .policy-subtitle {
-            color: #6c757d;
-            font-size: 1.1rem;
-            margin-bottom: 0;
-        }
-        
-        .section-title {
-            color: #333;
-            font-weight: 600;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            padding-left: 1rem;
-            border-left: 4px solid #007bff;
-        }
-        
-        .subsection-title {
-            color: #007bff;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .policy-text {
-            line-height: 1.8;
-            color: #555;
-            margin-bottom: 1rem;
-        }
-        
-        .step-list {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .step-list li {
-            padding: 0.5rem 0;
-            padding-left: 2rem;
-            position: relative;
-            color: #555;
-            line-height: 1.6;
-        }
-        
-        .step-list li::before {
-            content: counter(step-counter);
-            counter-increment: step-counter;
-            position: absolute;
-            left: 0;
-            top: 0.5rem;
-            background: #007bff;
-            color: white;
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .reset-counter {
-            counter-reset: step-counter;
-        }
-        
-        .highlight-box {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-left: 4px solid #28a745;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 4px 4px 0;
-        }
-        
-        .warning-box {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-left: 4px solid #ffc107;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 4px 4px 0;
-        }
-        
-        .contact-info {
-            background-color: #e7f3ff;
-            border: 1px solid #b3d9ff;
-            border-left: 4px solid #007bff;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 4px 4px 0;
-        }
-        
-        .contact-info strong {
-            color: #007bff;
-        }
-        
-        .breadcrumb-custom {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-        
-        .breadcrumb-custom .breadcrumb {
-            margin-bottom: 0;
-            background-color: transparent;
-            padding: 0;
-        }
-        
-        .breadcrumb-custom .breadcrumb-item a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        
-        .breadcrumb-custom .breadcrumb-item a:hover {
-            text-decoration: underline;
-        }
-        
-        .icon-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .payment-methods {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-            flex-wrap: wrap;
-        }
-        
-        .payment-method {
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            flex: 1;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-        
-        .payment-method:hover {
-            border-color: #007bff;
-            box-shadow: 0 4px 8px rgba(0,123,255,0.2);
-        }
-        
-        .payment-method i {
-            font-size: 2rem;
-            color: #007bff;
-            margin-bottom: 0.5rem;
-        }
-        
-        .payment-method h6 {
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .payment-method p {
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 0;
-        }
-    </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top">
+    <header class="bg-white shadow-sm sticky-top modern-header">
         <div class="container">
             <div class="row align-items-center py-3">
                 <!-- Logo Section with Hamburger Menu -->
                 <div class="col-lg-3 col-md-4 col-6">
                     <div class="header-logo-section">
                         <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
+                        <button class="hamburger-menu modern-hamburger" id="hamburgerBtn" aria-label="Menu">
                             <span class="line"></span>
                             <span class="line"></span>
                             <span class="line"></span>
                         </button>
                         
-                        <div class="logo">
+                        <div class="logo modern-logo">
                             <a href="<%=request.getContextPath()%>/">
                                 <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
+                                <div class="logo-glow"></div>
                             </a>
                         </div>
                     </div>
@@ -233,17 +52,21 @@
                 <!-- Search Section -->
                 <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
                     <div class="header-center-section">
-                        <div class="search-container w-100">
+                        <div class="search-container w-100 modern-search">
                             <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." id="headerSearchInput" autocomplete="off">
-                                    <button class="btn btn-search" type="submit">
+                                <div class="input-group modern-input-group">
+                                    <span class="input-group-text search-icon">
                                         <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" name="q" class="form-control search-input modern-search-input" 
+                                           placeholder="Tìm kiếm sản phẩm Gundam..." id="headerSearchInput" autocomplete="off">
+                                    <button class="btn btn-search modern-search-btn" type="submit">
+                                        <i class="fas fa-rocket"></i>
+                                        <span class="btn-text">Tìm</span>
                                     </button>
                                 </div>
                                 <!-- Autocomplete suggestions -->
-                                <div id="headerSearchSuggestions" class="search-suggestions"></div>
+                                <div id="headerSearchSuggestions" class="search-suggestions modern-suggestions"></div>
                             </form>
                         </div>
                     </div>
@@ -251,47 +74,53 @@
                 
                 <!-- Actions Section -->
                 <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section">
+                    <div class="header-actions-section modern-actions">
                         <div class="account-menu me-3">
                             <!-- Unified Account Button -->
                             <div id="unified-account-menu">
                                 <div class="dropdown">
                                     <!-- This button will dynamically change based on login state -->
-                                    <a href="#" class="btn btn-outline-primary dropdown-toggle" 
+                                    <a href="#" class="btn btn-outline-primary dropdown-toggle modern-account-btn" 
                                        id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
                                         <!-- Content will be updated by JavaScript -->
                                         <i class="fas fa-user me-1"></i>
                                         <span class="account-text d-none d-md-inline">Tài khoản</span>
+                                        <div class="btn-ripple"></div>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" id="unifiedAccountDropdownMenu">
+                                    <ul class="dropdown-menu dropdown-menu-end modern-dropdown" id="unifiedAccountDropdownMenu">
                                         <!-- Menu items will be updated by JavaScript -->
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
+                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
                                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                                         </a></li>
-                                        <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
+                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
                                             <i class="fas fa-user-plus me-2"></i>Đăng ký
                                         </a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
+                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
+                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
+                            <a href="#" class="btn btn-warning modern-work-btn" id="workDashboardLink">
+                                <i class="fas fa-briefcase me-1"></i>
+                                <span class="d-none d-lg-inline">Trang làm việc</span>
+                                <div class="btn-ripple"></div>
+                            </a>
+                        </div>
                         <div class="cart-btn">
-                            <a href="cart.jsp" class="btn btn-primary">
+                            <a href="cart.jsp" class="btn btn-primary modern-cart-btn">
                                 <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count">0</span>
+                                <span class="cart-count modern-cart-count">0</span>
                                 <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
+                                <div class="btn-ripple"></div>
+                                <div class="cart-notification" id="cartNotification"></div>
                             </a>
-                        </div>
-                        <div class="order-history-btn">
-                            <a href="order-history.jsp" class="btn btn-outline-secondary">
-                                <i class="fas fa-history me-1"></i>
-                                <span class="d-none d-lg-inline">Lịch sử giao dịch</span>
-                            </a>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
         </div>
+        <div class="header-shadow"></div>
     </header>
 
     <!-- Mobile Sidebar Navigation -->
@@ -704,5 +533,12 @@
             }, 1500);
         });
     </script>
+    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
 </body>
 </html>
+
+
+
+
+
+

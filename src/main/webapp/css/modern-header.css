@@ -1,0 +1,625 @@
+/* Modern Header Navbar Styles */
+
+/* Header Container */
+.modern-header {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: visible; /* Changed from hidden to visible for dropdown */
+    z-index: 9999; /* Very high z-index to ensure header is always on top */
+}
+
+.modern-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="header-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(102,126,234,0.02)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23header-grid)"/></svg>');
+    z-index: 1;
+}
+
+.modern-header .container {
+    position: relative;
+    z-index: 10000; /* Higher than the ::before pseudo-element */
+}
+
+.header-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(180deg, rgba(102,126,234,0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* Logo Section */
+.modern-logo {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.modern-logo:hover {
+    transform: scale(1.05);
+}
+
+.modern-logo .logo-img {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+.logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(102,126,234,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.modern-logo:hover .logo-glow {
+    opacity: 1;
+}
+
+/* Modern Hamburger Menu */
+.modern-hamburger {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 12px;
+    padding: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-hamburger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.modern-hamburger:hover::before {
+    left: 100%;
+}
+
+.modern-hamburger .line {
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.modern-hamburger:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+}
+
+/* Modern Search Container */
+.modern-search {
+    position: relative;
+}
+
+.modern-input-group {
+    background: #fff;
+    border-radius: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.modern-input-group:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(102,126,234,0.2);
+    border-color: #667eea;
+}
+
+.search-icon {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    color: #fff;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-icon i {
+    font-size: 1.1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.modern-search-input {
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.modern-search-input:focus {
+    box-shadow: none;
+    outline: none;
+    background: linear-gradient(135deg, #f8f9ff, #fff);
+}
+
+.modern-search-input::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+.modern-search-btn {
+    background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+    border: none;
+    color: #fff;
+    padding: 12px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-search-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.modern-search-btn:hover::before {
+    left: 100%;
+}
+
+.modern-search-btn:hover {
+    background: linear-gradient(135deg, #a8e6cf, #56ab2f);
+    transform: scale(1.05);
+}
+
+.modern-search-btn .btn-text {
+    position: relative;
+    z-index: 1;
+}
+
+/* Modern Suggestions */
+.modern-suggestions {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(102,126,234,0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    margin-top: 5px;
+    z-index: 10003; /* Highest z-index for search suggestions */
+    position: relative;
+}
+
+.modern-suggestions .suggestion-item {
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.modern-suggestions .suggestion-item:hover {
+    background: linear-gradient(135deg, #f8f9ff, #fff);
+    transform: translateX(5px);
+}
+
+.modern-suggestions .suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Modern Action Buttons */
+.modern-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modern-account-btn,
+.modern-work-btn,
+.modern-cart-btn {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    font-weight: 600;
+    padding: 10px 16px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+/* Ripple Effect */
+.btn-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    transition: width 0.6s ease, height 0.6s ease;
+    pointer-events: none;
+}
+
+.modern-account-btn:hover .btn-ripple,
+.modern-work-btn:hover .btn-ripple,
+.modern-cart-btn:hover .btn-ripple {
+    width: 300px;
+    height: 300px;
+}
+
+/* Account Button */
+.modern-account-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: #667eea;
+}
+
+.modern-account-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+    border-color: #5a6fd8;
+}
+
+/* Work Button */
+.modern-work-btn {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    border-color: #f093fb;
+}
+
+.modern-work-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(240,147,251,0.4);
+    border-color: #ee82f0;
+}
+
+/* Cart Button */
+.modern-cart-btn {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border-color: #4facfe;
+    position: relative;
+}
+
+.modern-cart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(79,172,254,0.4);
+    border-color: #3d9bfe;
+}
+
+/* Modern Cart Count */
+.modern-cart-count {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: #fff;
+    border-radius: 15px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+    animation: cartPulse 2s infinite;
+    box-shadow: 0 2px 8px rgba(238,90,82,0.3);
+}
+
+@keyframes cartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Cart Notification */
+.cart-notification {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 12px;
+    height: 12px;
+    background: #ff4757;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.cart-notification.show {
+    opacity: 1;
+    transform: scale(1);
+    animation: notificationBounce 0.6s ease;
+}
+
+@keyframes notificationBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Modern Dropdown */
+.modern-dropdown {
+    background: rgba(255,255,255,0.95);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    border: 1px solid rgba(102,126,234,0.1);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    margin-top: 10px;
+    z-index: 10001; /* Higher than header container */
+    position: relative;
+}
+
+.modern-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    width: 16px;
+    height: 16px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(102,126,234,0.1);
+    border-bottom: none;
+    border-right: none;
+    transform: rotate(45deg);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    z-index: 10002; /* Higher than dropdown */
+}
+
+.modern-dropdown-item {
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+    color: #333;
+    font-weight: 500;
+    border-radius: 10px;
+    margin: 2px 8px;
+}
+
+.modern-dropdown-item:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.modern-dropdown-item i {
+    width: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.modern-dropdown-item:hover i {
+    transform: scale(1.2);
+}
+
+/* Floating Animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+}
+
+.modern-header:hover .modern-logo {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Glow Effect */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+    50% { box-shadow: 0 2px 20px rgba(102,126,234,0.15); }
+}
+
+.modern-header.scrolled {
+    animation: glow 4s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .modern-search {
+        margin-top: 15px;
+    }
+    
+    .modern-input-group {
+        border-radius: 20px;
+    }
+    
+    .modern-search-btn .btn-text {
+        display: none;
+    }
+    
+    .modern-account-btn,
+    .modern-work-btn,
+    .modern-cart-btn {
+        padding: 8px 12px;
+        border-radius: 15px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .modern-header .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    .modern-actions {
+        gap: 5px;
+    }
+    
+    .modern-account-btn span,
+    .modern-work-btn span:not(.d-none),
+    .modern-cart-btn span:not(.cart-count) {
+        display: none !important;
+    }
+    
+    .modern-account-btn,
+    .modern-work-btn,
+    .modern-cart-btn {
+        padding: 8px 10px;
+        min-width: 40px;
+    }
+}
+
+/* Loading States */
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Interactive Hover States */
+.modern-header .btn:not(:disabled):hover {
+    filter: brightness(1.1);
+}
+
+.modern-header .btn:active {
+    transform: scale(0.98);
+}
+
+/* Focus States for Accessibility */
+.modern-search-input:focus,
+.modern-account-btn:focus,
+.modern-work-btn:focus,
+.modern-cart-btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Smooth Transitions */
+* {
+    transition: all 0.3s ease;
+}
+
+/* Enhanced Shadow Effects */
+.modern-header.enhanced-shadow {
+    box-shadow: 
+        0 2px 20px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(102,126,234,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+/* Gradient Border Animation */
+@keyframes gradientBorder {
+    0% { border-color: #667eea; }
+    25% { border-color: #764ba2; }
+    50% { border-color: #56ab2f; }
+    75% { border-color: #f093fb; }
+    100% { border-color: #667eea; }
+}
+
+.modern-input-group.active {
+    animation: gradientBorder 3s ease-in-out infinite;
+}
+
+/* Success State */
+.search-success {
+    background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+    animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Bootstrap Dropdown Override for Header */
+.modern-header .dropdown-menu {
+    z-index: 10001 !important;
+    position: absolute !important;
+}
+
+/* General header popover/tooltip override */
+.modern-header .popover,
+.modern-header .tooltip {
+    z-index: 10002 !important;
+}
+
+/* Mobile sidebar override */
+.mobile-sidebar {
+    z-index: 9998; /* Slightly lower than header */
+}
+
+/* Chat widget should be lower than header */
+.chat-widget-container {
+    z-index: 9997 !important;
+}
+
+/* Ensure all header elements are properly layered */
+.modern-header * {
+    position: relative;
+}
+
+.modern-header .dropdown {
+    position: static; /* Allow dropdown to escape header bounds */
+}
+
+.modern-header .dropdown-toggle::after {
+    transition: transform 0.3s ease;
+}
+
+.modern-header .dropdown-toggle[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+/* Fix for sticky header and dropdown interaction */
+.sticky-top.modern-header {
+    z-index: 9999 !important;
+}
+
+/* Ensure search autocomplete is always visible */
+.search-suggestions,
+.modern-suggestions {
+    z-index: 10003 !important;
+    position: absolute !important;
+}
+
+/* Additional Bootstrap dropdown fixes */
+.navbar .dropdown-menu.show {
+    z-index: 10001 !important;
+    transform: translateY(0) !important;
+}
+
+/* Ensure dropdown doesn't get clipped */
+.modern-header .navbar-nav .dropdown {
+    position: static !important;
+}
+
+.modern-header .navbar-nav .dropdown-menu {
+    position: absolute !important;
+    transform: none !important;
+    will-change: transform !important;
+}
+
+/* Fix dropdown positioning */
+.modern-header .dropdown-menu {
+    top: 100% !important;
+    left: auto !important;
+    right: 0 !important;
+    transform: translateY(0) !important;
+}
+
+/* Prevent dropdown from being hidden by other elements */
+.modern-header .dropdown-menu::before {
+    z-index: 10002 !important;
+}
