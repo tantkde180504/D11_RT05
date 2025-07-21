@@ -98,6 +98,113 @@
     z-index: 1061;
 }
 
+/* ===== SHIPPING TYPE STYLES ===== */
+.shipping-type-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Shipping type: Thường */
+.shipping-normal {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    color: #1565c0;
+    border: 2px solid #42a5f5;
+}
+
+.shipping-normal::before {
+    content: '📦';
+    margin-right: 4px;
+}
+
+/* Shipping type: Hỏa tốc */
+.shipping-express {
+    background: linear-gradient(135deg, #fff3e0, #ffcc02);
+    color: #e65100;
+    border: 2px solid #ff9800;
+    animation: expressPulse 2s infinite;
+}
+
+.shipping-express::before {
+    content: '⚡';
+    margin-right: 4px;
+}
+
+@keyframes expressPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 152, 0, 0.8), 0 0 30px rgba(255, 152, 0, 0.4);
+    }
+}
+
+/* Row highlighting based on shipping type */
+.order-row.express-order {
+    background: linear-gradient(90deg, rgba(255, 152, 0, 0.05), rgba(255, 193, 7, 0.02));
+    border-left: 4px solid #ff9800;
+}
+
+.order-row.normal-order {
+    background: linear-gradient(90deg, rgba(66, 165, 245, 0.05), rgba(33, 150, 243, 0.02));
+    border-left: 4px solid #42a5f5;
+}
+
+/* Priority indicator */
+.priority-indicator {
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 2px;
+}
+
+.priority-express {
+    background: linear-gradient(180deg, #ff9800, #f57c00);
+    animation: priorityGlow 1.5s infinite;
+}
+
+@keyframes priorityGlow {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 10px #ff9800;
+    }
+}
+
+.priority-normal {
+    background: linear-gradient(180deg, #42a5f5, #1976d2);
+}
+
+/* Express và Normal stat cards */
+.stat-card-express {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+}
+
+.stat-card-express .stat-icon {
+    color: #fff3e0;
+}
+
+.stat-card-normal {
+    background: linear-gradient(135deg, #42a5f5, #1976d2);
+    color: white;
+}
+
+.stat-card-normal .stat-icon {
+    color: #e3f2fd;
+}
+
 #cameraModal .modal-content {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(10px);

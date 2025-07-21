@@ -132,6 +132,7 @@ public class ShippingController {
                 dto.customerName = order.getShippingName();
                 dto.shippingAddress = order.getShippingAddress();
                 dto.shippingPhone = order.getShippingPhone();
+                dto.shippingType = order.getShippingType();
                 dto.orderDate = order.getOrderDate() != null ? order.getOrderDate().toString() : null;
                 // Lấy danh sách sản phẩm, số lượng, số tiền từ bảng order_items
                 List<Object[]> itemRows = orderRepository.findOrderItemDetailsByOrderId(order.getId());
@@ -174,6 +175,7 @@ public class ShippingController {
         public String customerName;
         public String shippingAddress;
         public String shippingPhone;
+        public String shippingType;
     }
 
     public static class ProductItemInfo {

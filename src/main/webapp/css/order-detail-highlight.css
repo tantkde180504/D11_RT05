@@ -1,0 +1,200 @@
+/* Order Detail Highlight Styles - Chỉ cho Staff Dashboard */
+
+/* Style cho tiêu đề "Chi tiết đơn hàng" trong staff dashboard */
+.order-detail-title {
+    background: linear-gradient(135deg, #ff4757, #ff3742, #ff6b6b) !important;
+    color: white !important;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5), 0 0 30px rgba(255, 71, 87, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 800;
+    font-size: 1.4rem;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    display: inline-block;
+    animation: superGlow 2s ease-in-out infinite alternate;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* Hiệu ứng glow siêu nổi bật */
+@keyframes superGlow {
+    0% {
+        box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5), 0 0 30px rgba(255, 71, 87, 0.3);
+        text-shadow: 0 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.4);
+    }
+    50% {
+        box-shadow: 0 10px 35px rgba(255, 71, 87, 0.8), 0 0 50px rgba(255, 71, 87, 0.6), 0 0 80px rgba(255, 71, 87, 0.2);
+        text-shadow: 0 3px 6px rgba(0,0,0,0.3), 0 0 25px rgba(255,255,255,0.6), 0 0 40px rgba(255,71,87,0.4);
+        transform: scale(1.08);
+    }
+    100% {
+        box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5), 0 0 30px rgba(255, 71, 87, 0.3);
+        text-shadow: 0 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.4);
+        transform: scale(1.05);
+    }
+}
+
+/* Hiệu ứng shine siêu sáng */
+.order-detail-title::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6), transparent);
+    animation: superShine 2.5s infinite;
+}
+
+@keyframes superShine {
+    0% { left: -100%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+}
+
+/* Style cho modal header có gradient */
+.modal-header-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: none;
+    padding: 20px 30px;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Style cho nội dung bên trong modal */
+.modal-body {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    padding: 25px;
+}
+
+/* Style cho text trong modal body */
+.modal-body * {
+    color: #333333 !important;
+}
+
+.modal-body h6, .modal-body h5, .modal-body h4 {
+    color: #2c3e50 !important;
+    font-weight: 600;
+}
+
+.modal-body p, .modal-body span, .modal-body div {
+    color: #555555 !important;
+}
+
+/* Style cho table trong modal */
+.modal-body table {
+    color: #333333 !important;
+}
+
+.modal-body table th {
+    color: #2c3e50 !important;
+    background-color: #f8f9fa !important;
+}
+
+.modal-body table td {
+    color: #555555 !important;
+    background-color: #ffffff !important;
+}
+
+/* Style cho card trong modal */
+.modal-body .card {
+    background-color: #ffffff !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.modal-body .card-header {
+    background-color: #f8f9fa !important;
+    color: #2c3e50 !important;
+}
+
+.modal-body .card-body {
+    background-color: #ffffff !important;
+    color: #555555 !important;
+}
+
+/* Style cho badge và label */
+.modal-body .badge {
+    color: #ffffff !important;
+}
+
+.modal-body .text-muted {
+    color: #6c757d !important;
+}
+
+/* Style cho icon trong tiêu đề */
+.order-detail-title i.fas {
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6);
+    margin-right: 10px;
+    font-size: 1.3em;
+    animation: iconGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes iconGlow {
+    0% { 
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6);
+        transform: scale(1);
+    }
+    100% { 
+        text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.8), 0 0 70px rgba(255, 215, 0, 0.4);
+        transform: scale(1.1);
+    }
+}
+
+/* Style cho nút đóng modal */
+.modal-header-gradient .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.modal-header-gradient .btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .order-detail-title {
+        font-size: 1.1rem;
+        padding: 10px 16px;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Override cho mọi element trong modal để đảm bảo text hiển thị */
+#orderDetailModal .modal-body,
+#orderDetailModal .modal-body *:not(.btn):not(.badge) {
+    color: #333333 !important;
+    background-color: transparent !important;
+}
+
+#orderDetailModal .modal-body .btn {
+    color: #ffffff !important;
+}
+
+#orderDetailModal .modal-body strong,
+#orderDetailModal .modal-body b {
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+}
+
+/* Style riêng cho product name và các thông tin quan trọng */
+#orderDetailModal .modal-body .product-name,
+#orderDetailModal .modal-body .order-info {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-size: 1.1em !important;
+}
+
+/* Style cho list items */
+#orderDetailModal .modal-body li {
+    color: #555555 !important;
+    margin-bottom: 5px;
+}

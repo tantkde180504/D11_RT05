@@ -43,7 +43,7 @@
         
         <!-- Dashboard Stats -->
         <div class="row mt-4 mb-4" id="stats-cards">
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-6 mb-3">
                 <div class="stat-card stat-card-pending">
                     <div class="stat-icon">
                         <i class="fas fa-clock"></i>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-6 mb-3">
                 <div class="stat-card stat-card-shipping">
                     <div class="stat-icon">
                         <i class="fas fa-truck"></i>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-6 mb-3">
                 <div class="stat-card stat-card-delivered">
                     <div class="stat-icon">
                         <i class="fas fa-check-circle"></i>
@@ -76,7 +76,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-6 mb-3">
                 <div class="stat-card stat-card-cancelled">
                     <div class="stat-icon">
                         <i class="fas fa-times-circle"></i>
@@ -84,6 +84,28 @@
                     <div class="stat-content">
                         <h3 class="stat-number" id="stat-cancelled">0</h3>
                         <p class="stat-label">Đã hủy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6 mb-3">
+                <div class="stat-card stat-card-express">
+                    <div class="stat-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" id="stat-express">0</h3>
+                        <p class="stat-label">Hỏa tốc</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6 mb-3">
+                <div class="stat-card stat-card-normal">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" id="stat-normal">0</h3>
+                        <p class="stat-label">Thường</p>
                     </div>
                 </div>
             </div>

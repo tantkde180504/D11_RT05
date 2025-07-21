@@ -14,6 +14,7 @@
             rel="stylesheet">
         <link href="css/styles.css" rel="stylesheet">
         <link href="css/staff-styles.css" rel="stylesheet">
+        <link href="css/order-detail-highlight.css" rel="stylesheet">
     </head>
 
     <body class="staff-body">
@@ -495,8 +496,8 @@
                 <div class="modal fade" id="orderDetailModal" tabindex="-1">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Chi tiết đơn hàng</h5>
+                            <div class="modal-header modal-header-gradient">
+                                <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart"></i>Chi tiết đơn hàng</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
@@ -957,8 +958,8 @@
             <div class="modal fade modal-modern" id="orderDetailModal" tabindex="-1">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><i class="fas fa-shopping-cart me-2"></i>Chi tiết đơn hàng
+                        <div class="modal-header modal-header-gradient">
+                            <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart me-2"></i>Chi tiết đơn hàng
                                 #ORD001</h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
