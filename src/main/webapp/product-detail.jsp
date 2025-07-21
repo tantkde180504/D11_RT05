@@ -154,15 +154,18 @@
             </div>
 
             <!-- Product Description -->
-            <div id="productDescription" class="product-description" style="display: none;">
-                <h2 class="section-title">
-                    <i class="fas fa-info-circle me-2"></i>Mô tả sản phẩm
+            <div id="productDescription" style="display: block; margin: 30px 0; padding: 20px; border-radius: 10px;">
+                <h2 style="color: #333; margin-bottom: 20px; font-size: 1.5rem;">
+                    <i class="fas fa-info-circle" style="margin-right: 8px;"></i>Mô tả sản phẩm
                 </h2>
-                <div class="description-content" id="descriptionContent">
-                    <!-- Description will be inserted here -->
+                <div id="descriptionContent" style="min-height: 100px; background: #f8f9fa; padding: 20px; border-radius: 8px; font-size: 16px; line-height: 1.6;">
+                    <p style="color: #666; text-align: center; font-size: 18px; margin: 40px 0;">
+                        <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i>
+                        Đang tải mô tả sản phẩm...
+                    </p>
                 </div>
             </div>
-
+            
             <!-- Product Specifications -->
             <div id="productSpecifications" class="product-specifications" style="display: none;">
                 <h2 class="section-title">
@@ -504,6 +507,9 @@
         
         // Display product information
         function displayProduct(product) {
+            console.log('displayProduct called with product data:', product);
+            console.log('Product description in displayProduct:', product.description);
+            
             // Update page title and breadcrumb
             document.title = product.name + ' - 43 Gundam Hobby';
             document.getElementById('productBreadcrumb').textContent = product.name;
@@ -537,7 +543,6 @@
             
             // Show all sections
             document.getElementById('productMain').style.display = 'block';
-            document.getElementById('productDescription').style.display = 'block';
             document.getElementById('productSpecifications').style.display = 'block';
             
             // Load wishlist status for this product
@@ -619,8 +624,45 @@
         
         // Display product description
         function displayProductDescription(product) {
-            const description = product.description || 'Chưa có mô tả chi tiết cho sản phẩm này.';
-            document.getElementById('descriptionContent').innerHTML = '<p>' + description + '</p>';
+            console.log('=== DISPLAY PRODUCT DESCRIPTION ===');
+            console.log('Product data:', product);
+            console.log('Description value:', product.description);
+            
+            const descriptionElement = document.getElementById('descriptionContent');
+            
+            if (!descriptionElement) {
+                console.error('descriptionContent element not found!');
+                return;
+            }
+            
+            // Clear loading message
+            descriptionElement.innerHTML = '';
+            
+            if (product.description && product.description.trim() !== '') {
+                // Convert newlines to <br> tags
+                const descriptionText = product.description.replace(/\n/g, '<br>');
+                
+                // Display clean description content
+                const descriptionHtml = 
+                    '<div style="color: #333; font-size: 16px; line-height: 1.8; padding: 20px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">' +
+                        descriptionText +
+                    '</div>';
+                
+                descriptionElement.innerHTML = descriptionHtml;
+                console.log('✅ Description displayed successfully');
+            } else {
+                // No description available
+                const placeholderHtml = 
+                    '<div style="text-align: center; padding: 40px; color: #6c757d;">' +
+                        '<i class="fas fa-info-circle" style="font-size: 2em; margin-bottom: 15px; display: block;"></i>' +
+                        '<p style="font-size: 16px; margin: 0;">Chưa có mô tả chi tiết cho sản phẩm này.</p>' +
+                    '</div>';
+                
+                descriptionElement.innerHTML = placeholderHtml;
+                console.log('ℹ️ No description available');
+            }
+            
+            console.log('=== END DISPLAY PRODUCT DESCRIPTION ===');
         }
         
         // Display product specifications
@@ -831,6 +873,28 @@
             document.getElementById('wishlistBtn').addEventListener('click', function() {
                 toggleWishlist();
             });
+            
+            // Debug button for description (remove in production)
+            const debugBtn = document.getElementById('debugDescriptionBtn');
+            if (debugBtn) {
+                debugBtn.addEventListener('click', function() {
+                    const descSection = document.getElementById('productDescription');
+                    const descContent = document.getElementById('descriptionContent');
+                    
+                    console.log('=== DEBUG DESCRIPTION ===');
+                    console.log('Section element:', descSection);
+                    console.log('Content element:', descContent);
+                    console.log('Section display:', descSection.style.display);
+                    console.log('Content innerHTML:', descContent.innerHTML);
+                    
+                    // Force show
+                    descSection.style.display = 'block !important';
+                    descSection.style.visibility = 'visible !important';
+                    descSection.style.opacity = '1 !important';
+                    
+                    alert('Debug info logged to console. Section forced to show.');
+                });
+            }
         }
         
         // Back to top functionality

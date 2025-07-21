@@ -520,6 +520,49 @@
     color: var(--primary-color);
 }
 
+/* Description text styling */
+.description-text {
+    padding: 20px;
+    line-height: 1.8;
+    color: #333;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* Force show product description when it has content */
+.product-description.show-description,
+#productDescription {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override any hiding CSS */
+.product-description {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* No description placeholder styling */
+.no-description {
+    padding: 40px 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.no-description i {
+    font-size: 1.2em;
+    color: #6c757d;
+}
+
+.no-description .text-muted {
+    font-style: italic;
+}
+
 /* Specifications table */
 .product-specifications {
     background: white;
