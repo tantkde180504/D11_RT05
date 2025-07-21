@@ -1,7 +1,10 @@
 <!-- Unified Scripts - Single source for consistent header behavior -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Legacy Cleanup - MUST RUN FIRST to remove old elements -->
+<!-- Anti-Flicker Unified - MUST RUN FIRST to prevent navbar flickering -->
+<script src="<%=request.getContextPath()%>/js/anti-flicker-unified.js"></script>
+
+<!-- Legacy Cleanup - Remove old elements after anti-flicker -->
 <script src="<%=request.getContextPath()%>/js/legacy-navbar-cleanup.js"></script>
 
 <!-- MD5 Library for Gravatar -->
@@ -9,9 +12,6 @@
 
 <!-- Email to Google Converter -->
 <script src="<%=request.getContextPath()%>/js/email-to-google-converter.js"></script>
-
-<!-- Anti-Flicker Unified - LOAD FIRST to prevent navbar flickering -->
-<script src="<%=request.getContextPath()%>/js/anti-flicker-unified.js"></script>
 
 <!-- Unified Navbar Manager - Core navbar logic -->
 <script src="<%=request.getContextPath()%>/js/unified-navbar-manager.js"></script>
@@ -30,6 +30,12 @@
 
 <!-- Search Autocomplete Script -->
 <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+
+<!-- Debug Script for troubleshooting -->
+<script src="<%=request.getContextPath()%>/js/debug-navbar.js"></script>
+
+<!-- UTF-8 Placeholder Fix - Handles Vietnamese text encoding -->
+<script src="<%=request.getContextPath()%>/js/utf8-placeholder-fix.js"></script>
 
 <!-- Context Path Setup -->
 <script>

@@ -28,6 +28,8 @@
 <link href="<%=request.getContextPath()%>/css/z-index-master-fix.css" rel="stylesheet">
 <!-- Profile Sidebar Enhancement -->
 <link href="<%=request.getContextPath()%>/css/profile-sidebar-enhanced.css" rel="stylesheet">
+<!-- Policy Pages Styling -->
+<link href="<%=request.getContextPath()%>/css/policy-pages.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">

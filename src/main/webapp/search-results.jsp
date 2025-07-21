@@ -7,123 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết quả tìm kiếm - Gundam Hobby</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/modern-ecommerce.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/modern-header.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/header-z-index-fix.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Unified CSS -->
+    <jsp:include page="includes/unified-css.jsp" />
 </head>
 <body>
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top modern-header">
-        <div class="container">
-            <div class="row align-items-center py-3">
-                <!-- Logo Section with Hamburger Menu -->
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="header-logo-section">
-                        <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu modern-hamburger" id="hamburgerBtn" aria-label="Menu">
-                            <span class="line"></span>
-                            <span class="line"></span>
-                            <span class="line"></span>
-                        </button>
-                        
-                        <div class="logo modern-logo">
-                            <a href="<%=request.getContextPath()%>/">
-                                <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
-                                <div class="logo-glow"></div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
-                    <div class="header-center-section">
-                        <div class="search-container w-100 modern-search">
-                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
-                                <div class="input-group modern-input-group">
-                                    <span class="input-group-text search-icon">
-                                        <i class="fas fa-search"></i>
-                                    </span>
-                                    <input type="text" name="q" class="form-control search-input modern-search-input" 
-                                           placeholder="Tìm kiếm sản phẩm Gundam..." id="headerSearchInput" autocomplete="off">
-                                    <button class="btn btn-search modern-search-btn" type="submit">
-                                        <i class="fas fa-rocket"></i>
-                                        <span class="btn-text">Tìm</span>
-                                    </button>
-                                </div>
-                                <!-- Autocomplete suggestions -->
-                                <div id="headerSearchSuggestions" class="search-suggestions modern-suggestions"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section modern-actions">
-                        <div class="account-menu me-3">
-                            <!-- Unified Account Button -->
-                            <div id="unified-account-menu">
-                                <div class="dropdown">
-                                    <!-- This button will dynamically change based on login state -->
-                                    <a href="#" class="btn btn-outline-primary dropdown-toggle modern-account-btn" 
-                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <!-- Content will be updated by JavaScript -->
-                                        <i class="fas fa-user me-1"></i>
-                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
-                                        <div class="btn-ripple"></div>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end modern-dropdown" id="unifiedAccountDropdownMenu">
-                                        <!-- Menu items will be updated by JavaScript -->
-                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                        </a></li>
-                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
-                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
-                            <a href="#" class="btn btn-warning modern-work-btn" id="workDashboardLink">
-                                <i class="fas fa-briefcase me-1"></i>
-                                <span class="d-none d-lg-inline">Trang làm việc</span>
-                                <div class="btn-ripple"></div>
-                            </a>
-                        </div>
-                        <div class="cart-btn">
-                            <a href="cart.jsp" class="btn btn-primary modern-cart-btn">
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count modern-cart-count">0</span>
-                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
-                                <div class="btn-ripple"></div>
-                                <div class="cart-notification" id="cartNotification"></div>
-                            </a>
-                        </div>                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-shadow"></div>
-    </header>
-
+    <!-- Unified Header -->
+    <jsp:include page="includes/unified-header.jsp" />
+    
     <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
@@ -153,8 +43,8 @@
                     <div class="col-md-3">
                         <div class="filter-group">
                             <label for="searchQuery">Từ khóa tìm kiếm</label>
-                            <input type="text" class="form-control" id="searchQuery" name="q" 
-                                   value="${query}" placeholder="Nhập từ khóa...">
+                            <input type="text" class="form-control" name="q" 
+                                   value="${query}" placeholder="" id="search-keyword">
                         </div>
                     </div>
                     
@@ -175,10 +65,10 @@
                             <label>Khoảng giá (VNĐ)</label>
                             <div class="price-range">
                                 <input type="number" class="form-control price-input" name="minPrice" 
-                                       value="${minPrice}" placeholder="Từ" min="0">
+                                       value="${minPrice}" placeholder="" id="price-from" min="0">
                                 <span>-</span>
                                 <input type="number" class="form-control price-input" name="maxPrice" 
-                                       value="${maxPrice}" placeholder="Đến" min="0">
+                                       value="${maxPrice}" placeholder="" id="price-to" min="0">
                             </div>
                         </div>
                     </div>
@@ -259,11 +149,8 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Search Autocomplete Script -->
-    <script src="<%=request.getContextPath()%>/js/search-autocomplete.js"></script>
+    <!-- Unified Scripts -->
+    <jsp:include page="includes/unified-scripts.jsp" />
     
     <script>
         // Search functionality
@@ -610,35 +497,6 @@
             position: relative;
         }
     </style>
-    
-    <!-- Avatar Utils -->
-    <script src="<%=request.getContextPath()%>/js/avatar-utils.js"></script>
-    
-    <!-- Authentication and Navbar Scripts -->
-    <script src="<%=request.getContextPath()%>/js/auth-sync.js"></script>
-    <script src="<%=request.getContextPath()%>/js/navbar-manager.js"></script>
-    <script src="<%=request.getContextPath()%>/js/google-oauth-clean.js"></script>
-    <script src="<%=request.getContextPath()%>/js/navbar-fix.js"></script>
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
-    
-    <!-- Force check auth state after page load -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Force check auth state multiple times to ensure sync
-            setTimeout(() => {
-                if (window.authSyncManager) {
-                    window.authSyncManager.forceRefresh();
-                }
-            }, 100);
-            
-            setTimeout(() => {
-                if (window.authSyncManager) {
-                    window.authSyncManager.forceRefresh();
-                }
-            }, 500);
-        });
-    </script>
-    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
 </body>
 </html>
 

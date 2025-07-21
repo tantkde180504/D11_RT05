@@ -5,123 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>43 Gundam Hobby - Quên mật khẩu</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/layout-sizing.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-fix.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/account-menu-fix.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/modern-ecommerce.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/modern-header.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/header-z-index-fix.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Unified CSS -->
+    <jsp:include page="includes/unified-css.jsp" />
 </head>
 <body>
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top modern-header">
-        <div class="container">
-            <div class="row align-items-center py-3">
-                <!-- Logo Section with Hamburger Menu -->
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="header-logo-section">
-                        <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu modern-hamburger" id="hamburgerBtn" aria-label="Menu">
-                            <span class="line"></span>
-                            <span class="line"></span>
-                            <span class="line"></span>
-                        </button>
-                        
-                        <div class="logo modern-logo">
-                            <a href="<%=request.getContextPath()%>/">
-                                <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
-                                <div class="logo-glow"></div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
-                    <div class="header-center-section">
-                        <div class="search-container w-100 modern-search">
-                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get" id="headerSearchForm">
-                                <div class="input-group modern-input-group">
-                                    <span class="input-group-text search-icon">
-                                        <i class="fas fa-search"></i>
-                                    </span>
-                                    <input type="text" name="q" class="form-control search-input modern-search-input" 
-                                           placeholder="Tìm kiếm sản phẩm Gundam..." id="headerSearchInput" autocomplete="off">
-                                    <button class="btn btn-search modern-search-btn" type="submit">
-                                        <i class="fas fa-rocket"></i>
-                                        <span class="btn-text">Tìm</span>
-                                    </button>
-                                </div>
-                                <!-- Autocomplete suggestions -->
-                                <div id="headerSearchSuggestions" class="search-suggestions modern-suggestions"></div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section modern-actions">
-                        <div class="account-menu me-3">
-                            <!-- Unified Account Button -->
-                            <div id="unified-account-menu">
-                                <div class="dropdown">
-                                    <!-- This button will dynamically change based on login state -->
-                                    <a href="#" class="btn btn-outline-primary dropdown-toggle modern-account-btn" 
-                                       id="unifiedAccountDropdown" role="button" data-bs-toggle="dropdown">
-                                        <!-- Content will be updated by JavaScript -->
-                                        <i class="fas fa-user me-1"></i>
-                                        <span class="account-text d-none d-md-inline">Tài khoản</span>
-                                        <div class="btn-ripple"></div>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end modern-dropdown" id="unifiedAccountDropdownMenu">
-                                        <!-- Menu items will be updated by JavaScript -->
-                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                        </a></li>
-                                        <li><a class="dropdown-item modern-dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                            <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                        </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Work Dashboard Button (for staff/admin/shipper) -->
-                        <div class="work-dashboard-btn me-3" id="workDashboardBtn" style="display: none;">
-                            <a href="#" class="btn btn-warning modern-work-btn" id="workDashboardLink">
-                                <i class="fas fa-briefcase me-1"></i>
-                                <span class="d-none d-lg-inline">Trang làm việc</span>
-                                <div class="btn-ripple"></div>
-                            </a>
-                        </div>
-                        <div class="cart-btn">
-                            <a href="cart.jsp" class="btn btn-primary modern-cart-btn">
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count modern-cart-count">0</span>
-                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
-                                <div class="btn-ripple"></div>
-                                <div class="cart-notification" id="cartNotification"></div>
-                            </a>
-                        </div>                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-shadow"></div>
-    </header>
-
+    <!-- Unified Header -->
+    <jsp:include page="includes/unified-header.jsp" />
+    
     <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
@@ -137,7 +27,7 @@
             <form id="forgotPasswordForm" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
-                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off" placeholder="Nhập email đã đăng ký">
+                    <input type="email" class="form-control" name="email" required autocomplete="off" placeholder="" id="email-register">
                 </div>
                 <button type="submit" class="btn btn-login w-100">Gửi mã OTP</button>
             </form>
@@ -160,8 +50,8 @@
             <form id="otpVerificationForm" autocomplete="off">
                 <div class="mb-3">
                     <label for="otp" class="form-label">Mã OTP *</label>
-                    <input type="text" class="form-control text-center" id="otp" name="otp" required 
-                           maxlength="6" pattern="[0-9]{6}" placeholder="Nhập 6 chữ số" 
+                    <input type="text" class="form-control text-center" name="otp" required 
+                           maxlength="6" pattern="[0-9]{6}" placeholder="" id="otp-input" 
                            style="letter-spacing: 0.5em; font-size: 1.2rem;">
                     <div class="form-text">Vui lòng nhập mã OTP gồm 6 chữ số</div>
                 </div>
@@ -354,16 +244,10 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Context Path Setup -->
-    <script>
-        window.contextPath = '<%=request.getContextPath()%>';
-        console.log('🔧 Context path set to:', window.contextPath);
-    </script>
+    <!-- Unified Scripts -->
+    <jsp:include page="includes/unified-scripts.jsp" />
     
     <script src="<%=request.getContextPath()%>/js/forgot-password.js"></script>
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script>
         // Back to top functionality
         const backToTopBtn = document.getElementById('backToTop');
@@ -383,7 +267,6 @@
             });
         });
     </script>
-    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
 </body>
 </html>
 

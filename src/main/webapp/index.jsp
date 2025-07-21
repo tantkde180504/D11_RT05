@@ -70,7 +70,7 @@
                                         <i class="fas fa-search"></i>
                                     </span>
                                     <input type="text" name="q" class="form-control search-input modern-search-input" 
-                                           placeholder="Tìm kiếm sản phẩm Gundam..." id="headerSearchInput" autocomplete="off">
+                                           placeholder="" id="headerSearchInput" autocomplete="off">
                                     <button class="btn btn-search modern-search-btn" type="submit">
                                         <i class="fas fa-rocket"></i>
                                         <span class="btn-text">Tìm</span>
@@ -739,6 +739,14 @@
     <script>
         window.contextPath = '<%=request.getContextPath()%>';
         console.log('Context path set to:', window.contextPath);
+        
+        // Set Vietnamese placeholder correctly
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('headerSearchInput');
+            if (searchInput) {
+                searchInput.placeholder = 'Tìm kiếm sản phẩm Gundam...';
+            }
+        });
     </script>
     
     <!-- Basic page functionality -->

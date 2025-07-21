@@ -829,7 +829,6 @@
             }, 500);
         });
     </script>
-    <script src="<%=request.getContextPath()%>/js/modern-header.js"></script>
 </body>
 </html>
 

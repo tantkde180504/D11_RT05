@@ -298,34 +298,9 @@ window.addEventListener('pageshow', function(event) {
     }
 });
 </script>
-<!-- JS imports từ index.jsp cho header -->
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/legacy-navbar-cleanup.js"></script>
-<script src="js/anti-flicker-unified.js"></script>
-<script src="js/unified-navbar-manager.js"></script>
-<script src="js/hamburger-menu.js"></script>
-<script src="js/navbar-darkmode.js"></script>
-<script src="js/navbar-bg-orange.js"></script>
-<script src="js/navbar-bg-scroll.js"></script>
-<script src="js/navbar-mobile-sidebar.js"></script>
-<script src="js/navbar-account-menu.js"></script>
-<script src="js/navbar-cart-button.js"></script>
-<script src="js/navbar-search.js"></script>
-<script src="js/navbar-search-voice.js"></script>
-<script src="js/navbar-search-history.js"></script>
-<script src="js/navbar-search-suggestions.js"></script>
-<script src="js/navbar-search-mobile.js"></script>
-<script src="js/navbar-search-mobile-history.js"></script>
-<script src="js/navbar-search-mobile-suggestions.js"></script>
-<script src="js/navbar-search-mobile-voice.js"></script>
-<script src="js/navbar-search-mobile-clear.js"></script>
-<script src="js/navbar-search-mobile-focus.js"></script>
-<script src="js/navbar-search-mobile-placeholder.js"></script>
-<script src="js/navbar-search-mobile-submit.js"></script>
-<script src="js/navbar-search-mobile-expand.js"></script>
-<script src="js/navbar-search-mobile-collapse.js"></script>
-<script src="js/navbar-search-mobile-anti-flicker.js"></script>
-<script src="js/navbar-search-mobile-unified.js"></script>
-<!-- Kết thúc JS imports header -->
+
+<!-- Unified Scripts -->
+<%@ include file="/includes/unified-scripts.jsp" %>
+
 </body>
 </html>
