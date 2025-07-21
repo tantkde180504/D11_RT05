@@ -1021,6 +1021,33 @@ function viewComplaintDetail(complaintCode) {
             const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
             modal.show();
         })
+        .then(() => {
+            // Sau khi hiển thị thông tin khiếu nại, load file đính kèm
+            const gallery = document.getElementById('complaint-media-gallery');
+            gallery.innerHTML = '<div class="text-muted">Đang tải file đính kèm...</div>';
+            fetch(`/api/complaints/${complaintCode}/attachments`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success || !Array.isArray(data.files) || data.files.length === 0) {
+                        gallery.innerHTML = '<div class="text-muted">Không có file đính kèm.</div>';
+                        return;
+                    }
+                    let html = '';
+                    data.files.forEach(url => {
+                        if (url.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                            html += `<a href="${url}" target="_blank"><img src="${url}" style="max-width:120px;max-height:120px;border-radius:8px;object-fit:cover;" class="border me-2 mb-2"></a>`;
+                        } else if (url.match(/\.(mp4|webm|ogg)$/i)) {
+                            html += `<video src="${url}" controls style="max-width:160px;max-height:120px;display:inline-block;border-radius:8px;" class="me-2 mb-2"></video>`;
+                        } else {
+                            html += `<a href="${url}" target="_blank">${url}</a>`;
+                        }
+                    });
+                    gallery.innerHTML = html;
+                })
+                .catch(() => {
+                    gallery.innerHTML = '<div class="text-danger">Lỗi tải file đính kèm.</div>';
+                });
+        })
         .catch(err => {
             console.error('Lỗi tải chi tiết khiếu nại:', err);
             showErrorMessage('Lỗi tải chi tiết khiếu nại');

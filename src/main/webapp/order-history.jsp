@@ -191,17 +191,28 @@
                     const orderId = document.getElementById('complaintOrderId').value;
                     const category = document.getElementById('complaintCategory').value.trim();
                     const content = document.getElementById('complaintContent').value.trim();
+                    const mediaInput = document.getElementById('complaintMedia');
 
                     if (!content) {
                         alert('Vui lòng nhập nội dung khiếu nại!');
                         return;
                     }
 
+                    const formData = new FormData();
+                    formData.append('orderId', orderId);
+                    formData.append('category', category);
+                    formData.append('content', content);
+                    // Thêm các file nếu có
+                    if (mediaInput && mediaInput.files && mediaInput.files.length > 0) {
+                        for (let i = 0; i < mediaInput.files.length; i++) {
+                            formData.append('mediaFiles', mediaInput.files[i]);
+                        }
+                    }
+
                     try {
                         const resp = await fetch('/api/complaints/create', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ orderId, category, content })
+                            body: formData
                         });
                         const data = await resp.json();
                         if (data.success) {

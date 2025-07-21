@@ -104,9 +104,15 @@ public class ComplaintController {
     }
 
     // API 3: Gửi khiếu nại mới
-    @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<?> createComplaint(HttpServletRequest request, @RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> createComplaint(
+            HttpServletRequest request,
+            @RequestParam("orderId") String orderIdStr,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam("content") String content,
+            @RequestParam(value = "mediaFiles", required = false) List<org.springframework.web.multipart.MultipartFile> mediaFiles
+    ) {
         Map<String, Object> resp = new HashMap<>();
         HttpSession session = request.getSession(false);
         Object sessionValue = (session != null) ? session.getAttribute("userId") : null;
@@ -144,9 +150,11 @@ public class ComplaintController {
         }
 
         try {
-            Long orderId = Long.valueOf(payload.get("orderId"));
-            String category = payload.getOrDefault("category", "").trim();
-            String content = payload.getOrDefault("content", "").trim();
+            Long orderId = Long.valueOf(orderIdStr);
+            if (category == null) category = "";
+            if (content == null) content = "";
+            category = category.trim();
+            content = content.trim();
 
             if (content.isEmpty()) {
                 resp.put("success", false);
@@ -165,7 +173,7 @@ public class ComplaintController {
                 return ResponseEntity.ok(resp);
             }
 
-            String complaintCode = "CP" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+            String complaintCode = "CP" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
             String insertSql = "INSERT INTO complaints (complaint_code, user_id, order_id, category, content, status, created_at, updated_at) "
                     +
                     "VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?)";
@@ -176,9 +184,29 @@ public class ComplaintController {
                     .setParameter(3, orderId)
                     .setParameter(4, category)
                     .setParameter(5, content)
-                    .setParameter(6, Timestamp.valueOf(LocalDateTime.now()))
-                    .setParameter(7, Timestamp.valueOf(LocalDateTime.now()))
+                    .setParameter(6, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()))
+                    .setParameter(7, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()))
                     .executeUpdate();
+
+            // Lưu file upload nếu có
+            if (mediaFiles != null && !mediaFiles.isEmpty()) {
+                String uploadDir = "src/main/webapp/uploads/complaints/" + complaintCode;
+                java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
+                if (!java.nio.file.Files.exists(uploadPath)) {
+                    java.nio.file.Files.createDirectories(uploadPath);
+                }
+                for (org.springframework.web.multipart.MultipartFile file : mediaFiles) {
+                    if (file.isEmpty()) continue;
+                    String originalFilename = file.getOriginalFilename();
+                    String ext = "";
+                    if (originalFilename != null && originalFilename.contains(".")) {
+                        ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    }
+                    String uniqueFilename = System.currentTimeMillis() + "_" + java.util.UUID.randomUUID().toString().substring(0, 8) + ext;
+                    java.nio.file.Path filePath = uploadPath.resolve(uniqueFilename);
+                    java.nio.file.Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
 
             resp.put("success", true);
             resp.put("message", "Gửi khiếu nại thành công!");
@@ -254,6 +282,35 @@ public class ComplaintController {
             errorResponse.put("success", false);
             errorResponse.put("message", "Lỗi máy chủ: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // API: Lấy danh sách file đính kèm của khiếu nại
+    @GetMapping(path = "/{complaintCode}/attachments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getComplaintAttachments(@PathVariable("complaintCode") String complaintCode) {
+        try {
+            String uploadDir = "src/main/webapp/uploads/complaints/" + complaintCode;
+            java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
+            java.util.List<String> fileUrls = new java.util.ArrayList<>();
+            if (java.nio.file.Files.exists(uploadPath) && java.nio.file.Files.isDirectory(uploadPath)) {
+                java.nio.file.DirectoryStream<java.nio.file.Path> stream = java.nio.file.Files.newDirectoryStream(uploadPath);
+                for (java.nio.file.Path file : stream) {
+                    String fileName = file.getFileName().toString();
+                    String url = "/uploads/complaints/" + complaintCode + "/" + fileName;
+                    fileUrls.add(url);
+                }
+                stream.close();
+            }
+            java.util.Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", true);
+            resp.put("files", fileUrls);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            java.util.Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", false);
+            resp.put("message", "Lỗi khi lấy file đính kèm: " + e.getMessage());
+            return ResponseEntity.status(500).body(resp);
         }
     }
 
