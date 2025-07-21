@@ -10,10 +10,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh toán đơn hàng | 43 Gundam Hobby</title>
     <%@ include file="/includes/unified-css.jsp" %>
+    
 </head>
 
 <body style="background:#f5f5f5;">
     <!-- Header Section -->
+     
     <%@ include file="/includes/unified-header.jsp" %>
 
     <div class="container mt-4">
@@ -29,66 +31,89 @@
         console.log('URL params:', window.location.search);
     </script>
         <div class="row justify-content-center">
-            <div class="col-lg-7">
-                <div class="checkout-section mb-4">
-                    <div class="checkout-title"><i class="fas fa-receipt me-2"></i>Thông tin thanh toán</div>
-                    <form id="checkout-form">
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" placeholder="Nhập họ và tên" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" placeholder="Nhập số điện thoại" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" placeholder="Nhập địa chỉ nhận hàng" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ghi chú đơn hàng</label>
-                            <textarea class="form-control" rows="3" placeholder="Ghi chú thêm (nếu có)"></textarea>
-                        </div>
-                        <div class="mb-4 payment-method">
-                            <label class="form-label mb-2">Phương thức thanh toán</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="payment" id="cod" checked>
-                                <label class="form-check-label" for="cod">
-                                    Thanh toán khi nhận hàng (COD)
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="payment" id="bank">
-                                <label class="form-check-label" for="bank">
-                                    Thanh toán qua PayOS
-                                </label>
-                            </div>
-                            <div id="payos-section" class="mt-3" style="display:none;">
-                                <div class="alert alert-info py-2 mb-2">
-                                    <i class="fas fa-credit-card me-2"></i>
-                                    Bạn sẽ được chuyển đến cổng thanh toán PayOS để hoàn tất giao dịch.
+            <div class="col-lg-7 mb-4">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <h4 class="mb-0 fw-bold text-primary"><i class="fas fa-receipt me-2"></i>Thông tin thanh toán</h4>
+                    </div>
+                    <div class="card-body pt-3">
+                        <form id="checkout-form">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control rounded-3" placeholder="Nhập họ và tên" required>
                                 </div>
-                                <div class="text-center">
-                                    <img src="https://docs.payos.vn/img/logo.svg" 
-                                         alt="PayOS Logo" style="max-width:150px;">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control rounded-3" placeholder="Nhập số điện thoại" required>
                                 </div>
                             </div>
-                        </div>
-                        <button type="submit" class="btn btn-danger w-100 py-2 fs-5">Đặt hàng</button>
-                    </form>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control rounded-3" placeholder="Nhập địa chỉ nhận hàng" required id="checkoutAddressInput">
+                                    <button type="button" class="btn btn-outline-primary" id="chooseAddressBtn" title="Chọn từ sổ địa chỉ">
+                                        <i class="fas fa-book me-1"></i> Sổ địa chỉ
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="shippingTypeSection" style="display:none" class="mb-3">
+                                <label class="form-label">Chọn loại giao hàng:</label>
+                                <div>
+                                    <input type="radio" id="fastShipping" name="shippingType" value="hỏa tốc" checked>
+                                    <label for="fastShipping">Giao hỏa tốc (trong ngày)</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="normalShipping" name="shippingType" value="thường">
+                                    <label for="normalShipping">Giao hàng thường</label>
+                                </div>
+                            </div>
+                            <div id="shippingTypeNotice" class="alert alert-info" style="display:none"></div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Ghi chú đơn hàng</label>
+                                <textarea class="form-control rounded-3" rows="3" placeholder="Ghi chú thêm (nếu có)"></textarea>
+                            </div>
+                            <div class="mb-4 payment-method">
+                                <label class="form-label fw-semibold mb-2">Phương thức thanh toán</label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="payment" id="cod" checked>
+                                        <label class="form-check-label" for="cod">
+                                            <i class="fas fa-money-bill-wave me-1 text-success"></i> Thanh toán khi nhận hàng (COD)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="payment" id="bank">
+                                        <label class="form-check-label" for="bank">
+                                            <i class="fas fa-credit-card me-1 text-primary"></i> Thanh toán qua PayOS
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="payos-section" class="mt-3" style="display:none;">
+                                    <div class="alert alert-info py-2 mb-2 rounded-3">
+                                        <i class="fas fa-credit-card me-2"></i>
+                                        Bạn sẽ được chuyển đến cổng thanh toán PayOS để hoàn tất giao dịch.
+                                    </div>                                  
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger w-100 py-3 fs-5 rounded-3 shadow-sm">Đặt hàng</button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-lg-5">
-                <div class="order-summary shadow-sm mb-4">
-                    <h5 class="mb-3"><i class="fas fa-list-ul me-2"></i>Đơn hàng của bạn</h5>
-                    <div id="order-summary-list">
-                        <div class="text-muted">Đang tải giỏ hàng...</div>
+            <div class="col-lg-5 mb-4">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <h4 class="mb-0 fw-bold text-primary"><i class="fas fa-list-ul me-2"></i>Đơn hàng của bạn</h4>
+                    </div>
+                    <div class="card-body pt-3">
+                        <div id="order-summary-list">
+                            <div class="text-muted">Đang tải giỏ hàng...</div>
+                        </div>
                     </div>
                 </div>
-                <a href="#" class="btn btn-outline-secondary w-100" onclick="goBackToPrevious()">
+                <a href="cart.jsp" class="btn btn-outline-secondary w-100 mt-3 rounded-3 shadow-sm" onclick="goBackToPrevious()">
                     <i class="fas fa-arrow-left me-1"></i>
                     <span id="backButtonText">Quay lại giỏ hàng</span>
                 </a>
@@ -114,6 +139,21 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Modal chọn địa chỉ giao hàng -->
+    <div class="modal fade" id="addressBookModal" tabindex="-1" aria-labelledby="addressBookModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addressBookModalLabel">Chọn địa chỉ giao hàng</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+          </div>
+          <div class="modal-body" id="addressBookList">
+            <!-- Danh sách địa chỉ sẽ được render ở đây -->
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -213,6 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Cart mode - Payload being sent:', payload);
             }
             
+            // Lấy loại giao hàng từ form
+            let shippingTypeInput = document.querySelector('input[name="shippingType"]:checked');
+            let shippingType = shippingTypeInput ? shippingTypeInput.value : null;
+            payload.shippingType = shippingType;
+
             // Gửi request đến API
             console.log('Sending payment request with payload:', payload);
             
@@ -492,6 +537,70 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Timeout - rendering order summary again...');
         renderOrderSummary();
     }, 100);
+
+    const nameInput = document.querySelector('input[placeholder="Nhập họ và tên"]');
+    const phoneInput = document.querySelector('input[placeholder="Nhập số điện thoại"]');
+    const addressInput = document.getElementById('checkoutAddressInput');
+    const chooseBtn = document.getElementById('chooseAddressBtn');
+
+    // Chọn địa chỉ từ sổ địa chỉ và autofill
+    chooseBtn.addEventListener('click', async function() {
+        try {
+            const resp = await fetch('/api/addresses');
+            const data = await resp.json();
+            let html = '';
+            if (data.success && Array.isArray(data.addresses) && data.addresses.length > 0) {
+                data.addresses.forEach(addr => {
+                    const fullAddress = (addr.houseNumber || '') + ', ' + (addr.ward || '') + ', ' + (addr.district || '') + ', ' + (addr.province || '');
+                    const addrStr = encodeURIComponent(JSON.stringify(addr));
+                    html +=
+                        "<div class='card mb-2'><div class='card-body'>" +
+                        "<div><strong>" + (addr.recipientName || '') + "</strong> - " + (addr.phone || '') + "</div>" +
+                        "<div>" + fullAddress + "</div>" +
+                        "<button class='btn btn-sm btn-primary mt-2' onclick='window.selectAddressForCheckout(\"" + addrStr + "\")'>Chọn địa chỉ này</button>" +
+                        "</div></div>";
+                });
+            } else {
+                html = '<div class="alert alert-info">Bạn chưa có địa chỉ nào trong sổ địa chỉ.</div>';
+            }
+            document.getElementById('addressBookList').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('addressBookModal')).show();
+        } catch (e) {
+            document.getElementById('addressBookList').innerHTML = '<div class="alert alert-danger">Không thể tải sổ địa chỉ!</div>';
+            new bootstrap.Modal(document.getElementById('addressBookModal')).show();
+        }
+    });
+
+    // Hàm kiểm tra và hiện/ẩn vùng chọn loại giao hàng
+    function checkShippingTypeByProvince(province) {
+        const shippingSection = document.getElementById('shippingTypeSection');
+        const notice = document.getElementById('shippingTypeNotice');
+        if (province && province.trim().toLowerCase() === 'đà nẵng') {
+            shippingSection.style.display = '';
+            notice.style.display = 'none';
+        } else {
+            shippingSection.style.display = 'none';
+            notice.style.display = '';
+            notice.textContent = 'Chỉ áp dụng giao hỏa tốc cho đơn hàng tại Đà Nẵng.';
+        }
+    }
+
+    // Khi chọn địa chỉ từ sổ địa chỉ
+    window.selectAddressForCheckout = function(addrStr) {
+        const addr = JSON.parse(decodeURIComponent(addrStr));
+        if (nameInput) nameInput.value = addr.recipientName || '';
+        if (phoneInput) phoneInput.value = addr.phone || '';
+        if (addressInput) addressInput.value = (addr.houseNumber || '') + ', ' + (addr.ward || '') + ', ' + (addr.district || '') + ', ' + (addr.province || '');
+        checkShippingTypeByProvince(addr.province);
+        bootstrap.Modal.getInstance(document.getElementById('addressBookModal')).hide();
+    };
+
+    // Khi nhập tay địa chỉ
+    addressInput.addEventListener('blur', function() {
+        const val = this.value;
+        const province = val.split(',').pop().trim();
+        checkShippingTypeByProvince(province);
+    });
 });
 </script>
 </div> <!-- End container -->
@@ -499,7 +608,3 @@ document.addEventListener('DOMContentLoaded', function() {
 <%@ include file="/includes/unified-scripts.jsp" %>
 </body>
 </html>
-
-
-
-

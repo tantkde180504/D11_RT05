@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.*, com.mycompany.model.CartItem" %>
 <%
     List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
@@ -12,10 +12,13 @@
     <link rel="stylesheet" href="css/layout-sizing.css">
     <link rel="stylesheet" href="css/cart.css">
     <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <%@ include file="/includes/unified-css.jsp" %>
 </head>
 <body>
+    <%@ include file="/includes/unified-header.jsp" %>
     
-<div class="cart-container">
+    <div class="cart-container">
     <div class="cart-title">Giỏ hàng của bạn</div>
     <table class="cart-table" width="100%">
         <thead>
@@ -295,5 +298,34 @@ window.addEventListener('pageshow', function(event) {
     }
 });
 </script>
+<!-- JS imports từ index.jsp cho header -->
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/legacy-navbar-cleanup.js"></script>
+<script src="js/anti-flicker-unified.js"></script>
+<script src="js/unified-navbar-manager.js"></script>
+<script src="js/hamburger-menu.js"></script>
+<script src="js/navbar-darkmode.js"></script>
+<script src="js/navbar-bg-orange.js"></script>
+<script src="js/navbar-bg-scroll.js"></script>
+<script src="js/navbar-mobile-sidebar.js"></script>
+<script src="js/navbar-account-menu.js"></script>
+<script src="js/navbar-cart-button.js"></script>
+<script src="js/navbar-search.js"></script>
+<script src="js/navbar-search-voice.js"></script>
+<script src="js/navbar-search-history.js"></script>
+<script src="js/navbar-search-suggestions.js"></script>
+<script src="js/navbar-search-mobile.js"></script>
+<script src="js/navbar-search-mobile-history.js"></script>
+<script src="js/navbar-search-mobile-suggestions.js"></script>
+<script src="js/navbar-search-mobile-voice.js"></script>
+<script src="js/navbar-search-mobile-clear.js"></script>
+<script src="js/navbar-search-mobile-focus.js"></script>
+<script src="js/navbar-search-mobile-placeholder.js"></script>
+<script src="js/navbar-search-mobile-submit.js"></script>
+<script src="js/navbar-search-mobile-expand.js"></script>
+<script src="js/navbar-search-mobile-collapse.js"></script>
+<script src="js/navbar-search-mobile-anti-flicker.js"></script>
+<script src="js/navbar-search-mobile-unified.js"></script>
+<!-- Kết thúc JS imports header -->
 </body>
 </html>

@@ -73,6 +73,7 @@ public class PaymentController {
             String address = (String) payload.getOrDefault("address", "");
             String note = (String) payload.getOrDefault("note", "");
             String paymentMethod = (String) payload.getOrDefault("paymentMethod", "COD");
+            String shippingType = (String) payload.getOrDefault("shippingType", null);
             
             // Kiểm tra chế độ mua hàng
             Boolean buyNowMode = (Boolean) payload.getOrDefault("buyNowMode", false);
@@ -214,6 +215,7 @@ public class PaymentController {
                 } else {
                     System.out.println("No selectedIds to save. buyNowMode: " + buyNowMode + ", selectedIds: " + selectedIds);
                 }
+            order.setShippingType(shippingType);
 
             String orderNumber = "ORD" + String.format("%06d", System.currentTimeMillis() % 1000000);
             order.setOrderNumber(orderNumber);

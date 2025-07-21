@@ -49,6 +49,9 @@ public class Order {
     @Column(name = "notes")
     private String notes;
 
+    @Column(name = "shipping_type")
+    private String shippingType;
+
     // Trường tạm để hiển thị nếu không dùng DTO
     @Transient
     private String productName;
@@ -71,6 +74,7 @@ public class Order {
     public LocalDateTime getShippedDate() { return shippedDate; }
     public LocalDateTime getDeliveredDate() { return deliveredDate; }
     public String getNotes() { return notes; }
+    public String getShippingType() { return shippingType; }
     public String getProductName() { return productName; }
     public List<OrderItem> getOrderItems() { return orderItems; }
 
@@ -88,6 +92,7 @@ public void setShippingName(String shippingName) { this.shippingName = shippingN
     public void setShippedDate(LocalDateTime shippedDate) { this.shippedDate = shippedDate; }
     public void setDeliveredDate(LocalDateTime deliveredDate) { this.deliveredDate = deliveredDate; }
     public void setNotes(String notes) { this.notes = notes; }
+    public void setShippingType(String shippingType) { this.shippingType = shippingType; }
     public void setProductName(String productName) { this.productName = productName; }
     public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 }
