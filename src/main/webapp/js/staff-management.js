@@ -181,7 +181,26 @@ function loadStaffList() {
       console.log("📦 Dữ liệu trả về:", data);
       // Store data in global variable for filtering
       staffList = data;
-      // Apply current filters
+      // Reset filter UI và biến filter về mặc định
+      currentStaffFilters = {
+        search: '',
+        role: '',
+        status: '',
+        joinDate: '',
+        sort: 'id_asc'
+      };
+      var staffSearchInput = document.getElementById('staffSearchInput');
+      if (staffSearchInput) staffSearchInput.value = '';
+      var roleFilter = document.getElementById('roleFilter');
+      if (roleFilter) roleFilter.value = '';
+      var staffStatusFilter = document.getElementById('staffStatusFilter');
+      if (staffStatusFilter) staffStatusFilter.value = '';
+      var joinDateFilter = document.getElementById('joinDateFilter');
+      if (joinDateFilter) joinDateFilter.value = '';
+      var staffSortFilter = document.getElementById('staffSortFilter');
+      if (staffSortFilter) staffSortFilter.value = 'id_asc';
+      if (typeof updateStaffActiveFilters === 'function') updateStaffActiveFilters();
+      // Apply lại filter mặc định
       applyStaffFilters();
     })
     .catch(err => {
@@ -637,13 +656,24 @@ function resetAllStaffFilters() {
         joinDate: '',
         sort: 'id_asc'
     };
-    
-    // Reset form elements
-    document.getElementById('staffSearchInput').value = '';
-    document.getElementById('roleFilter').value = '';
-    document.getElementById('staffStatusFilter').value = '';
-    document.getElementById('joinDateFilter').value = '';
-    document.getElementById('staffSortFilter').value = 'id_asc';
-    
-    applyStaffFilters();
+    // Reset form elements an toàn
+    var staffSearchInput = document.getElementById('staffSearchInput');
+    if (staffSearchInput) staffSearchInput.value = '';
+    var roleFilter = document.getElementById('roleFilter');
+    if (roleFilter) roleFilter.value = '';
+    var staffStatusFilter = document.getElementById('staffStatusFilter');
+    if (staffStatusFilter) staffStatusFilter.value = '';
+    var joinDateFilter = document.getElementById('joinDateFilter');
+    if (joinDateFilter) joinDateFilter.value = '';
+    var staffSortFilter = document.getElementById('staffSortFilter');
+    if (staffSortFilter) staffSortFilter.value = 'id_asc';
+    // Xóa badge filter nếu có
+    if (typeof updateStaffActiveFilters === 'function') updateStaffActiveFilters();
+    // Gọi lại loadStaffList để đảm bảo dữ liệu gốc được hiển thị
+    if (typeof loadStaffList === 'function') loadStaffList();
+    // Sau khi load xong, filter lại bảng cho chắc chắn
+    setTimeout(() => {
+        if (typeof applyStaffFilters === 'function') applyStaffFilters();
+        if (typeof updateStaffActiveFilters === 'function') updateStaffActiveFilters();
+    }, 200);
 }

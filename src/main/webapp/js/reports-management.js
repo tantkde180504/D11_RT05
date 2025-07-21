@@ -318,6 +318,7 @@ function displayRevenueReport(data) {
                             <tr>
                                 <th class="py-3"><i class="fas fa-calendar-alt me-2 text-primary"></i>${periodText}</th>
                                 <th class="py-3"><i class="fas fa-shopping-cart me-2 text-info"></i>Số đơn hàng</th>
+                                <th class="py-3"><i class="fas fa-truck me-2 text-primary"></i>Đơn giao thành công</th>
                                 <th class="py-3"><i class="fas fa-dollar-sign me-2 text-success"></i>Doanh thu</th>
                                 <th class="py-3"><i class="fas fa-chart-line me-2 text-warning"></i>TB/đơn</th>
                             </tr>
@@ -327,12 +328,11 @@ function displayRevenueReport(data) {
     
     data.periodRevenue.forEach((period, index) => {
         const orders = period.order_count || 0;
+        const delivered = period.delivered_orders || 0;
         const revenue = period.total_revenue || 0;
         const avgPerOrder = orders > 0 ? revenue / orders : 0;
-        
         // Màu alternate cho mỗi row
         const rowClass = index % 2 === 0 ? '' : 'table-light';
-        
         tableHTML += `
             <tr class="${rowClass}">
                 <td class="py-3 fw-semibold">
@@ -341,6 +341,9 @@ function displayRevenueReport(data) {
                 </td>
                 <td class="py-3">
                     <span class="badge bg-primary fs-6 px-3 py-2">${orders}</span>
+                </td>
+                <td class="py-3">
+                    <span class="badge bg-success fs-6 px-3 py-2">${delivered}</span>
                 </td>
                 <td class="py-3">
                     <span class="text-success fw-bold fs-6">${formatCurrency(revenue)}</span>
@@ -362,6 +365,9 @@ function displayRevenueReport(data) {
                                 </td>
                                 <td class="py-3">
                                     <span class="badge bg-light text-dark fs-6 px-3 py-2">${data.totalOrders || 0}</span>
+                                </td>
+                                <td class="py-3">
+                                    <span class="badge bg-light text-dark fs-6 px-3 py-2">${data.deliveredOrders || 0}</span>
                                 </td>
                                 <td class="py-3 text-warning">
                                     ${formatCurrency(data.totalRevenue || 0)}
@@ -678,25 +684,18 @@ function exportToExcel() {
             if (reportType === 'revenue') {
                 // Sử dụng field names chính xác từ backend
                 let periodDate = item.period_date || item.period || '';
-                
                 // Format lại ngày cho dễ đọc
                 if (periodDate && !isNaN(periodDate)) {
-                    // Nếu là timestamp, convert sang date
-                    const date = new Date(parseInt(periodDate));
                     const periodType = document.getElementById('periodType').value;
                     periodDate = formatPeriodDate(periodDate, periodType);
                 } else if (typeof periodDate === 'string' && periodDate.includes('E')) {
-                    // Nếu là scientific notation, convert
                     const timestamp = parseFloat(periodDate);
-                    const date = new Date(timestamp);
                     const periodType = document.getElementById('periodType').value;
                     periodDate = formatPeriodDate(timestamp, periodType);
                 }
-                
                 const orderCount = item.order_count || item.total_orders || 0;
-                const deliveredCount = item.delivered_count || item.delivered_orders || 0;
+                const deliveredCount = item.delivered_orders || item.delivered_count || 0;
                 const totalRevenue = item.total_revenue || 0;
-                
                 row = [periodDate, orderCount, deliveredCount, totalRevenue];
             } else if (reportType === 'top-products') {
                 // Sử dụng field names thực tế từ debug
@@ -835,7 +834,6 @@ function printReport() {
         printContent += '<tr>';
         if (reportType === 'revenue') {
             let periodDate = item.period_date || item.period || '';
-            
             // Format lại ngày cho dễ đọc
             if (periodDate && !isNaN(periodDate)) {
                 const periodType = document.getElementById('periodType').value;
@@ -845,11 +843,9 @@ function printReport() {
                 const periodType = document.getElementById('periodType').value;
                 periodDate = formatPeriodDate(timestamp, periodType);
             }
-            
             const orderCount = item.order_count || item.total_orders || 0;
-            const deliveredCount = item.delivered_count || item.delivered_orders || 0;
+            const deliveredCount = item.delivered_orders || item.delivered_count || 0;
             const totalRevenue = item.total_revenue || 0;
-            
             printContent += `
                 <td>${periodDate}</td>
                 <td>${orderCount}</td>

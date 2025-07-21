@@ -954,11 +954,13 @@
                     '<th>Hình ảnh</th><th>Mã đơn</th><th>Tên sản phẩm</th><th>Ngày đặt</th><th>Trạng thái</th><th>Tổng tiền</th><th>Hành động</th></tr></thead><tbody>';
                 data.forEach(order => {
                     const product = order.firstProduct || {};
+                    const orderDate = parseDateArray(order.orderDate);
+                    const formattedDate = orderDate ? orderDate.toLocaleString('vi-VN') : 'Ngày không hợp lệ';
                     html += '<tr>' +
                         '<td style="width:70px">' + (product.image ? '<img src="' + product.image + '" alt="Ảnh" style="max-width:60px;max-height:60px;object-fit:cover;">' : '<span class="text-muted">Không có</span>') + '</td>' +
                         '<td class="fw-bold">' + order.orderNumber + '</td>' +
                         '<td>' + (product.name || '<span class="text-muted">Không có</span>') + '</td>' +
-                        '<td>' + (order.orderDate ? new Date(order.orderDate).toLocaleString('vi-VN') : '') + '</td>' +
+                        '<td>' + formattedDate + '</td>' +
                         '<td>' + renderStatus(order.status) + '</td>' +
                         '<td class="text-danger fw-bold">' + formatCurrency(order.totalAmount) + '₫</td>' +
                         '<td>' + renderCancelBtn(order) + '</td>' +
@@ -974,6 +976,22 @@
         function formatCurrency(num) {
             if (!num) return '0';
             return Number(num).toLocaleString('vi-VN');
+        }
+
+        function parseDateArray(dateArray) {
+            if (!Array.isArray(dateArray) || dateArray.length < 6) {
+                return null;
+            }
+            // Dữ liệu từ Jackson là [năm, tháng, ngày, giờ, phút, giây, nano giây]
+            // Tháng trong JavaScript Date bắt đầu từ 0 (0-11), nên cần trừ đi 1.
+            const year = dateArray[0];
+            const month = dateArray[1] - 1;
+            const day = dateArray[2];
+            const hour = dateArray[3];
+            const minute = dateArray[4];
+            const second = dateArray[5];
+            const ms = dateArray.length > 6 ? Math.floor(dateArray[6] / 1000000) : 0;
+            return new Date(year, month, day, hour, minute, second, ms);
         }
 
         function renderStatus(status) {

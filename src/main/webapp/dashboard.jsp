@@ -285,32 +285,30 @@
                     }
 
                     .admin-table .table thead th {
-                        background: linear-gradient(135deg, var(--admin-dark) 0%, #555555 100%);
-                        color: var(--admin-white);
-                        font-weight: 600;
+                        background: #36C187;
+                        border-right: 2px solid #fff;
+                    }
+                    .admin-table .table thead th:last-child {
+                        border-right: none;
+                        color: #fff;
+                        font-weight: 800;
                         border: none;
-                        padding: 1rem;
+                        padding: 1.1rem 0.75rem;
+                        text-align: center;
+                        letter-spacing: 0.7px;
+                        font-size: 1.12rem;
+                        backdrop-filter: blur(6px);
+                        -webkit-backdrop-filter: blur(6px);
+                        border-bottom: 2.5px solid #fff;
+                        box-shadow: 0 4px 18px 0 rgba(230,100,101,0.10), 0 1.5px 0 #fff inset;
+                        transition: background 0.3s;
+                        border-radius: 0;
                     }
-
-                    .admin-table .table tbody td {
-                        padding: 1rem;
-                        vertical-align: middle;
-                        border-color: var(--admin-border);
+                    .admin-table .table thead th:first-child {
+                        border-top-left-radius: 14px;
                     }
-
-                    .admin-table .table tbody tr:hover {
-                        background-color: rgba(40, 167, 69, 0.05);
-                    }
-
-                    /* Buttons */
-                    .btn-admin-primary {
-                        background: linear-gradient(135deg, var(--admin-primary) 0%, #20c997 100%);
-                        border: none;
-                        color: var(--admin-white);
-                        font-weight: 600;
-                        padding: 0.75rem 1.5rem;
-                        border-radius: 8px;
-                        transition: all 0.3s ease;
+                    .admin-table .table thead th:last-child {
+                        border-top-right-radius: 14px;
                     }
 
                     .btn-admin-primary:hover {

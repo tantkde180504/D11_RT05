@@ -1,14 +1,236 @@
-.order-table th, .order-table td { vertical-align: middle; text-align: center; }
-.order-table img { border-radius: 8px; box-shadow: 0 2px 8px #ddd; }
-.order-status {
-    font-weight: bold;
-    padding: 4px 10px;
+/* order-history.css - Style riêng cho trang lịch sử đơn hàng, đồng bộ theme index.jsp */
+
+.order-history-card {
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(43, 52, 69, 0.10);
+    background: #fff;
+    border: none;
+    margin-bottom: 32px;
+    transition: box-shadow 0.2s;
+    max-height: 700px;
+    overflow: hidden;
+    position: relative;
+}
+
+.order-history-card .table-responsive {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #1976d2 #e3f0ff;
+}
+
+.order-history-card .table-responsive::-webkit-scrollbar {
+    width: 8px;
+    background: #e3f0ff;
     border-radius: 8px;
+}
+
+.order-history-card .table-responsive::-webkit-scrollbar-thumb {
+    background: #1976d2;
+    border-radius: 8px;
+}
+
+.order-history-table {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #bae6f5;
+    font-size: 1rem;
+    color: #222;    
+    box-shadow: 0 1px 8px rgba(43,52,69,0.06);
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2.5px solid #222;
+}
+
+.order-history-table th {
+    background: linear-gradient(90deg, #e3f0ff 0%, #f7f7fa 100%);
+    color: #1976d2;
+    font-weight: 700;
+    border-bottom: 3px solid #222;
+    border-right: 2px solid #222;
+    padding: 16px 8px;
+    font-size: 1.05em;
+    letter-spacing: 0.5px;
+}
+.order-history-table th:last-child {
+    border-right: none;
+}
+
+.order-history-table td {
+    padding: 14px 8px;
+    vertical-align: middle;
+    border-bottom: 2px solid #222;
+    border-right: 2px solid #222;
+    background: #fff;
+    font-size: 1em;
+}
+.order-history-table td:last-child {
+    border-right: none;
+}
+.order-history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.order-history-table tr:hover {
+    background: #eff2f5;
+    transition: background 0.2s;
+}
+
+.order-history-table img {
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(43,52,69,0.10);
+    background: #f7f7fa;
+    border: 1px solid #e0e0e0;
+}
+
+.order-status {
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 0.95em;
+    letter-spacing: 0.5px;
     display: inline-block;
+    box-shadow: 0 1px 4px rgba(43,52,69,0.07);
 }
 .order-status.PENDING { background: #fff3cd; color: #856404; }
-.order-status.CONFIRMED { background: #cce5ff; color: #004085; }
-.order-status.PROCESSING { background: #d1ecf1; color: #0c5460; }
-.order-status.SHIPPING { background: #bee5eb; color: #0c5460; }
+.order-status.CONFIRMED { background: #d1ecf1; color: #0c5460; }
+.order-status.PROCESSING { background: #cce5ff; color: #004085; }
 .order-status.DELIVERED { background: #d4edda; color: #155724; }
 .order-status.CANCELLED { background: #f8d7da; color: #721c24; }
+
+.order-history-table .btn-danger {
+    background: linear-gradient(90deg, #ff4d4f 0%, #ff7b7b 100%);
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 6px 18px;
+    transition: background 0.2s;
+    box-shadow: 0 1px 4px rgba(255,77,79,0.10);
+}
+.order-history-table .btn-danger:hover {
+    background: #d9363e;
+}
+.order-history-table .btn-warning {
+    background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%);
+    color: #222;
+    border: none;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 6px 18px;
+    transition: background 0.2s;
+    box-shadow: 0 1px 4px rgba(255,214,0,0.10);
+}
+.order-history-table .btn-warning:hover {
+    background: #ffe066;
+}
+
+.order-history-table .fw-bold {
+    color: #1976d2;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+    .order-history-table th, .order-history-table td {
+        padding: 8px 4px;
+        font-size: 0.95em;
+    }
+    .order-history-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* Nút và section phụ */
+.order-history-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.order-history-title {
+    color: #1976d2;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 4px rgba(43,52,69,0.07);
+}
+
+.order-history-empty, .order-history-error {
+    color: #ff4d4f;
+    font-size: 1.1em;
+    font-weight: 500;
+    text-align: center;
+    padding: 32px 0;
+}
+
+.order-history-loading {
+    color: #888;
+    text-align: center;
+    padding: 32px 0;
+}
+
+/* Đường kẻ cho bảng khiếu nại cũng đậm và nghệ thuật như lịch sử đơn hàng */
+.table-bordered th, .table-bordered td {
+    border: 2.5px solid #222 !important;
+}
+.table-bordered {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 1px 8px rgba(43,52,69,0.06);
+    background: #fff;
+    border: 2.5px solid #222 !important;
+}
+.table-bordered th {
+    background: linear-gradient(90deg, #e3f0ff 0%, #f7f7fa 100%);
+    color: #1976d2;
+    font-weight: 700;
+    border-bottom: 3px solid #222 !important;
+    border-right: 2px solid #222 !important;
+    padding: 16px 8px;
+    font-size: 1.05em;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+.table-bordered th:last-child {
+    border-right: none !important;
+}
+.table-bordered td {
+    padding: 14px 8px;
+    vertical-align: middle;
+    border-bottom: 2px solid #222 !important;
+    border-right: 2px solid #222 !important;
+    background: #fff;
+    font-size: 1em;
+    text-align: center;
+}
+.table-bordered td:last-child {
+    border-right: none !important;
+}
+.table-bordered tr:last-child td {
+    border-bottom: none !important;
+}
+@media (max-width: 768px) {
+    .table-bordered th, .table-bordered td {
+        padding: 8px 4px;
+        font-size: 0.95em;
+    }
+}
+
+.complaints-table-wrapper {
+    border-radius: 0 !important;
+    background: #fff;
+    box-shadow: none;
+    padding: 8px 0 16px 0;
+    margin-bottom: 32px;
+    border: 4px solid #222 !important;
+}
+.complaints-table-wrapper .table-bordered {
+    border-radius: 0 !important;
+    overflow: unset !important;
+    background: #fff;
+    border: none !important;
+    margin-top: 0 !important;
+}

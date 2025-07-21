@@ -63,6 +63,7 @@ public class ReportsRepository {
             System.out.println("Period Revenue result: " + periodRevenue.size() + " rows");
             double totalRevenue = 0;
             int totalOrders = 0;
+            // Thêm delivered_orders cho từng giai đoạn
             for (Map<String, Object> period : periodRevenue) {
                 // Kiểm tra null để tránh lỗi khi không có dữ liệu
                 Number revenue = (Number) period.get("total_revenue");
@@ -73,12 +74,66 @@ public class ReportsRepository {
                 if (orders != null) {
                     totalOrders += orders.intValue();
                 }
+                // Lấy ngày/tháng/năm tương ứng
+                Object periodDateObj = period.get("period_date");
+                String deliveredSql = null;
+                Object[] deliveredParams = null;
+                String periodDateStr = null;
+                switch (periodType) {
+                    case "month":
+                        // period_date dạng yyyy-MM
+                        if (periodDateObj == null) {
+                            periodDateStr = null;
+                        } else if (periodDateObj instanceof java.sql.Date) {
+                            java.sql.Date d = (java.sql.Date) periodDateObj;
+                            periodDateStr = d.toLocalDate().toString().substring(0,7); // yyyy-MM
+                        } else {
+                            String s = periodDateObj.toString();
+                            periodDateStr = s.length() >= 7 ? s.substring(0,7) : s;
+                        }
+                        deliveredSql = "SELECT COUNT(DISTINCT id) FROM orders WHERE FORMAT(order_date, 'yyyy-MM') = ? AND UPPER(TRIM(status)) = 'DELIVERED'";
+                        break;
+                    case "year":
+                        // period_date dạng yyyy
+                        if (periodDateObj == null) {
+                            periodDateStr = null;
+                        } else {
+                            String s = periodDateObj.toString();
+                            periodDateStr = s.length() >= 4 ? s.substring(0,4) : s;
+                        }
+                        deliveredSql = "SELECT COUNT(DISTINCT id) FROM orders WHERE YEAR(order_date) = ? AND UPPER(TRIM(status)) = 'DELIVERED'";
+                        break;
+                    case "day":
+                    default:
+                        // period_date dạng yyyy-MM-dd
+                        if (periodDateObj == null) {
+                            periodDateStr = null;
+                        } else if (periodDateObj instanceof java.sql.Date) {
+                            java.sql.Date d = (java.sql.Date) periodDateObj;
+                            periodDateStr = d.toLocalDate().toString();
+                        } else {
+                            String s = periodDateObj.toString();
+                            periodDateStr = s.length() >= 10 ? s.substring(0,10) : s;
+                        }
+                        deliveredSql = "SELECT COUNT(DISTINCT id) FROM orders WHERE CONVERT(date, order_date) = ? AND UPPER(TRIM(status)) = 'DELIVERED'";
+                        break;
+                }
+                deliveredParams = new Object[] { periodDateStr };
+                System.out.println("DEBUG delivered_orders: periodType=" + periodType + ", periodDateStr=" + periodDateStr);
+                try {
+                    Long deliveredCount = jdbcTemplate.queryForObject(deliveredSql, Long.class, deliveredParams);
+                    period.put("delivered_orders", deliveredCount != null ? deliveredCount : 0L);
+                } catch (Exception ex) {
+                    System.out.println("Error delivered_orders for period " + periodDateStr + ": " + ex.getMessage());
+                    period.put("delivered_orders", 0L);
+                }
             }
             result.put("periodRevenue", periodRevenue);
             result.put("totalRevenue", totalRevenue);
             result.put("totalOrders", totalOrders);
             result.put("averageOrderValue", totalOrders > 0 ? totalRevenue / totalOrders : 0);
             result.put("periodType", periodType);
+            result.put("deliveredOrders", getDeliveredOrders(startDate, endDate));
         } catch (Exception e) {
             e.printStackTrace();
             result.put("error", "Database error: " + e.getMessage());
@@ -239,8 +294,11 @@ public class ReportsRepository {
     }
     
     private long getDeliveredOrders(String startDate, String endDate) {
+        System.out.println("DEBUG getDeliveredOrders: startDate=" + startDate + ", endDate=" + endDate);
         String sql = "SELECT COUNT(DISTINCT id) FROM orders " +
-                    "WHERE order_date BETWEEN ? AND ? AND status = 'DELIVERED'";
+                    "WHERE order_date BETWEEN ? AND ? AND UPPER(TRIM(status)) = 'DELIVERED'";
+        System.out.println("DEBUG SQL: " + sql);
+        System.out.println("DEBUG PARAMS: " + startDate + " 00:00:00, " + endDate + " 23:59:59");
         try {
             Long result = jdbcTemplate.queryForObject(sql, Long.class, startDate + " 00:00:00", endDate + " 23:59:59");
             System.out.println("Delivered orders only: " + result);

@@ -1,5 +1,30 @@
 document.addEventListener("DOMContentLoaded", function () {
   let customerLoaded = false;
+  // Thêm sự kiện cho nút Đặt lại bộ lọc khách hàng
+  const resetBtn = document.getElementById('resetCustomerFiltersBtn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      // Xóa các bộ lọc
+      const genderFilter = document.getElementById('customerGenderFilter');
+      const orderFilter = document.getElementById('customerOrderFilter');
+      const dateFilter = document.getElementById('customerDateFilter');
+      const advSearchInput = document.getElementById('customerSearchInputAdvanced');
+      if (genderFilter) genderFilter.value = '';
+      if (orderFilter) orderFilter.value = '';
+      if (dateFilter) dateFilter.value = '';
+      if (advSearchInput) advSearchInput.value = '';
+      // Cập nhật lại giao diện badge
+      if (typeof showGenderBadge === 'function') showGenderBadge();
+      if (typeof showOrderBadge === 'function') showOrderBadge();
+      if (typeof showDateBadge === 'function') showDateBadge();
+      // Gọi lại loadCustomerList để lấy lại dữ liệu gốc
+      if (typeof loadCustomerList === 'function') loadCustomerList();
+      // Sau khi load xong, filter lại bảng cho chắc chắn
+      setTimeout(() => {
+        if (typeof filterCustomerRows === 'function') filterCustomerRows();
+      }, 200);
+    });
+  }
   // Chỉ load khi tab khách hàng được mở
   const customerTab = document.querySelector('a[href="#customers"]');
   if (customerTab) {
