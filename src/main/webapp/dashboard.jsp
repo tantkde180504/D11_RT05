@@ -11,6 +11,7 @@
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
                 <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
+                <link href="<%=request.getContextPath()%>/css/dashboard-sidebar-enhanced.css" rel="stylesheet">
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
@@ -25,7 +26,7 @@
                 <style>
                     /* Admin Dashboard Specific Styles */
                     :root {
-                        --admin-primary: #ff6600;
+                        --admin-primary: #28a745;
                         --admin-secondary: #0066cc;
                         --admin-dark: #333333;
                         --admin-light: #f8f9fa;
@@ -77,9 +78,9 @@
 
                     /* Sidebar */
                     .admin-sidebar {
-                        background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+                        background: linear-gradient(180deg, #f8f9fc 0%, #e9ecef 100%);
                         box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
-                        border-right: 1px solid var(--admin-border);
+                        border-right: 2px solid #d1d3e2;
                         min-height: calc(100vh - 76px);
                     }
 
@@ -92,7 +93,7 @@
                         display: block;
                         width: 80%;
                         height: 3px;
-                        background: linear-gradient(90deg, var(--admin-primary) 0%, #e55a00 100%);
+                        background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
                         margin: 0 auto 2rem auto;
                         border-radius: 2px;
                     }
@@ -100,10 +101,12 @@
                     .sidebar-header h6 {
                         font-size: 0.85rem;
                         letter-spacing: 1px;
-                        color: #6c757d !important;
+                        color: #2c3e50 !important;
                         margin-bottom: 1rem;
                         padding-bottom: 0.5rem;
-                        border-bottom: 1px solid #e9ecef;
+                        border-bottom: 2px solid #28a745;
+                        font-weight: 700;
+                        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
                     }
 
                     .tracking-wide {
@@ -111,7 +114,7 @@
                     }
 
                     .sidebar-nav .nav-link {
-                        color: #2c3e50;
+                        color: #2c3e50 !important;
                         padding: 1rem 1.5rem;
                         border-radius: 8px;
                         border-left: 4px solid transparent;
@@ -120,47 +123,47 @@
                         margin-bottom: 0.5rem;
                         margin-left: 0.5rem;
                         margin-right: 0.5rem;
-                        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 1px solid #dee2e6;
+                        background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
+                        border: 1px solid #d1d3e2;
                         text-decoration: none;
                         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
                         font-size: 0.95rem;
                     }
 
                     .sidebar-nav .nav-link:hover {
-                        background: linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.2) 100%);
-                        border-left-color: var(--admin-primary);
-                        color: var(--admin-primary);
+                        background: linear-gradient(135deg, #e8f4fd 0%, #d4edda 100%);
+                        border-left-color: #3498db;
+                        color: #2980b9 !important;
                         transform: translateX(5px);
-                        box-shadow: 0 4px 12px rgba(255, 102, 0, 0.25);
-                        border-color: var(--admin-primary);
+                        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+                        border-color: #3498db;
                         font-weight: 700;
                     }
 
                     .sidebar-nav .nav-link.active {
-                        background: linear-gradient(135deg, var(--admin-primary) 0%, #e55a00 100%);
-                        border-left-color: var(--admin-primary);
-                        color: var(--admin-white) !important;
+                        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                        border-left-color: #28a745;
+                        color: #ffffff !important;
                         font-weight: 700;
-                        box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
-                        border-color: var(--admin-primary);
+                        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                        border-color: #28a745;
                     }
 
                     .sidebar-nav .nav-link i {
                         width: 20px;
                         margin-right: 0.75rem;
                         font-size: 1.1rem;
-                        color: var(--admin-primary);
+                        color: #2c3e50;
                         opacity: 0.8;
                     }
 
                     .sidebar-nav .nav-link.active i {
-                        color: var(--admin-white);
+                        color: #ffffff;
                         opacity: 1;
                     }
 
                     .sidebar-nav .nav-link:hover i {
-                        color: var(--admin-primary);
+                        color: #2980b9;
                         opacity: 1;
                     }
 
@@ -296,12 +299,12 @@
                     }
 
                     .admin-table .table tbody tr:hover {
-                        background-color: rgba(255, 102, 0, 0.05);
+                        background-color: rgba(40, 167, 69, 0.05);
                     }
 
                     /* Buttons */
                     .btn-admin-primary {
-                        background: linear-gradient(135deg, var(--admin-primary) 0%, #e55a00 100%);
+                        background: linear-gradient(135deg, var(--admin-primary) 0%, #20c997 100%);
                         border: none;
                         color: var(--admin-white);
                         font-weight: 600;
@@ -338,7 +341,7 @@
                     }
 
                     .modal-header {
-                        background: linear-gradient(135deg, var(--admin-primary) 0%, #e55a00 100%);
+                        background: linear-gradient(135deg, var(--admin-primary) 0%, #20c997 100%);
                         color: var(--admin-white);
                         border-radius: 12px 12px 0 0;
                         border: none;
@@ -411,7 +414,7 @@
                         }
 
                         .reports-print-header h1 {
-                            color: #ff6600;
+                            color: #28a745;
                             margin: 0;
                             font-size: 24px;
                             font-weight: bold;
@@ -1997,9 +2000,9 @@
                                                 datasets: [{
                                                     data: [35, 25, 30, 10],
                                                     backgroundColor: [
-                                                        '#ff6600',
-                                                        '#0066cc',
                                                         '#28a745',
+                                                        '#0066cc',
+                                                        '#20c997',
                                                         '#ffc107'
                                                     ]
                                                 }]
