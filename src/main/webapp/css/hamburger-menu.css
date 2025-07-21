@@ -22,7 +22,7 @@
     border-radius: 12px;
     cursor: pointer;
     padding: 6px;
-    z-index: 10070;
+    z-index: 99999;
     margin-right: 15px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     font-family: 'Vietnamese-Safe', 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -137,7 +137,7 @@
         4px 0 32px rgba(0, 0, 0, 0.12),
         0 0 0 1px rgba(255, 102, 0, 0.08);
     transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-    z-index: 10050;
+    z-index: 99999;
     overflow-y: auto;
     overflow-x: hidden;
     padding-top: 0;
@@ -367,7 +367,7 @@
     width: 100%;
     height: 100vh;
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
-    z-index: 10040;
+    z-index: 99998;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);

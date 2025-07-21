@@ -1,0 +1,132 @@
+/* Z-Index Master Fix - Load this file LAST */
+/* This file ensures proper layering of all UI elements */
+
+/* Critical: Mobile Navigation must be highest */
+.mobile-sidebar {
+    z-index: 99999 !important;
+    position: fixed !important;
+}
+
+.mobile-overlay {
+    z-index: 99998 !important;
+    position: fixed !important;
+}
+
+.hamburger-menu {
+    z-index: 99999 !important;
+    position: relative !important;
+}
+
+.sidebar-close {
+    z-index: 99999 !important;
+    position: absolute !important;
+}
+
+/* Header elements should be below mobile navigation */
+.modern-header {
+    z-index: 9999 !important;
+    position: relative !important;
+}
+
+.modern-header .container {
+    z-index: 9999 !important;
+    position: relative !important;
+}
+
+/* Header dropdowns */
+.modern-header .dropdown-menu,
+.modern-header .modern-dropdown,
+.dropdown-menu.show {
+    z-index: 10001 !important;
+    position: absolute !important;
+}
+
+/* Search suggestions */
+.modern-header .modern-suggestions,
+.modern-header .search-suggestions {
+    z-index: 10003 !important;
+    position: absolute !important;
+}
+
+/* Bootstrap components */
+.popover {
+    z-index: 10002 !important;
+}
+
+.tooltip {
+    z-index: 10002 !important;
+}
+
+.modal {
+    z-index: 9998 !important;
+}
+
+.modal-backdrop {
+    z-index: 9997 !important;
+}
+
+/* Chat widget stays low */
+.chat-widget-container,
+.chat-widget,
+.chat-bubble {
+    z-index: 9990 !important;
+}
+
+/* Other page elements stay low */
+.hero-banner,
+.product-section,
+.features-section,
+footer {
+    z-index: 1 !important;
+}
+
+/* Ensure mobile sidebar is always visible when active */
+.mobile-sidebar.active {
+    z-index: 99999 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+.mobile-overlay.active {
+    z-index: 99998 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Prevent body scroll when sidebar is open */
+body.sidebar-open {
+    overflow: hidden !important;
+}
+
+/* Ensure all sidebar content is visible */
+.mobile-sidebar * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Override any existing z-index conflicts */
+.navbar,
+.navbar * {
+    z-index: 9999 !important;
+}
+
+/* Back to top button */
+.back-to-top {
+    z-index: 9996 !important;
+}
+
+/* Clear any auto z-index for normal elements */
+body * {
+    z-index: auto;
+}
+
+/* Except for our critical UI elements */
+.modern-header,
+.modern-header *,
+.mobile-sidebar,
+.mobile-sidebar *,
+.hamburger-menu,
+.mobile-overlay {
+    z-index: inherit !important;
+}

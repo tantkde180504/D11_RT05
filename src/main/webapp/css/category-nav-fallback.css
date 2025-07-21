@@ -1,0 +1,169 @@
+/* Additional Category Navigation Fallback Styles */
+/* This file provides fallback and enhancement styles for category navigation */
+
+/* Fallback for missing images */
+.category-icon img[src=""] {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23f8f9fa"/><circle cx="100" cy="80" r="30" fill="%23dee2e6"/><rect x="70" y="120" width="60" height="8" rx="4" fill="%23dee2e6"/><rect x="80" y="135" width="40" height="6" rx="3" fill="%23dee2e6"/></svg>');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Enhanced loading states */
+.category-icon.loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #ff6600;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 2;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Error state styling */
+.category-icon.error::after {
+    content: '📦';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    z-index: 2;
+}
+
+/* Enhanced accessibility */
+.category-link:focus-visible {
+    outline: 3px solid rgba(255, 102, 0, 0.6) !important;
+    outline-offset: 3px !important;
+    box-shadow: 
+        0 0 0 6px rgba(255, 102, 0, 0.1),
+        0 15px 40px rgba(102,126,234,0.2) !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .category-link {
+        border: 2px solid #000 !important;
+    }
+    
+    .category-link:hover {
+        background: #000 !important;
+        color: #fff !important;
+    }
+    
+    .category-icon {
+        border: 2px solid #000 !important;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .category-item,
+    .category-link,
+    .category-icon,
+    .category-icon img,
+    .category-name {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .category-link:hover {
+        transform: none !important;
+    }
+    
+    .category-link:hover .category-icon {
+        transform: none !important;
+    }
+    
+    .category-link:hover .category-icon img {
+        transform: none !important;
+    }
+    
+    .category-nav::before {
+        animation: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .category-nav {
+        background: none !important;
+        box-shadow: none !important;
+    }
+    
+    .category-link {
+        background: none !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .category-icon {
+        box-shadow: none !important;
+    }
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+    .category-nav {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%) !important;
+    }
+    
+    .category-link {
+        background: linear-gradient(145deg, #34495e 0%, #2c3e50 100%) !important;
+        color: #ecf0f1 !important;
+        border-color: #34495e !important;
+    }
+    
+    .category-link:hover {
+        background: linear-gradient(145deg, #3498db 0%, #2980b9 100%) !important;
+        color: #fff !important;
+    }
+    
+    .category-icon {
+        background: #34495e !important;
+        border-color: #2c3e50 !important;
+    }
+}
+
+/* RTL language support */
+[dir="rtl"] .category-slider {
+    direction: rtl;
+}
+
+[dir="rtl"] .scroll-indicator.left {
+    right: 10px;
+    left: auto;
+}
+
+[dir="rtl"] .scroll-indicator.right {
+    left: 10px;
+    right: auto;
+}
+
+/* Performance optimizations */
+.category-nav {
+    contain: layout style paint;
+    will-change: transform;
+}
+
+.category-item {
+    contain: layout style paint;
+}
+
+.category-link {
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+.category-icon img {
+    backface-visibility: hidden;
+}

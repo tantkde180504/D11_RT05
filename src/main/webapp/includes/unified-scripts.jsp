@@ -22,6 +22,9 @@
 <!-- Hamburger Menu Script -->
 <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
 
+<!-- Modern Category Navigation Script -->
+<script src="<%=request.getContextPath()%>/js/modern-category-nav.js"></script>
+
 <!-- Mobile Sidebar Z-Index Fix - CRITICAL for visibility -->
 <script src="<%=request.getContextPath()%>/js/mobile-sidebar-fix.js"></script>
 

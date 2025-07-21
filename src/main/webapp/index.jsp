@@ -20,7 +20,11 @@
     <link href="<%=request.getContextPath()%>/css/user-avatar.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/modern-ecommerce.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/modern-header.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/category-nav-fallback.css" rel="stylesheet">
     <link href="<%=request.getContextPath()%>/css/header-z-index-fix.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/css/z-index-master-fix.css" rel="stylesheet">
+    <!-- Load category nav CSS LAST to override everything -->
+    <link href="<%=request.getContextPath()%>/css/modern-category-nav.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -195,7 +199,7 @@
 
     <!-- Product Sections -->
     <!-- Category Navigation -->
-    <section class="category-nav py-4 bg-light">
+    <section class="category-nav py-4" style="background: white !important; background-color: white !important;">
         <div class="container">
             <div class="row">
                 <div class="col-12">
