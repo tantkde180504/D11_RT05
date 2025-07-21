@@ -232,6 +232,18 @@ public class AddressController {
             
             // Set user email
             address.setUserEmail(userEmail);
+            
+            // Debug UTF-8 encoding
+            System.out.println("=== UTF-8 DEBUG INFO ===");
+            System.out.println("Original recipientName: " + address.getRecipientName());
+            System.out.println("Original recipientName bytes: " + java.util.Arrays.toString(address.getRecipientName().getBytes()));
+            System.out.println("Original recipientName UTF-8: " + java.util.Arrays.toString(address.getRecipientName().getBytes("UTF-8")));
+            System.out.println("Original houseNumber: " + address.getHouseNumber());
+            System.out.println("Original ward: " + address.getWard());
+            System.out.println("Original district: " + address.getDistrict());
+            System.out.println("Original province: " + address.getProvince());
+            System.out.println("=========================");
+            
             System.out.println("Address after setting user email: " + address);
             
             // Validate

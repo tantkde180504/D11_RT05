@@ -11,25 +11,25 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Column(name = "user_email", nullable = false, length = 255)
+    @Column(name = "user_email", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String userEmail;
     
-    @Column(name = "recipient_name", nullable = false, length = 255)
+    @Column(name = "recipient_name", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String recipientName;
     
     @Column(name = "phone", nullable = false, length = 20)
     private String phone;
     
-    @Column(name = "house_number", nullable = false, length = 500)
+    @Column(name = "house_number", nullable = false, length = 500, columnDefinition = "NVARCHAR(500)")
     private String houseNumber;
     
-    @Column(name = "ward", nullable = false, length = 255)
+    @Column(name = "ward", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String ward;
     
-    @Column(name = "district", nullable = false, length = 255)
+    @Column(name = "district", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String district;
     
-    @Column(name = "province", nullable = false, length = 255)
+    @Column(name = "province", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String province;
     
     @Column(name = "is_default", nullable = true)

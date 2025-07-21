@@ -1,6 +1,84 @@
 // Address Book JavaScript with API Integration
 console.log('Address Book Script Loading...');
 
+// Hàm helper để fix UTF-8 encoding issues
+function fixUTF8Encoding(text) {
+    if (!text || typeof text !== 'string') return text;
+    
+    // Map các ký tự bị lỗi encoding thường gặp trong tiếng Việt
+    const charMap = {
+        // Đ/đ variants
+        'Ðà': 'Đà',
+        'Ðình': 'Đình', 
+        'Ð': 'Đ',
+        'ð': 'đ',
+        
+        // Tên thường gặp
+        'Tr?n': 'Trần',
+        'T?n': 'Tân',
+        'C?m': 'Cẩm', 
+        'L?': 'Lệ',
+        'H?i': 'Hải',
+        'N?ng': 'Nẵng',
+        'Ph?m': 'Phạm',
+        'Nguy?n': 'Nguyễn',
+        'H?': 'Hà',
+        'Qu?ng': 'Quảng',
+        'Hu?': 'Huế',
+        'Ðông': 'Đông',
+        'Ð?c': 'Đức',
+        
+        // Tỉnh thành thường gặp
+        'Hà N?i': 'Hà Nội',
+        'TP. H? Chí Minh': 'TP. Hồ Chí Minh',
+        'H? Chí Minh': 'Hồ Chí Minh',
+        'C?n Th?': 'Cần Thơ',
+        'Ðà L?t': 'Đà Lạt',
+        'Nha Trang': 'Nha Trang',
+        'Qu?ng Nam': 'Quảng Nam',
+        'Qu?ng Ninh': 'Quảng Ninh',
+        'Th?a Thiên Hu?': 'Thừa Thiên Huế'
+    };
+    
+    let fixed = text;
+    
+    // Apply character mapping - SAFELY escape special regex characters
+    for (const [wrong, correct] of Object.entries(charMap)) {
+        // Escape special regex characters trong wrong string
+        const escapedWrong = wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        fixed = fixed.replace(new RegExp(escapedWrong, 'g'), correct);
+    }
+    
+    // Safe fallback cho các ký tự ? còn lại (nếu có)
+    // Sử dụng replace với string thay vì regex để tránh lỗi
+    fixed = fixed.replace(/\?/g, 'ă');
+    
+    return fixed;
+}
+
+// Hàm để làm sạch và hiển thị text an toàn với xử lý UTF-8
+function safeText(value, fallback = 'Chưa có thông tin') {
+    // Simplified logging để tránh spam console
+    // console.log('SafeText input:', { value, type: typeof value, fallback });
+    
+    if (value === null || value === undefined || value === 'null' || value === '') {
+        return fallback;
+    }
+    
+    // Xử lý encoding issue
+    try {
+        let processedValue = String(value).trim();
+        
+        // Sử dụng helper function để fix encoding
+        processedValue = fixUTF8Encoding(processedValue);
+        
+        return processedValue;
+    } catch (e) {
+        console.warn('SafeText: Error processing value, returning as-is:', e);
+        return String(value).trim();
+    }
+}
+
 // Danh sách 63 tỉnh thành Việt Nam
 const provinces = [
     "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", 
@@ -26,6 +104,7 @@ let addresses = [];
 
 // Context path
 const contextPath = window.APP_CONTEXT_PATH || '';
+console.log('Address Book Context Path:', contextPath);
 
 // Load địa chỉ từ API
 async function loadAddresses() {
@@ -33,24 +112,114 @@ async function loadAddresses() {
         console.log('=== LOADING ADDRESSES ===');
         console.log('API URL:', `${contextPath}/api/addresses`);
         
-        const response = await fetch(`${contextPath}/api/addresses`);
+        const response = await fetch(`${contextPath}/api/addresses`, {
+            headers: {
+                'Accept': 'application/json; charset=UTF-8'
+            }
+        });
         console.log('Response status:', response.status);
         console.log('Response ok:', response.ok);
         
         const data = await response.json();
-        console.log('API Response data:', data);
+        console.log('=== RAW API RESPONSE ANALYSIS ===');
+        console.log('Response data type:', typeof data);
+        console.log('Response data:', data);
+        console.log('Has success property:', 'success' in data);
+        console.log('Success value:', data.success);
+        console.log('Has addresses property:', 'addresses' in data);
+        console.log('Addresses value:', data.addresses);
+        console.log('Addresses type:', typeof data.addresses);
         
-        if (data.success) {
-            addresses = data.addresses || [];
-            console.log('Loaded addresses count:', addresses.length);
-            console.log('Addresses data:', addresses);
-            updateAddressCount();
-        } else {
-            console.error('Error loading addresses:', data.message);
+        // Check if it's a direct array
+        if (Array.isArray(data)) {
+            console.log('🔍 Response is direct array with length:', data.length);
+            addresses = data;
+            console.log('✅ Using direct array as addresses');
+        }
+        // Check if it has success and addresses structure
+        else if (data.success && data.addresses) {
+            console.log('🔍 Response has success/addresses structure');
+            // Pre-process addresses để fix encoding issues
+            data.addresses = data.addresses.map(addr => {
+                const fixedAddr = { ...addr };
+                
+                // Fix encoding cho tất cả text fields
+                if (fixedAddr.recipient_name) {
+                    fixedAddr.recipient_name = fixUTF8Encoding(fixedAddr.recipient_name);
+                }
+                if (fixedAddr.recipientName) {
+                    fixedAddr.recipientName = fixUTF8Encoding(fixedAddr.recipientName);
+                }
+                if (fixedAddr.phone) {
+                    fixedAddr.phone = fixUTF8Encoding(fixedAddr.phone);
+                }
+                if (fixedAddr.house_number) {
+                    fixedAddr.house_number = fixUTF8Encoding(fixedAddr.house_number);
+                }
+                if (fixedAddr.houseNumber) {
+                    fixedAddr.houseNumber = fixUTF8Encoding(fixedAddr.houseNumber);
+                }
+                if (fixedAddr.ward) {
+                    fixedAddr.ward = fixUTF8Encoding(fixedAddr.ward);
+                }
+                if (fixedAddr.district) {
+                    fixedAddr.district = fixUTF8Encoding(fixedAddr.district);
+                }
+                if (fixedAddr.province) {
+                    fixedAddr.province = fixUTF8Encoding(fixedAddr.province);
+                }
+                
+                return fixedAddr;
+            });
+            
+            addresses = data.addresses;
+            console.log('✅ Using addresses from success structure');
+        }
+        // Check other possible structures
+        else if (data.data && Array.isArray(data.data)) {
+            console.log('🔍 Response has data property with array');
+            addresses = data.data;
+            console.log('✅ Using data array as addresses');
+        }
+        // Handle error cases
+        else {
+            console.warn('⚠️ Unexpected response structure');
+            console.log('Available keys:', Object.keys(data));
             addresses = [];
         }
+        
+        console.log('📊 FINAL RESULT:');
+        console.log('Loaded addresses count:', addresses.length);
+        console.log('Addresses array:', addresses);
+        
+        // Debug từng địa chỉ để kiểm tra dữ liệu (chỉ khi có địa chỉ)
+        if (addresses.length > 0) {
+            console.log('🔍 ADDRESS DETAILS:');
+            addresses.forEach((addr, index) => {
+                console.log(`Address ${index + 1}:`, {
+                    id: addr.id,
+                    recipient_name: addr.recipient_name,
+                    recipientName: addr.recipientName,
+                    phone: addr.phone,
+                    house_number: addr.house_number,
+                    houseNumber: addr.houseNumber,
+                    ward: addr.ward,
+                    district: addr.district,
+                    province: addr.province,
+                    is_default: addr.is_default
+                });
+            });
+        } else {
+            console.log('❌ No addresses found in response');
+        }
+        
+        updateAddressCount();
     } catch (error) {
-        console.error('Error loading addresses:', error);
+        console.error('❌ Error loading addresses:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
         addresses = [];
     }
 }
@@ -106,7 +275,17 @@ function createEmptyStateHTML() {
 
 // Tạo HTML cho danh sách địa chỉ
 function createAddressListHTML() {
-    return addresses.map((address, index) => `
+    console.log('Creating address list HTML for', addresses.length, 'addresses');
+    
+    return addresses.map((address, index) => {
+        const recipientName = safeText(address.recipient_name || address.recipientName);
+        const phone = safeText(address.phone);
+        const houseNumber = safeText(address.house_number || address.houseNumber);
+        const ward = safeText(address.ward);
+        const district = safeText(address.district);
+        const province = safeText(address.province);
+        
+        return `
         <div class="address-card ${address.is_default ? 'default' : ''}">
             <div class="card-header">
                 <div class="address-title">
@@ -116,11 +295,11 @@ function createAddressListHTML() {
             </div>
             <div class="card-body">
                 <div class="address-info">
-                    <strong>${address.recipient_name}</strong><br>
-                    ${address.phone}<br>
-                    ${address.house_number}<br>
-                    ${address.ward}, ${address.district}<br>
-                    ${address.province}
+                    <strong>${recipientName}</strong><br>
+                    ${phone}<br>
+                    ${houseNumber}<br>
+                    ${ward}, ${district}<br>
+                    ${province}
                 </div>
                 <div class="address-actions">
                     ${!address.is_default ? `<button class="btn btn-sm btn-outline-primary" onclick="setDefaultAddress(${address.id})">
@@ -135,7 +314,8 @@ function createAddressListHTML() {
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Tạo HTML cho form thêm/sửa địa chỉ
@@ -259,7 +439,8 @@ async function handleAddAddress(e) {
         const response = await fetch(`${contextPath}/api/addresses`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Accept': 'application/json; charset=UTF-8'
             },
             body: JSON.stringify(formData)
         });
@@ -295,10 +476,17 @@ async function handleAddAddress(e) {
             
             // Wait a bit then refresh to ensure backend is ready
             setTimeout(async () => {
-                console.log('Refreshing address list...');
-                await refreshAddressList();
-                updateAddressCount();
-                console.log('Address list refreshed. New count:', addresses.length);
+                console.log('⏳ Waiting 500ms then refreshing address list...');
+                try {
+                    await refreshAddressList();
+                    updateAddressCount();
+                    console.log('✅ Address list refreshed. New count:', addresses.length);
+                } catch (error) {
+                    console.error('❌ Error during refresh after save:', error);
+                    // Fallback: reload page if refresh fails
+                    console.log('🔄 Fallback: Reloading page...');
+                    location.reload();
+                }
             }, 500);
             
         } else {
@@ -387,7 +575,8 @@ async function editAddress(addressId) {
             const response = await fetch(`${contextPath}/api/addresses/${addressId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json; charset=UTF-8',
+                    'Accept': 'application/json; charset=UTF-8'
                 },
                 body: JSON.stringify(formData)
             });
@@ -421,7 +610,10 @@ async function deleteAddress(addressId) {
     
     try {
         const response = await fetch(`${contextPath}/api/addresses/${addressId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json; charset=UTF-8'
+            }
         });
         
         const result = await response.json();
@@ -443,7 +635,10 @@ async function deleteAddress(addressId) {
 async function setDefaultAddress(addressId) {
     try {
         const response = await fetch(`${contextPath}/api/addresses/${addressId}/default`, {
-            method: 'PUT'
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json; charset=UTF-8'
+            }
         });
         
         const result = await response.json();
@@ -465,19 +660,32 @@ async function refreshAddressList() {
     console.log('=== REFRESHING ADDRESS LIST ===');
     console.log('Current addresses count before refresh:', addresses.length);
     
-    await loadAddresses();
-    
-    console.log('Addresses count after loadAddresses:', addresses.length);
-    console.log('Loaded addresses:', addresses);
-    
-    const addressListElement = document.getElementById('addressList');
-    if (addressListElement) {
-        const newHTML = addresses.length === 0 ? createEmptyStateHTML() : createAddressListHTML();
-        console.log('Updating addressList HTML...');
-        addressListElement.innerHTML = newHTML;
-        console.log('Address list HTML updated');
-    } else {
-        console.error('addressList element not found!');
+    try {
+        await loadAddresses();
+        console.log('Addresses count after loadAddresses:', addresses.length);
+        
+        const addressListElement = document.getElementById('addressList');
+        if (addressListElement) {
+            console.log('Found addressList element, updating HTML...');
+            
+            if (addresses.length === 0) {
+                console.log('No addresses found, showing empty state');
+                addressListElement.innerHTML = createEmptyStateHTML();
+            } else {
+                console.log('Creating address list HTML for', addresses.length, 'addresses');
+                const newHTML = createAddressListHTML();
+                console.log('Generated HTML length:', newHTML.length);
+                addressListElement.innerHTML = newHTML;
+            }
+            
+            console.log('Address list HTML updated successfully');
+        } else {
+            console.error('❌ addressList element not found! DOM structure:');
+            console.log('Available elements with "address" in ID:', 
+                Array.from(document.querySelectorAll('[id*="address"]')).map(el => el.id));
+        }
+    } catch (error) {
+        console.error('❌ Error in refreshAddressList:', error);
     }
 }
 
@@ -492,7 +700,11 @@ function updateAddressCount() {
 // Tải số lượng địa chỉ từ API
 async function loadAddressCount() {
     try {
-        const response = await fetch(`${contextPath}/api/addresses/count`);
+        const response = await fetch(`${contextPath}/api/addresses/count`, {
+            headers: {
+                'Accept': 'application/json; charset=UTF-8'
+            }
+        });
         const data = await response.json();
         
         if (data.success) {
@@ -599,4 +811,79 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAddressCount();
 });
 
+// Force refresh function for profile tab integration
+async function forceRefreshAddresses() {
+    console.log('=== FORCE REFRESH ADDRESSES ===');
+    try {
+        await loadAddresses();
+        await loadAddressCount();
+        console.log('Force refresh completed successfully');
+    } catch (error) {
+        console.error('Error during force refresh:', error);
+    }
+}
+
 console.log('Address Book Script Loaded');
+
+// Test function để debug UTF-8 encoding
+window.testUTF8Fix = function() {
+    const testData = [
+        'Tr?n Kim T?n',
+        'Lê Ðình Diên', 
+        'Hòa Xuân, C?m L?',
+        'Ðà N?ng'
+    ];
+    
+    console.log('=== UTF-8 ENCODING TEST ===');
+    testData.forEach(text => {
+        const fixed = fixUTF8Encoding(text);
+        console.log(`"${text}" → "${fixed}"`);
+    });
+};
+
+// Debug function để check trạng thái address book
+window.debugAddressBook = function() {
+    console.log('=== ADDRESS BOOK DEBUG ===');
+    console.log('Addresses array:', addresses);
+    console.log('Addresses count:', addresses.length);
+    console.log('AddressList element:', document.getElementById('addressList'));
+    console.log('AddressForm element:', document.getElementById('addressForm'));
+    
+    // Test refresh
+    console.log('Testing refresh...');
+    refreshAddressList();
+};
+
+// Debug function để test API trực tiếp
+window.testAddressAPI = async function() {
+    console.log('=== TESTING ADDRESS API DIRECTLY ===');
+    
+    const contextPath = window.APP_CONTEXT_PATH || '';
+    const apiUrl = `${contextPath}/api/addresses`;
+    
+    console.log('Testing API URL:', apiUrl);
+    
+    try {
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Accept': 'application/json; charset=UTF-8'
+            }
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', [...response.headers.entries()]);
+        
+        const rawText = await response.text();
+        console.log('Raw response text:', rawText);
+        
+        try {
+            const jsonData = JSON.parse(rawText);
+            console.log('Parsed JSON:', jsonData);
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+        }
+        
+    } catch (error) {
+        console.error('API test error:', error);
+    }
+};
