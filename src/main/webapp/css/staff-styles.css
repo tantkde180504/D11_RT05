@@ -234,18 +234,67 @@
     font-weight: 600;
     border: none;
     padding: 15px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .table-modern td {
     padding: 15px;
     border: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Căn trái cho cột sản phẩm để dễ đọc */
+.table-modern td:nth-child(3),
+.table-modern th:nth-child(3) {
+    text-align: left;
+}
+
+/* Căn trái cho cột khách hàng */
+.table-modern td:nth-child(2),
+.table-modern th:nth-child(2) {
+    text-align: left;
 }
 
 .table-modern tbody tr:hover {
     background: rgba(40, 167, 69, 0.05);
 }
 
+/* Style cơ bản cho buttons trong bảng */
+.table-modern .btn {
+    margin: 2px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+/* Căn chỉnh cột thao tác */
+.table-modern td:last-child {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Style cho mã đơn hàng */
+.table-modern .order-id {
+    font-weight: 600;
+    color: #495057;
+    font-family: monospace;
+}
+
+/* Style cho giá tiền */
+.table-modern .price {
+    font-weight: 600;
+    color: #28a745;
+}
+
+/* Style cho trạng thái */
+.table-modern .status {
+    font-weight: 500;
+}
+
+/* Style căn bản cho search box */
 .search-box {
     position: relative;
     margin-bottom: 20px;
@@ -284,20 +333,115 @@
 }
 
 .status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    min-width: 120px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
 }
 
 .status-pending {
-    background: #fff3cd;
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
     color: #856404;
+    border-color: #f39c12;
+}
+
+.status-confirmed {
+    background: linear-gradient(135deg, #d4edda, #a8e6cf);
+    color: #155724;
+    border-color: #28a745;
+}
+
+.status-shipping {
+    background: linear-gradient(135deg, #d1ecf1, #74b9ff);
+    color: #0c5460;
+    border-color: #17a2b8;
 }
 
 .status-processing {
-    background: #d1ecf1;
+    background: linear-gradient(135deg, #d1ecf1, #81ecec);
     color: #0c5460;
+    border-color: #00cec9;
+}
+
+.status-completed {
+    background: linear-gradient(135deg, #d4edda, #55efc4);
+    color: #155724;
+    border-color: #00b894;
+}
+
+.status-cancelled {
+    background: linear-gradient(135deg, #f8d7da, #fd79a8);
+    color: #721c24;
+    border-color: #e84393;
+}
+
+/* Hover effect cho status badges */
+.status-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Style cho các trạng thái cụ thể bằng tiếng Việt */
+.badge:contains("Chờ xác nhận") {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7) !important;
+    color: #856404 !important;
+    border: 2px solid #f39c12;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: none;
+    min-width: 120px;
+    text-align: center;
+}
+
+.badge:contains("Đã xác nhận") {
+    background: linear-gradient(135deg, #d4edda, #a8e6cf) !important;
+    color: #155724 !important;
+    border: 2px solid #28a745;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: none;
+    min-width: 120px;
+    text-align: center;
+}
+
+.badge:contains("Đang giao hàng") {
+    background: linear-gradient(135deg, #d1ecf1, #74b9ff) !important;
+    color: #0c5460 !important;
+    border: 2px solid #17a2b8;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: none;
+    min-width: 120px;
+    text-align: center;
+}
+
+/* Alternative classes for Vietnamese status */
+.status-cho-xac-nhan {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+    border: 2px solid #f39c12;
+}
+
+.status-da-xac-nhan {
+    background: linear-gradient(135deg, #d4edda, #a8e6cf);
+    color: #155724;
+    border: 2px solid #28a745;
+}
+
+.status-dang-giao-hang {
+    background: linear-gradient(135deg, #d1ecf1, #74b9ff);
+    color: #0c5460;
+    border: 2px solid #17a2b8;
 }
 
 .status-completed {
@@ -521,6 +665,68 @@
     .stats-grid {
         grid-template-columns: 1fr;
     }
+
+/* Animation cho table rows */
+.table-modern tbody tr {
+    animation: slideInUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.table-modern tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table-modern tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.table-modern tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.table-modern tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.table-modern tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style cho pagination nếu có */
+.pagination {
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.pagination .page-link {
+    border-radius: 8px;
+    border: 2px solid rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    font-weight: 600;
+    margin: 0 3px;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+
+/* Loading animation */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(40, 167, 69, 0.3);
+    border-radius: 50%;
+    border-top-color: #28a745;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
     .table-responsive {
         font-size: 0.8rem;

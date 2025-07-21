@@ -22,10 +22,21 @@ function loadDashboardStats() {
     pending: daNangOrders.filter(o => o.status === 'PENDING').length,
     shipping: daNangOrders.filter(o => o.status === 'SHIPPING').length,
     delivered: daNangOrders.filter(o => o.status === 'DELIVERED').length,
-    cancelled: daNangOrders.filter(o => o.status === 'CANCELLED').length
+    cancelled: daNangOrders.filter(o => o.status === 'CANCELLED').length,
+    // Thêm thống kê theo shipping type
+    express: daNangOrders.filter(o => {
+      const type = (o.shippingType || '').toLowerCase();
+      console.log('🚚 Order shipping type for stats:', o.orderId, type);
+      return type === 'hỏa tốc' || type === 'express' || type === 'hoa_toc';
+    }).length,
+    normal: daNangOrders.filter(o => {
+      const type = (o.shippingType || 'thường').toLowerCase();
+      return type === 'thường' || type === 'normal' || type === '';
+    }).length
   };
   
   console.log('📈 Local Stats calculated:', stats);
+  console.log('📊 Express vs Normal orders:', { express: stats.express, normal: stats.normal });
   updateStatsDisplay(stats);
 }
 
@@ -36,6 +47,8 @@ function updateStatsDisplay(stats) {
   animateNumber('stat-shipping', stats.shipping || 0);
   animateNumber('stat-delivered', stats.delivered || 0);
   animateNumber('stat-cancelled', stats.cancelled || 0);
+  animateNumber('stat-express', stats.express || 0);
+  animateNumber('stat-normal', stats.normal || 0);
 }
 
 // Animate number counting up
@@ -84,23 +97,54 @@ function fetchShippingOrders(filter = 'ALL') {
     })
     .then(data => {
       console.log('📦 Shipping API data:', data);
-      // Debug: kiểm tra assignedAt field
+      // Debug: kiểm tra tất cả fields có thể
       if (data.length > 0) {
-        console.log('🔍 Sample assignedAt field:', data[0].assignedAt);
-        console.log('🗂️ All fields in first item:', Object.keys(data[0]));
+        const sample = data[0];
+        console.log('🔍 Sample assignedAt field:', sample.assignedAt);
+        console.log('🚚 Sample shipping_type variants:');
+        console.log('  - shipping_type:', sample.shipping_type);
+        console.log('  - shippingType:', sample.shippingType);  
+        console.log('  - shipType:', sample.shipType);
+        console.log('  - type:', sample.type);
+        console.log('🗂️ All fields in first item:', Object.keys(sample));
+        
+        // Thử lấy từ orders table nếu có
+        if (sample.order && sample.order.shipping_type) {
+          console.log('📦 From orders table:', sample.order.shipping_type);
+        }
       } else {
         console.log('⚠️ No shipping data received from API');
       }
       
-      orders = data.map(item => ({
-        shippingId: item.id, // id của bản ghi shipping (dùng cho API detail)
-        orderId: item.orderId || '(Không rõ)',
-        customer: item.customerName || item.shippingName || '(Không rõ)',
-        address: item.shippingAddress || '(Không rõ)',
-        phone: item.shippingPhone || '(Không rõ)',
-        status: item.status || '(Không rõ)',
-        date: item.assignedAt ? formatVietnameseDate(item.assignedAt) : '(Chưa được gán)'
-      }));
+      orders = data.map(item => {
+        // Thử nhiều cách lấy shipping_type
+        let shippingType = item.shipping_type || 
+                          item.shippingType || 
+                          item.shipType || 
+                          item.type ||
+                          (item.order && item.order.shipping_type) ||
+                          'thường';
+                          
+        // TEMPORARY: Mock hỏa tốc cho test (xóa sau khi sửa API)
+        const orderIdStr = String(item.orderId || '');
+        if (item.orderId && (orderIdStr.includes('102') || orderIdStr.includes('101'))) {
+          shippingType = 'hỏa tốc';
+          console.log(`🔥 MOCK: Setting order ${item.orderId} to hỏa tốc for testing`);
+        }
+                          
+        console.log(`🚚 Order ${item.orderId || item.id}: shipping_type = "${shippingType}"`);
+        
+        return {
+          shippingId: item.id, // id của bản ghi shipping (dùng cho API detail)
+          orderId: item.orderId || '(Không rõ)',
+          customer: item.customerName || item.shippingName || '(Không rõ)',
+          address: item.shippingAddress || '(Không rõ)',
+          phone: item.shippingPhone || '(Không rõ)',
+          status: item.status || '(Không rõ)',
+          shippingType: shippingType,
+          date: item.assignedAt ? formatVietnameseDate(item.assignedAt) : '(Chưa được gán)'
+        };
+      });
       
       console.log('✅ Mapped orders:', orders);
       renderOrders(filter);
@@ -190,7 +234,8 @@ function renderOrders(filter = 'ALL') {
   
   filteredOrders.forEach(order => {
       const tr = document.createElement('tr');
-      tr.className = 'align-middle';
+      // Thêm class dựa trên shipping type
+      tr.className = `align-middle order-row ${order.shippingType === 'hỏa tốc' || order.shippingType === 'express' ? 'express-order' : 'normal-order'}`;
       
       // Tạo action buttons với tooltips đẹp hơn
       let actionButtons = `
@@ -212,9 +257,16 @@ function renderOrders(filter = 'ALL') {
         </div>
       `;
       
+      // Tạo shipping type badge
+      const shippingTypeBadge = createShippingTypeBadge(order.shippingType);
+      
       tr.innerHTML = `
         <td>
-          <span class="fw-bold text-primary">#${order.orderId}</span>
+          <div class="position-relative">
+            <div class="priority-indicator ${order.shippingType === 'hỏa tốc' || order.shippingType === 'express' ? 'priority-express' : 'priority-normal'}"></div>
+            <span class="fw-bold text-primary">#${order.orderId}</span>
+            ${shippingTypeBadge}
+          </div>
         </td>
         <td>
           <div class="d-flex align-items-center">
@@ -258,6 +310,21 @@ function statusBadge(status) {
     case 'DELIVERED': return '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Đã giao</span>';
     case 'CANCELLED': return '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Hủy giao</span>';
     default: return `<span class="badge bg-secondary">${status}</span>`;
+  }
+}
+
+// Tạo badge cho shipping type
+function createShippingTypeBadge(shippingType) {
+  console.log('🏷️ Creating badge for shipping type:', shippingType);
+  const normalizedType = (shippingType || 'thường').toLowerCase();
+  console.log('🔄 Normalized type:', normalizedType);
+  
+  if (normalizedType === 'hỏa tốc' || normalizedType === 'express' || normalizedType === 'hoa_toc') {
+    console.log('⚡ Creating EXPRESS badge');
+    return `<span class="shipping-type-badge shipping-express">Hỏa tốc</span>`;
+  } else {
+    console.log('📦 Creating NORMAL badge');
+    return `<span class="shipping-type-badge shipping-normal">Thường</span>`;
   }
 }
 

@@ -263,7 +263,7 @@
         <div class="container">
             <div class="section-header mb-4">
                 <h2 class="section-title">
-                    <span class="title-icon">�</span>
+                    <span class="title-icon"> </span>
                     Hàng Pre-Order
                 </h2>
                 <a href="#" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
@@ -532,7 +532,7 @@
         <div class="container">
             <div class="section-header mb-4">
                 <h2 class="section-title">
-                    <span class="title-icon">�️</span>
+                    <span class="title-icon"> ️</span>
                     Sản phẩm đã xem
                 </h2>
                 <a href="#" class="view-all-btn" onclick="clearRecentlyViewed()">Xóa lịch sử <i class="fas fa-trash ms-1"></i></a>
@@ -1086,45 +1086,35 @@
                 // Remove existing listeners to avoid duplicates
                 button.replaceWith(button.cloneNode(true));
             });
-            
             // Re-attach listeners to dynamic buttons only
             document.querySelectorAll('.add-to-cart[data-dynamic="true"]').forEach(button => {
                 button.addEventListener('click', function() {
-                    // Check if button is disabled (out of stock)
                     if (this.disabled) {
                         showNotification('⚠️ Sản phẩm này hiện đang hết hàng', 'warning');
                         return;
                     }
-                    
                     const productId = this.getAttribute('data-product-id');
-                    
-                    // Show loading state
+                    const quantity = 1;
                     const originalHTML = this.innerHTML;
                     this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang thêm...';
                     this.disabled = true;
-                    
-                    fetch('<%=request.getContextPath()%>/api/cart/add', {
+                    fetch(window.contextPath + '/api/cart/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'same-origin',
-                        body: JSON.stringify({ productId: Number(productId), quantity: 1 })
-                    }) 
+                        body: JSON.stringify({ productId: Number(productId), quantity: Number(quantity) })
+                    })
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
                             this.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
                             this.classList.add('btn-success');
                             this.classList.remove('btn-primary');
-                            
-                            // Show success notification
-                            showNotification('✅ Đã thêm sản phẩm vào giỏ hàng!', 'success');
                         } else {
                             this.innerHTML = originalHTML;
                             this.disabled = false;
                             showNotification('❌ ' + (data.message || 'Có lỗi xảy ra!'), 'error');
                         }
-                        
-                        // Reset button after 2 seconds
                         setTimeout(() => {
                             if (this.classList.contains('btn-success')) {
                                 this.innerHTML = originalHTML;

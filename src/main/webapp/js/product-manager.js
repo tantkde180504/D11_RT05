@@ -293,10 +293,61 @@ class ProductManager {
 }
 
 // Global function for adding to cart
-function addToCart(productId) {
+function addToCart(productId, buttonElement) {
     console.log('Adding product to cart:', productId);
-    // TODO: Implement cart functionality
-    alert('Tính năng giỏ hàng đang được phát triển!');
+    const quantity = 1;
+    // Nếu có buttonElement thì dùng, không thì tìm theo productId
+    let button = buttonElement;
+    if (!button) {
+        // Thử tìm button theo productId nếu có
+        button = document.querySelector(`button[onclick*="addToCart(${productId}"]`);
+    }
+    let originalHTML = button ? button.innerHTML : '';
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang thêm...';
+    }
+    fetch((window.contextPath || '') + '/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ productId: Number(productId), quantity: Number(quantity) })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (button) {
+                button.innerHTML = '<i class="fas fa-check me-1"></i>Đã thêm';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-primary');
+            } else {
+                alert('Đã thêm sản phẩm vào giỏ hàng!');
+            }
+        } else {
+            if (button) {
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+            }
+            alert(data.message || 'Có lỗi xảy ra!');
+        }
+        if (button) {
+            setTimeout(() => {
+                if (button.classList.contains('btn-success')) {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-primary');
+                    button.disabled = false;
+                }
+            }, 2000);
+        }
+    })
+    .catch(() => {
+        if (button) {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }
+        alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
+    });
 }
 
 // Initialize when DOM is loaded
