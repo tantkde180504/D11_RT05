@@ -26,7 +26,7 @@ td {
 .btn,
 .qty-btn {
     padding: 6px 12px;
-    background: #ff6600;
+    background: #28a745;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -35,7 +35,7 @@ td {
 }
 
 .checkout-btn {
-    background: #ff6600;
+    background: #28a745;
     color: #fff;
     border: none;
     padding: 12px 24px;
@@ -68,7 +68,7 @@ td {
 }
 
 .cart-title {
-    color: #ff6600;
+    color: #28a745;
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 24px;
@@ -131,7 +131,7 @@ td {
 }
 
 .cart-info-title {
-    color: #ff6600;
+    color: #28a745;
     font-weight: 600;
     font-size: 1.1rem;
     margin-bottom: 6px;
@@ -150,7 +150,7 @@ td {
 }
 
 .cart-hotline {
-    color: #ff6600;
+    color: #28a745;
     font-weight: bold;
     font-size: 1.1rem;
 }

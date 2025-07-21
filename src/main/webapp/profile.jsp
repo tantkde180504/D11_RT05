@@ -351,31 +351,62 @@
                 }
             }
             
-            // Setup edit mode handlers
+            // Tạo một bản sao của nội dung gốc để sử dụng khi cần khôi phục
+            window.originalProfileInfoContent = document.getElementById('profileInfoContent').cloneNode(true);
+            
+            // Ẩn element gốc để bảo vệ nó khỏi bị thay đổi
+            document.getElementById('profileInfoContent').style.display = 'none';
+            
+            // Setup edit mode handlers for initial load
             setupEditHandlers();
+            
+            // Đảm bảo tab "Thông tin tài khoản" được active và hiển thị đúng nội dung ban đầu
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById('profileInfoTab').classList.add('active');
         });
         
         // Setup edit mode event handlers
         function setupEditHandlers() {
             // Edit button click
-            document.getElementById('editProfileBtn').addEventListener('click', function() {
-                document.getElementById('profileViewMode').style.display = 'none';
-                document.getElementById('profileEditMode').style.display = 'block';
-                this.style.display = 'none';
-            });
+            const editBtn = document.getElementById('editProfileBtn');
+            if (editBtn) {
+                // Remove existing event listener to avoid duplicates
+                editBtn.replaceWith(editBtn.cloneNode(true));
+                const newEditBtn = document.getElementById('editProfileBtn');
+                
+                newEditBtn.addEventListener('click', function() {
+                    document.getElementById('profileViewMode').style.display = 'none';
+                    document.getElementById('profileEditMode').style.display = 'block';
+                    this.style.display = 'none';
+                });
+            }
             
             // Cancel edit button click
-            document.getElementById('cancelEditBtn').addEventListener('click', function() {
-                document.getElementById('profileEditMode').style.display = 'none';
-                document.getElementById('profileViewMode').style.display = 'block';
-                document.getElementById('editProfileBtn').style.display = 'block';
-            });
+            const cancelBtn = document.getElementById('cancelEditBtn');
+            if (cancelBtn) {
+                // Remove existing event listener to avoid duplicates
+                cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+                const newCancelBtn = document.getElementById('cancelEditBtn');
+                
+                newCancelBtn.addEventListener('click', function() {
+                    document.getElementById('profileEditMode').style.display = 'none';
+                    document.getElementById('profileViewMode').style.display = 'block';
+                    document.getElementById('editProfileBtn').style.display = 'block';
+                });
+            }
             
             // Form submit
-            document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                updateProfile();
-            });
+            const updateForm = document.getElementById('updateProfileForm');
+            if (updateForm) {
+                // Remove existing event listener to avoid duplicates
+                updateForm.replaceWith(updateForm.cloneNode(true));
+                const newUpdateForm = document.getElementById('updateProfileForm');
+                
+                newUpdateForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    updateProfile();
+                });
+            }
         }
         
         // Update profile function
@@ -521,9 +552,23 @@
             // Add active class to clicked tab
             this.classList.add('active');
             
-            // Show profile info content (đã có sẵn)
+            // Khôi phục nội dung thông tin tài khoản từ bản sao gốc
             const profileContent = document.getElementById('profileContent');
-            profileContent.innerHTML = document.getElementById('profileInfoContent').outerHTML;
+            if (window.originalProfileInfoContent) {
+                // Sử dụng bản sao gốc và clone lại để tránh ảnh hưởng
+                profileContent.innerHTML = '';
+                const clonedContent = window.originalProfileInfoContent.cloneNode(true);
+                profileContent.appendChild(clonedContent);
+            } else {
+                // Fallback nếu không có bản sao
+                profileContent.innerHTML = document.getElementById('profileInfoContent').outerHTML;
+            }
+            
+            // Khôi phục lại event handlers cho edit mode sau khi thay đổi innerHTML
+            setupEditHandlers();
+            
+            // Tải lại dữ liệu profile để đảm bảo thông tin mới nhất
+            loadProfileData();
         };
         
         document.getElementById('profileAddressTab').onclick = async function(e) {

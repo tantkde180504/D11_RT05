@@ -1,13 +1,13 @@
 .navbar,
 .navbar.bg-white,
 .navbar.navbar-light {
-    background: #E55A00 !important;
+    background: #28a745 !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 @media (prefers-color-scheme: dark) {
     .navbar,
     .navbar.bg-white,
     .navbar.navbar-light {
-        background: #E55A00 !important;
+        background: #28a745 !important;
     }
 }

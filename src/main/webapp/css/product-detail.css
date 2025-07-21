@@ -68,7 +68,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), #ff8533, #ffaa00);
+    background: linear-gradient(90deg, var(--primary-color), #20c997, #2dc653);
 }
 
 /* Product image gallery */
@@ -325,7 +325,7 @@
 }
 
 .btn-add-cart {
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     color: white;
     border: none;
     padding: 15px 30px;
@@ -357,8 +357,8 @@
 
 .btn-add-cart:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
-    background: linear-gradient(135deg, #ff8533, #ffaa00);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    background: linear-gradient(135deg, #20c997, #2dc653);
 }
 
 .btn-buy-now {
@@ -450,7 +450,7 @@
 }
 
 .quantity-btn:hover {
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     color: white;
 }
 
@@ -491,7 +491,7 @@
     left: 0;
     width: 60px;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), #ff8533);
+    background: linear-gradient(90deg, var(--primary-color), #20c997);
     border-radius: 2px;
 }
 
@@ -629,7 +629,7 @@
 }
 
 .related-product-btn {
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -642,9 +642,9 @@
 }
 
 .related-product-btn:hover {
-    background: linear-gradient(135deg, #ff8533, #ffaa00);
+    background: linear-gradient(135deg, #20c997, #2dc653);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
 /* ===== PRODUCT REVIEWS SECTION ===== */
@@ -667,7 +667,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #ff6600, #ff8533, #ffaa00);
+    background: linear-gradient(90deg, #28a745, #20c997, #17a2b8);
 }
 
 /* Reviews Header */
@@ -699,7 +699,7 @@
 .score {
     font-size: 3rem;
     font-weight: 800;
-    color: #ff6600;
+    color: #28a745;
     line-height: 1;
 }
 
@@ -745,7 +745,7 @@
 
 .bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ff6600, #ff8533);
+    background: linear-gradient(90deg, #28a745, #20c997);
     border-radius: 4px;
     transition: width 0.3s ease;
 }
@@ -808,12 +808,12 @@
 }
 
 .review-form .form-control:focus {
-    border-color: #ff6600;
+    border-color: #28a745;
     box-shadow: 0 0 0 0.25rem rgba(255, 102, 0, 0.15);
 }
 
 .review-form .btn-primary {
-    background: linear-gradient(135deg, #ff6600, #ff8533);
+    background: linear-gradient(135deg, #28a745, #20c997);
     border: none;
     border-radius: 12px;
     padding: 12px 30px;

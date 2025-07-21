@@ -111,8 +111,8 @@
 }
 
 .search-input:focus {
-    border-color: #ff6600;
-    box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.25);
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
 }
 
 /* Tối ưu hóa search button */
@@ -121,7 +121,7 @@
 }
 
 .btn-search:hover {
-    background-color: #e55a00;
+    background-color: #20c997;
     transform: translateY(-1px);
 }
 
@@ -235,8 +235,8 @@
 }
 
 .sidebar-menu a:hover {
-    background-color: rgba(255, 102, 0, 0.1);
-    color: #ff6600;
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
     padding-left: 25px;
 }
 
@@ -274,8 +274,8 @@
 }
 
 .category-list a:hover {
-    background-color: rgba(255, 102, 0, 0.1);
-    color: #ff6600;
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
 }
 
 /* Submenu styling */
@@ -297,8 +297,8 @@
 }
 
 .submenu a:hover {
-    background-color: rgba(255, 102, 0, 0.1);
-    color: #ff6600;
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
 }
 
 /* Ngăn chặn body scroll khi sidebar mở - cách tốt hơn */
@@ -341,7 +341,7 @@ body.sidebar-open {
     }
     
     .btn-search:hover {
-        background-color: #ff6600;
+        background-color: #28a745;
         transform: none;
     }
 }

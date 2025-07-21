@@ -35,7 +35,7 @@
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, var(--primary-color), #ff8533, #ffaa00, var(--primary-color));
+    background: linear-gradient(45deg, var(--primary-color), #20c997, #2dc653, var(--primary-color));
     border-radius: 14px;
     z-index: -1;
     opacity: 0;
@@ -81,7 +81,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     border-radius: 3px;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -171,7 +171,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), #ff8533, #ffaa00);
+    background: linear-gradient(90deg, var(--primary-color), #20c997, #2dc653);
 }
 
 .mobile-sidebar .sidebar-header h4 {
@@ -232,7 +232,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     opacity: 0;
     transition: opacity 0.3s ease;
     border-radius: 8px;
@@ -270,7 +270,7 @@
 }
 
 .mobile-sidebar .sidebar-menu a:hover i {
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     color: white;
     transform: scale(1.1) rotate(5deg);
     box-shadow: 0 2px 8px rgba(255, 102, 0, 0.3);
@@ -314,7 +314,7 @@
 }
 
 .mobile-sidebar .sidebar-menu .submenu a:hover i {
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     color: white;
 }
 
@@ -339,7 +339,7 @@
     font-weight: 700;
     font-size: 1rem;
     margin-bottom: 12px;
-    background: linear-gradient(135deg, var(--primary-color), #ff8533);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -421,7 +421,7 @@
 
 /* Sidebar category section styling */
 .mobile-sidebar .category-section {
-    background: linear-gradient(145deg, var(--primary-color) 0%, #ff8533 50%, #ffaa00 100%);
+    background: linear-gradient(145deg, var(--primary-color) 0%, #20c997 50%, #2dc653 100%);
     position: relative;
     overflow: hidden;
     margin: 12px;
@@ -612,13 +612,13 @@
 }
 
 .mobile-sidebar::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, var(--primary-color), #ff8533);
+    background: linear-gradient(45deg, var(--primary-color), #20c997);
     border-radius: 3px;
     transition: background 0.3s ease;
 }
 
 .mobile-sidebar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #ff8533, #ffaa00);
+    background: linear-gradient(45deg, #20c997, #2dc653);
 }
 
 /* Enhanced typography */
