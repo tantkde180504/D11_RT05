@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!-- Unified Header Component - Single source of truth for all pages -->
 <header class="bg-white shadow-sm sticky-top modern-header">
     <div class="container">
