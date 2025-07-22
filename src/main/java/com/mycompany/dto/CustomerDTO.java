@@ -30,4 +30,6 @@ private String phone;
     private Date createdAt;
     private int totalOrders; // Tổng số đơn hàng của khách hàng
     // Có thể bổ sung các trường khác nếu cần
+    private String status; // Trạng thái tài khoản: active, banned, ...
+    private String banReason; // Lý do bị ban
 }

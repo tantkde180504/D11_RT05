@@ -22,6 +22,7 @@ public interface UserService {
     // === Customer Management ===
     List<CustomerDTO> getAllCustomers();
     boolean updateCustomer(Long id, CustomerDTO dto);
+    boolean updateCustomerStatus(Long id, String status, String banReason);
 
     // === User Lookup via JDBC ===
     String getUserFullName(Long userId);

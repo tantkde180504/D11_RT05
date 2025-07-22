@@ -1241,11 +1241,26 @@
                                                         <th>Số điện thoại</th>
                                                         <th>Ngày đăng ký</th>
                                                         <th>Tổng đơn hàng</th>
+                                                        <th>Trạng thái</th>
                                                         <th>Thao tác</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="customerTableBody">
                                                     <!-- Dữ liệu render bằng JavaScript -->
+                                                    <!-- Ví dụ mẫu cho 1 dòng khách hàng, sẽ được render động bằng JS:
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>Nguyễn Văn A</td>
+                                                        <td>nguyenvana@email.com</td>
+                                                        <td>0123456789</td>
+                                                        <td>2024-07-01</td>
+                                                        <td>5</td>
+                                                        <td><span class="badge bg-success">active</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-warning" onclick="banCustomer(1)">Cấm</button>
+                                                        </td>
+                                                    </tr>
+                                                    -->
                                                 </tbody>
                                             </table>
                                         </div>

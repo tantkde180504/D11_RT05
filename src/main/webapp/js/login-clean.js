@@ -213,8 +213,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 2000); // Increased delay to 2 seconds
                 
             } else {
-                console.log('Login failed:', data.message);
-                alert(data.message || 'Đăng nhập thất bại!');
+                if (data.banReason) {
+                    document.querySelectorAll('.ban-reason-box').forEach(e => e.remove());
+                    const banBox = document.createElement('div');
+                    banBox.className = 'ban-reason-box';
+                    banBox.style.position = 'fixed';
+                    banBox.style.bottom = '32px';
+                    banBox.style.right = '32px';
+                    banBox.style.zIndex = '9999';
+                    banBox.style.background = '#fff0f0';
+                    banBox.style.border = '2px solid #d9534f';
+                    banBox.style.color = '#d9534f';
+                    banBox.style.padding = '20px 28px';
+                    banBox.style.borderRadius = '12px';
+                    banBox.style.maxWidth = '360px';
+                    banBox.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+                    banBox.style.textAlign = 'center';
+                    banBox.style.fontFamily = 'inherit';
+                    banBox.innerHTML = `
+                      <div style='font-size:32px;margin-bottom:8px;'>⚠️</div>
+                      <h3 style='margin:0 0 8px 0;font-size:22px;'>Tài khoản của bạn đã bị cấm</h3>
+                      <div style='font-size:16px;margin-bottom:8px;'><b>Lý do:</b> <span>${data.banReason}</span></div>
+                      <button onclick="this.parentElement.remove()" style="margin-top:8px;padding:6px 18px;border:none;background:#d9534f;color:#fff;border-radius:5px;cursor:pointer;font-size:15px;">Đóng</button>
+                    `;
+                    document.body.appendChild(banBox);
+                } else {
+                    alert(data.message || 'Đăng nhập thất bại!');
+                }
             }
         })
         .catch(error => {

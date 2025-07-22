@@ -1,10 +1,7 @@
-
 package com.mycompany.controller;
 
 import org.springframework.validation.annotation.Validated;
-
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +22,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @Validated
 public class UserController {
+    // ...existing code...
+
+    // Ban or unban customer account
+    @PutMapping("/customers/{id}/ban")
+    public ResponseEntity<?> banCustomer(@PathVariable("id") Long id,
+                                         @RequestParam(value = "status", required = false) String statusParam,
+                                         @RequestBody(required = false) Map<String, Object> body) {
+        String status = statusParam;
+        String banReason = null;
+        if (body != null) {
+            if (body.get("status") != null) status = body.get("status").toString();
+            if (body.get("banReason") != null) banReason = body.get("banReason").toString();
+        }
+        if (status == null) status = "banned";
+        try {
+            boolean result = userService.updateCustomerStatus(id, status, banReason);
+            if (result) return ResponseEntity.ok().body(java.util.Collections.singletonMap("message", "Cập nhật trạng thái thành công"));
+            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("message", "Không tìm thấy khách hàng"));
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(java.util.Collections.singletonMap("message", "Lỗi cập nhật trạng thái: " + ex.getMessage()));
+        }
+    }
     @org.springframework.web.bind.annotation.ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(org.springframework.web.bind.MethodArgumentNotValidException ex) {
         java.util.List<Map<String, String>> errors = new java.util.ArrayList<>();

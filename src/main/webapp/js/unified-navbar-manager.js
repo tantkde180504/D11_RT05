@@ -106,10 +106,45 @@ class UnifiedNavbarManager {
             if (response.ok) {
                 const data = await response.json();
                 console.log('📡 Server response:', data);
-                
+                // Nếu bị ban thì hiển thị bảng thông báo và không cho đăng nhập
+                if (data.success === false && data.banReason) {
+                    document.querySelectorAll('.ban-reason-box').forEach(e => e.remove());
+                    const banBox = document.createElement('div');
+                    banBox.className = 'ban-reason-box';
+                    banBox.style.position = 'fixed';
+                    banBox.style.bottom = '32px';
+                    banBox.style.right = '32px';
+                    banBox.style.zIndex = '9999';
+                    banBox.style.background = '#fff0f0';
+                    banBox.style.border = '2px solid #d9534f';
+                    banBox.style.color = '#d9534f';
+                    banBox.style.padding = '20px 28px';
+                    banBox.style.borderRadius = '12px';
+                    banBox.style.maxWidth = '360px';
+                    banBox.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+                    banBox.style.textAlign = 'center';
+                    banBox.style.fontFamily = 'inherit';
+                    banBox.innerHTML = `
+                      <div style='font-size:32px;margin-bottom:8px;'>⚠️</div>
+                      <h3 style='margin:0 0 8px 0;font-size:22px;'>Tài khoản của bạn đã bị cấm</h3>
+                      <div style='font-size:16px;margin-bottom:8px;'><b>Lý do:</b> <span>${data.banReason}</span></div>
+                      <div style='font-size:14px;margin-bottom:8px;'>Bạn sẽ được chuyển về trang đăng nhập sau vài giây...</div>
+                      <button onclick="this.parentElement.remove()" style="margin-top:8px;padding:6px 18px;border:none;background:#d9534f;color:#fff;border-radius:5px;cursor:pointer;font-size:15px;">Đóng</button>
+                    `;
+                    document.body.appendChild(banBox);
+                    // Xóa user khỏi localStorage, không cho đăng nhập
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('googleUser');
+                    this.currentUser = null;
+                    this.updateNavbarForGuest();
+                    // Tự động redirect về trang đăng nhập sau 3 giây
+                    setTimeout(() => {
+                        window.location.replace(this.contextPath + '/login.jsp?banned=1');
+                    }, 3000);
+                    return Promise.reject('Banned user');
+                }
                 if (data.isLoggedIn) {
                     console.log('✅ Server session found:', data);
-                    
                     // Convert server data to client format
                     this.currentUser = {
                         id: data.email, // Use email as ID for chat system
@@ -121,10 +156,8 @@ class UnifiedNavbarManager {
                         avatarUrl: data.picture,
                         loginType: data.loginType || 'server'
                     };
-                    
                     // Also save to localStorage for consistency
                     localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                    
                     this.updateNavbarForLoggedInUser();
                     return Promise.resolve();
                 }
@@ -148,30 +181,75 @@ class UnifiedNavbarManager {
         console.log('📦 Stored user:', storedUser);
         console.log('📦 Google user:', googleUser);
         
-        if (storedUser) {
+        // Nếu có bất kỳ user nào trong localStorage, luôn kiểm tra trạng thái ban với server
+        if (storedUser || googleUser) {
+            let userObj = null;
             try {
-                this.currentUser = JSON.parse(storedUser);
-                console.log('✅ Regular user found:', this.currentUser);
-                this.updateNavbarForLoggedInUser();
-                return;
+                userObj = storedUser ? JSON.parse(storedUser) : JSON.parse(googleUser);
+                this.currentUser = userObj;
             } catch (e) {
-                console.error('❌ Error parsing stored user:', e);
                 localStorage.removeItem('currentUser');
-            }
-        }
-        
-        if (googleUser) {
-            try {
-                this.currentUser = JSON.parse(googleUser);
-                console.log('✅ Google user found:', this.currentUser);
-                this.updateNavbarForLoggedInUser();
-                return;
-            } catch (e) {
-                console.error('❌ Error parsing Google user:', e);
                 localStorage.removeItem('googleUser');
+                this.currentUser = null;
             }
+            // Luôn gọi lại API để kiểm tra trạng thái ban
+            fetch(`${this.contextPath}/oauth2/user-info`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Accept': 'application/json' }
+            }).then(async (response) => {
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success === false && data.banReason) {
+                        document.querySelectorAll('.ban-reason-box').forEach(e => e.remove());
+                        const banBox = document.createElement('div');
+                        banBox.className = 'ban-reason-box';
+                        banBox.style.position = 'fixed';
+                        banBox.style.bottom = '32px';
+                        banBox.style.right = '32px';
+                        banBox.style.zIndex = '9999';
+                        banBox.style.background = '#fff0f0';
+                        banBox.style.border = '2px solid #d9534f';
+                        banBox.style.color = '#d9534f';
+                        banBox.style.padding = '20px 28px';
+                        banBox.style.borderRadius = '12px';
+                        banBox.style.maxWidth = '360px';
+                        banBox.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+                        banBox.style.textAlign = 'center';
+                        banBox.style.fontFamily = 'inherit';
+                        banBox.innerHTML = `
+                          <div style='font-size:32px;margin-bottom:8px;'>⚠️</div>
+                          <h3 style='margin:0 0 8px 0;font-size:22px;'>Tài khoản của bạn đã bị cấm</h3>
+                          <div style='font-size:16px;margin-bottom:8px;'><b>Lý do:</b> <span>${data.banReason}</span></div>
+                          <div style='font-size:14px;margin-bottom:8px;'>Bạn sẽ được chuyển về trang đăng nhập sau vài giây...</div>
+                          <button onclick="this.parentElement.remove()" style="margin-top:8px;padding:6px 18px;border:none;background:#d9534f;color:#fff;border-radius:5px;cursor:pointer;font-size:15px;">Đóng</button>
+                        `;
+                        document.body.appendChild(banBox);
+                        // Gọi luôn handleLogout để xóa sạch session phía client và server
+                        if (typeof this.handleLogout === 'function') {
+                            this.handleLogout();
+                        } else if (window.unifiedNavbarManager && typeof window.unifiedNavbarManager.handleLogout === 'function') {
+                            window.unifiedNavbarManager.handleLogout();
+                        }
+                        setTimeout(() => {
+                            window.location.replace(this.contextPath + '/login.jsp?banned=1');
+                        }, 3000);
+                        return;
+                    }
+                    // Nếu không bị ban thì cho đăng nhập bình thường
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    console.log('✅ User found:', this.currentUser);
+                    this.updateNavbarForLoggedInUser();
+                    return;
+                }
+            }).catch((e) => {
+                console.error('❌ Error checking user ban status:', e);
+                localStorage.removeItem('googleUser');
+                localStorage.removeItem('currentUser');
+            });
+            return;
         }
-        
+
         // No user found
         console.log('👤 No authenticated user found');
         this.updateNavbarForGuest();
@@ -504,6 +582,9 @@ if (document.readyState === 'loading') {
 } else {
     unifiedNavbarManager = new UnifiedNavbarManager();
 }
+
+// Khởi tạo global để script luôn chạy
+window.unifiedNavbarManager = new UnifiedNavbarManager();
 
 // Make it globally available
 window.UnifiedNavbarManager = UnifiedNavbarManager;

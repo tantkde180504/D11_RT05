@@ -1,3 +1,4 @@
+// ...existing code...
 
 package com.mycompany.service;
 
@@ -17,6 +18,21 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
+    // Ban or unban customer by status
+    @Override
+    public boolean updateCustomerStatus(Long id, String status, String banReason) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null || !"CUSTOMER".equalsIgnoreCase(user.getRole())) return false;
+        user.setStatus(status);
+        user.setUpdatedAt(LocalDateTime.now());
+        if ("banned".equalsIgnoreCase(status)) {
+            user.setBanReason(banReason);
+        } else {
+            user.setBanReason(null);
+        }
+        userRepository.save(user);
+        return true;
+    }
     // ...existing code...
 
     @Override
@@ -210,13 +226,13 @@ public class UserServiceImpl implements UserService {
             dto.setDateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null);
             dto.setGender(user.getGender());
             dto.setAddress(user.getAddress());
+            dto.setStatus(user.getStatus()); // Truyền trạng thái tài khoản
 
             if (user.getCreatedAt() != null) {
                 dto.setCreatedAt(java.util.Date.from(user.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toInstant()));
             }
 
             try {
-                // Sử dụng đúng tên hàm đã đồng bộ: countByUserId
                 int totalOrders = orderRepository.countByUserId(user.getId());
                 dto.setTotalOrders(totalOrders);
             } catch (Exception e) {

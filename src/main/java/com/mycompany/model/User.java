@@ -88,4 +88,12 @@ public class User {
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private Boolean isActive = true;
+
+    // Trạng thái tài khoản: active, banned, pending, ...
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private String status = "active";
+    // Lý do bị ban
+    @Column(name = "ban_reason")
+    private String banReason;
 }

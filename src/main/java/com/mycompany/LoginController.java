@@ -78,7 +78,7 @@ public class LoginController {
             
             // For now, let's use a simple approach without provider column
             // to avoid the SQL error and get login working first
-            String sql = "SELECT id, first_name, last_name, role, password FROM users WHERE email = ?";
+            String sql = "SELECT id, first_name, last_name, role, password, status, ban_reason FROM users WHERE email = ?";
             
             System.out.println("Using SQL: " + sql);
             
@@ -91,6 +91,8 @@ public class LoginController {
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
                         String role = resultSet.getString("role");
+                        String status = resultSet.getString("status");
+                        String banReason = resultSet.getString("ban_reason");
                         
                         // Skip provider column for now to avoid SQL errors
                         String provider = null;
@@ -113,14 +115,26 @@ public class LoginController {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .body(resp);
                         }
-                        
+
+                        // Kiểm tra trạng thái ban trước khi kiểm tra mật khẩu
+                        if ("banned".equalsIgnoreCase(status)) {
+                            Map<String, Object> resp = new HashMap<>();
+                            resp.put("success", false);
+                            resp.put("message", "Tài khoản của bạn đã bị cấm.");
+                            resp.put("banReason", banReason != null ? banReason : "Không có lý do cụ thể.");
+                            // Không cho đăng nhập, không tạo session
+                            return ResponseEntity.status(200)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(resp);
+                        }
+
                         // For users with both OAuth and password, allow password login
                         System.out.println("User has both OAuth and password capability - allowing password login");
-                        
+
                         String hashedInputPassword = hashPassword(password);
                         boolean passwordMatch = hashedInputPassword.equals(dbPasswordFromDb) || password.equals(dbPasswordFromDb);
                         System.out.println("  - Passwords match: " + passwordMatch);
-                        
+
                         if (passwordMatch) {
                             // Create session for email/password login
                             HttpSession session = request.getSession(true);
