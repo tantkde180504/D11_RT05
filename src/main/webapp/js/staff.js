@@ -1,4 +1,11 @@
 // Staff Dashboard JavaScript
+
+// Real-time update variables
+let staffRealTimeInterval = null;
+let staffLastUpdateTimestamp = null;
+let isStaffRealTimeActive = true;
+let currentOrdersData = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize all functionality
     initTabSwitching();
@@ -8,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initStatusBadges();
     initMessageTemplates();
     initKeyboardShortcuts();
-    initRealTimeUpdates();
+    initStaffRealTimeUpdates();
     initTooltips();
     initDropdownFix();
     showKeyboardShortcutsHint();
@@ -1197,6 +1204,9 @@ function loadOrdersFromAPI() {
         .then(data => {
             console.log('📦 Orders API response:', data);
             
+            // Store current data for real-time comparison
+            currentOrdersData = data;
+            
             const tbody = document.getElementById('orders-body');
             tbody.innerHTML = '';
 
@@ -1214,6 +1224,7 @@ function loadOrdersFromAPI() {
                     : '—';
 
                 const row = document.createElement('tr');
+                row.setAttribute('data-order-id', o.id);
                 row.innerHTML = `
                     <td><strong>#${o.orderNumber}</strong></td>
                     <td>${o.shippingName}</td>
@@ -1245,6 +1256,9 @@ function loadOrdersFromAPI() {
                 `;
                 tbody.appendChild(row);
             });
+            
+            // Update timestamp for real-time tracking
+            staffLastUpdateTimestamp = Date.now();
         })
         .catch(err => {
             console.error('Lỗi khi load đơn hàng:', err);
@@ -1284,6 +1298,11 @@ function confirmOrder(orderId) {
 })
 .then(msg => {
     showSuccessMessage(msg);
+    
+    // Show real-time notification
+    showStaffRealTimeNotification('✅ Đơn hàng đã được xác nhận!', 'success');
+    
+    // Immediately refresh data
     loadOrdersFromAPI();
 })
 .catch(err => {
@@ -1313,6 +1332,7 @@ function updateOrderStatus() {
     })
     .then(msg => {
         showSuccessMessage(msg);
+        showStaffRealTimeNotification('✅ Trạng thái đơn hàng đã được cập nhật!', 'success');
         bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
         loadOrdersFromAPI();
     })
@@ -1500,6 +1520,7 @@ function cancelOrder(orderId) {
     })
     .then(msg => {
         showSuccessMessage(msg);
+        showStaffRealTimeNotification('❌ Đơn hàng đã được hủy!', 'warning');
         loadOrdersFromAPI();
     })
     .catch(err => {
@@ -1731,6 +1752,269 @@ function viewReturnDetail(returnId) {
             modal.show();
         })
         .catch(error => console.error('Lỗi khi xem chi tiết:', error));
+}
+
+// ================================
+// STAFF REAL-TIME UPDATE FUNCTIONS
+// ================================
+
+// Initialize real-time updates for staff
+function initStaffRealTimeUpdates() {
+    console.log('🔄 Initializing real-time updates for Staff');
+    
+    // Start real-time updates when page loads
+    startStaffRealTimeUpdates();
+    
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            console.log('📱 Staff page hidden - pausing real-time updates');
+            pauseStaffRealTimeUpdates();
+        } else {
+            console.log('📱 Staff page visible - resuming real-time updates');
+            resumeStaffRealTimeUpdates();
+        }
+    });
+    
+    // Handle window focus/blur
+    window.addEventListener('focus', () => {
+        console.log('🔍 Staff window focused - ensuring real-time updates');
+        resumeStaffRealTimeUpdates();
+    });
+}
+
+// Start real-time updates for staff
+function startStaffRealTimeUpdates() {
+    if (staffRealTimeInterval) {
+        clearInterval(staffRealTimeInterval);
+    }
+    
+    // Update every 12 seconds for staff (slightly less frequent than shipper)
+    staffRealTimeInterval = setInterval(() => {
+        if (isStaffRealTimeActive) {
+            checkForStaffUpdates();
+        }
+    }, 12000);
+    
+    console.log('✅ Staff real-time updates started (12s interval)');
+}
+
+// Check for order updates
+function checkForStaffUpdates() {
+    // Only check if we're on the orders tab
+    const ordersTab = document.getElementById('orders');
+    if (!ordersTab || !ordersTab.classList.contains('active')) {
+        return;
+    }
+    
+    const currentFilter = document.getElementById('order-status-filter')?.value || 'ALL';
+    
+    fetch(`/api/orders?status=${currentFilter}`)
+        .then(res => res.json())
+        .then(newData => {
+            // Compare with current data
+            if (hasStaffDataChanged(newData)) {
+                console.log('🔄 Staff data changed - updating UI');
+                updateStaffOrdersRealTime(newData);
+                showStaffRealTimeNotification('📋 Đơn hàng được cập nhật!', 'info');
+            }
+        })
+        .catch(err => {
+            console.log('⚠️ Staff real-time update failed (silent):', err.message);
+        });
+}
+
+// Check if staff data has changed
+function hasStaffDataChanged(newData) {
+    if (!currentOrdersData || currentOrdersData.length !== newData.length) {
+        return true;
+    }
+    
+    // Check for status changes or new orders
+    for (let i = 0; i < newData.length; i++) {
+        const newOrder = newData[i];
+        const existingOrder = currentOrdersData.find(o => o.id === newOrder.id);
+        
+        if (!existingOrder || existingOrder.status !== newOrder.status) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Update staff orders with animation
+function updateStaffOrdersRealTime(newData) {
+    const previousOrders = [...currentOrdersData];
+    
+    // Find changed orders for animation
+    const changedOrders = [];
+    newData.forEach(newOrder => {
+        const oldOrder = previousOrders.find(o => o.id === newOrder.id);
+        if (oldOrder && oldOrder.status !== newOrder.status) {
+            changedOrders.push({
+                orderId: newOrder.id,
+                orderNumber: newOrder.orderNumber,
+                oldStatus: oldOrder.status,
+                newStatus: newOrder.status
+            });
+        }
+    });
+    
+    // Update current data
+    currentOrdersData = newData;
+    
+    // Re-render orders table
+    renderStaffOrdersWithAnimation(newData, changedOrders);
+    
+    // Update timestamp
+    staffLastUpdateTimestamp = Date.now();
+}
+
+// Render staff orders with animation
+function renderStaffOrdersWithAnimation(data, changedOrders) {
+    const tbody = document.getElementById('orders-body');
+    tbody.innerHTML = '';
+
+    data.forEach((o, index) => {
+        const productListHtml = (o.productNames?.length > 0)
+            ? `<ul class="mb-0 ps-3">${o.productNames.map(p => `<li>${p}</li>`).join('')}</ul>`
+            : '—';
+
+        const row = document.createElement('tr');
+        row.setAttribute('data-order-id', o.id);
+        
+        // Check if this order was changed
+        const wasChanged = changedOrders.find(c => c.orderId === o.id);
+        if (wasChanged) {
+            row.classList.add('order-updated-staff');
+        }
+        
+        row.innerHTML = `
+            <td><strong>#${o.orderNumber}</strong></td>
+            <td>${o.shippingName}</td>
+            <td>${productListHtml}</td>
+            <td><strong>${formatCurrency(o.totalAmount)}</strong></td>
+            <td><span class="status-badge ${getOrderStatusClass(o.status)}">${mapOrderStatus(o.status)}</span></td>
+            <td>${formatDate(o.orderDate)}</td>
+            <td>
+                ${o.status === 'PENDING' ? `
+                    <button class="btn btn-sm btn-success me-1" onclick="confirmOrder(${o.id})">
+                        <i class="fas fa-check"></i>
+                    </button>` : ''}
+
+                ${o.status !== 'DELIVERED' && o.status !== 'CANCELLED' ? `
+                    <button class="btn btn-sm btn-danger me-1" onclick="cancelOrder(${o.id})">
+                        <i class="fas fa-times"></i>
+                    </button>` : ''}
+                ${o.status === 'DELIVERED' ? `
+                    <button class="btn btn-sm btn-primary me-1" onclick="viewDeliveryPhotos(${o.id})" title="Xem ảnh giao hàng">
+                        <i class="fas fa-images"></i>
+                    </button>` : ''}
+                <button class="btn btn-sm btn-warning me-1" onclick="showUpdateStatusModal(${o.id}, '${o.status}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-info" onclick="viewOrderDetail(${o.id})">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    // Remove animation class after 3 seconds
+    setTimeout(() => {
+        tbody.querySelectorAll('.order-updated-staff').forEach(row => {
+            row.classList.remove('order-updated-staff');
+        });
+    }, 3000);
+}
+
+// Show staff real-time notification
+function showStaffRealTimeNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} staff-real-time-notification`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 320px;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    `;
+    
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                ${message}
+            </div>
+            <button type="button" class="btn-close ms-2" aria-label="Close"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show animation
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        hideStaffNotification(notification);
+    }, 5000);
+    
+    // Manual close
+    notification.querySelector('.btn-close').addEventListener('click', () => {
+        hideStaffNotification(notification);
+    });
+}
+
+// Hide staff notification
+function hideStaffNotification(notification) {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateX(100%)';
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
+}
+
+// Pause staff real-time updates
+function pauseStaffRealTimeUpdates() {
+    isStaffRealTimeActive = false;
+    console.log('⏸️ Staff real-time updates paused');
+}
+
+// Resume staff real-time updates
+function resumeStaffRealTimeUpdates() {
+    isStaffRealTimeActive = true;
+    
+    // Immediately check for updates when resuming
+    checkForStaffUpdates();
+    
+    console.log('▶️ Staff real-time updates resumed');
+}
+
+// Stop staff real-time updates
+function stopStaffRealTimeUpdates() {
+    if (staffRealTimeInterval) {
+        clearInterval(staffRealTimeInterval);
+        staffRealTimeInterval = null;
+    }
+    isStaffRealTimeActive = false;
+    console.log('⏹️ Staff real-time updates stopped');
 }
 
 document.addEventListener('DOMContentLoaded', function () {

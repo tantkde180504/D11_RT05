@@ -7,6 +7,11 @@ let orders = [];
 let currentView = 'Khu vực Đà Nẵng';
 let allOrdersGlobal = [];
 
+// Real-time update variables
+let realTimeUpdateInterval = null;
+let lastUpdateTimestamp = null;
+let isRealTimeActive = true;
+
 // Load dashboard statistics from filtered data
 function loadDashboardStats() {
   // Tính từ dữ liệu đã filter chỉ lấy đơn Đà Nẵng
@@ -151,6 +156,9 @@ function fetchShippingOrders(filter = 'ALL') {
       
       // Reload stats after data update
       loadDashboardStats();
+      
+      // Update last timestamp for real-time tracking
+      lastUpdateTimestamp = Date.now();
     })
     .catch(err => {
       console.error('❌ Lỗi lấy shipping:', err);
@@ -453,7 +461,9 @@ function updateShippingStatus() {
     })
     .then(msg => {
       console.log('✅ API Response:', msg);
-      alert(msg);
+      showRealTimeNotification('✅ Cập nhật trạng thái thành công!', 'success');
+      
+      // Immediately refresh data without waiting for interval
       fetchShippingOrders(document.getElementById('order-status-filter').value);
       bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
     })
@@ -605,12 +615,12 @@ function savePhoto() {
     })
     .then(data => {
         if (data.success) {
-            alert('✅ Ảnh đã được lưu thành công!');
+            showRealTimeNotification('✅ Ảnh đã được lưu thành công!', 'success');
             bootstrap.Modal.getInstance(document.getElementById('cameraModal')).hide();
             // Refresh orders to show updated status
             fetchShippingOrders();
         } else {
-            alert('❌ Lỗi lưu ảnh: ' + (data.message || 'Unknown error'));
+            showRealTimeNotification('❌ Lỗi lưu ảnh: ' + (data.message || 'Unknown error'), 'error');
         }
     })
     .catch(err => {
@@ -724,12 +734,296 @@ document.getElementById('cameraModal').addEventListener('hidden.bs.modal', funct
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🎯 DOM loaded, initializing shipper dashboard...');
   
-  // Load dashboard stats
-  loadDashboardStats();
+  // Initialize real-time updates
+  initRealTimeUpdates();
   
+  // Initial data load
   fetchShippingOrders();
-  document.getElementById('order-status-filter').addEventListener('change', function() {
-    console.log('🔄 Filter changed to:', this.value);
-    fetchShippingOrders(this.value);
-  });
+  
+  // Setup filter change handler
+  const filterSelect = document.getElementById('order-status-filter');
+  if (filterSelect) {
+      filterSelect.addEventListener('change', (e) => {
+          fetchShippingOrders(e.target.value);
+      });
+  }
 });
+
+// ================================
+// REAL-TIME UPDATE FUNCTIONS
+// ================================
+
+// Initialize real-time updates
+function initRealTimeUpdates() {
+    console.log('🔄 Initializing real-time updates for Shipper');
+    
+    // Show connection status
+    updateConnectionStatus('connecting');
+    
+    // Start real-time updates when page loads
+    startRealTimeUpdates();
+    
+    // Show connected status after successful start
+    setTimeout(() => {
+        updateConnectionStatus('connected');
+    }, 1000);
+    
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            console.log('📱 Page hidden - pausing real-time updates');
+            pauseRealTimeUpdates();
+            updateConnectionStatus('paused');
+        } else {
+            console.log('📱 Page visible - resuming real-time updates');
+            resumeRealTimeUpdates();
+            updateConnectionStatus('connected');
+        }
+    });
+    
+    // Handle window focus/blur
+    window.addEventListener('focus', () => {
+        console.log('🔍 Window focused - ensuring real-time updates');
+        resumeRealTimeUpdates();
+        updateConnectionStatus('connected');
+    });
+}
+
+// Update connection status indicator
+function updateConnectionStatus(status) {
+    const indicator = document.getElementById('real-time-status');
+    if (!indicator) return;
+    
+    switch (status) {
+        case 'connecting':
+            indicator.className = 'real-time-indicator ms-2 connecting';
+            indicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kết nối...';
+            break;
+        case 'connected':
+            indicator.className = 'real-time-indicator ms-2 active';
+            indicator.innerHTML = '<i class="fas fa-wifi"></i> Kết nối';
+            break;
+        case 'paused':
+            indicator.className = 'real-time-indicator ms-2 paused';
+            indicator.innerHTML = '<i class="fas fa-pause"></i> Tạm dừng';
+            break;
+        case 'error':
+            indicator.className = 'real-time-indicator ms-2 error';
+            indicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Lỗi kết nối';
+            break;
+    }
+}
+
+// Start real-time updates
+function startRealTimeUpdates() {
+    if (realTimeUpdateInterval) {
+        clearInterval(realTimeUpdateInterval);
+    }
+    
+    // Update every 8 seconds
+    realTimeUpdateInterval = setInterval(() => {
+        if (isRealTimeActive) {
+            checkForUpdates();
+        }
+    }, 8000);
+    
+    console.log('✅ Real-time updates started (8s interval)');
+}
+
+// Check for updates without full reload
+function checkForUpdates() {
+    const currentFilter = document.getElementById('order-status-filter')?.value || 'ALL';
+    
+    fetch(`/api/shipping?status=${currentFilter}`)
+        .then(res => res.json())
+        .then(newData => {
+            // Compare with current data
+            if (hasDataChanged(newData)) {
+                console.log('🔄 Data changed - updating UI');
+                updateOrdersRealTime(newData);
+                showRealTimeNotification('📦 Đơn hàng được cập nhật!', 'info');
+            }
+        })
+        .catch(err => {
+            console.log('⚠️ Real-time update failed (silent):', err.message);
+        });
+}
+
+// Check if data has changed
+function hasDataChanged(newData) {
+    if (!orders || orders.length !== newData.length) {
+        return true;
+    }
+    
+    // Check for status changes
+    for (let i = 0; i < newData.length; i++) {
+        const newOrder = newData[i];
+        const existingOrder = orders.find(o => o.shippingId === newOrder.id);
+        
+        if (!existingOrder || existingOrder.status !== newOrder.status) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Update orders with animation
+function updateOrdersRealTime(newData) {
+    const previousOrders = [...orders];
+    
+    // Update global orders data
+    orders = newData.map(item => {
+        let shippingType = item.shipping_type || 
+                          item.shippingType || 
+                          item.shipType || 
+                          item.type ||
+                          (item.order && item.order.shipping_type) ||
+                          'thường';
+                          
+        return {
+            shippingId: item.id,
+            orderId: item.orderId || '(Không rõ)',
+            customer: item.customerName || item.shippingName || '(Không rõ)',
+            address: item.shippingAddress || '(Không rõ)',
+            phone: item.shippingPhone || '(Không rõ)',
+            status: item.status || '(Không rõ)',
+            shippingType: shippingType,
+            date: item.assignedAt ? formatVietnameseDate(item.assignedAt) : '(Chưa được gán)'
+        };
+    });
+    
+    // Find changed orders for animation
+    const changedOrders = [];
+    orders.forEach(newOrder => {
+        const oldOrder = previousOrders.find(o => o.shippingId === newOrder.shippingId);
+        if (oldOrder && oldOrder.status !== newOrder.status) {
+            changedOrders.push({
+                orderId: newOrder.orderId,
+                oldStatus: oldOrder.status,
+                newStatus: newOrder.status
+            });
+        }
+    });
+    
+    // Re-render with animations
+    renderOrdersWithAnimation(changedOrders);
+    
+    // Update stats
+    loadDashboardStats();
+    
+    // Update timestamp
+    lastUpdateTimestamp = Date.now();
+}
+
+// Render orders with animation for changed items
+function renderOrdersWithAnimation(changedOrders) {
+    const currentFilter = document.getElementById('order-status-filter')?.value || 'ALL';
+    const tbody = document.getElementById('orders-table-body');
+    
+    // Render normally first
+    renderOrders(currentFilter);
+    
+    // Add animation to changed orders
+    if (changedOrders.length > 0) {
+        setTimeout(() => {
+            changedOrders.forEach(change => {
+                // Find row by order ID in content
+                const rows = tbody.querySelectorAll('tr');
+                rows.forEach(row => {
+                    if (row.innerHTML.includes(`#${change.orderId}`)) {
+                        // Add highlight animation
+                        row.classList.add('order-updated');
+                        
+                        // Remove animation after 3 seconds
+                        setTimeout(() => {
+                            row.classList.remove('order-updated');
+                        }, 3000);
+                    }
+                });
+            });
+        }, 100);
+    }
+}
+
+// Show real-time notification
+function showRealTimeNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} real-time-notification`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 300px;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="flex-grow-1">${message}</div>
+            <button type="button" class="btn-close ms-2" aria-label="Close"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show animation
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Auto hide after 4 seconds
+    setTimeout(() => {
+        hideNotification(notification);
+    }, 4000);
+    
+    // Manual close
+    notification.querySelector('.btn-close').addEventListener('click', () => {
+        hideNotification(notification);
+    });
+}
+
+// Hide notification with animation
+function hideNotification(notification) {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateX(100%)';
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
+}
+
+// Pause real-time updates
+function pauseRealTimeUpdates() {
+    isRealTimeActive = false;
+    console.log('⏸️ Real-time updates paused');
+}
+
+// Resume real-time updates
+function resumeRealTimeUpdates() {
+    isRealTimeActive = true;
+    
+    // Immediately check for updates when resuming
+    checkForUpdates();
+    
+    console.log('▶️ Real-time updates resumed');
+}
+
+// Stop real-time updates
+function stopRealTimeUpdates() {
+    if (realTimeUpdateInterval) {
+        clearInterval(realTimeUpdateInterval);
+        realTimeUpdateInterval = null;
+    }
+    isRealTimeActive = false;
+    console.log('⏹️ Real-time updates stopped');
+}

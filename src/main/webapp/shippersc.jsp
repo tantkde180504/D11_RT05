@@ -122,6 +122,12 @@
                             Khu vực Đà Nẵng
                         </span>
                         <small class="text-muted">Cập nhật realtime</small>
+                        <span id="real-time-status" class="real-time-indicator ms-2 connecting">
+                            <i class="fas fa-spinner fa-spin"></i> Đang kết nối...
+                        </span>
+                        <div id="real-time-status" class="real-time-indicator ms-2">
+                            <i class="fas fa-wifi"></i> Đang kết nối...
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
