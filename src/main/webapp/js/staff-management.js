@@ -1,8 +1,34 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // === Hàm hiển thị thông báo Bootstrap alert/toast ===
+  window.showBootstrapAlert = function(message, type = 'success', timeout = 3000) {
+    let alertContainer = document.getElementById('customAlertContainer');
+    if (!alertContainer) {
+      alertContainer = document.createElement('div');
+      alertContainer.id = 'customAlertContainer';
+      alertContainer.style.position = 'fixed';
+      alertContainer.style.top = '20px';
+      alertContainer.style.right = '20px';
+      alertContainer.style.zIndex = '9999';
+      document.body.appendChild(alertContainer);
+    }
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = 'alert';
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    alertContainer.appendChild(alertDiv);
+    setTimeout(() => {
+      if (alertDiv) alertDiv.classList.remove('show');
+      setTimeout(() => alertDiv.remove(), 500);
+    }, timeout);
+  }
   const form = document.querySelector("#addStaffForm");
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+
 
       // Validate all required fields
       const requiredFields = [
@@ -21,27 +47,60 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!value || value.trim() === "") missing.push(f.label);
       });
       if (missing.length > 0) {
-        alert("Vui lòng nhập đầy đủ các trường: " + missing.join(", "));
+        showBootstrapAlert("Vui lòng nhập đầy đủ các trường: " + missing.join(", "), 'warning');
         return;
       }
 
-     // Validate firstName & lastName: chỉ cho phép chữ và khoảng trắng, tối đa 50 ký tự
-     const namePattern = /^[A-Za-zÀ-ỹ ]{1,50}$/;
-     const firstName = form.querySelector('input[name="firstName"]').value.trim();
-     const lastName = form.querySelector('input[name="lastName"]').value.trim();
-     if (!namePattern.test(firstName)) {
-         alert("Họ chỉ được chứa chữ, khoảng trắng và tối đa 50 ký tự!");
-         return;
-     }
-     if (!namePattern.test(lastName)) {
-         alert("Tên chỉ được chứa chữ, khoảng trắng và tối đa 50 ký tự!");
-         return;
-     }
+      // Validate ngày sinh: phải đúng định dạng yyyy-MM-dd, là ngày hợp lệ, năm >= 1900, không ở tương lai, đủ 18 tuổi
+      const dobValue = form.querySelector('input[name="dateOfBirth"]').value;
+      if (!dobValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        showBootstrapAlert("Ngày sinh không hợp lệ. Định dạng phải là yyyy-MM-dd.", 'warning');
+        return;
+      }
+      // Kiểm tra ngày thực tế và năm >= 1900
+      const [yyyy, mm, dd] = dobValue.split('-').map(Number);
+      const nowYear = new Date().getFullYear();
+      const minYear = 1900;
+      const maxYear = nowYear - 18;
+      if (yyyy < minYear || yyyy > maxYear || mm < 1 || mm > 12 || dd < 1 || dd > 31) {
+        showBootstrapAlert(`Năm sinh phải từ ${minYear} đến ${maxYear} (và đủ 18 tuổi)!`, 'warning');
+        return;
+      }
+      // Kiểm tra ngày tồn tại thực tế (ví dụ: 2023-02-30 là không hợp lệ)
+      const dob = new Date(dobValue);
+      if (dob.getFullYear() !== yyyy || dob.getMonth() + 1 !== mm || dob.getDate() !== dd) {
+        showBootstrapAlert("Ngày sinh không tồn tại thực tế.", 'warning');
+        return;
+      }
+      const now = new Date();
+      if (dob > now) {
+        showBootstrapAlert("Ngày sinh không được lớn hơn ngày hiện tại!", 'warning');
+        return;
+      }
+      // Kiểm tra đủ 18 tuổi
+      const age = now.getFullYear() - dob.getFullYear() - (now.getMonth() < dob.getMonth() || (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate()) ? 1 : 0);
+      if (age < 18) {
+        showBootstrapAlert("Nhân viên phải đủ 18 tuổi trở lên!", 'warning');
+        return;
+      }
+
+      // Validate firstName & lastName: chỉ cho phép chữ và khoảng trắng, tối đa 50 ký tự
+      const namePattern = /^[A-Za-zÀ-ỹ ]{1,50}$/;
+      const firstName = form.querySelector('input[name="firstName"]').value.trim();
+      const lastName = form.querySelector('input[name="lastName"]').value.trim();
+      if (!namePattern.test(firstName)) {
+          showBootstrapAlert("Họ chỉ được chứa chữ, khoảng trắng và tối đa 50 ký tự!", 'warning');
+          return;
+      }
+      if (!namePattern.test(lastName)) {
+          showBootstrapAlert("Tên chỉ được chứa chữ, khoảng trắng và tối đa 50 ký tự!", 'warning');
+          return;
+      }
 
       // Validate email phải chứa @
       const emailValue = form.querySelector('input[name="email"]').value;
       if (!emailValue.includes("@")) {
-        alert("Email phải chứa ký tự @");
+        showBootstrapAlert("Email phải chứa ký tự @", 'warning');
         return;
       }
 
@@ -66,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return res.json();
         })
         .then(result => {
-          alert("✅ Tạo nhân viên thành công!");
+          showBootstrapAlert("✅ Tạo nhân viên thành công!", 'success');
           const roleLabel = result.role === "STAFF" ? "Nhân viên" : result.role;
           const row = document.createElement("tr");
           row.innerHTML = `
@@ -88,9 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(err => {
           if (err.text) {
-            err.text().then(msg => alert("❌ Lỗi: " + msg));
+            err.text().then(msg => showBootstrapAlert("❌ Lỗi: " + msg, 'danger'));
           } else {
-            alert("❌ Lỗi không xác định khi tạo nhân viên.");
+            showBootstrapAlert("❌ Lỗi không xác định khi tạo nhân viên.", 'danger');
             console.error(err);
           }
         });
@@ -227,7 +286,7 @@ window.openEditModal = function (id) {
           if (errJson && errJson.message) msg = errJson.message;
         } catch {}
         // Reload lại danh sách nếu không tìm thấy nhân viên
-        alert(msg + "\nDanh sách sẽ được làm mới.");
+        showBootstrapAlert(msg + "<br>Danh sách sẽ được làm mới.", 'danger');
         loadStaffList();
         return Promise.reject(new Error(msg));
       }
@@ -235,7 +294,7 @@ window.openEditModal = function (id) {
     })
     .then(data => {
       if (!data || !data.id) {
-        alert("API không trả về dữ liệu hợp lệ.\n" + JSON.stringify(data));
+        showBootstrapAlert("API không trả về dữ liệu hợp lệ.<br>" + JSON.stringify(data), 'danger');
         loadStaffList();
         return;
       }
@@ -273,7 +332,7 @@ window.openEditModal = function (id) {
     .catch(err => {
       if (err && err.message && err.message.startsWith("Không tìm thấy nhân viên")) return;
       console.error("❌ Lỗi khi lấy dữ liệu nhân viên:", err);
-      alert("Không thể tải dữ liệu nhân viên.\n" + err.message);
+      showBootstrapAlert("Không thể tải dữ liệu nhân viên.<br>" + err.message, 'danger');
     });
 };
 
@@ -300,30 +359,39 @@ window.saveStaffUpdate = function () {
   });
   
   if (missing.length > 0) {
-    alert("Vui lòng nhập đầy đủ các trường: " + missing.join(", "));
+    showBootstrapAlert("Vui lòng nhập đầy đủ các trường: " + missing.join(", "), 'warning');
     return;
   }
   
-  // Đảm bảo format ngày đúng yyyy-MM-dd
+  // Đảm bảo format ngày đúng yyyy-MM-dd, kiểm tra ngày thực tế, năm >= 1900, đủ 18 tuổi
   let dateOfBirth = document.getElementById("editDateOfBirth").value;
-  console.log("Original dateOfBirth:", dateOfBirth);
-  
-  // Nếu đã là format yyyy-MM-dd thì ok, nếu không thì convert
   if (!dateOfBirth.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    console.warn("Invalid date format, trying to convert:", dateOfBirth);
-    try {
-      const date = new Date(dateOfBirth);
-      if (!isNaN(date)) {
-        dateOfBirth = date.toISOString().split('T')[0];
-        console.log("Converted dateOfBirth:", dateOfBirth);
-      } else {
-        alert("Format ngày sinh không hợp lệ. Vui lòng nhập lại.");
-        return;
-      }
-    } catch (e) {
-      alert("Format ngày sinh không hợp lệ. Vui lòng nhập lại.");
-      return;
-    }
+    showBootstrapAlert("Ngày sinh không hợp lệ. Định dạng phải là yyyy-MM-dd.", 'warning');
+    return;
+  }
+  const [yyyy, mm, dd] = dateOfBirth.split('-').map(Number);
+  const nowYear = new Date().getFullYear();
+  const minYear = 1900;
+  const maxYear = nowYear - 18;
+  if (yyyy < minYear || yyyy > maxYear || mm < 1 || mm > 12 || dd < 1 || dd > 31) {
+    showBootstrapAlert(`Năm sinh phải từ ${minYear} đến ${maxYear} (và đủ 18 tuổi)!`, 'warning');
+    return;
+  }
+  const dob = new Date(dateOfBirth);
+  if (dob.getFullYear() !== yyyy || dob.getMonth() + 1 !== mm || dob.getDate() !== dd) {
+    showBootstrapAlert("Ngày sinh không tồn tại thực tế.", 'warning');
+    return;
+  }
+  const now = new Date();
+  if (dob > now) {
+    showBootstrapAlert("Ngày sinh không được lớn hơn ngày hiện tại!", 'warning');
+    return;
+  }
+  // Kiểm tra đủ 18 tuổi
+  const age = now.getFullYear() - dob.getFullYear() - (now.getMonth() < dob.getMonth() || (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate()) ? 1 : 0);
+  if (age < 18) {
+    showBootstrapAlert("Nhân viên phải đủ 18 tuổi trở lên!", 'warning');
+    return;
   }
   
   const data = {
@@ -338,7 +406,7 @@ window.saveStaffUpdate = function () {
 
   // Validate email phải chứa @
   if (!data.email.includes("@")) {
-    alert("Email phải chứa ký tự @");
+    showBootstrapAlert("Email phải chứa ký tự @", 'warning');
     return;
   }
 
@@ -352,7 +420,7 @@ window.saveStaffUpdate = function () {
   .then(async res => {
     console.log("Response status:", res.status);
     if (res.ok) {
-      alert("Cập nhật thành công");
+      showBootstrapAlert("Cập nhật thành công", 'success');
       bootstrap.Modal.getInstance(document.getElementById("editStaffModal")).hide();
       loadStaffList();
     } else {
@@ -377,20 +445,20 @@ window.saveStaffUpdate = function () {
           errorMessage = `Lỗi HTTP ${res.status}: ${res.statusText}`;
         }
       }
-      alert(errorMessage);
+      showBootstrapAlert(errorMessage, 'danger');
       console.error("Chi tiết lỗi:", res);
     }
   })
   .catch(err => {
     console.error("❌ Lỗi khi cập nhật nhân viên:", err);
-    alert("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.");
+    showBootstrapAlert("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.", 'danger');
   });
 };
 
 window.deleteStaff = function (id) {
   console.log("[DEBUG] Gọi deleteStaff với id:", id, typeof id);
   if (!id || isNaN(id)) {
-    alert("ID nhân viên không hợp lệ! Không thể xóa.");
+    showBootstrapAlert("ID nhân viên không hợp lệ! Không thể xóa.", 'warning');
     console.warn("[WARN] deleteStaff được gọi với id không hợp lệ:", id);
     return;
   }
@@ -399,10 +467,10 @@ window.deleteStaff = function (id) {
       method: "DELETE"
     }).then(res => {
       if (res.ok) {
-        alert("Xoá thành công!");
+        showBootstrapAlert("Xoá thành công!", 'success');
         loadStaffList();
       } else {
-        alert("Xoá thất bại!");
+        showBootstrapAlert("Xoá thất bại!", 'danger');
       }
     });
   }
@@ -568,23 +636,69 @@ function renderStaffTable(staffToRender) {
     });
 }
 
-// Hàm gọi API chuyển trạng thái hoạt động/tạm ngưng
-function toggleStaffActive(id) {
+// Modal xác nhận chuyển trạng thái nhân viên
+function showConfirmToggleStaff(id) {
+    // Nếu modal chưa có trong DOM thì tạo
+    let modal = document.getElementById('confirmToggleStaffModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.id = 'confirmToggleStaffModal';
+        modal.tabIndex = -1;
+        modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Xác nhận chuyển trạng thái</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Bạn có chắc muốn chuyển trạng thái nhân viên này?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+              <button type="button" class="btn btn-primary" id="confirmToggleStaffBtn">Xác nhận</button>
+            </div>
+          </div>
+        </div>`;
+        document.body.appendChild(modal);
+    }
+    // Gán lại sự kiện cho nút xác nhận
+    setTimeout(() => {
+      const btn = document.getElementById('confirmToggleStaffBtn');
+      if (btn) {
+        btn.onclick = function() {
+          const bsModal = bootstrap.Modal.getInstance(modal);
+          if (bsModal) bsModal.hide();
+          doToggleStaffActive(id);
+        };
+      }
+    }, 100);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+// Hàm thực hiện gọi API chuyển trạng thái
+function doToggleStaffActive(id) {
     if (!id) return;
-    if (!confirm("Bạn có chắc muốn chuyển trạng thái nhân viên này?")) return;
     fetch(apiUrl(`/api/staffs/${id}/toggle-active`), {
         method: "PUT",
         headers: { 'Content-Type': 'application/json' }
     })
     .then(res => res.json())
     .then(data => {
-        if (data && data.message) alert(data.message);
+        if (data && data.message) showBootstrapAlert(data.message, 'info');
         loadStaffList();
     })
     .catch(err => {
-        alert("Lỗi khi chuyển trạng thái nhân viên!");
+        showBootstrapAlert("Lỗi khi chuyển trạng thái nhân viên!", 'danger');
         console.error(err);
     });
+}
+
+// Thay thế nút chuyển trạng thái gọi hàm mới
+function toggleStaffActive(id) {
+    showConfirmToggleStaff(id);
 }
 
 function updateStaffFilterSummary(filteredCount) {

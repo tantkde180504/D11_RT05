@@ -1,4 +1,70 @@
+  // Validate ngày sinh khi thêm khách hàng mới
+  const addForm = document.getElementById('addCustomerForm');
+  if (addForm) {
+    addForm.addEventListener('submit', function(e) {
+      // Validate ngày sinh: yyyy-MM-dd, ngày thực tế, tuổi 13-100
+      const dobValue = addForm.querySelector('input[name="dateOfBirth"]').value;
+      const submitBtn = addForm.querySelector('button[type="submit"]');
+      if (!dobValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        showBootstrapAlert('Ngày sinh không hợp lệ. Định dạng phải là yyyy-MM-dd.', 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        e.preventDefault();
+        return;
+      }
+      const [yyyy, mm, dd] = dobValue.split('-').map(Number);
+      const now = new Date();
+      const nowYear = now.getFullYear();
+      const minYear = nowYear - 100;
+      const maxYear = nowYear - 13;
+      if (yyyy < minYear || yyyy > maxYear || mm < 1 || mm > 12 || dd < 1 || dd > 31) {
+        showBootstrapAlert(`Khách hàng phải từ 13 đến 100 tuổi (năm sinh từ ${minYear} đến ${maxYear})!`, 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        e.preventDefault();
+        return;
+      }
+      const dob = new Date(dobValue);
+      if (dob.getFullYear() !== yyyy || dob.getMonth() + 1 !== mm || dob.getDate() !== dd) {
+        showBootstrapAlert('Ngày sinh không tồn tại thực tế.', 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        e.preventDefault();
+        return;
+      }
+      if (dob > now) {
+        showBootstrapAlert('Ngày sinh không được lớn hơn ngày hiện tại!', 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        e.preventDefault();
+        return;
+      }
+    });
+  }
 let banCustomerId = null;
+
+// === Hàm hiển thị thông báo Bootstrap alert/toast ===
+function showBootstrapAlert(message, type = 'success', timeout = 3000) {
+  // type: 'success', 'danger', 'warning', 'info'
+  let alertContainer = document.getElementById('customAlertContainer');
+  if (!alertContainer) {
+    alertContainer = document.createElement('div');
+    alertContainer.id = 'customAlertContainer';
+    alertContainer.style.position = 'fixed';
+    alertContainer.style.top = '20px';
+    alertContainer.style.right = '20px';
+    alertContainer.style.zIndex = '9999';
+    document.body.appendChild(alertContainer);
+  }
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+  alertDiv.role = 'alert';
+  alertDiv.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  alertContainer.appendChild(alertDiv);
+  setTimeout(() => {
+    if (alertDiv) alertDiv.classList.remove('show');
+    setTimeout(() => alertDiv.remove(), 500);
+  }, timeout);
+}
 // === Modal nhập lý do cấm (chèn trực tiếp vào DOM khi file JS được load) ===
 (function() {
   if (!document.getElementById('banReasonModal')) {
@@ -89,6 +155,34 @@ document.addEventListener("DOMContentLoaded", function () {
       const submitBtn = editForm.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       const id = document.getElementById('editCusId').value;
+      // Validate ngày sinh: yyyy-MM-dd, ngày thực tế, tuổi 13-100
+      const dobValue = document.getElementById('editCusDob').value;
+      if (!dobValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        showBootstrapAlert('Ngày sinh không hợp lệ. Định dạng phải là yyyy-MM-dd.', 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+      const [yyyy, mm, dd] = dobValue.split('-').map(Number);
+      const now = new Date();
+      const nowYear = now.getFullYear();
+      const minYear = nowYear - 100;
+      const maxYear = nowYear - 13;
+      if (yyyy < minYear || yyyy > maxYear || mm < 1 || mm > 12 || dd < 1 || dd > 31) {
+        showBootstrapAlert(`Khách hàng phải từ 13 đến 100 tuổi (năm sinh từ ${minYear} đến ${maxYear})!`, 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+      const dob = new Date(dobValue);
+      if (dob.getFullYear() !== yyyy || dob.getMonth() + 1 !== mm || dob.getDate() !== dd) {
+        showBootstrapAlert('Ngày sinh không tồn tại thực tế.', 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+      if (dob > now) {
+        showBootstrapAlert('Ngày sinh không được lớn hơn ngày hiện tại!', 'warning');
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
       // Lấy giá trị gender, nếu rỗng thì mặc định là 'MALE'
       let genderValue = document.getElementById('editCusGender').value;
       if (!genderValue || !['MALE','FEMALE','OTHER'].includes(genderValue)) genderValue = 'MALE';
@@ -97,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
         lastName: document.getElementById('editCusLastName').value,
         email: document.getElementById('editCusEmail').value,
         phone: document.getElementById('editCusPhone').value,
-        dateOfBirth: document.getElementById('editCusDob').value,
+        dateOfBirth: dobValue,
         gender: genderValue,
         address: document.getElementById('editCusAddress').value
       };
@@ -148,13 +242,13 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(result => {
         bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
         setTimeout(() => {
-          alert('Cập nhật thành công!');
+          showBootstrapAlert('Cập nhật thành công!', 'success');
           loadCustomerList();
           if (submitBtn) submitBtn.disabled = false;
         }, 300);
       })
       .catch(err => {
-        alert(err);
+        showBootstrapAlert(err, 'danger');
         console.error(err);
         if (submitBtn) submitBtn.disabled = false;
         // Remove previous invalid highlights after error
@@ -399,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return res.text();
       })
       .then(() => {
-        alert(status === 'banned' ? 'Đã cấm tài khoản!' : 'Đã bỏ cấm tài khoản!');
+        showBootstrapAlert(status === 'banned' ? 'Đã cấm tài khoản!' : 'Đã bỏ cấm tài khoản!', 'success');
         loadCustomerList();
       })
       .catch(err => {
@@ -738,6 +832,6 @@ function sendBanCustomer(id, status, banReason) {
       loadCustomerList();
     })
     .catch(err => {
-      alert(err);
+      showBootstrapAlert(err, 'danger');
     });
 }
