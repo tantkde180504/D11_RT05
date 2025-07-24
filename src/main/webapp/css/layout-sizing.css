@@ -1,0 +1,272 @@
+/* 
+ * Layout Sizing CSS - Consistent sizing across all pages
+ * Based on product-detail.jsp layout and sizing
+ */
+
+/* Force scrollbar to always be visible to prevent layout shifts */
+html {
+    overflow-y: scroll !important;
+    scrollbar-gutter: stable;
+}
+
+/* Ensure consistent scrollbar appearance and prevent jumping */
+body {
+    scrollbar-gutter: stable;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Prevent any element from causing scrollbar changes */
+* {
+    box-sizing: border-box;
+}
+
+/* Fix header and navbar elements - no scrollbar needed */
+header {
+    will-change: auto;
+    position: relative;
+    z-index: 1030;
+    overflow: visible; /* Allow dropdown overflow */
+}
+
+/* Ensure container doesn't create scrollbar */
+header .container {
+    overflow: visible;
+    max-width: 100%;
+}
+
+/* Fix row to prevent horizontal overflow */
+header .row {
+    margin-left: 0;
+    margin-right: 0;
+    overflow: visible;
+}
+
+/* Prevent navbar hover effects from causing layout changes */
+.navbar .btn, .navbar .dropdown-toggle, .navbar a, 
+.header-actions-section .btn, .account-menu .btn,
+.dropdown-toggle, .btn-outline-success, .btn-outline-primary {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    min-width: fit-content;
+    white-space: nowrap;
+}
+
+/* Fix dropdown positioning and z-index */
+.dropdown {
+    position: relative;
+    z-index: 1040;
+}
+
+.dropdown .btn {
+    position: relative;
+    z-index: 1041;
+}
+
+/* Ensure dropdown menus appear above other content */
+.dropdown-menu {
+    position: absolute !important;
+    z-index: 1050 !important;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    background-color: #fff;
+    margin-top: 0.125rem;
+}
+
+/* Header sections without overflow issues */
+.header-actions-section {
+    will-change: auto;
+    position: relative;
+    z-index: 1040;
+    overflow: visible;
+}
+
+.account-menu {
+    position: relative;
+    z-index: 1040;
+    overflow: visible;
+}
+
+/* Prevent any size changes on hover */
+.header-actions-section .btn:hover,
+.account-menu .btn:hover,
+.dropdown-toggle:hover {
+    transform: translateZ(0);
+}
+
+/* Optimize header sections without blocking dropdowns */
+.header-logo-section, .header-center-section {
+    will-change: auto;
+    overflow: visible;
+}
+
+/* Smooth search container */
+.search-container {
+    will-change: auto;
+    position: relative;
+    overflow: visible;
+}
+
+/* Search suggestions positioning */
+.search-suggestions {
+    position: absolute !important;
+    z-index: 1050 !important;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Main container without scrollbar issues */
+.container {
+    max-width: 100%;
+    overflow-x: hidden;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Content containers should have normal overflow */
+.main-content .container,
+.page-content .container,
+.product-detail-container .container,
+.search-container-page .container,
+.profile-container .container,
+.auth-container .container {
+    overflow: visible;
+}
+
+/* Prevent Bootstrap responsive utilities from affecting scrollbar */
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Column padding adjustments */
+.col-lg-3, .col-lg-6, .col-lg-4, .col-lg-8, .col-lg-9, .col-lg-12,
+.col-md-4, .col-md-6, .col-md-8, .col-md-12,
+.col-6, .col-12 {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Ensure sticky header works properly with dropdowns */
+.sticky-top {
+    z-index: 1030;
+}
+
+/* Mobile sidebar z-index */
+.mobile-sidebar {
+    z-index: 1060 !important;
+}
+
+/* Back to top button z-index */
+.back-to-top {
+    z-index: 1020;
+}
+
+/* Page containers consistent sizing */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Form containers sizing */
+.form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.form-container.large {
+    max-width: 800px;
+}
+
+/* Card containers */
+.card-container {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Product grid consistent sizing */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+/* Search results container */
+.search-results-container {
+    padding: 2rem 0;
+}
+
+/* Profile sections */
+.profile-section {
+    margin-bottom: 2rem;
+}
+
+/* Breadcrumb consistent spacing */
+.breadcrumb-section {
+    padding: 1rem 0;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 2rem;
+}
+
+/* Footer consistent positioning */
+footer {
+    margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .form-container {
+        padding: 1rem;
+        margin: 0 1rem;
+    }
+    
+    .card-container {
+        padding: 1rem;
+        margin: 0 0 1rem 0;
+    }
+    
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .col-lg-3, .col-lg-6, .col-lg-4, .col-lg-8, .col-lg-9, .col-lg-12,
+    .col-md-4, .col-md-6, .col-md-8, .col-md-12,
+    .col-6, .col-12 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}

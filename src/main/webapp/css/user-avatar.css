@@ -1,0 +1,158 @@
+/* User Avatar Styles */
+.user-avatar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.user-avatar {
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.user-avatar:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: scale(1.05);
+}
+
+.user-avatar-small {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+/* Account button styling to prevent overflow */
+.modern-account-btn {
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-account-btn .account-text {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Greeting text styling */
+.greeting-text {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-right: 4px;
+}
+
+/* User account dropdown button styling */
+#userAccountDropdown {
+    border: 2px solid #28a745;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+#userAccountDropdown:hover {
+    background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+    border-color: #1e7e34;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    transform: translateY(-1px);
+}
+
+#userAccountDropdown:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .user-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .greeting-text {
+        display: none;
+    }
+    
+    #userAccountDropdown {
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+}
+
+/* Default avatar fallback */
+.avatar-fallback {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Avatar loading state */
+.avatar-loading {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-loading::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid #6c757d;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dropdown menu enhancements */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 8px 0;
+    margin-top: 8px;
+}
+
+.dropdown-header {
+    padding: 12px 16px 8px;
+    font-size: 0.9em;
+    color: #495057;
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+    border-radius: 0;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #f8d7da;
+    color: #721c24;
+}

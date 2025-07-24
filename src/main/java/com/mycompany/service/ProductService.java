@@ -19,6 +19,11 @@ public class ProductService {
         return productRepository.findByIsActiveTrue();
     }
     
+    // Lấy tất cả sản phẩm (bao gồm inactive) - for admin
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+    
     // Lấy sản phẩm featured cho trang chủ
     public List<Product> getFeaturedProducts() {
         return productRepository.findByIsFeaturedTrueAndIsActiveTrue();

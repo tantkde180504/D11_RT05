@@ -1,114 +1,35 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>43 Gundam Hobby - Quên mật khẩu</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/styles.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/category-popup.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-darkmode.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-bg-orange.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/navbar-menu-white.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/hamburger-menu.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/login-anhobby.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Unified CSS -->
+    <jsp:include page="includes/unified-css.jsp" />
 </head>
 <body>
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky-top">
-        <div class="container">
-            <div class="row align-items-center py-3">
-                <!-- Logo Section with Hamburger Menu -->
-                <div class="col-lg-3 col-md-4 col-6">
-                    <div class="header-logo-section">
-                        <!-- Hamburger Menu (Mobile) -->
-                        <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menu">
-                            <span class="line"></span>
-                            <span class="line"></span>
-                            <span class="line"></span>
-                        </button>
-                        
-                        <div class="logo">
-                            <a href="<%=request.getContextPath()%>/">
-                                <img src="<%=request.getContextPath()%>/img/logo.png" alt="43 Gundam Logo" class="logo-img">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Section -->
-                <div class="col-lg-6 col-md-4 col-12 order-lg-2 order-md-2 order-3">
-                    <div class="header-center-section">
-                        <div class="search-container w-100">
-                            <form class="search-form" action="<%=request.getContextPath()%>/search.jsp" method="get">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control search-input" 
-                                           placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
-                                    <button class="btn btn-search" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actions Section -->
-                <div class="col-lg-3 col-md-4 col-6 order-lg-3 order-md-3 order-2">
-                    <div class="header-actions-section">
-                        <div class="account-menu me-3">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-outline-primary dropdown-toggle" 
-                                   id="accountDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span class="d-none d-md-inline">Tài khoản</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/login.jsp">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>/register.jsp">
-                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                    </a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="cart-btn">
-                            <a href="#" class="btn btn-primary">
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                <span class="cart-count">0</span>
-                                <span class="d-none d-lg-inline ms-1">Giỏ hàng</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
+    <!-- Unified Header -->
+    <jsp:include page="includes/unified-header.jsp" />
+    
     <!-- Mobile Sidebar Navigation -->
     <jsp:include page="includes/mobile-sidebar.jsp" />
 
     <!-- Forgot Password Form -->
     <div class="container d-flex flex-column align-items-center justify-content-center min-height-70vh">
         <div class="login-title mt-4">Quên mật khẩu</div>
-        <div class="text-center mb-4">
-            <p class="text-muted">Nhập email của bạn để nhận liên kết đặt lại mật khẩu</p>
-        </div>
         
         <!-- Step 1: Email Input Form -->
-        <div class="login-form-box mx-auto" id="forgot-password-form">
-            <form id="forgotPasswordForm" action="/api/forgot-password" method="post" autocomplete="off">
+        <div class="login-form-box mx-auto" id="step-1-email">
+            <div class="text-center mb-4">
+                <p class="text-muted">Nhập email của bạn để nhận mã OTP</p>
+            </div>
+            <form id="forgotPasswordForm" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
-                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off" placeholder="Nhập email đã đăng ký">
+                    <input type="email" class="form-control" name="email" required autocomplete="off" placeholder="" id="email-register">
                 </div>
-                <button type="submit" class="btn btn-login w-100">Gửi liên kết đặt lại mật khẩu</button>
+                <button type="submit" class="btn btn-login w-100">Gửi mã OTP</button>
             </form>
             
             <div class="text-center mt-3">
@@ -118,24 +39,46 @@
             </div>
         </div>
         
-        <!-- Step 2: Success Message (hidden by default) -->
-        <div id="success-message" class="login-form-box mx-auto d-none">
-            <div class="text-center">
-                <i class="fas fa-envelope-circle-check text-success mb-3" style="font-size: 3rem;"></i>
-                <h4>Email đã được gửi!</h4>
-                <p class="text-muted">Chúng tôi đã gửi liên kết đặt lại mật khẩu đến email của bạn. Vui lòng kiểm tra hộp thư và làm theo hướng dẫn.</p>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <small>Nếu không thấy email, vui lòng kiểm tra thư mục spam/junk</small>
+        <!-- Step 2: OTP Verification Form (hidden by default) -->
+        <div id="step-2-otp" class="login-form-box mx-auto d-none">
+            <div class="text-center mb-4">
+                <i class="fas fa-envelope-circle-check text-success mb-3" style="font-size: 2rem;"></i>
+                <h5>Nhập mã OTP</h5>
+                <p class="text-muted">Chúng tôi đã gửi mã OTP 6 số đến email: <strong id="email-display"></strong></p>
+                <p class="text-muted small">Mã OTP có hiệu lực trong 10 phút</p>
+            </div>
+            <form id="otpVerificationForm" autocomplete="off">
+                <div class="mb-3">
+                    <label for="otp" class="form-label">Mã OTP *</label>
+                    <input type="text" class="form-control text-center" name="otp" required 
+                           maxlength="6" pattern="[0-9]{6}" placeholder="" id="otp-input" 
+                           style="letter-spacing: 0.5em; font-size: 1.2rem;">
+                    <div class="form-text">Vui lòng nhập mã OTP gồm 6 chữ số</div>
                 </div>
-                <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Quay lại đăng nhập</a>
+                <button type="submit" class="btn btn-login w-100">Xác nhận OTP</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <button id="resend-otp" class="btn btn-link text-decoration-none">
+                    <i class="fas fa-refresh me-2"></i>Gửi lại mã OTP
+                </button>
+                <div class="mt-2">
+                    <button id="back-to-email" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i>Thay đổi email
+                    </button>
+                </div>
             </div>
         </div>
         
         <!-- Step 3: Reset Password Form (hidden by default) -->
-        <div id="reset-password-form" class="login-form-box mx-auto d-none">
-            <form id="resetPasswordForm" action="/api/reset-password" method="post" autocomplete="off">
-                <input type="hidden" id="resetToken" name="token" value="">
+        <div id="step-3-reset" class="login-form-box mx-auto d-none">
+            <div class="text-center mb-4">
+                <i class="fas fa-key text-success mb-3" style="font-size: 2rem;"></i>
+                <h5>Đặt mật khẩu mới</h5>
+                <p class="text-muted">Tạo mật khẩu mới cho tài khoản của bạn</p>
+            </div>
+            <form id="resetPasswordForm" autocomplete="off">
+                <input type="hidden" id="verification-token" name="token" value="">
                 <div class="mb-3">
                     <label for="newPassword" class="form-label">Mật khẩu mới *</label>
                     <input type="password" class="form-control" id="newPassword" name="newPassword" required autocomplete="off">
@@ -145,22 +88,16 @@
                     <label for="confirmNewPassword" class="form-label">Xác nhận mật khẩu mới *</label>
                     <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required autocomplete="off">
                 </div>
-                <button type="submit" class="btn btn-login w-100">Đặt lại mật khẩu</button>
+                <button type="submit" class="btn btn-login w-100">Cập nhật mật khẩu</button>
             </form>
-            
-            <div class="text-center mt-3">
-                <a href="<%=request.getContextPath()%>/login.jsp" class="text-primary text-decoration-none">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại đăng nhập
-                </a>
-            </div>
         </div>
         
-        <!-- Step 4: Reset Success Message (hidden by default) -->
-        <div id="reset-success-message" class="login-form-box mx-auto d-none">
+        <!-- Step 4: Success Message (hidden by default) -->
+        <div id="step-4-success" class="login-form-box mx-auto d-none">
             <div class="text-center">
                 <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
-                <h4>Mật khẩu đã được đặt lại!</h4>
-                <p class="text-muted">Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập với mật khẩu mới.</p>
+                <h4>Mật khẩu đã được cập nhật!</h4>
+                <p class="text-muted">Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập với mật khẩu mới ngay bây giờ.</p>
                 <a href="<%=request.getContextPath()%>/login.jsp" class="btn btn-primary">Đăng nhập ngay</a>
             </div>
         </div>
@@ -196,10 +133,10 @@
                             <h6 class="footer-title">Sản phẩm</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Gundam Bandai</a></li>
-                                <li><a href="#">High Grade (HG)</a></li>
-                                <li><a href="#">Master Grade (MG)</a></li>
-                                <li><a href="#">Real Grade (RG)</a></li>
-                                <li><a href="#">Perfect Grade (PG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG">High Grade (HG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG">Master Grade (MG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG">Real Grade (RG)</a></li>
+                                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG">Perfect Grade (PG)</a></li>
                                 <li><a href="#">Metal Build</a></li>
                             </ul>
                         </div>
@@ -209,7 +146,7 @@
                             <h6 class="footer-title">Dịch vụ</h6>
                             <ul class="footer-links">
                                 <li><a href="#">Hàng Pre-Order</a></li>
-                                <li><a href="#">Dụng cụ & Phụ kiện</a></li>
+                                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp">Dụng cụ & Phụ kiện</a></li>
                                 <li><a href="#">Hướng dẫn lắp ráp</a></li>
                                 <li><a href="#">Sơn & Trang trí</a></li>
                                 <li><a href="#">Bảo hành sản phẩm</a></li>
@@ -220,10 +157,10 @@
                         <div class="footer-section">
                             <h6 class="footer-title">Chính sách</h6>
                             <ul class="footer-links">
-                                <li><a href="#">Chính sách bảo mật</a></li>
+                                <li><a href="<%=request.getContextPath()%>/privacy-policy.jsp">Chính sách bảo mật</a></li>
                                 <li><a href="#">Chính sách thanh toán</a></li>
-                                <li><a href="#">Chính sách vận chuyển</a></li>
-                                <li><a href="#">Chính sách đổi trả</a></li>
+                                <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách vận chuyển</a></li>
+                                <li><a href="<%=request.getContextPath()%>/shipping-policy.jsp">Chính sách đổi trả</a></li>
                                 <li><a href="#">Quy định sử dụng</a></li>
                             </ul>
                         </div>
@@ -249,22 +186,23 @@
                     <div class="col-md-6">
                         <h6 class="social-title mb-3">Theo dõi chúng tôi</h6>
                         <div class="social-links">
-                            <a href="#" class="social-link facebook">
+                            <a href="https://www.facebook.com/BANDAIHobbysite.EN" target="_blank" rel="noopener noreferrer" class="social-link facebook">
                                 <i class="fab fa-facebook-f"></i>
                                 <span>Facebook</span>
                             </a>
-                            <a href="#" class="social-link youtube">
+                            <a href="https://www.youtube.com/@GundamInfo" target="_blank" rel="noopener noreferrer" class="social-link youtube">
                                 <i class="fab fa-youtube"></i>
                                 <span>Youtube</span>
                             </a>
-                            <a href="#" class="social-link tiktok">
+                            <a href="https://www.tiktok.com/@bandainamcoasiahobby_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="social-link tiktok">
                                 <i class="fab fa-tiktok"></i>
                                 <span>TikTok</span>
                             </a>
-                            <a href="#" class="social-link instagram">
+                            <a href="https://www.instagram.com/bandaihobbyhk/" target="_blank" rel="noopener noreferrer" class="social-link instagram">
                                 <i class="fab fa-instagram"></i>
                                 <span>Instagram</span>
                             </a>
+                        </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -306,9 +244,10 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Unified Scripts -->
+    <jsp:include page="includes/unified-scripts.jsp" />
+    
     <script src="<%=request.getContextPath()%>/js/forgot-password.js"></script>
-    <script src="<%=request.getContextPath()%>/js/hamburger-menu.js"></script>
     <script>
         // Back to top functionality
         const backToTopBtn = document.getElementById('backToTop');
@@ -330,3 +269,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+

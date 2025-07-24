@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!-- Universal Sidebar Navigation (works on all screen sizes) -->
 <div class="mobile-sidebar" id="mobileSidebar">
     <button class="sidebar-close" id="sidebarClose" aria-label="Đóng menu">&times;</button>
@@ -14,10 +15,8 @@
             <li><a href="#"><i class="fas fa-robot me-2"></i>Gundam Bandai</a></li>
             <li><a href="#"><i class="fas fa-industry me-2"></i>Mô hình Trung</a></li>
             <li><a href="#"><i class="fas fa-gem me-2"></i>Metal Build - Diecast</a></li>
-            <li><a href="#"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
+            <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
             <li><a href="#"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
-            <li><a href="#"><i class="fas fa-dragon me-2"></i>Mô hình Dragon Ball</a></li>
-            <li><a href="#"><i class="fas fa-palette me-2"></i>Sơn - Decal</a></li>
         </ul>
     </div>
     
@@ -31,9 +30,8 @@
                 <i class="fas fa-cubes me-2"></i>Phụ kiện & Mô hình <i class="fas fa-chevron-down float-end"></i>
             </a>
             <ul class="collapse submenu" id="phukienSubmenu">
-                <li><a href="#"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
-                <li><a href="#"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
-                <li><a href="#"><i class="fas fa-dragon me-2"></i>Mô hình Dragon Ball</a></li>
+                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp"><i class="fas fa-tools me-2"></i>Dụng cụ - Tool</a></li>
+                <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp?category=BASE_STAND"><i class="fas fa-puzzle-piece me-2"></i>Phụ kiện - Base</a></li>
             </ul>
         </li>
         <li>
@@ -41,14 +39,16 @@
                 <i class="fas fa-robot me-2"></i>Bandai Collection <i class="fas fa-chevron-down float-end"></i>
             </a>
             <ul class="collapse submenu" id="bandaiSubmenu">
-                <li><a href="#"><i class="fas fa-award me-2"></i>High Grade (HG)</a></li>
-                <li><a href="#"><i class="fas fa-trophy me-2"></i>Master Grade (MG)</a></li>
-                <li><a href="#"><i class="fas fa-medal me-2"></i>Real Grade (RG)</a></li>
-                <li><a href="#"><i class="fas fa-crown me-2"></i>Perfect Grade (PG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=HG"><i class="fas fa-award me-2"></i>High Grade (HG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=MG"><i class="fas fa-trophy me-2"></i>Master Grade (MG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=RG"><i class="fas fa-medal me-2"></i>Real Grade (RG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=PG"><i class="fas fa-crown me-2"></i>Perfect Grade (PG)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=SD"><i class="fas fa-smile me-2"></i>Super Deformed (SD)</a></li>
+                <li><a href="<%=request.getContextPath()%>/grade.jsp?grade=METAL_BUILD"><i class="fas fa-gem me-2"></i>Metal Build</a></li>
             </ul>
         </li>
-        <li><a href="#"><i class="fas fa-heart me-2"></i>Yêu thích</a></li>
-        <li><a href="#"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
+        <li><a href="favorites.jsp"><i class="fas fa-heart me-2"></i>Yêu thích</a></li>
+        <li><a href="<%=request.getContextPath()%>/profile.jsp"><i class="fas fa-user me-2"></i>Tài khoản</a></li>
     </ul>
     
     <!-- Additional Info Section for Desktop -->

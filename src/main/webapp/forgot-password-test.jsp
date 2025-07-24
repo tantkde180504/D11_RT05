@@ -23,12 +23,12 @@
             margin-bottom: 20px;
         }
         .test-title {
-            color: #ff6600;
+            color: #28a745;
             font-weight: bold;
             margin-bottom: 20px;
         }
         .btn-test {
-            background-color: #ff6600;
+            background-color: #28a745;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -36,7 +36,7 @@
             margin: 5px;
         }
         .btn-test:hover {
-            background-color: #e55a00;
+            background-color: #20c997;
             color: white;
         }
         .response-area {

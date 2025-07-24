@@ -1,65 +1,23 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết quả tìm kiếm - Gundam Hobby</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-bg-orange.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/navbar-menu-white.css">
+    <%@ include file="/includes/unified-css.jsp" %>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
-                <img src="${pageContext.request.contextPath}/img/logo.png" alt="Logo" width="40" height="40" class="me-2">
-                <span class="fw-bold">Gundam Hobby</span>
-            </a>
+    <!-- Success notification for OAuth login -->
+    <div id="oauth-success-notification" class="alert alert-success alert-dismissible fade oauth-notification">
+        <strong>🎉 Đăng nhập thành công!</strong>
+        <p class="mb-0" id="welcome-message">Chào mừng bạn quay trở lại!</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/all-products">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">Giới thiệu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Liên hệ</a>
-                    </li>
-                </ul>
-
-                <!-- Search Form -->
-                <form class="d-flex me-3" id="headerSearchForm" action="${pageContext.request.contextPath}/search.jsp" method="get">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="q" placeholder="Tìm kiếm sản phẩm..." 
-                               value="<%= request.getParameter("q") != null ? request.getParameter("q") : "" %>" id="headerSearchInput" autocomplete="off">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                    <!-- Autocomplete suggestions -->
-                    <div id="headerSearchSuggestions" class="search-suggestions"></div>
-                </form>
-            </div>
-        </div>
-    </nav>
-
+    <!-- Header -->
+    <%@ include file="/includes/unified-header.jsp" %>
+    
     <div class="container mt-4">
         <h2>Kết quả tìm kiếm</h2>
         <p id="searchQueryDisplay"></p>
@@ -89,11 +47,12 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <%@ include file="/includes/unified-scripts.jsp" %>
     
-    <!-- Search Autocomplete Script -->
-    <script src="${pageContext.request.contextPath}/js/search-autocomplete.js"></script>
+    <!-- Search-specific scripts -->
+    <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
+    <script src="${pageContext.request.contextPath}/js/cart-manager.js"></script>
+    <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
     
     <script>
         // Initialize when page loads
@@ -168,7 +127,7 @@
                             '<h5 class="card-title">' + (product.name || 'Tên sản phẩm') + '</h5>' +
                             '<p class="card-text text-danger fw-bold">' + price + '</p>' +
                             '<div class="mt-auto">' +
-                                '<a href="${pageContext.request.contextPath}/product/' + product.id + '" class="btn btn-primary w-100">' +
+                                '<a href="${pageContext.request.contextPath}/product-detail.jsp?id=' + product.id + '" class="btn btn-primary w-100">' +
                                     '<i class="fas fa-eye me-2"></i>Xem chi tiết' +
                                 '</a>' +
                             '</div>' +
@@ -218,7 +177,7 @@
             position: absolute;
             top: 100%;
             left: 0;
-            right: 40px;
+            right: 0;
             background: white;
             border: 1px solid #ddd;
             border-top: none;
@@ -244,9 +203,86 @@
             border-bottom: none;
         }
 
-        .input-group {
+        .search-container {
             position: relative;
         }
     </style>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Avatar Utils -->
+    <script src="${pageContext.request.contextPath}/js/avatar-utils.js"></script>
+    
+    <!-- Cart Manager Script -->
+    <script src="${pageContext.request.contextPath}/js/cart-manager.js"></script>
+    
+    <!-- Unified Navbar Manager -->
+    <script src="${pageContext.request.contextPath}/js/unified-navbar-manager.js"></script>
+    
+    <!-- Google OAuth Handler -->
+    <script src="${pageContext.request.contextPath}/js/google-oauth-handler.js"></script>
+    
+    <!-- Authentication and Navbar Scripts -->
+    <script src="${pageContext.request.contextPath}/js/auth-sync.js"></script>
+    <script src="${pageContext.request.contextPath}/js/navbar-manager.js"></script>
+    <script src="${pageContext.request.contextPath}/js/google-oauth-clean.js"></script>
+    <script src="${pageContext.request.contextPath}/js/navbar-fix.js"></script>
+    <script src="${pageContext.request.contextPath}/js/hamburger-menu.js"></script>
+    
+    <!-- Unified Navbar Debug -->
+    <script src="${pageContext.request.contextPath}/js/unified-navbar-debug.js"></script>
+    
+    <!-- Force check auth state after page load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📦 DOM ready, setting up unified navbar...');
+            
+            // Initialize cart count
+            if (window.cartManager) {
+                window.cartManager.updateCartCount();
+            }
+            
+            // Immediate auth state debug
+            console.log('🔍 Immediate Auth Check:');
+            console.log('- currentUser:', localStorage.getItem('currentUser'));
+            console.log('- googleUser:', localStorage.getItem('googleUser'));
+            console.log('- userLoggedIn:', localStorage.getItem('userLoggedIn'));
+            
+            // Ensure unified navbar manager is initialized
+            if (window.unifiedNavbarManager) {
+                setTimeout(() => {
+                    console.log('⚡ Manual auth state check...');
+                    window.unifiedNavbarManager.checkAuthState();
+                }, 100);
+                
+                setTimeout(() => {
+                    console.log('🔄 Refreshing navbar...');
+                    window.unifiedNavbarManager.refreshNavbar();
+                }, 200);
+            } else {
+                console.warn('⚠️ unifiedNavbarManager not found!');
+            }
+            
+            // Force check auth state multiple times to ensure sync
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 300);
+            
+            setTimeout(() => {
+                if (window.authSyncManager) {
+                    window.authSyncManager.forceRefresh();
+                }
+            }, 600);
+        });
+    </script>
 </body>
 </html>
+
+
+
+
+
+

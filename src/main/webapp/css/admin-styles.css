@@ -90,10 +90,13 @@ main {
 .table th {
     border-top: none;
     font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
 }
 
-.badge {
-    font-size: 0.75em;
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
 }
 
 /* Modal enhancements */
@@ -110,4 +113,67 @@ main {
 .card:hover {
     transform: translateY(-2px);
     transition: transform 0.2s ease-in-out;
+}
+
+/* 🎨 GRADIENT BACKGROUNDS CHO CÁC THẺ THỐNG KÊ */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%) !important;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+/* ✨ CARD HOVER EFFECTS */
+.card.shadow-lg {
+    transition: all 0.3s ease;
+    border-radius: 15px !important;
+}
+
+.card.shadow-lg:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+
+/* 🎯 BADGE STYLING */
+.badge.fs-6 {
+    font-size: 0.9rem !important;
+    border-radius: 10px;
+}
+
+/* 🎨 ICON CIRCLES */
+.bg-white.bg-opacity-20 {
+    background-color: rgba(255,255,255,0.2) !important;
+}
+
+/* 🎯 FLEXBOX LAYOUT CHO STATS CARDS */
+.d-flex.gap-3 {
+    gap: 1rem !important;
+}
+
+.flex-fill {
+    flex: 1 1 0% !important;
+}
+
+/* 📱 RESPONSIVE CHO STATS CARDS */
+@media (max-width: 768px) {
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+}
+
+/* 📱 RESPONSIVE CARD HEIGHTS */
+@media (max-width: 768px) {
+    .card.h-100 {
+        margin-bottom: 1rem;
+    }
 }

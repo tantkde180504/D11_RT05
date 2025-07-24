@@ -1,0 +1,61 @@
+# ========================
+# Build outputs
+# ========================
+/target/
+/build/
+/out/
+/work/
+*.class
+
+# ========================
+# IDE and editor files
+# ========================
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# ========================
+# OS-specific files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Logs and temporary files
+# ========================
+*.log
+*.tmp
+*.bak
+
+# ========================
+# Dependency directories
+# ========================
+/node_modules/
+
+# ========================
+# Application properties (sensitive info)
+# ========================
+src/main/resources/application.properties
+src/main/resources/application-*.properties
+.env
+
+# ========================
+# Package managers and metadata
+# ========================
+*.jar
+*.war
+*.ear
+
+# ========================
+# Coverage, reports
+# ========================
+/coverage/
+/jacoco.exec
+/test-output/
+/surefire-reports/
+*.jsp.class
+*.jsp.java
+
+

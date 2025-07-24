@@ -1,0 +1,71 @@
+/* Account Menu Fix CSS - Sửa lỗi hiển thị menu tài khoản */
+
+/* Đảm bảo account menu luôn hiển thị đúng */
+.account-menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Đảm bảo d-none class hoạt động đúng */
+.d-none {
+    display: none !important;
+}
+
+/* Đảm bảo không có CSS xung đột */
+#nav-user-info:not(.d-none) {
+    display: block !important;
+}
+
+#nav-login-btn:not(.d-none) {
+    display: block !important;
+}
+
+/* Đảm bảo dropdown hoạt động */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    min-width: 200px;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+/* Cải thiện responsive */
+@media (max-width: 768px) {
+    .account-menu {
+        gap: 10px;
+    }
+    
+    .dropdown-menu {
+        min-width: 180px;
+    }
+}
+
+/* Debug styles để kiểm tra */
+.debug-visible {
+    border: 2px solid red !important;
+    background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+.debug-hidden {
+    border: 2px solid blue !important;
+    background-color: rgba(0, 0, 255, 0.1) !important;
+}

@@ -13,12 +13,12 @@
     color: #fff !important;
 }
 .category-popup {
-    background: #E55A00;
+    background: #28a745;
 }
 .category-popup .category-item {
     color: #fff;
 }
 .category-popup .category-item:hover {
     background: #fff;
-    color: #E55A00;
+    color: #28a745;
 }

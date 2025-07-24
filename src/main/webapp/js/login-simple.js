@@ -62,12 +62,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Show success message
                     const roleText = getRoleDisplayName(data.role);
                     showAlert(`🎉 Đăng nhập thành công! Chào mừng ${data.fullName} (${roleText})`, 'success');
-                      // Redirect to home page after 2 seconds
-                    setTimeout(() => {
-                        const role = data.role ? data.role.toUpperCase() : '';
-                        const targetPage = '/';
+                      // Redirect to appropriate page based on server response
+                     setTimeout(() => {
+                        // Use redirectUrl from server response if available, otherwise fallback to client-side logic
+                        let targetPage = data.redirectUrl;
                         
-                        console.log('Redirecting to:', targetPage);
+                        if (!targetPage) {
+                            // Fallback client-side logic
+                            const role = data.role ? data.role.toUpperCase() : '';
+                            if (role === 'ADMIN') {
+                                targetPage = '/dashboard.jsp';
+                            } else if (role === 'STAFF') {
+                                targetPage = '/staffsc.jsp';    
+                            } else if (role === 'SHIPPER') {
+                                targetPage = '/shippersc.jsp';    
+                            } else {
+                                targetPage = '/index.jsp';
+                            }
+                        }                       
+                        console.log('Redirecting to:', targetPage, '(Role:', data.role + ')');
                         showAlert(`🚀 Đang chuyển đến trang chủ...`, 'info');
                         
                         setTimeout(() => {
@@ -108,6 +121,8 @@ function getRoleDisplayName(role) {
             return 'Nhân viên';
         case 'CUSTOMER':
             return 'Khách hàng';
+        case 'SHIPPER':
+            return 'Giao hàng';
         default:
             return 'Người dùng';
     }

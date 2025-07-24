@@ -1,12 +1,17 @@
 package com.mycompany.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/oauth2")
@@ -20,13 +25,69 @@ public class GoogleOAuthController {    @GetMapping("/user-info")
         
         if (principal != null) {
             // User đăng nhập qua OAuth2
-            response.put("email", principal.getAttribute("email"));
-            response.put("name", principal.getAttribute("name"));
-            response.put("picture", principal.getAttribute("picture"));
-            response.put("role", session.getAttribute("userRole"));
+            String email = principal.getAttribute("email");
+            if (email != null) email = email.trim().toLowerCase();
+            System.out.println("[BAN CHECK] Email nhận từ Google: '" + email + "'");
+            String name = principal.getAttribute("name");
+            String picture = principal.getAttribute("picture");
+            String role = (String) session.getAttribute("userRole");
+            if (role == null) role = "CUSTOMER"; // Default role
+
+            boolean foundUser = false;
+            String statusLog = "";
+            String banReasonLog = "";
+            try {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                String connectionUrl = "jdbc:sqlserver://43gundam.database.windows.net:1433;database=gundamhobby;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+                String username = "admin43@43gundam";
+                String dbPassword = "Se18d06.";
+                try (java.sql.Connection connection = java.sql.DriverManager.getConnection(connectionUrl, username, dbPassword)) {
+                    String sql = "SELECT status, ban_reason FROM users WHERE email = ?";
+                    try (java.sql.PreparedStatement stmt = connection.prepareStatement(sql)) {
+                        stmt.setString(1, email);
+                        try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                            if (rs.next()) {
+                                foundUser = true;
+                                String status = rs.getString("status");
+                                String banReason = rs.getString("ban_reason");
+                                statusLog = status;
+                                banReasonLog = banReason;
+                                System.out.println("[BAN CHECK] Email: " + email + ", Status: " + status + ", BanReason: " + banReason);
+                                if ("banned".equalsIgnoreCase(status)) {
+                                    response.put("success", false);
+                                    response.put("isLoggedIn", false);
+                                    response.put("banReason", banReason != null ? banReason : "Không có lý do cụ thể.");
+                                    response.put("message", "Tài khoản của bạn đã bị cấm.");
+                                    System.out.println("Google OAuth user is banned: " + email);
+                                    System.out.println("[BAN RESPONSE] " + response);
+                                    // Xóa session nếu user bị ban
+                                    session.invalidate();
+                                    return ResponseEntity.status(200)
+                                            .header("Content-Type", "application/json")
+                                            .body(response);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                System.err.println("Error checking ban status for Google OAuth user: " + ex.getMessage());
+            }
+
+            if (!foundUser) {
+                System.out.println("[BAN CHECK] Không tìm thấy user trong DB với email: " + email);
+            } else {
+                System.out.println("[BAN CHECK] User found, status: " + statusLog + ", banReason: " + banReasonLog);
+            }
+
+            response.put("email", email);
+            response.put("name", name);
+            response.put("picture", picture);
+            response.put("role", role);
             response.put("isLoggedIn", true);
             response.put("loginType", "google");
-            System.out.println("OAuth2 user found: " + principal.getAttribute("name"));
+            System.out.println("OAuth2 user found: " + name + " (" + email + ")");
+            System.out.println("[BAN RESPONSE] " + response);
         } else {
             // Kiểm tra session cho user thường
             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");

@@ -1,8 +1,15 @@
 package com.mycompany.service;
 
-import com.mycompany.model.OAuthUser;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.springframework.stereotype.Service;
-import java.sql.*;
+
+import com.mycompany.model.OAuthUser;
 
 @Service
 public class OAuthUserService {
@@ -28,29 +35,23 @@ public class OAuthUserService {
                         existingUser.setId(rs.getLong("id"));
                         existingUser.setEmail(rs.getString("email"));
                         
-                        // Parse name into first_name and last_name
-                        String[] nameParts = name != null ? name.split(" ", 2) : new String[]{"", ""};
-                        String firstName = nameParts.length > 0 ? nameParts[0] : "";
-                        String lastName = nameParts.length > 1 ? nameParts[1] : "";
-                        
+                        // Use existing names from database
                         existingUser.setName(rs.getString("first_name") + " " + rs.getString("last_name"));
                         existingUser.setPicture(picture);
                         existingUser.setProvider(provider);
                         existingUser.setProviderId(providerId);
                         existingUser.setRole(rs.getString("role"));
                         
-                        // Update users table with OAuth info
-                        String updateUsersSql = "UPDATE users SET provider = ?, provider_id = ?, picture = ?, first_name = ?, last_name = ? WHERE id = ?";
+                        // Update users table with OAuth info (but preserve existing names and passwords)
+                        String updateUsersSql = "UPDATE users SET provider = ?, provider_id = ?, picture = ? WHERE id = ?";
                         try (PreparedStatement updateUsersStmt = connection.prepareStatement(updateUsersSql)) {
                             updateUsersStmt.setString(1, provider);
                             updateUsersStmt.setString(2, providerId);
                             updateUsersStmt.setString(3, picture);
-                            updateUsersStmt.setString(4, firstName);
-                            updateUsersStmt.setString(5, lastName);
-                            updateUsersStmt.setLong(6, existingUser.getId());
+                            updateUsersStmt.setLong(4, existingUser.getId());
                             updateUsersStmt.executeUpdate();
                             
-                            System.out.println("Updated existing user with OAuth info: " + existingUser.getEmail());
+                            System.out.println("Updated existing user with OAuth info (preserved original name and password): " + existingUser.getEmail());
                             return existingUser;
                         }
                     }
@@ -177,6 +178,7 @@ public class OAuthUserService {
         }
     }
     
+    
     /**
      * Migrate existing OAuth users from oauth_users table to main users table
      * This method should be called once during deployment to consolidate user data
@@ -216,22 +218,16 @@ public class OAuthUserService {
                         checkUserStmt.setString(1, email);
                         try (ResultSet checkResult = checkUserStmt.executeQuery()) {
                             if (checkResult.next() && checkResult.getInt(1) > 0) {
-                                // User exists, update with OAuth info
-                                String[] nameParts = name != null ? name.split(" ", 2) : new String[]{"", ""};
-                                String firstName = nameParts.length > 0 ? nameParts[0] : "";
-                                String lastName = nameParts.length > 1 ? nameParts[1] : "";
-                                
-                                String updateUserSql = "UPDATE users SET provider = ?, provider_id = ?, picture = ?, first_name = COALESCE(NULLIF(first_name, ''), ?), last_name = COALESCE(NULLIF(last_name, ''), ?) WHERE email = ?";
+                                // User exists, update with OAuth info (preserve name and password)
+                                String updateUserSql = "UPDATE users SET provider = ?, provider_id = ?, picture = ? WHERE email = ?";
                                 try (PreparedStatement updateStmt = connection.prepareStatement(updateUserSql)) {
                                     updateStmt.setString(1, provider);
                                     updateStmt.setString(2, providerId);
                                     updateStmt.setString(3, picture);
-                                    updateStmt.setString(4, firstName);
-                                    updateStmt.setString(5, lastName);
-                                    updateStmt.setString(6, email);
+                                    updateStmt.setString(4, email);
                                     updateStmt.executeUpdate();
                                     
-                                    System.out.println("Updated existing user with OAuth info: " + email);
+                                    System.out.println("Updated existing user with OAuth info (preserved name and password): " + email);
                                 }
                             } else {
                                 // User doesn't exist, create new

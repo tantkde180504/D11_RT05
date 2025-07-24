@@ -1,0 +1,362 @@
+/* Navbar Fix CSS - Sửa lỗi giật và không phản hồi */
+
+/* Tối ưu hóa hamburger menu để giảm giật */
+.hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 36px;
+    height: 30px;
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 6px;
+    z-index: 1001;
+    margin-right: 15px;
+    /* Giảm độ phức tạp của transition */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+/* Loại bỏ các hiệu ứng phức tạp gây giật */
+.hamburger-menu::before {
+    display: none;
+}
+
+.hamburger-menu:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hamburger-menu:active {
+    transform: scale(0.98);
+}
+
+.hamburger-menu .line {
+    width: 100%;
+    height: 2px;
+    background: #333;
+    transition: all 0.3s ease;
+    transform-origin: center;
+    border-radius: 1px;
+}
+
+/* Loại bỏ pseudo-element phức tạp */
+.hamburger-menu .line::before {
+    display: none;
+}
+
+.hamburger-menu.active .line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active .line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Tối ưu hóa dropdown account */
+.dropdown-toggle {
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-toggle:hover {
+    background-color: #f8f9fa !important;
+}
+
+.dropdown-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.25);
+}
+
+/* Cải thiện dropdown menu */
+.dropdown-menu {
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 8px 0;
+    margin-top: 8px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Tối ưu hóa search input */
+.search-input {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+/* Tối ưu hóa search button */
+.btn-search {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-search:hover {
+    background-color: #20c997;
+    transform: translateY(-1px);
+}
+
+.btn-search:active {
+    transform: translateY(0);
+}
+
+/* Tối ưu hóa mobile sidebar */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 340px;
+    height: 100vh;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafb 50%, #ecf0f1 100%);
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.12);
+    /* Sử dụng transform thay vì left để tối ưu performance */
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    will-change: transform;
+}
+
+.mobile-sidebar.active {
+    transform: translateX(0);
+}
+
+/* Tối ưu hóa overlay */
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    will-change: opacity;
+}
+
+.mobile-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sidebar styling */
+.sidebar-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    z-index: 10060;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.sidebar-close:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.sidebar-header {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-header h4 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.sidebar-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.sidebar-menu {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-menu li {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.sidebar-menu a:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    padding-left: 25px;
+}
+
+.category-section {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.category-section h5 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-list li {
+    margin-bottom: 5px;
+}
+
+.category-list a {
+    display: block;
+    padding: 8px 15px;
+    color: #555;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.category-list a:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+/* Submenu styling */
+.submenu {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.submenu li {
+    border-bottom: none;
+}
+
+.submenu a {
+    padding: 10px 20px 10px 40px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.submenu a:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+/* Ngăn chặn body scroll khi sidebar mở - cách tốt hơn */
+body.sidebar-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Tối ưu hóa cho các element có thể gây giật */
+.header-actions-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.account-menu {
+    position: relative;
+}
+
+/* Đảm bảo button không bị shift */
+.btn {
+    box-sizing: border-box;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tối ưu hóa cho touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .hamburger-menu:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .dropdown-toggle:hover {
+        background-color: transparent !important;
+    }
+    
+    .btn-search:hover {
+        background-color: #28a745;
+        transform: none;
+    }
+}
+
+/* Giảm motion cho users có preference */
+@media (prefers-reduced-motion: reduce) {
+    .hamburger-menu,
+    .hamburger-menu .line,
+    .dropdown-toggle,
+    .dropdown-menu,
+    .search-input,
+    .btn-search,
+    .mobile-sidebar,
+    .mobile-overlay {
+        transition: none !important;
+        animation: none !important;
+    }
+}

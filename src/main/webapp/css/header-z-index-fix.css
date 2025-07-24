@@ -1,0 +1,101 @@
+/* Z-Index Fix for Header Navigation - Load this file LAST */
+
+/* Master z-index hierarchy for header components */
+.modern-header {
+    z-index: 9999 !important;
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.modern-header .container {
+    z-index: 10000 !important;
+    position: relative !important;
+}
+
+/* All dropdown menus in header */
+.modern-header .dropdown-menu,
+.modern-header .modern-dropdown {
+    z-index: 10001 !important;
+    position: absolute !important;
+}
+
+/* Search suggestions */
+.modern-header .modern-suggestions,
+.modern-header .search-suggestions {
+    z-index: 10003 !important;
+    position: absolute !important;
+}
+
+/* Bootstrap dropdown override */
+.dropdown-menu.show {
+    z-index: 10001 !important;
+}
+
+/* Popovers and tooltips */
+.popover {
+    z-index: 10002 !important;
+}
+
+.tooltip {
+    z-index: 10002 !important;
+}
+
+/* Make sure nothing overrides our header */
+body * {
+    z-index: auto;
+}
+
+/* Except for our header components */
+.modern-header,
+.modern-header *,
+.modern-dropdown,
+.modern-suggestions {
+    z-index: inherit !important;
+}
+
+/* Override any conflicting z-index from other CSS files */
+.hero-banner,
+.product-section,
+.features-section,
+footer {
+    z-index: 1 !important;
+}
+
+/* Mobile sidebar should be lower than header */
+.mobile-sidebar,
+.sidebar-overlay {
+    z-index: 9998 !important;
+}
+
+/* Chat widget should be lower than header */
+.chat-widget,
+.chat-widget-container {
+    z-index: 9997 !important;
+}
+
+/* Back to top button */
+.back-to-top {
+    z-index: 9996 !important;
+}
+
+/* Override any existing z-index utilities */
+.z-index-1050 {
+    z-index: 1050 !important;
+}
+
+.z-index-9999 {
+    z-index: 9999 !important;
+}
+
+/* Create new utility for header elements */
+.z-index-header {
+    z-index: 10000 !important;
+}
+
+.z-index-dropdown {
+    z-index: 10001 !important;
+}
+
+.z-index-suggestions {
+    z-index: 10003 !important;
+}

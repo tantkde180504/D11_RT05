@@ -24,10 +24,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Prevent body scroll when sidebar is open
         if (mobileSidebar.classList.contains('active')) {
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('sidebar-open');
             document.body.style.paddingRight = getScrollbarWidth() + 'px';
         } else {
-            document.body.style.overflow = '';
+            document.body.classList.remove('sidebar-open');
             document.body.style.paddingRight = '';
         }
     }
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hamburgerBtn.classList.remove('active');
         mobileSidebar.classList.remove('active');
         mobileOverlay.classList.remove('active');
-        document.body.style.overflow = '';
+        document.body.classList.remove('sidebar-open');
         document.body.style.paddingRight = '';
     }
     
