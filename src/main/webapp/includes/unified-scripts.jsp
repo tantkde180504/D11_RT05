@@ -13,6 +13,9 @@
 <!-- Modern Notification System -->
 <script src="<%=request.getContextPath()%>/js/notification-system.js"></script>
 
+<!-- Login Success Popup Manager -->
+<script src="<%=request.getContextPath()%>/js/login-popup.js"></script>
+
 <!-- Email to Google Converter -->
 <script src="<%=request.getContextPath()%>/js/email-to-google-converter.js"></script>
 

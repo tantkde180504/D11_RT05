@@ -261,21 +261,30 @@ class GoogleOAuthHandler {
     }
 
     showWelcomeNotification(userData) {
-        const notification = document.getElementById('oauth-success-notification');
-        const welcomeMessage = document.getElementById('welcome-message');
-        
-        if (notification && welcomeMessage) {
-            welcomeMessage.textContent = `Chào mừng ${userData.name} quay trở lại! Bạn đã đăng nhập thành công bằng Google.`;
-            notification.style.display = 'block';
-            notification.classList.add('show');
+        // Use popup instead of notification banner
+        if (window.loginPopupManager) {
+            console.log('✅ Showing OAuth login success popup for:', userData.name);
+            window.loginPopupManager.showSuccessPopup(userData);
+        } else {
+            console.warn('⚠️ Login popup manager not available for OAuth, falling back to notification');
             
-            // Tự động ẩn sau 8 giây
-            setTimeout(() => {
-                notification.classList.remove('show');
+            // Fallback to original notification
+            const notification = document.getElementById('oauth-success-notification');
+            const welcomeMessage = document.getElementById('welcome-message');
+            
+            if (notification && welcomeMessage) {
+                welcomeMessage.textContent = `Chào mừng ${userData.name} quay trở lại! Bạn đã đăng nhập thành công bằng Google.`;
+                notification.style.display = 'block';
+                notification.classList.add('show');
+                
+                // Tự động ẩn sau 8 giây
                 setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 500);
-            }, 8000);
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 500);
+                }, 8000);
+            }
         }
     }
 }

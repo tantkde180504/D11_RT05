@@ -143,9 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 console.log('✅ User data saved to localStorage:', userObj);
                 
-                // Success feedback
-                alert('Đăng nhập thành công! Chào mừng ' + (data.fullName || 'bạn'));
-                
                 console.log('Dispatching login event...');
                 
                 // Dispatch event for navbar manager - với user object đã tạo
@@ -182,35 +179,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(forceAuthSync, 200);
                 setTimeout(forceAuthSync, 500);
                 
-                console.log('Event dispatched, preparing redirect...');
+                console.log('Event dispatched, preparing to show success popup...');
                 
-                // Redirect with delay to ensure events are processed
-                setTimeout(() => {
-                    // Double-check localStorage before redirect
-                    console.log('Pre-redirect localStorage check:', {
-                        userLoggedIn: localStorage.getItem('userLoggedIn'),
-                        userName: localStorage.getItem('userName'),
-                        userEmail: localStorage.getItem('userEmail'),
-                        userAvatar: localStorage.getItem('userAvatar')
-                    });
+                // Show success popup instead of alert and redirect
+                if (window.loginPopupManager) {
+                    console.log('✅ Showing login success popup for:', userObj.fullName);
+                    window.loginPopupManager.showSuccessPopup(userObj);
+                } else {
+                    console.warn('⚠️ Login popup manager not available, falling back to alert and redirect');
+                    alert('Đăng nhập thành công! Chào mừng ' + (data.fullName || 'bạn'));
                     
-                    // Force one more auth sync
-                    if (window.authSyncManager) {
-                        window.authSyncManager.forceRefresh();
-                    }
-                    
-                    // Force navbar update if available
-                    if (window.forceFixNavbar) {
-                        console.log('Forcing navbar fix before redirect...');
-                        window.forceFixNavbar();
-                    }
-                    
-                    // Use redirectUrl from server response or fallback to context path
-                    const redirectUrl = data.redirectUrl || ((window.APP_CONTEXT_PATH || contextPath) || '/');
-                    console.log('Redirecting to:', redirectUrl, '(Role:', data.role + ')');
-                    
-                    window.location.href = redirectUrl;
-                }, 2000); // Increased delay to 2 seconds
+                    // Fallback redirect after short delay
+                    setTimeout(() => {
+                        const redirectUrl = data.redirectUrl || ((window.APP_CONTEXT_PATH || contextPath) || '/');
+                        console.log('Fallback redirecting to:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    }, 1500);
+                }
                 
             } else {
                 if (data.banReason) {

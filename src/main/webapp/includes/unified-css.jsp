@@ -28,6 +28,8 @@
 <link href="<%=request.getContextPath()%>/css/z-index-master-fix.css" rel="stylesheet">
 <!-- Profile Sidebar Enhancement -->
 <link href="<%=request.getContextPath()%>/css/profile-sidebar-enhanced.css" rel="stylesheet">
+<!-- Login Success Popup -->
+<link href="<%=request.getContextPath()%>/css/login-popup.css" rel="stylesheet">
 <!-- Policy Pages Styling -->
 <link href="<%=request.getContextPath()%>/css/policy-pages.css" rel="stylesheet">
 <!-- Login/Auth Styling -->
