@@ -10,6 +10,9 @@
 <!-- MD5 Library for Gravatar -->
 <script src="<%=request.getContextPath()%>/js/md5.min.js"></script>
 
+<!-- Modern Notification System -->
+<script src="<%=request.getContextPath()%>/js/notification-system.js"></script>
+
 <!-- Email to Google Converter -->
 <script src="<%=request.getContextPath()%>/js/email-to-google-converter.js"></script>
 

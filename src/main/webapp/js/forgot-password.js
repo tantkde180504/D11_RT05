@@ -35,16 +35,28 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             console.log('📧 Step 1: Email form submitted');
             
-            const email = document.getElementById('email').value.trim();
+            const emailInput = document.getElementById('email');
+            console.log('📧 Email input element:', emailInput);
+            
+            if (!emailInput) {
+                console.error('❌ Email input not found!');
+                alert('Lỗi: Không tìm thấy trường email!');
+                return;
+            }
+            
+            const email = emailInput.value.trim();
+            console.log('📧 Email value:', email);
             
             if (!validateEmail(email)) {
-                alert('Vui lòng nhập email hợp lệ!');
+                showNotification.error('Lỗi định dạng email', 'Vui lòng nhập email hợp lệ!');
                 return;
             }
             
             currentEmail = email;
             sendOTPRequest(email);
         });
+    } else {
+        console.error('❌ Forgot password form not found!');
     }
     
     // Step 2: OTP verification
@@ -56,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const otp = document.getElementById('otp').value.trim();
             
             if (!validateOTP(otp)) {
-                alert('Vui lòng nhập mã OTP gồm 6 chữ số!');
+                showNotification.error('Mã OTP không hợp lệ', 'Vui lòng nhập mã OTP gồm 6 chữ số!');
                 return;
             }
             
@@ -139,12 +151,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function validatePasswordReset(password, confirmPassword) {
         if (password.length < 6) {
-            alert('Mật khẩu phải có ít nhất 6 ký tự!');
+            showNotification.error('Mật khẩu quá ngắn', 'Mật khẩu phải có ít nhất 6 ký tự!');
             return false;
         }
         
         if (password !== confirmPassword) {
-            alert('Mật khẩu xác nhận không khớp!');
+            showNotification.error('Mật khẩu không khớp', 'Mật khẩu xác nhận không khớp!');
             return false;
         }
         
@@ -185,7 +197,11 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.textContent = isResend ? 'Đang gửi lại...' : 'Đang gửi...';
         submitBtn.disabled = true;
         
-        fetch(`${contextPath}/api/forgot-password/send-otp`, {
+        const apiUrl = `${contextPath}/api/forgot-password/send-otp`;
+        console.log('📤 API URL:', apiUrl);
+        console.log('📤 Request payload:', { email: email });
+        
+        fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -194,7 +210,13 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({ email: email })
         })
         .then(response => {
-            console.log('📡 OTP send response:', response.status);
+            console.log('📡 OTP send response status:', response.status);
+            console.log('📡 OTP send response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             return response.json();
         })
         .then(data => {
@@ -206,17 +228,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 startResendTimer();
                 
                 if (!isResend) {
-                    alert('Mã OTP đã được gửi đến email của bạn!');
+                    showNotification.success(
+                        'Mã OTP đã được gửi!', 
+                        `Chúng tôi đã gửi mã OTP đến email ${email}. Vui lòng kiểm tra hộp thư và thư mục spam.`,
+                        { duration: 7000 }
+                    );
                 } else {
-                    alert('Mã OTP mới đã được gửi!');
+                    showNotification.success(
+                        'Mã OTP mới đã được gửi!', 
+                        'Vui lòng kiểm tra email để lấy mã OTP mới.',
+                        { duration: 5000 }
+                    );
                 }
             } else {
-                alert(data.message || 'Có lỗi xảy ra khi gửi OTP!');
+                showNotification.error(
+                    'Không thể gửi OTP', 
+                    data.message || 'Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.'
+                );
             }
         })
         .catch(error => {
             console.error('❌ OTP send error:', error);
-            alert('Lỗi kết nối! Vui lòng thử lại.');
+            showNotification.error(
+                'Lỗi kết nối', 
+                'Không thể kết nối đến server! Vui lòng kiểm tra kết nối mạng và thử lại.'
+            );
         })
         .finally(() => {
             submitBtn.textContent = originalText;
@@ -256,16 +292,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('verification-token').value = verificationToken;
                 showStep(3);
                 clearResendTimer();
-                alert('Mã OTP chính xác! Vui lòng nhập mật khẩu mới.');
+                showNotification.success(
+                    'Xác minh thành công!', 
+                    'Mã OTP chính xác! Bây giờ bạn có thể tạo mật khẩu mới.',
+                    { duration: 5000 }
+                );
             } else {
-                alert(data.message || 'Mã OTP không chính xác!');
+                showNotification.error(
+                    'Mã OTP không chính xác', 
+                    data.message || 'Vui lòng kiểm tra lại mã OTP và thử lại.'
+                );
                 document.getElementById('otp').value = '';
                 document.getElementById('otp').focus();
             }
         })
         .catch(error => {
             console.error('❌ OTP verify error:', error);
-            alert('Lỗi kết nối! Vui lòng thử lại.');
+            showNotification.error(
+                'Lỗi kết nối', 
+                'Không thể xác minh OTP! Vui lòng kiểm tra kết nối mạng và thử lại.'
+            );
         })
         .finally(() => {
             submitBtn.textContent = originalText;
@@ -303,14 +349,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (data.success) {
                 showStep(4);
-                alert('Mật khẩu đã được cập nhật thành công!');
+                showNotification.success(
+                    'Mật khẩu đã được cập nhật!', 
+                    'Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập với mật khẩu mới ngay bây giờ.',
+                    { duration: 8000 }
+                );
             } else {
-                alert(data.message || 'Có lỗi xảy ra khi cập nhật mật khẩu!');
+                showNotification.error(
+                    'Cập nhật mật khẩu thất bại', 
+                    data.message || 'Có lỗi xảy ra khi cập nhật mật khẩu! Vui lòng thử lại.'
+                );
             }
         })
         .catch(error => {
             console.error('❌ Password reset error:', error);
-            alert('Lỗi kết nối! Vui lòng thử lại.');
+            showNotification.error(
+                'Lỗi kết nối', 
+                'Không thể cập nhật mật khẩu! Vui lòng kiểm tra kết nối mạng và thử lại.'
+            );
         })
         .finally(() => {
             submitBtn.textContent = originalText;

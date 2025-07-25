@@ -47,7 +47,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login.jsp", "/index.jsp", "/profile.jsp", "/css/**", "/js/**", "/img/**", 
                                "/api/login", "/api/login-test", "/demo-login.html", "/test-login.html", 
                                "/test-login-simple.html", "/test-flow.html", "/oauth-redirect-test.html", 
-                               "/google-oauth-test.jsp", "/oauth-login-test.jsp", "/oauth-success", "/oauth-success.html").permitAll()
+                               "/google-oauth-test.jsp", "/oauth-login-test.jsp", "/oauth-success", "/oauth-success.html",
+                               "/api/forgot-password/**", "/forgot-password.jsp").permitAll()
                 .anyRequest().permitAll())
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login.jsp")

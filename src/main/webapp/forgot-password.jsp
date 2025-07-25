@@ -27,7 +27,7 @@
             <form id="forgotPasswordForm" autocomplete="off">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email *</label>
-                    <input type="email" class="form-control" name="email" required autocomplete="off" placeholder="" id="email-register">
+                    <input type="email" class="form-control" name="email" required autocomplete="off" placeholder="" id="email">
                 </div>
                 <button type="submit" class="btn btn-login w-100">Gửi mã OTP</button>
             </form>
@@ -51,7 +51,7 @@
                 <div class="mb-3">
                     <label for="otp" class="form-label">Mã OTP *</label>
                     <input type="text" class="form-control text-center" name="otp" required 
-                           maxlength="6" pattern="[0-9]{6}" placeholder="" id="otp-input" 
+                           maxlength="6" pattern="[0-9]{6}" placeholder="" id="otp" 
                            style="letter-spacing: 0.5em; font-size: 1.2rem;">
                     <div class="form-text">Vui lòng nhập mã OTP gồm 6 chữ số</div>
                 </div>

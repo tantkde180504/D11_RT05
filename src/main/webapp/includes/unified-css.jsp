@@ -30,6 +30,12 @@
 <link href="<%=request.getContextPath()%>/css/profile-sidebar-enhanced.css" rel="stylesheet">
 <!-- Policy Pages Styling -->
 <link href="<%=request.getContextPath()%>/css/policy-pages.css" rel="stylesheet">
+<!-- Login/Auth Styling -->
+<link href="<%=request.getContextPath()%>/css/login.css" rel="stylesheet">
+<!-- Forgot Password OTP Styling -->
+<link href="<%=request.getContextPath()%>/css/forgot-password-otp.css" rel="stylesheet">
+<!-- Modern Notification System -->
+<link href="<%=request.getContextPath()%>/css/notification-popup.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
