@@ -258,207 +258,6 @@
         </div>
     </section>
 
-    <!-- Pre-Order Section -->
-    <section class="product-section py-5 bg-light">
-        <div class="container">
-            <div class="section-header mb-4">
-                <h2 class="section-title">
-                    <span class="title-icon"> </span>
-                    Hàng Pre-Order
-                </h2>
-                <a href="#" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
-            <div class="row">
-                <!-- Enhanced Pre-Order Product Card -->
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card preorder-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/667eea/ffffff?text=MG+RX-78" class="img-fluid" alt="MG RX-78-2 Fat Cat">
-                            <div class="product-badges">
-                                <span class="badge bg-gradient-primary">🎯 Pre-Order</span>
-                                <span class="badge bg-gradient-danger">💥 -86%</span>
-                            </div>
-                            <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-lg">
-                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                </button>
-                            </div>
-                            <!-- Countdown Timer for Pre-Order -->
-                            <div class="preorder-countdown">
-                                <div class="countdown-timer">
-                                    <span class="countdown-label">Kết thúc sau:</span>
-                                    <div class="countdown-display">
-                                        <span class="time-unit">
-                                            <span class="time-value">15</span>
-                                            <span class="time-label">ngày</span>
-                                        </span>
-                                        <span class="time-separator">:</span>
-                                        <span class="time-unit">
-                                            <span class="time-value">08</span>
-                                            <span class="time-label">giờ</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">MG RX-78-2 2.0 Fat Cat Limited Edition</h6>
-                            <p class="product-category">🏆 Master Grade Premium</p>
-                            <div class="product-price">
-                                <span class="current-price">100.000₫</span>
-                                <span class="old-price">680.000₫</span>
-                                <span class="discount-percent">-86%</span>
-                            </div>
-                            <div class="preorder-progress mb-3">
-                                <div class="progress-label">
-                                    <span>🎯 Đã đặt: 45/100</span>
-                                    <span class="text-success">Còn 55 suất</span>
-                                </div>
-                                <div class="progress" style="height: 8px; border-radius: 10px;">
-                                    <div class="progress-bar bg-gradient-success" style="width: 45%; border-radius: 10px;"></div>
-                                </div>
-                            </div>
-                            <button class="btn btn-gradient-warning add-to-cart w-100">
-                                <i class="fas fa-rocket me-2"></i>Đặt trước ngay
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Second Pre-Order Product -->
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card preorder-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/764ba2/ffffff?text=PG+Strike" class="img-fluid" alt="PG Strike Freedom">
-                            <div class="product-badges">
-                                <span class="badge bg-gradient-info">🔥 Hot Pre-Order</span>
-                                <span class="badge bg-gradient-warning">⭐ Limited</span>
-                            </div>
-                            <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-lg">
-                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                </button>
-                            </div>
-                            <div class="preorder-countdown">
-                                <div class="countdown-timer">
-                                    <span class="countdown-label">Ra mắt:</span>
-                                    <div class="countdown-display">
-                                        <span class="time-unit">
-                                            <span class="time-value">Mar</span>
-                                            <span class="time-label">2025</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">PG Strike Freedom Gundam 2.0</h6>
-                            <p class="product-category">👑 Perfect Grade Unleashed</p>
-                            <div class="product-price">
-                                <span class="current-price">2.500.000₫</span>
-                            </div>
-                            <div class="preorder-progress mb-3">
-                                <div class="progress-label">
-                                    <span>🎯 Đã đặt: 78/150</span>
-                                    <span class="text-warning">Còn 72 suất</span>
-                                </div>
-                                <div class="progress" style="height: 8px; border-radius: 10px;">
-                                    <div class="progress-bar bg-gradient-info" style="width: 52%; border-radius: 10px;"></div>
-                                </div>
-                            </div>
-                            <button class="btn btn-gradient-info add-to-cart w-100">
-                                <i class="fas fa-star me-2"></i>Đặt trước VIP
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Third Pre-Order Product -->
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card preorder-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/f093fb/ffffff?text=Metal+Build" class="img-fluid" alt="Metal Build Barbatos">
-                            <div class="product-badges">
-                                <span class="badge bg-gradient-dark">💎 Premium</span>
-                                <span class="badge bg-gradient-success">✨ New</span>
-                            </div>
-                            <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-lg">
-                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                </button>
-                            </div>
-                            <div class="preorder-countdown coming-soon">
-                                <div class="countdown-timer">
-                                    <span class="countdown-label">Coming Soon</span>
-                                    <div class="countdown-display">
-                                        <span class="time-unit">
-                                            <span class="time-value">🔜</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">Metal Build Gundam Barbatos Lupus Rex</h6>
-                            <p class="product-category">💎 Metal Build Series</p>
-                            <div class="product-price">
-                                <span class="current-price">4.200.000₫</span>
-                            </div>
-                            <div class="preorder-progress mb-3">
-                                <div class="progress-label">
-                                    <span>📋 Đăng ký quan tâm</span>
-                                    <span class="text-info">245 người quan tâm</span>
-                                </div>
-                                <div class="progress" style="height: 8px; border-radius: 10px;">
-                                    <div class="progress-bar bg-gradient-purple" style="width: 35%; border-radius: 10px;"></div>
-                                </div>
-                            </div>
-                            <button class="btn btn-gradient-purple add-to-cart w-100">
-                                <i class="fas fa-bell me-2"></i>Đăng ký thông báo
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Add more pre-order products -->
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="product-card preorder-card">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/250x250/20c997/ffffff?text=RG+Nu" class="img-fluid" alt="RG Nu Gundam">
-                            <div class="product-badges">
-                                <span class="badge bg-gradient-success">🆕 New Arrival</span>
-                            </div>
-                            <div class="product-overlay">
-                                <button class="btn btn-outline-light btn-lg">
-                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
-                                </button>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h6 class="product-title">RG Nu Gundam Clear Color</h6>
-                            <p class="product-category">🌟 Real Grade Special</p>
-                            <div class="product-price">
-                                <span class="current-price">750.000₫</span>
-                            </div>
-                            <div class="preorder-progress mb-3">
-                                <div class="progress-label">
-                                    <span>🎯 Còn hàng</span>
-                                    <span class="text-success">Sẵn sàng giao hàng</span>
-                                </div>
-                                <div class="progress" style="height: 8px; border-radius: 10px;">
-                                    <div class="progress-bar bg-gradient-success" style="width: 100%; border-radius: 10px;"></div>
-                                </div>
-                            </div>
-                            <button class="btn btn-gradient-success add-to-cart w-100">
-                                <i class="fas fa-shopping-cart me-2"></i>Mua ngay
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Store Features Section -->
     <section class="features-section py-5 bg-light">
         <div class="container">
@@ -595,7 +394,6 @@
                         <div class="footer-section">
                             <h6 class="footer-title">Dịch vụ</h6>
                             <ul class="footer-links">
-                                <li><a href="#">Hàng Pre-Order</a></li>
                                 <li><a href="<%=request.getContextPath()%>/tools-accessories.jsp">Dụng cụ & Phụ kiện</a></li>
                                 <li><a href="#">Hướng dẫn lắp ráp</a></li>
                                 <li><a href="#">Sơn & Trang trí</a></li>
@@ -769,7 +567,7 @@
             });
         });
 
-        // Initialize static add-to-cart buttons (for pre-order and tools sections)
+        // Initialize static add-to-cart buttons (for tools sections)
         function initializeStaticCartButtons() {
             document.querySelectorAll('.add-to-cart:not([data-dynamic])').forEach(button => {
                 button.addEventListener('click', function() {
@@ -1007,7 +805,6 @@
         function getCategoryDisplayName(category) {
             const categoryNames = {
                 'GUNDAM_BANDAI': 'Gundam Bandai',
-                'PRE_ORDER': 'Pre-Order',
                 'TOOLS_ACCESSORIES': 'Dụng cụ & Phụ kiện'
             };
             return categoryNames[category] || category;

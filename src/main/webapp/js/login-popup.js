@@ -147,10 +147,13 @@ class LoginPopupManager {
             // Determine redirect based on role
             switch(userData.role) {
                 case 'ADMIN':
-                    redirectUrl += '/admin.jsp';
+                    redirectUrl += '/dashboard.jsp';  // Admin đi đến dashboard.jsp
                     break;
                 case 'STAFF':
-                    redirectUrl += '/dashboard.jsp';
+                    redirectUrl += '/staffsc.jsp';    // Staff đi đến staffsc.jsp
+                    break;
+                case 'SHIPPER':
+                    redirectUrl += '/shippersc.jsp';  // Shipper đi đến shippersc.jsp
                     break;
                 default:
                     redirectUrl += '/index.jsp';
