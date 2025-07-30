@@ -71,7 +71,7 @@ public class CategoryRepository {
     public List<CategoryDTO> findAll() {
         String sql = "SELECT c.id, c.name, c.description, c.parent_id, c.is_active, c.created_at, " +
                      "(SELECT COUNT(p.id) FROM products p WHERE p.category_id = c.id) as product_count " +
-                     "FROM categories c ORDER BY c.id";
+"FROM categories c ORDER BY c.id";
         List<CategoryDTO> list = jdbcTemplate.query(sql, (rs, rowNum) -> {
             CategoryDTO dto = mapRowToCategoryDTO(rs);
             dto.setProductCount(rs.getInt("product_count"));

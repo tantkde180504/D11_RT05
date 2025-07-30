@@ -26,9 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   const form = document.querySelector("#addStaffForm");
   if (form) {
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-
 
       // Validate all required fields
       const requiredFields = [
@@ -48,6 +48,29 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       if (missing.length > 0) {
         showBootstrapAlert("Vui lòng nhập đầy đủ các trường: " + missing.join(", "), 'warning');
+        return;
+      }
+
+      // Validate mật khẩu theo rule backend
+      const password = form.querySelector('input[name="password"]').value;
+      if (password.length < 8 || password.length > 20) {
+        showBootstrapAlert("Mật khẩu phải từ 8 đến 20 ký tự", 'warning');
+        return;
+      }
+      if (!/[A-Z]/.test(password)) {
+        showBootstrapAlert("Mật khẩu phải chứa ít nhất 1 chữ hoa (A-Z)", 'warning');
+        return;
+      }
+      if (!/[a-z]/.test(password)) {
+        showBootstrapAlert("Mật khẩu phải chứa ít nhất 1 chữ thường (a-z)", 'warning');
+        return;
+      }
+      if (!/[0-9]/.test(password)) {
+        showBootstrapAlert("Mật khẩu phải chứa ít nhất 1 chữ số (0-9)", 'warning');
+        return;
+      }
+      if (!/[!@#$%^&*()_\-+=]/.test(password)) {
+        showBootstrapAlert("Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*()_+-=)", 'warning');
         return;
       }
 
@@ -126,22 +149,8 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(result => {
           showBootstrapAlert("✅ Tạo nhân viên thành công!", 'success');
-          const roleLabel = result.role === "STAFF" ? "Nhân viên" : result.role;
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${result.id}</td>
-            <td>${result.firstName} ${result.lastName}</td>
-            <td>${result.email}</td>
-            <td>${result.phone || ''}</td>
-            <td>${roleLabel}</td>
-            <td>${result.createdAtFormatted || ""}</td>
-            <td><span class="badge bg-success">Hoạt động</span></td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick="openEditModal(${result.id})"><i class="fas fa-edit"></i></button>
-              <button class="btn btn-sm btn-danger" onclick="deleteStaff(${result.id})"><i class="fas fa-trash"></i></button>
-            </td>
-          `;
-          document.querySelector("#staffTableBody").appendChild(row);
+          // Sau khi thêm mới, reload lại toàn bộ danh sách nhân viên để đảm bảo mọi chức năng hoạt động đầy đủ
+          loadStaffList();
           form.reset();
           bootstrap.Modal.getInstance(document.getElementById("addStaffModal")).hide();
         })
@@ -428,25 +437,28 @@ window.saveStaffUpdate = function () {
       let errorMessage = "Lỗi khi cập nhật nhân viên";
       try {
         const errorData = await res.json();
-        if (typeof errorData === 'object' && errorData !== null) {
-          // Nếu là lỗi validation dạng { field: message, ... }
-          errorMessage = Object.values(errorData).join('\n');
-        } else if (errorData.message) {
-          errorMessage = errorData.message;
+        if (errorData && typeof errorData === 'object') {
+          if (Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+            // Gộp các thông báo lỗi lại, chỉ lấy defaultMessage
+            errorMessage = errorData.errors.map(e => e.defaultMessage).join('<br>');
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          } else {
+            errorMessage = JSON.stringify(errorData);
+          }
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData;
         }
       } catch (e) {
-        // Nếu không parse được JSON, lấy text
         try {
           const errorText = await res.text();
-          if (errorText) {
-            errorMessage = errorText;
-          }
+          if (errorText) errorMessage = errorText;
         } catch (e2) {
           errorMessage = `Lỗi HTTP ${res.status}: ${res.statusText}`;
         }
       }
       showBootstrapAlert(errorMessage, 'danger');
-      console.error("Chi tiết lỗi:", res);
+      console.error("Chi tiết lỗi:", errorMessage);
     }
   })
   .catch(err => {
@@ -455,6 +467,7 @@ window.saveStaffUpdate = function () {
   });
 };
 
+
 window.deleteStaff = function (id) {
   console.log("[DEBUG] Gọi deleteStaff với id:", id, typeof id);
   if (!id || isNaN(id)) {
@@ -462,19 +475,62 @@ window.deleteStaff = function (id) {
     console.warn("[WARN] deleteStaff được gọi với id không hợp lệ:", id);
     return;
   }
-  if (confirm("Bạn có chắc chắn muốn xoá nhân viên này?")) {
-    fetch(apiUrl(`/api/staffs/${id}`), {
-      method: "DELETE"
-    }).then(res => {
-      if (res.ok) {
-        showBootstrapAlert("Xoá thành công!", 'success');
-        loadStaffList();
-      } else {
-        showBootstrapAlert("Xoá thất bại!", 'danger');
-      }
-    });
-  }
+  showConfirmDeleteStaff(id);
 };
+
+// Modal xác nhận xóa nhân viên
+function showConfirmDeleteStaff(id) {
+  let modal = document.getElementById('confirmDeleteStaffModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.id = 'confirmDeleteStaffModal';
+    modal.tabIndex = -1;
+    modal.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Xác nhận xoá nhân viên</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xoá nhân viên này?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteStaffBtn">Xoá</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  // Gán lại sự kiện cho nút xác nhận
+  setTimeout(() => {
+    const btn = document.getElementById('confirmDeleteStaffBtn');
+    if (btn) {
+      btn.onclick = function() {
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) bsModal.hide();
+        doDeleteStaff(id);
+      };
+    }
+  }, 100);
+  const bsModal = new bootstrap.Modal(modal);
+  bsModal.show();
+}
+
+function doDeleteStaff(id) {
+  fetch(apiUrl(`/api/staffs/${id}`), {
+    method: "DELETE"
+  }).then(res => {
+    if (res.ok) {
+      showBootstrapAlert("Xoá thành công!", 'success');
+      loadStaffList();
+    } else {
+      showBootstrapAlert("Xoá thất bại!", 'danger');
+    }
+  });
+}
 
 // Advanced Filters & Search for Staff Management
 let staffList = [];

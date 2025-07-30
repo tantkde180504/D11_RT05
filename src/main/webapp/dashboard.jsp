@@ -681,11 +681,6 @@
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">
-                                            <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
-                                        </a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
                                         <a class="nav-link" id="categories-tab" data-bs-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
                                             <i class="fas fa-tags"></i> Quản lý danh mục
                                         </a>
@@ -709,7 +704,7 @@
                                             <h1 class="page-title">
                                                 <i class="fas fa-tachometer-alt me-3"></i>Dashboard Tổng Quan
                                             </h1>
-                                            <!-- Đã xóa nút Xuất báo cáo theo yêu cầu -->
+                                      
                                         </div>
                                         <p class="text-muted mb-0">Tổng quan hoạt động kinh doanh của 43 Gundam Hobby
                                         </p>
@@ -1027,9 +1022,26 @@
                                                         </div>
                                                         <div class="col-12">
                                                             <label>Mật khẩu</label>
-                                                            <input type="password" name="password" class="form-control"
-                                                                required>
+                                                            <div style="position:relative;">
+                                                                <input type="password" name="password" id="addStaffPassword" class="form-control" required style="padding-right:40px;">
+                                                                <span onclick="toggleAddStaffPassword()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;">
+                                                                    <img id="addStaffEyeIcon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/eye.svg" alt="Hiện/Ẩn" width="22"/>
+                                                                </span>
+                                                            </div>
                                                         </div>
+                                                        <script>
+                                                        function toggleAddStaffPassword() {
+                                                            var pwd = document.getElementById('addStaffPassword');
+                                                            var icon = document.getElementById('addStaffEyeIcon');
+                                                            if (pwd.type === 'password') {
+                                                                pwd.type = 'text';
+                                                                icon.src = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/eye-slash.svg';
+                                                            } else {
+                                                                pwd.type = 'password';
+                                                                icon.src = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/eye.svg';
+                                                            }
+                                                        }
+                                                        </script>
                                                         <div class="col-6">
                                                             <label>Số điện thoại</label>
                                                             <input type="text" name="phone" class="form-control">
@@ -1595,45 +1607,6 @@
                                                 </div>
                                             </form>
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- Orders Management Tab -->
-                                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-                                    <div
-                                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                        <h1 class="h2">Quản lý đơn hàng</h1>
-                                    </div>
-
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Khách hàng</th>
-                                                    <th>Ngày đặt</th>
-                                                    <th>Tổng tiền</th>
-                                                    <th>Trạng thái</th>
-                                                    <th>Thao tác</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>#DH001</td>
-                                                    <td>Trần Thị B</td>
-                                                    <td>20/06/2024</td>
-                                                    <td>1,650,000đ</td>
-                                                    <td><span class="badge bg-warning">Đang xử lý</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-info">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-success">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
 

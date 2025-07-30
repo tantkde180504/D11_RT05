@@ -18,8 +18,16 @@ public class StaffDTO {
     @Size(max = 50, message = "Tên tối đa 50 ký tự")
     @Pattern(regexp = "^[A-Za-zÀ-ỹ ]+$", message = "Tên chỉ được chứa chữ và khoảng trắng")
     private String lastName;
+    @NotBlank(message = "Email không được để trống")
+    @jakarta.validation.constraints.Email(message = "Email không đúng định dạng")
     private String email;
+
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại phải đúng 10 chữ số")
     private String phone;
+    // Chỉ bắt buộc khi tạo mới, không bắt buộc khi cập nhật
+    @Size(min = 6, max = 100, message = "Mật khẩu phải từ 6-100 ký tự")
+    private String password;
     private String dateOfBirth; // Thay đổi từ LocalDate sang String để tránh lỗi JSON serialize
     private String gender;
     private String address;
@@ -35,6 +43,8 @@ public class StaffDTO {
     }
 
     // --- Getters & Setters chuẩn ---
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getFirstName() { return firstName; }

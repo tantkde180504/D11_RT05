@@ -211,16 +211,14 @@ function deleteCategory(id) {
         }
         throw new Error(msg);
       }
+      // Nếu xóa thành công mà không trả về JSON (204 No Content hoặc text/plain), vẫn coi là thành công
       if (!contentType.includes('application/json')) {
-        const text = await res.text();
-        console.error('API /api/categories/{id} không trả về JSON. Content-Type:', contentType, '\nResponse:', text.slice(0, 200));
-        showBootstrapAlert('❌ Lỗi: API /api/categories/{id} không trả về dữ liệu JSON hợp lệ!', 'danger');
+        showBootstrapAlert('✅ Đã xóa danh mục #' + id, 'success');
+        fetchCategoriesAndRender();
         return;
       }
-      return res.json();
-    })
-    .then(result => {
-      if (!result) return;
+      // Nếu có JSON thì xử lý như cũ
+      const result = await res.json();
       showBootstrapAlert('✅ Đã xóa danh mục #' + id, 'success');
       fetchCategoriesAndRender();
     })

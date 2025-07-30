@@ -4,6 +4,7 @@ package com.mycompany.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.mycompany.dto.CustomerDTO;
 import com.mycompany.dto.StaffDTO;
@@ -18,6 +19,7 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     // Ban or unban customer by status
     @Override
     public boolean updateCustomerStatus(Long id, String status, String banReason) {
@@ -49,45 +51,93 @@ public class UserServiceImpl implements UserService {
     // ...existing code...
     @Override
     public User createStaffAccountFromDTO(StaffDTO dto) {
-        // Đã dùng @Valid ở controller, không cần kiểm tra thủ công các trường required nữa
+        try {
+            // Đã dùng @Valid ở controller, nhưng vẫn kiểm tra thủ công để báo lỗi rõ ràng nếu thiếu trường
+            if (dto.getFirstName() == null || dto.getFirstName().trim().isEmpty())
+                throw new RuntimeException("Họ không được để trống");
+            if (dto.getLastName() == null || dto.getLastName().trim().isEmpty())
+                throw new RuntimeException("Tên không được để trống");
+            if (dto.getEmail() == null || dto.getEmail().trim().isEmpty())
+                throw new RuntimeException("Email không được để trống");
+            if (dto.getPhone() == null || dto.getPhone().trim().isEmpty())
+                throw new RuntimeException("Số điện thoại không được để trống");
+            if (dto.getPassword() == null || dto.getPassword().trim().isEmpty())
+                throw new RuntimeException("Mật khẩu không được để trống");
+            String password = dto.getPassword();
+            if (password.length() < 8 || password.length() > 20)
+                throw new RuntimeException("Mật khẩu phải từ 8 đến 20 ký tự");
+            if (!password.matches(".*[A-Z].*"))
+                throw new RuntimeException("Mật khẩu phải chứa ít nhất 1 chữ hoa (A-Z)");
+            if (!password.matches(".*[a-z].*"))
+                throw new RuntimeException("Mật khẩu phải chứa ít nhất 1 chữ thường (a-z)");
+            if (!password.matches(".*[0-9].*"))
+                throw new RuntimeException("Mật khẩu phải chứa ít nhất 1 chữ số (0-9)");
+            // Nếu vẫn lỗi, dùng regex này:
+            if (!password.matches(".*[!@#$%^&*()_\\-+=].*"))
+                throw new RuntimeException("Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*()_+-=)");
+            if (dto.getAddress() == null || dto.getAddress().trim().isEmpty())
+                throw new RuntimeException("Địa chỉ không được để trống");
+            if (dto.getGender() == null || dto.getGender().trim().isEmpty())
+                throw new RuntimeException("Giới tính không được để trống");
+            if (dto.getDateOfBirth() == null || dto.getDateOfBirth().trim().isEmpty())
+                throw new RuntimeException("Ngày sinh không được để trống");
 
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email đã tồn tại.");
-        }
-        if (userRepository.existsByPhone(dto.getPhone())) {
-            throw new RuntimeException("Số điện thoại đã tồn tại.");
-        }
-        if (userRepository.existsByFirstNameAndLastNameAndEmail(dto.getFirstName(), dto.getLastName(), dto.getEmail())) {
-            throw new RuntimeException("Tên và email đã tồn tại cùng nhau.");
-        }
-        if (userRepository.existsByFirstNameAndLastNameAndPhone(dto.getFirstName(), dto.getLastName(), dto.getPhone())) {
-            throw new RuntimeException("Tên và số điện thoại đã tồn tại cùng nhau.");
-        }
-
-        User user = new User();
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setPhone(dto.getPhone());
-        if (dto.getDateOfBirth() != null && !dto.getDateOfBirth().isEmpty()) {
-            try {
-                user.setDateOfBirth(java.time.LocalDate.parse(dto.getDateOfBirth()));
-            } catch (Exception ignored) {}
-        }
-        String validGender = null;
-        if (dto.getGender() != null) {
-            String gender = dto.getGender().toUpperCase();
-            if ("MALE".equals(gender) || "FEMALE".equals(gender) || "OTHER".equals(gender)) {
-                validGender = gender;
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new RuntimeException("Email đã tồn tại.");
             }
+            if (userRepository.existsByPhone(dto.getPhone())) {
+                throw new RuntimeException("Số điện thoại đã tồn tại.");
+            }
+            if (userRepository.existsByFirstNameAndLastNameAndEmail(dto.getFirstName(), dto.getLastName(), dto.getEmail())) {
+                throw new RuntimeException("Tên và email đã tồn tại cùng nhau.");
+            }
+            if (userRepository.existsByFirstNameAndLastNameAndPhone(dto.getFirstName(), dto.getLastName(), dto.getPhone())) {
+                throw new RuntimeException("Tên và số điện thoại đã tồn tại cùng nhau.");
+            }
+
+            User user = new User();
+            user.setFirstName(dto.getFirstName());
+            user.setLastName(dto.getLastName());
+            user.setEmail(dto.getEmail());
+            user.setPhone(dto.getPhone());
+            // Parse dateOfBirth: hỗ trợ cả "MM/dd/yyyy" và "yyyy-MM-dd"
+            if (dto.getDateOfBirth() != null && !dto.getDateOfBirth().isEmpty()) {
+                String dob = dto.getDateOfBirth();
+                java.time.format.DateTimeFormatter fmt1 = java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                java.time.format.DateTimeFormatter fmt2 = java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+                try {
+                    if (dob.contains("/")) {
+                        user.setDateOfBirth(java.time.LocalDate.parse(dob, fmt1));
+                    } else {
+                        user.setDateOfBirth(java.time.LocalDate.parse(dob, fmt2));
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[ERROR] Lỗi parse ngày sinh: " + ex.getMessage());
+                    throw new RuntimeException("Ngày sinh không hợp lệ. Định dạng hợp lệ: MM/dd/yyyy hoặc yyyy-MM-dd");
+                }
+            }
+            // Chỉ cho phép gender là MALE hoặc FEMALE, mặc định MALE nếu không hợp lệ
+            String validGender = "MALE";
+            if (dto.getGender() != null) {
+                String gender = dto.getGender().trim().toLowerCase();
+                if (gender.equals("nữ") || gender.equals("nu") || gender.equals("female")) {
+                    validGender = "FEMALE";
+                } else if (gender.equals("nam") || gender.equals("male")) {
+                    validGender = "MALE";
+                }
+            }
+            user.setGender(validGender);
+            user.setAddress(dto.getAddress());
+            user.setRole("STAFF");
+            user.setCreatedAt(java.time.LocalDateTime.now());
+            user.setUpdatedAt(java.time.LocalDateTime.now());
+            // Lưu mật khẩu dạng plain text (KHÔNG AN TOÀN, chỉ dùng cho demo)
+            user.setPassword(dto.getPassword());
+            return userRepository.save(user);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Lỗi tạo tài khoản nhân viên: " + ex.getMessage());
         }
-        user.setGender(validGender);
-        user.setAddress(dto.getAddress());
-        user.setRole("STAFF");
-        user.setCreatedAt(java.time.LocalDateTime.now());
-        user.setUpdatedAt(java.time.LocalDateTime.now());
-        // Không set password vì StaffDTO không có trường này
-        return userRepository.save(user);
     }
 
     @Autowired

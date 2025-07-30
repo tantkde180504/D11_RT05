@@ -109,17 +109,27 @@ public class UserController {
 
     @PostMapping("/staffs/create")
     public ResponseEntity<?> createStaff(@Valid @RequestBody StaffDTO dto) {
-        System.out.println("[DEBUG] Dữ liệu nhận được khi tạo nhân viên:");
-        System.out.println("  Họ: " + dto.getFirstName());
-        System.out.println("  Tên: " + dto.getLastName());
-        System.out.println("  Email: " + dto.getEmail());
-        System.out.println("  Ngày sinh (dateOfBirth): " + dto.getDateOfBirth());
-        System.out.println("  Số điện thoại: " + dto.getPhone());
-        System.out.println("  Giới tính: " + dto.getGender());
-        System.out.println("  Địa chỉ: " + dto.getAddress());
-        System.out.println("  Ngày tạo (createdAt): " + dto.getCreatedAt());
-        User created = userService.createStaffAccountFromDTO(dto);
-        return ResponseEntity.ok(created);
+        try {
+            System.out.println("[DEBUG] Dữ liệu nhận được khi tạo nhân viên:");
+            System.out.println("  Họ: " + dto.getFirstName());
+            System.out.println("  Tên: " + dto.getLastName());
+            System.out.println("  Email: " + dto.getEmail());
+            System.out.println("  Ngày sinh (dateOfBirth): " + dto.getDateOfBirth());
+            System.out.println("  Số điện thoại: " + dto.getPhone());
+            System.out.println("  Giới tính: " + dto.getGender());
+            System.out.println("  Địa chỉ: " + dto.getAddress());
+            System.out.println("  Ngày tạo (createdAt): " + dto.getCreatedAt());
+            User created = userService.createStaffAccountFromDTO(dto);
+            return ResponseEntity.ok(created);
+        } catch (Exception ex) {
+            System.out.println("[ERROR] Lỗi khi tạo nhân viên: " + ex.getMessage());
+            ex.printStackTrace();
+            // Luôn trả về status 200 và message lỗi chi tiết
+            java.util.Map<String, Object> error = new java.util.HashMap<>();
+            error.put("success", false);
+            error.put("message", ex.getMessage() != null ? ex.getMessage() : "Lỗi hệ thống không xác định");
+            return ResponseEntity.ok(error);
+        }
     }
 
     @GetMapping("/staffs/list")
