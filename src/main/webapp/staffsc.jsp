@@ -91,7 +91,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#inventory" data-tab="inventory">
-                            <i class="fas fa-boxes me-2"></i>Tồn kho
+                            <i class="fas fa-boxes me-2"></i>Kho hàng
                         </a>
                     </li>
                     <li class="nav-item">
@@ -346,7 +346,7 @@
                                     <th>Tên sản phẩm</th>
                                     <th>SKU</th>
                                     <th>Danh mục</th>
-                                    <th>Tồn kho</th>
+                                    <th>Số lượng</th>
                                     <th>Trạng thái</th>
                                     <th>Giá</th>
                                     <th>Thao tác</th>
