@@ -8,6 +8,7 @@
         <title>Sản phẩm yêu thích - 43 Gundam Hobby</title>
         <%@ include file="/includes/unified-css.jsp" %>
             <link rel="stylesheet" href="css/order-history.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
 
     <body style="background:#f5f5f5;">
@@ -91,6 +92,25 @@
                     </form>
                 </div>
             </div>
+            <!-- Modal hiển thị chi tiết đơn hàng cho khách hàng -->
+            <div class="modal fade" id="customerOrderDetailModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header modal-header-gradient">
+                            <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart"></i> Chi tiết đơn hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="customer-order-detail-body">
+                                <!-- JavaScript sẽ render nội dung tại đây -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <script>
                 document.addEventListener('DOMContentLoaded', async function () {
                     const tbody = document.getElementById('order-history-tbody');
@@ -116,11 +136,13 @@
                             tbody.innerHTML += '<tr>' +
                                 '<td style="width:70px">' + (product.image ? '<img src="' + product.image + '" alt="Ảnh" style="max-width:60px;max-height:60px;object-fit:cover;border-radius:8px;">' : '<span class="text-muted">Không có</span>') + '</td>' +
                                 '<td class="fw-bold">' + order.orderNumber + '</td>' +
-                                '<td>' + (product.name || '<span class="text-muted">Không có</span>') + '</td>' +
+                                '<td>' + (product.name && product.productId ? ('<a href="product-detail.jsp?id=' + product.productId + '">' + product.name + '</a>') : (product.name || '<span class="text-muted">Không có</span>')) + '</td>' +
                                 '<td>' + formattedDate + '</td>' +
                                 '<td>' + renderStatus(order.status) + '</td>' +
                                 '<td class="text-danger fw-bold">' + formatCurrency(order.totalAmount) + '₫</td>' +
-                                '<td>' + renderCancelBtn(order) + '</td>' +
+                                '<td>' + renderCancelBtn(order) +
+                                ' <button class="btn btn-info btn-sm" onclick="showOrderDetail(' + order.id + ')"><i class="fas fa-eye"></i></button>' +
+                                '</td>' +
                                 '</tr>';
                         });
                     } catch (e) {
@@ -147,14 +169,47 @@
                 const ms = dateArray.length > 6 ? Math.floor(dateArray[6] / 1000000) : 0;
                 return new Date(year, month, day, hour, minute, second, ms);
                 }
+                // Tiến trình trạng thái đơn hàng với icon
+                function renderOrderProgress(status) {
+                    // Các trạng thái và icon tương ứng
+                    const steps = [
+                        { key: 'PENDING', label: 'Chờ xác nhận', icon: 'fa-regular fa-clock' },
+                        { key: 'CONFIRMED', label: 'Đã xác nhận', icon: 'fa-solid fa-check-circle' },
+                        { key: 'PROCESSING', label: 'Đang giao', icon: 'fa-solid fa-motorcycle' },
+                        { key: 'DELIVERED', label: 'Hoàn thành', icon: 'fa-solid fa-gift' },
+                        { key: 'CANCELLED', label: 'Đã huỷ', icon: 'fa-solid fa-times-circle' }
+                    ];
+                    // Nếu là huỷ thì không hiển thị tiến trình
+                    if (status === 'CANCELLED') return '';
+                    // Xác định index trạng thái hiện tại
+                    let currentIdx = steps.findIndex(s => s.key === status);
+                    if (currentIdx === -1) currentIdx = 0;
+                    // Chỉ lấy 4 bước đầu (không lấy huỷ)
+                    const progressSteps = steps.slice(0, 4);
+                    let html = '<div class="order-progress-bar">';
+                    progressSteps.forEach((step, idx) => {
+                        const active = idx === currentIdx ? 'active' : (idx < currentIdx ? 'done' : '');
+                        html += `<div class="order-progress-step ${active}">
+                            <div class="icon"><i class="${step.icon}"></i></div>
+                            <div class="label">${step.label}</div>
+                        </div>`;
+                        if (idx < progressSteps.length - 1) {
+                            html += '<div class="order-progress-line"></div>';
+                        }
+                    });
+                    html += '</div>';
+                    return html;
+                }
+
                 function renderStatus(status) {
+                    // Chỉ hiển thị badge trạng thái, không còn tiến trình
                     return '<span class="order-status ' + status + '">' + status + '</span>';
                 }
                 function renderCancelBtn(order) {
                     if (["PENDING", "CONFIRMED", "PROCESSING"].includes(order.status)) {
-                        return '<button class="btn btn-danger btn-sm" onclick="cancelOrder(' + order.id + ', this)"><i class="fas fa-trash-alt me-1"></i>Hủy đơn</button>';
+                        return '<button class="btn btn-danger btn-sm" onclick="cancelOrder(' + order.id + ', this)" title="Hủy đơn"><i class="fas fa-trash-alt"></i></button>';
                     } else if (order.status === "DELIVERED") {
-                        return '<button class="btn btn-warning btn-sm" onclick="sendComplaint(' + order.id + ', this)"><i class="fas fa-exclamation-circle me-1"></i>Gửi khiếu nại</button>';
+                        return '<button class="btn btn-warning btn-sm" onclick="sendComplaint(' + order.id + ', this)" title="Gửi khiếu nại"><i class="fas fa-exclamation-circle"></i></button>';
                     }
                     return '';
                 }
@@ -278,9 +333,7 @@
                             '<tr><th>Sản phẩm</th><th>Mã đơn</th><th>Danh mục</th><th>Nội dung</th><th>Trạng thái</th><th>Phản hồi</th><th>Thời gian</th></tr></thead><tbody>';
 
                         data.forEach(c => {
-                            console.log("📦 Complaint object:", c);
-
-                            // Xử lý an toàn cho các field
+                            // ...existing code...
                             const productImage = c.productImage || 'img/logo.png';
                             const productName = c.productName || 'N/A';
                             const totalItems = c.totalItems || '1';
@@ -289,8 +342,15 @@
                             const content = c.content || '-';
                             const status = c.status || 'UNKNOWN';
                             const staffResponse = c.staffResponse || '-';
-                            const createdAt = c.createdAt || '-';
-
+                            let createdAt = c.createdAt || '-';
+                            // Định dạng lại thời gian: chỉ lấy yyyy-MM-dd HH:mm
+                            if (createdAt && typeof createdAt === 'string' && createdAt.length > 15) {
+                                // Nếu có dấu chấm (mili giây/thập phân), cắt bỏ
+                                const idx = createdAt.indexOf('.');
+                                if (idx > 0) createdAt = createdAt.substring(0, idx);
+                                // Nếu vẫn còn thừa, chỉ lấy 16 ký tự đầu (yyyy-MM-dd HH:mm)
+                                createdAt = createdAt.substring(0, 16).replace('T', ' ');
+                            }
                             html += '<tr>' +
                                 '<td><div class="d-flex align-items-center"><img src="' + productImage + '" alt="' + productName + '" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"><div class="text-start"><strong>' + productName + '</strong><br><small class="text-muted">SL: ' + totalItems + '</small></div></div></td>' +
                                 '<td>' + orderNumber + '</td>' +
@@ -319,6 +379,76 @@
                         case 'REJECTED': return 'danger';
                         default: return 'secondary';
                     }
+                }
+
+                function showOrderDetail(orderId) {
+    fetch('/api/orders/detail?id=' + orderId)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.id) {
+                document.getElementById('customer-order-detail-body').innerHTML = '<div class="text-danger">Không tìm thấy đơn hàng!</div>';
+                return;
+            }
+            // Helper to show empty string if value is false/null/undefined
+            function safe(val) {
+                return (val === false || val === null || val === undefined) ? '' : val;
+            }
+            // Render tiến trình giao hàng (5 giai đoạn, có icon, sáng bước hiện tại)
+            function renderOrderProgressModal(status) {
+                // 4 bước: Chờ xác nhận, Đã xác nhận, Đang giao, Đã đến nhà
+                const steps = [
+                    { key: 'PENDING', label: 'Chờ xác nhận', icon: 'fa fa-clock' },
+                    { key: 'CONFIRMED', label: 'Đã xác nhận', icon: 'fa fa-check-circle' },
+                    { key: 'PROCESSING', label: 'Đang giao', icon: 'fa fa-truck' },
+                    { key: 'DELIVERED', label: 'Đã đến nhà', icon: 'fa fa-home' }
+                ];
+                if (status === 'CANCELLED') return '';
+                let currentIdx = steps.findIndex(s => s.key === status);
+                if (currentIdx === -1) currentIdx = 0;
+                let html = '<div class="order-progress-bar order-progress-modal">';
+                steps.forEach((step, idx) => {
+                    const state = idx === currentIdx ? 'active' : (idx < currentIdx ? 'done' : '');
+                    html += `<div class="order-progress-step ${state}">
+                        <div class="icon"><i class="${step.icon} icon-state"></i></div>
+                        <div class="label">${step.label}</div>
+                    </div>`;
+                    if (idx < steps.length - 1) {
+                        html += '<div class="order-progress-line"></div>';
+                    }
+                });
+                html += '</div>';
+                return html;
+            }
+            // Render danh sách sản phẩm bằng JS, không dùng template string với .map() trực tiếp trong html
+            let productListHtml = '';
+            if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+                productListHtml = '<ul>' + data.items.map(function(item) {
+                    return '<li>' + safe(item.name) + ' x' + safe(item.quantity) + '</li>';
+                }).join('') + '</ul>';
+            } else {
+                productListHtml = '<div>Không có sản phẩm</div>';
+            }
+            var html = '';
+            // Thêm tiến trình giao hàng phía trên
+            html += renderOrderProgressModal(safe(data.status));
+            html += '<p><strong>Mã đơn hàng:</strong> #' + safe(data.orderNumber) + '</p>';
+            html += '<p><strong>Khách hàng:</strong> ' + safe(data.shippingName) + '</p>';
+            html += '<p><strong>Điện thoại:</strong> ' + safe(data.shippingPhone) + '</p>';
+            html += '<p><strong>Email:</strong> ' + safe(data.email) + '</p>';
+            html += '<p><strong>Địa chỉ:</strong> ' + safe(data.shippingAddress) + '</p>';
+            html += '<p><strong>Phương thức thanh toán:</strong> ' + safe(data.paymentMethod) + '</p>';
+            html += '<p><strong>Trạng thái:</strong> ' + safe(data.status) + '</p>';
+            html += '<p><strong>Ngày đặt:</strong> ' + safe(data.orderDate) + '</p>';
+            html += '<p><strong>Tổng tiền:</strong> ' + safe(data.totalAmount) + '₫</p>';
+            html += '<h6>Sản phẩm:</h6>';
+            html += productListHtml;
+            document.getElementById('customer-order-detail-body').innerHTML = html;
+            var modal = new bootstrap.Modal(document.getElementById('customerOrderDetailModal'));
+            modal.show();
+        })
+        .catch(() => {
+            document.getElementById('customer-order-detail-body').innerHTML = '<div class="text-danger">Lỗi khi tải chi tiết đơn hàng!</div>';
+        });
                 }
             </script>
 

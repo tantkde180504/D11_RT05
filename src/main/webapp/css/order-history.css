@@ -1,3 +1,205 @@
+
+/* Dịch modal chi tiết đơn hàng xuống dưới để không che header */
+.modal-dialog.modal-lg {
+    margin-top: 200px !important;
+}
+
+
+/* Order history table - style giống shipper, không avatar, màu sắc tươi sáng */
+.order-history-table {
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #e3f0ff 0%, #bae6f5 100%);
+    font-size: 1.07rem;
+    color: #222;
+    box-shadow: 0 2px 12px rgba(25,118,210,0.10);
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2.5px solid #90caf9;
+}
+.order-history-table th {
+    background: linear-gradient(90deg, #1976d2 0%, #1565c0 100%);
+    color: #020000;
+    font-weight: 700;
+    border-bottom: 2.5px solid #1565c0;
+    border-right: none;
+    padding: 15px 10px;
+    font-size: 1.08em;
+    letter-spacing: 0.5px;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(25,118,210,0.15);
+}
+.order-history-table td {
+    padding: 13px 8px;
+    vertical-align: middle;
+    border-bottom: 1.5px solid #e0e0e0;
+    border-right: none;
+    background: #fff;
+    font-size: 1em;
+    text-align: center;
+    font-weight: 500;
+}
+.order-history-table tr {
+    transition: background 0.2s;
+}
+.order-history-table tr:hover {
+    background: #f3f7fa;
+}
+.order-history-table img {
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(43,52,69,0.10);
+    background: #f7f7fa;
+    border: 1px solid #e0e0e0;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+}
+.order-history-table .fw-bold {
+    color: #1976d2;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+}
+
+/* Badge trạng thái nổi bật, bo tròn, giống shipper */
+.order-status {
+    font-weight: 600;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 1em;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    background: #e3f0ff;
+    color: #1976d2;
+    border: 1.5px solid #1976d2;
+    min-width: 90px;
+}
+.order-status.PENDING { background: #fffbe6; color: #b8860b; border-color: #ffe066; }
+.order-status.CONFIRMED { background: #e0f7fa; color: #007b8a; border-color: #00bcd4; }
+.order-status.PROCESSING { background: #e3f0ff; color: #1976d2; border-color: #1976d2; }
+.order-status.DELIVERED { background: #e6f9ec; color: #2e7d32; border-color: #43a047; }
+.order-status.CANCELLED { background: #ffeaea; color: #c62828; border-color: #e57373; }
+
+/* Nút thao tác tròn, màu tươi, giống shipper */
+.order-history-table .btn-action, .order-history-table .btn-danger, .order-history-table .btn-warning, .order-history-table .btn-info {
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15em;
+    margin: 0 2px;
+    border: none;
+    box-shadow: 0 1px 4px rgba(43,52,69,0.07);
+    transition: background 0.2s, color 0.2s;
+}
+.order-history-table .btn-danger {
+    background: #ff4d4f;
+    color: #fff;
+}
+.order-history-table .btn-danger:hover {
+    background: #d9363e;
+}
+.order-history-table .btn-warning {
+    background: #ffe066;
+    color: #222;
+}
+.order-history-table .btn-warning:hover {
+    background: #ffd600;
+}
+.order-history-table .btn-info {
+    background: #bae6f5;
+    color: #1976d2;
+}
+.order-history-table .btn-info:hover {
+    background: #1976d2;
+    color: #fff;
+}
+
+/* Badge trạng thái giống shipper */
+.order-status {
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 16px;
+    font-size: 0.98em;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    box-shadow: 0 1px 4px rgba(43,52,69,0.07);
+    background: #e3f0ff;
+    color: #1976d2;
+    border: 1.5px solid #1976d2;
+}
+.order-status.PENDING { background: #fff3cd; color: #856404; border-color: #ffe066; }
+.order-status.CONFIRMED { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
+.order-status.PROCESSING { background: #cce5ff; color: #004085; border-color: #007bff; }
+.order-status.DELIVERED { background: #d4edda; color: #155724; border-color: #28a745; }
+.order-status.CANCELLED { background: #f8d7da; color: #721c24; border-color: #dc3545; }
+
+/* Badge loại đơn hàng (hỏa tốc/thường) */
+.order-type-badge {
+    display: inline-block;
+    font-size: 0.95em;
+    font-weight: 600;
+    border-radius: 16px;
+    padding: 4px 16px 4px 12px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    box-shadow: 0 1px 4px rgba(43,52,69,0.07);
+    border: 2px solid #ffb300;
+    background: linear-gradient(90deg, #fffbe6 0%, #ffe066 100%);
+    color: #ff9800;
+    position: relative;
+}
+.order-type-badge .icon {
+    margin-right: 4px;
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+.order-type-badge.normal {
+    border: 2px solid #1976d2;
+    background: linear-gradient(90deg, #e3f0ff 0%, #bae6f5 100%);
+    color: #1976d2;
+}
+
+/* Icon avatar khách hàng */
+.order-customer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e3f0ff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    color: #1976d2;
+    margin-right: 6px;
+    border: 1.5px solid #1976d2;
+}
+
+/* Nút thao tác */
+.order-history-table .btn-action {
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 1.1em;
+    margin: 0 2px;
+    background: #f7fafd;
+    color: #1976d2;
+    border: 1.5px solid #1976d2;
+    transition: background 0.2s, color 0.2s;
+}
+.order-history-table .btn-action:hover {
+    background: #1976d2;
+    color: #fff;
+}
+/* Padding cho nội dung modal chi tiết đơn hàng */
+#customer-order-detail-body {
+    padding: 16px 24px;
+    font-size: 1.08rem;
+}
+.modal-body {
+    padding: 24px 32px;
+}
 /* order-history.css - Style riêng cho trang lịch sử đơn hàng, đồng bộ theme index.jsp */
 
 .order-history-card {
@@ -32,15 +234,15 @@
 }
 
 .order-history-table {
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    background: #bae6f5;
+    background: linear-gradient(90deg, #e3f0ff 0%, #f7faff 100%);
     font-size: 1rem;
-    color: #222;    
-    box-shadow: 0 1px 8px rgba(43,52,69,0.06);
+    color: #222;
+    box-shadow: 0 2px 12px rgba(25,118,210,0.10);
     border-collapse: separate;
     border-spacing: 0;
-    border: 2.5px solid #222;
+    border: 2.5px solid #1976d2;
 }
 
 .order-history-table th {
@@ -174,43 +376,76 @@
 
 /* Đường kẻ cho bảng khiếu nại cũng đậm và nghệ thuật như lịch sử đơn hàng */
 .table-bordered th, .table-bordered td {
-    border: 2.5px solid #222 !important;
+    border: 2.5px solid #1976d2 !important;
 }
 .table-bordered {
-    border-radius: 12px !important;
+    border-radius: 14px !important;
     overflow: hidden;
-    box-shadow: 0 1px 8px rgba(43,52,69,0.06);
-    background: #fff;
-    border: 2.5px solid #222 !important;
+    box-shadow: 0 2px 12px rgba(25,118,210,0.10);
+    background: #f7faff;
+    border: 2.5px solid #1976d2 !important;
 }
 .table-bordered th {
-    background: linear-gradient(90deg, #e3f0ff 0%, #f7f7fa 100%);
-    color: #1976d2;
+    background: linear-gradient(90deg, #1976d2 0%, #90caf9 100%);
+    color: #fff;
     font-weight: 700;
-    border-bottom: 3px solid #222 !important;
-    border-right: 2px solid #222 !important;
-    padding: 16px 8px;
-    font-size: 1.05em;
+    border-bottom: 3px solid #1976d2 !important;
+    border-right: 2px solid #1976d2 !important;
+    padding: 18px 10px;
+    font-size: 1.08em;
     letter-spacing: 0.5px;
     text-align: center;
+    text-shadow: 0 1px 4px rgba(25,118,210,0.10);
 }
 .table-bordered th:last-child {
     border-right: none !important;
 }
 .table-bordered td {
-    padding: 14px 8px;
+    padding: 15px 10px;
     vertical-align: middle;
-    border-bottom: 2px solid #222 !important;
-    border-right: 2px solid #222 !important;
+    border-bottom: 2px solid #1976d2 !important;
+    border-right: 2px solid #1976d2 !important;
     background: #fff;
-    font-size: 1em;
+    font-size: 1.05em;
     text-align: center;
+    transition: background 0.2s;
 }
 .table-bordered td:last-child {
     border-right: none !important;
 }
 .table-bordered tr:last-child td {
     border-bottom: none !important;
+}
+/* Hiệu ứng hover cho dòng bảng khiếu nại */
+.table-bordered tr:hover td {
+    background: #e3f0ff;
+}
+/* Badge trạng thái khiếu nại nổi bật */
+.complaint-status {
+    font-weight: 600;
+    padding: 7px 22px;
+    border-radius: 20px;
+    font-size: 1em;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    min-width: 90px;
+    box-shadow: 0 1px 4px rgba(25,118,210,0.07);
+    border: 2px solid #1976d2;
+}
+.complaint-status.REJECTED {
+    background: #ff4d4f;
+    color: #fff;
+    border-color: #d32f2f;
+}
+.complaint-status.COMPLETED {
+    background: #43a047;
+    color: #fff;
+    border-color: #388e3c;
+}
+.complaint-status.PENDING {
+    background: #ffe066;
+    color: #222;
+    border-color: #ffe066;
 }
 @media (max-width: 768px) {
     .table-bordered th, .table-bordered td {
@@ -225,7 +460,7 @@
     box-shadow: none;
     padding: 8px 0 16px 0;
     margin-bottom: 32px;
-    border: 4px solid #222 !important;
+    border: none !important;
 }
 .complaints-table-wrapper .table-bordered {
     border-radius: 0 !important;
