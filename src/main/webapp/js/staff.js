@@ -772,10 +772,6 @@ function loadComplaintsFromAPI() {
                         <button class="btn btn-sm btn-primary me-1" onclick="viewComplaintDetail('${c.complaintCode}')">
                             <i class="fas fa-eye"></i>
                         </button>
-                        ${c.status === 'PROCESSING' ? `
-                        <button class="btn btn-sm btn-success" onclick="handleCompleteComplaint('${c.complaintCode}')">
-                            <i class="fas fa-check"></i>
-                        </button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -1188,31 +1184,31 @@ function handleComplaintUpdate(status) {
 
 
 //xử lí hoàn thành khiếu nại
-function handleCompleteComplaint(complaintCode) {
-    if (!confirm("Bạn có chắc muốn đánh dấu khiếu nại này là đã hoàn thành?")) return;
+// function handleCompleteComplaint(complaintCode) {
+//     if (!confirm("Bạn có chắc muốn đánh dấu khiếu nại này là đã hoàn thành?")) return;
 
-    fetch(`/api/complaints/${complaintCode}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            solution: "Đã xử lý hoàn tất",
-            staffResponse: "Khiếu nại đã được hoàn thành.",
-            status: "COMPLETED"
-        })
-    })
-        .then(res => {
-            if (!res.ok) throw new Error("Không thể cập nhật");
-            return res.text();
-        })
-        .then(msg => {
-            showSuccessMessage(msg);
-            loadComplaintsFromAPI();
-        })
-        .catch(err => {
-            console.error(err);
-            showErrorMessage("Lỗi khi cập nhật trạng thái khiếu nại.");
-        });
-}
+//     fetch(`/api/complaints/${complaintCode}`, {
+//         method: "PUT",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//             solution: "Đã xử lý hoàn tất",
+//             staffResponse: "Khiếu nại đã được hoàn thành.",
+//             status: "COMPLETED"
+//         })
+//     })
+//         .then(res => {
+//             if (!res.ok) throw new Error("Không thể cập nhật");
+//             return res.text();
+//         })
+//         .then(msg => {
+//             showSuccessMessage(msg);
+//             loadComplaintsFromAPI();
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             showErrorMessage("Lỗi khi cập nhật trạng thái khiếu nại.");
+//         });
+// }
 // ⚠️ Kiểm tra và hiển thị cảnh báo sản phẩm sắp hết hàng
 function checkLowStockAlert() {
     fetch('/api/notifications/low-stock')
@@ -1289,35 +1285,45 @@ function initOrdersTab() {
 
 // Function xác nhận hoàn thành đổi trả (PROCESSING → COMPLETED)
 function confirmReturnComplete(returnId, returnCode) {
-    // Hiển thị dialog xác nhận với thông tin rõ ràng
-    const isConfirmed = confirm(
-        "🔔 XÁC NHẬN HOÀN THÀNH ĐỔI TRẢ\n\n" +
-        `Mã đơn đổi trả: ${returnCode}\n` +
-        "Trạng thái hiện tại: Chờ xử lý\n" +
-        "Trạng thái mới: Đã hoàn thành\n\n" +
-        "⚠️ Sau khi xác nhận, đơn đổi trả sẽ được đánh dấu là hoàn thành.\n\n" +
-        "Bạn có chắc chắn muốn hoàn thành đơn đổi trả này?"
-    );
-
-    if (!isConfirmed) return;
-
-    // Gửi request cập nhật trạng thái sử dụng API có sẵn
-    fetch(`/api/returns/complete?returnId=${returnId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
-    })
-        .then(res => {
-            if (!res.ok) throw new Error("Không thể cập nhật trạng thái");
-            return res.text();
-        })
-        .then(msg => {
-            showSuccessMessage("✅ Đã xác nhận hoàn thành đơn đổi trả thành công!");
-            loadReturns(); // Reload để cập nhật giao diện
-        })
-        .catch(err => {
-            console.error("Lỗi xác nhận hoàn thành đổi trả:", err);
-            showErrorMessage("❌ Lỗi khi xác nhận hoàn thành đơn đổi trả. Vui lòng thử lại.");
-        });
+    Swal.fire({
+        title: '⚠️ XÁC NHẬN HOÀN THÀNH ĐỔI TRẢ',
+        html: `
+            <strong>Mã đơn đổi trả:</strong> ${returnCode}<br>
+            <strong>Trạng thái hiện tại:</strong> Chờ xử lý<br>
+            <strong>Trạng thái mới:</strong> <span class="text-success">Đã hoàn thành</span><br><br>
+            <span class="text-warning">Sau khi xác nhận, đơn đổi trả sẽ được đánh dấu là hoàn thành.</span><br><br>
+            Bạn có chắc chắn muốn hoàn thành đơn đổi trả này?
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '✅ Xác nhận',
+        cancelButtonText: '❌ Hủy bỏ',
+        reverseButtons: true,
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-outline-secondary'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/api/returns/complete?returnId=${returnId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Không thể cập nhật trạng thái");
+                    return res.text();
+                })
+                .then(msg => {
+                    showSuccessMessage("✅ Đã xác nhận hoàn thành đơn đổi trả thành công!");
+                    loadReturns();
+                })
+                .catch(err => {
+                    console.error("Lỗi xác nhận hoàn thành đổi trả:", err);
+                    showErrorMessage("❌ Lỗi khi xác nhận hoàn thành đơn đổi trả. Vui lòng thử lại.");
+                });
+        }
+    });
 }
 
 // Function load đơn hàng từ API với chức năng xem ảnh giao hàng
@@ -1418,32 +1424,42 @@ function loadOrdersFromAPI() {
 // }
 
 function confirmOrder(orderId) {
-    if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
-
-    fetch('/api/orders/confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `orderId=${orderId}`
-    })
-        .then(res => {
-            if (!res.ok) return res.text().then(text => { throw new Error(text); });
-            return res.text();
-        })
-        .then(msg => {
-            showSuccessMessage(msg);
-
-            // Show real-time notification
-            showStaffRealTimeNotification('✅ Đơn hàng đã được xác nhận!', 'success');
-
-            // Immediately refresh data
-            loadOrdersFromAPI();
-        })
-        .catch(err => {
-            console.error('Xác nhận lỗi:', err.message);
-            showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
-        });
-
+    Swal.fire({
+        title: '✅ XÁC NHẬN ĐƠN HÀNG',
+        text: 'Bạn có chắc chắn muốn xác nhận đơn hàng này?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-outline-secondary'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/api/orders/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `orderId=${orderId}`
+            })
+                .then(res => {
+                    if (!res.ok) return res.text().then(text => { throw new Error(text); });
+                    return res.text();
+                })
+                .then(msg => {
+                    showSuccessMessage(msg);
+                    showStaffRealTimeNotification('✅ Đơn hàng đã được xác nhận!', 'success');
+                    loadOrdersFromAPI();
+                })
+                .catch(err => {
+                    console.error('Xác nhận lỗi:', err.message);
+                    showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
+                });
+        }
+    });
 }
+
 function showUpdateStatusModal(orderId, currentStatus) {
     const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
     document.getElementById('update-order-id').value = orderId;
@@ -1640,27 +1656,42 @@ function printInvoice() {
 
 
 function cancelOrder(orderId) {
-    if (!confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
-
-    fetch('/api/orders/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `orderId=${orderId}`
-    })
-        .then(res => {
-            if (!res.ok) return res.text().then(text => { throw new Error(text); });
-            return res.text();
-        })
-        .then(msg => {
-            showSuccessMessage(msg);
-            showStaffRealTimeNotification('❌ Đơn hàng đã được hủy!', 'warning');
-            loadOrdersFromAPI();
-        })
-        .catch(err => {
-            console.error('Hủy đơn lỗi:', err.message);
-            showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
-        });
+    Swal.fire({
+        title: '❌ HỦY ĐƠN HÀNG',
+        text: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Hủy đơn',
+        cancelButtonText: 'Không',
+        customClass: {
+            confirmButton: 'btn btn-danger',
+            cancelButton: 'btn btn-outline-secondary'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/api/orders/cancel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `orderId=${orderId}`
+            })
+                .then(res => {
+                    if (!res.ok) return res.text().then(text => { throw new Error(text); });
+                    return res.text();
+                })
+                .then(msg => {
+                    showSuccessMessage(msg);
+                    showStaffRealTimeNotification('❌ Đơn hàng đã bị hủy!', 'warning');
+                    loadOrdersFromAPI();
+                })
+                .catch(err => {
+                    console.error('Hủy đơn lỗi:', err.message);
+                    showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
+                });
+        }
+    });
 }
+
 function mapOrderStatus(status) {
     switch (status) {
         case 'PENDING': return 'Chờ xác nhận';
@@ -1928,14 +1959,14 @@ function startStaffRealTimeUpdates() {
         clearInterval(staffRealTimeInterval);
     }
 
-    // Update every 12 seconds for staff (slightly less frequent than shipper)
+    // Update every 2 seconds for staff (slightly less frequent than shipper)
     staffRealTimeInterval = setInterval(() => {
         if (isStaffRealTimeActive) {
             checkForStaffUpdates();
         }
-    }, 12000);
+    }, 2000);
 
-    console.log('✅ Staff real-time updates started (12s interval)');
+    console.log('✅ Staff real-time updates started (2s interval)');
 }
 
 // Check for order updates
@@ -2164,6 +2195,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// 🔁 Tự động cập nhật returns mỗi 10 giây nếu tab đang hiển thị
+setInterval(() => {
+    const returnsTab = document.getElementById('returns');
+    if (returnsTab && returnsTab.classList.contains('active')) {
+        loadReturns();
+        console.log("🔁 Real-time returns đang hoạt động...");
+    }
+}, 2000);
+
 function loadDashboardStats() {
     fetch('/api/complaints/summary') // Hoặc /api/dashboard/stats nếu bạn đổi tên
         .then(response => response.json())
@@ -2208,5 +2249,4 @@ function showSuccessMessage(msg) {
 function showErrorMessage(msg) {
     showToast(msg, "danger");
 }
-
 

@@ -2015,11 +2015,14 @@
                                     });
                                     // Common utility functions for reports
                                     function formatCurrency(amount) {
-                                        if (amount === null || amount === undefined) return '0₫';
-                                        return new Intl.NumberFormat('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND'
-                                        }).format(amount);
+                                        if (amount === null || amount === undefined) return '0 VNĐ';
+                                        // Nếu dữ liệu là string và có ký hiệu đ/₫ hoặc dấu chấm ngăn cách, loại bỏ hết ký tự không phải số
+                                        if (typeof amount === 'string') {
+                                            amount = amount.replace(/[^0-9]/g, '');
+                                            amount = parseInt(amount, 10);
+                                        }
+                                        if (isNaN(amount)) return '0 VNĐ';
+                                        return amount.toLocaleString('vi-VN') + ' VNĐ';
                                     }
 
                                     function formatDate(dateString) {
@@ -2201,7 +2204,7 @@
                                             return res.json();
                                         })
                                         .then(data => {
-                                            document.getElementById('revenue').textContent = data.revenueThisMonth;
+                                            document.getElementById('revenue').textContent = formatCurrency(data.revenueThisMonth);
                                             document.getElementById('orderCount').textContent = data.orderCountThisMonth;
                                             document.getElementById('newCustomers').textContent = data.newCustomersThisMonth;
                                             document.getElementById('totalProducts').textContent = data.totalProducts;

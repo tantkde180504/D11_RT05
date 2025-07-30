@@ -497,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loadCustomerList();
       })
       .catch(err => {
-        alert(err);
+        showBootstrapAlert(err, 'danger');
       });
   }
 });
@@ -828,10 +828,11 @@ function sendBanCustomer(id, status, banReason) {
       return res.text();
     })
     .then(() => {
-      alert(status === 'banned' ? 'Đã cấm tài khoản!' : 'Đã bỏ cấm tài khoản!');
+      showBootstrapAlert(status === 'banned' ? 'Đã cấm tài khoản!' : 'Đã bỏ cấm tài khoản!', 'success');
       loadCustomerList();
     })
     .catch(err => {
       showBootstrapAlert(err, 'danger');
     });
 }
+ 

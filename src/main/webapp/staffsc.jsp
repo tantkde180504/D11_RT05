@@ -19,7 +19,7 @@
         <link href="css/staff-styles.css" rel="stylesheet">
         <link href="css/order-detail-highlight.css" rel="stylesheet">
     </head>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <body class="staff-body">
         <div class="staff-container">
             <!-- Header -->

@@ -469,3 +469,19 @@
     border: none !important;
     margin-top: 0 !important;
 }
+#custom-toast-container {
+    z-index: 2000 !important;
+}
+/* Dời toàn bộ modal xuống dưới header */
+.modal.show .modal-dialog {
+    margin-top: 200px !important;
+}
+
+/* Đảm bảo modal nổi lên trên header */
+.modal {
+    z-index: 1080 !important;
+}
+.modal-backdrop {
+    z-index: 1070 !important;
+}
+
