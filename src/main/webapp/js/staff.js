@@ -234,7 +234,7 @@ function initRealTimeUpdates() {
     setInterval(function () {
         updateNotificationCounts();
         updateStats();
-        
+
         // Auto-refresh orders if orders tab is active
         const ordersTab = document.getElementById('orders');
         if (ordersTab && ordersTab.classList.contains('active')) {
@@ -637,19 +637,26 @@ window.handleQuickCall = handleQuickCall;
 window.handleQuickNote = handleQuickNote;
 window.notificationManager = notificationManager;
 function loadInventoryFromAPI() {
-    fetch('/api/inventory/products') // ← endpoint từ backend Spring Boot
+    fetch('/api/inventory/products')
         .then(response => response.json())
         .then(data => {
             const tbody = document.querySelector('#inventory-body');
-            tbody.innerHTML = ''; // Xóa dữ liệu cũ
+            tbody.innerHTML = '';
 
             data.forEach(p => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><img src="${p.imageUrl}" width="50" height="50" class="rounded" alt=""></td>
-                    <td><strong>${p.name}</strong><br><small class="text-muted">${p.brand}</small></td>
+                    <td>
+                        <strong>${p.name}</strong><br>
+                        ${getBrandBadge(p.brand)}
+                    </td>
                     <td>${p.id}</td>
-                    <td>${p.category}</td>
+                    <td>
+                        <span class="badge-glow ${getCategoryClass(p.category)}">
+                        ${getCategoryIcon(p.category)}${p.category}
+                        </span>
+                    </td>
                     <td><strong>${p.stockQuantity}</strong></td>
                     <td><span class="status-badge ${getStockStatus(p.stockQuantity)}">${getStockLabel(p.stockQuantity)}</span></td>
                     <td>${formatCurrency(p.price)}</td>
@@ -673,10 +680,8 @@ function loadInventoryFromAPI() {
                 tbody.appendChild(row);
             });
 
-            // Gắn sự kiện cho nút cập nhật (giữ nguyên phần cũ)
             bindUpdateStockButtons();
 
-            // Gắn sự kiện xem chi tiết
             document.querySelectorAll('.btn-view-detail').forEach(btn => {
                 const id = btn.getAttribute('data-product-id');
                 btn.addEventListener('click', () => viewProductDetails(id));
@@ -689,24 +694,79 @@ function loadInventoryFromAPI() {
             showErrorMessage('Không thể tải dữ liệu tồn kho từ máy chủ');
         });
 }
-// COMPLAINTS KHIẾU NẠI
+
+// 🚀 Gọi lần đầu khi trang load
+document.addEventListener('DOMContentLoaded', function () {
+    loadInventoryFromAPI();
+});
+
+// 🔁 Cập nhật tồn kho mỗi 10 giây (10000 ms)
+setInterval(loadInventoryFromAPI, 10000);
+
+
+function getCategoryIcon(category) {
+    switch (category) {
+        case 'GUNDAM_BANDAI':
+            return '<i class="fas fa-robot text-danger me-1"></i>';
+        case 'PRE_ORDER':
+            return '<i class="fas fa-clock text-warning me-1"></i>';
+        case 'TOOLS_ACCESSORIES':
+            return '<i class="fas fa-wrench text-success me-1"></i>';
+        default:
+            return '<i class="fas fa-box text-muted me-1"></i>';
+    }
+}
+function getBrandBadge(brand) {
+    // Bạn có thể mở rộng nếu có nhiều brand khác
+    const colorMap = {
+        'bandai': 'badge-glow',
+        'axcis': 'badge bg-warning text-dark',
+        'p-bandai': 'badge bg-info text-white'
+    };
+    const key = brand.toLowerCase();
+    const badgeClass = colorMap[key] || 'badge-glow';
+    return `<span class="${badgeClass}">${brand}</span>`;
+}
+function getCategoryClass(category) {
+    switch (category) {
+        case 'GUNDAM_BANDAI': return 'badge-category-gundam';
+        case 'PRE_ORDER': return 'badge-category-preorder';
+        case 'TOOLS_ACCESSORIES': return 'badge-category-tools';
+        default: return 'badge-category-unknown';
+    }
+}
+
+
+
+/// COMPLAINTS KHIẾU NẠI
 function loadComplaintsFromAPI() {
     fetch('/api/complaints')
         .then(res => res.json())
         .then(data => {
-            console.log('Dữ liệu complaints nhận được:', data); // ← DÒNG NÀY
+            console.log('Dữ liệu complaints nhận được:', data);
             const tbody = document.getElementById('complaint-table-body');
             tbody.innerHTML = '';
 
             data.forEach(c => {
-                console.log('Thêm complaint:', c); // ← DÒNG NÀY
+                console.log('Thêm complaint:', c);
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><strong>${c.complaintCode}</strong></td>
-                    <td>${c.customerName}</td>
+                    <td>
+                        <i class="fas fa-clipboard text-secondary me-2"></i>
+                        <strong>${c.complaintCode}</strong>
+                    </td>
+                    <td>
+                        <span class="badge-glow badge-customer">
+                            <i class="fas fa-user"></i> ${c.customerName}
+                        </span>
+                    </td>
                     <td>${c.content}</td>
-                    <td><span class="status-badge ${mapComplaintStatusClass(c.status)}">${mapComplaintStatusLabel(c.status)}</span></td>
+                    <td>
+                        <span class="status-badge ${mapComplaintStatusClass(c.status)}">
+                            ${mapComplaintStatusLabel(c.status)}
+                        </span>
+                    </td>
                     <td>${formatDateTime(c.createdAt)}</td>
                     <td>
                         <button class="btn btn-sm btn-primary me-1" onclick="viewComplaintDetail('${c.complaintCode}')">
@@ -728,6 +788,14 @@ function loadComplaintsFromAPI() {
             showErrorMessage('Không thể tải danh sách khiếu nại từ máy chủ.');
         });
 }
+
+// 🔄 Gọi lại mỗi 2 giây (2000 ms)
+setInterval(loadComplaintsFromAPI, 2000);
+
+// 👉 Nếu muốn load lần đầu khi trang mở:
+document.addEventListener('DOMContentLoaded', function () {
+    loadComplaintsFromAPI();
+});
 
 function mapComplaintStatusClass(status) {
     switch (status) {
@@ -1060,6 +1128,64 @@ function viewComplaintDetail(complaintCode) {
             showErrorMessage('Lỗi tải chi tiết khiếu nại');
         });
 }
+function handleComplaintUpdate(status) {
+    if (!window.currentComplaint || !window.currentComplaint.complaintCode) {
+        showErrorMessage("✖ Không tìm thấy dữ liệu khiếu nại hiện tại.");
+        return;
+    }
+
+    const complaintCode = window.currentComplaint.complaintCode;
+    const currentStatus = window.currentComplaint.status;
+    const solution = document.getElementById("complaint-solution").value;
+    const staffResponse = document.getElementById("complaint-staff-response").value;
+
+    // ✅ Chỉ xử lý nếu trạng thái hiện tại là PENDING
+    if (currentStatus !== "PENDING") {
+        showErrorMessage("✖ Chỉ được xử lý khi khiếu nại đang ở trạng thái 'Chờ xử lý'.");
+        return;
+    }
+
+    // Nếu phê duyệt → yêu cầu cả giải pháp và phản hồi
+    if (status === "PROCESSING") {
+        if (!solution || !staffResponse) {
+            showErrorMessage("✖ Vui lòng chọn giải pháp và nhập phản hồi.");
+            return;
+        }
+    }
+
+    // Nếu từ chối → chỉ cần phản hồi
+    if (status === "REJECTED" && !staffResponse) {
+        showErrorMessage("✖ Vui lòng nhập phản hồi khi từ chối.");
+        return;
+    }
+
+    fetch(`/api/complaints/${complaintCode}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            solution: solution,
+            staffResponse: staffResponse,
+            status: status
+        })
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Cập nhật thất bại");
+            return res.text();
+        })
+        .then(message => {
+            showSuccessMessage(message); // ✅ Hiển thị thông báo đẹp
+            loadComplaintsFromAPI();     // ✅ Load lại danh sách complaint
+
+            // ✅ Đóng modal nếu đang mở
+            const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+            if (modal) modal.hide();
+        })
+        .catch(err => {
+            console.error(err);
+            showErrorMessage("✖ Lỗi khi cập nhật khiếu nại!");
+        });
+}
+
 
 //xử lí hoàn thành khiếu nại
 function handleCompleteComplaint(complaintCode) {
@@ -1198,15 +1324,15 @@ function confirmReturnComplete(returnId, returnCode) {
 function loadOrdersFromAPI() {
     const status = document.getElementById('order-status-filter')?.value || 'ALL';
     console.log('🔄 Loading orders from API with status filter:', status);
-    
+
     fetch(`/api/orders?status=${status}`)
         .then(res => res.json())
         .then(data => {
             console.log('📦 Orders API response:', data);
-            
+
             // Store current data for real-time comparison
             currentOrdersData = data;
-            
+
             const tbody = document.getElementById('orders-body');
             tbody.innerHTML = '';
 
@@ -1218,7 +1344,7 @@ function loadOrdersFromAPI() {
                     mappedStatus: mapOrderStatus(o.status),
                     statusClass: getOrderStatusClass(o.status)
                 });
-                
+
                 const productListHtml = (o.productNames?.length > 0)
                     ? `<ul class="mb-0 ps-3">${o.productNames.map(p => `<li>${p}</li>`).join('')}</ul>`
                     : '—';
@@ -1226,8 +1352,15 @@ function loadOrdersFromAPI() {
                 const row = document.createElement('tr');
                 row.setAttribute('data-order-id', o.id);
                 row.innerHTML = `
-                    <td><strong>#${o.orderNumber}</strong></td>
-                    <td>${o.shippingName}</td>
+                    <td>
+                        <i class="fas fa-clipboard text-secondary me-2"></i>
+                        <strong>${o.orderNumber}</strong>
+                    </td>
+                    <td>
+                        <span class="badge-glow badge-customer">
+                        <i class="fas fa-user"></i> ${o.shippingName}
+                        </span>
+                    </td>
                     <td>${productListHtml}</td>
                     <td><strong>${formatCurrency(o.totalAmount)}</strong></td>
                     <td><span class="status-badge ${getOrderStatusClass(o.status)}">${mapOrderStatus(o.status)}</span></td>
@@ -1256,7 +1389,7 @@ function loadOrdersFromAPI() {
                 `;
                 tbody.appendChild(row);
             });
-            
+
             // Update timestamp for real-time tracking
             staffLastUpdateTimestamp = Date.now();
         })
@@ -1288,27 +1421,27 @@ function confirmOrder(orderId) {
     if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
 
     fetch('/api/orders/confirm', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `orderId=${orderId}`
-})
-.then(res => {
-    if (!res.ok) return res.text().then(text => { throw new Error(text); });
-    return res.text();
-})
-.then(msg => {
-    showSuccessMessage(msg);
-    
-    // Show real-time notification
-    showStaffRealTimeNotification('✅ Đơn hàng đã được xác nhận!', 'success');
-    
-    // Immediately refresh data
-    loadOrdersFromAPI();
-})
-.catch(err => {
-    console.error('Xác nhận lỗi:', err.message);
-    showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
-});
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `orderId=${orderId}`
+    })
+        .then(res => {
+            if (!res.ok) return res.text().then(text => { throw new Error(text); });
+            return res.text();
+        })
+        .then(msg => {
+            showSuccessMessage(msg);
+
+            // Show real-time notification
+            showStaffRealTimeNotification('✅ Đơn hàng đã được xác nhận!', 'success');
+
+            // Immediately refresh data
+            loadOrdersFromAPI();
+        })
+        .catch(err => {
+            console.error('Xác nhận lỗi:', err.message);
+            showErrorMessage(err.message || "❌ Không thể xác nhận đơn hàng.");
+        });
 
 }
 function showUpdateStatusModal(orderId, currentStatus) {
@@ -1326,19 +1459,19 @@ function updateOrderStatus() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `orderId=${orderId}&status=${newStatus}`
     })
-    .then(res => {
-        if (!res.ok) return res.text().then(text => { throw new Error(text); });
-        return res.text();
-    })
-    .then(msg => {
-        showSuccessMessage(msg);
-        showStaffRealTimeNotification('✅ Trạng thái đơn hàng đã được cập nhật!', 'success');
-        bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
-        loadOrdersFromAPI();
-    })
-    .catch(err => {
-        showErrorMessage(err.message || "❌ Không thể cập nhật trạng thái.");
-    });
+        .then(res => {
+            if (!res.ok) return res.text().then(text => { throw new Error(text); });
+            return res.text();
+        })
+        .then(msg => {
+            showSuccessMessage(msg);
+            showStaffRealTimeNotification('✅ Trạng thái đơn hàng đã được cập nhật!', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
+            loadOrdersFromAPI();
+        })
+        .catch(err => {
+            showErrorMessage(err.message || "❌ Không thể cập nhật trạng thái.");
+        });
 }
 function viewOrderDetail(orderId) {
     fetch(`/api/orders/detail?id=${orderId}`)
@@ -1388,7 +1521,7 @@ function printInvoice() {
     if (!order) return alert('Không có dữ liệu hóa đơn.');
 
     const productListHtml = (order.items || [])
-  .map(item => `
+        .map(item => `
     <tr>
       <td>${item.name}</td>
       <td>${item.quantity}</td>
@@ -1396,7 +1529,7 @@ function printInvoice() {
       <td>${formatCurrency(item.price * item.quantity)}</td>
     </tr>
   `)
-  .join('');
+        .join('');
 
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
@@ -1514,19 +1647,19 @@ function cancelOrder(orderId) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `orderId=${orderId}`
     })
-    .then(res => {
-        if (!res.ok) return res.text().then(text => { throw new Error(text); });
-        return res.text();
-    })
-    .then(msg => {
-        showSuccessMessage(msg);
-        showStaffRealTimeNotification('❌ Đơn hàng đã được hủy!', 'warning');
-        loadOrdersFromAPI();
-    })
-    .catch(err => {
-        console.error('Hủy đơn lỗi:', err.message);
-        showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
-    });
+        .then(res => {
+            if (!res.ok) return res.text().then(text => { throw new Error(text); });
+            return res.text();
+        })
+        .then(msg => {
+            showSuccessMessage(msg);
+            showStaffRealTimeNotification('❌ Đơn hàng đã được hủy!', 'warning');
+            loadOrdersFromAPI();
+        })
+        .catch(err => {
+            console.error('Hủy đơn lỗi:', err.message);
+            showErrorMessage(err.message || "❌ Không thể hủy đơn hàng.");
+        });
 }
 function mapOrderStatus(status) {
     switch (status) {
@@ -1576,12 +1709,12 @@ function showDeliveryPhotosModal(photos, orderId) {
         createDeliveryPhotosModal();
         modal = document.getElementById('deliveryPhotosModal');
     }
-    
+
     const modalTitle = modal.querySelector('.modal-title');
     const photosContainer = modal.querySelector('#delivery-photos-container');
-    
+
     modalTitle.textContent = `Ảnh giao hàng - Đơn hàng #${orderId}`;
-    
+
     if (photos && photos.length > 0) {
         let photosHtml = '<div class="row">';
         photos.forEach((photo, index) => {
@@ -1610,7 +1743,7 @@ function showDeliveryPhotosModal(photos, orderId) {
             </div>
         `;
     }
-    
+
     new bootstrap.Modal(modal).show();
 }
 
@@ -1636,7 +1769,7 @@ function createDeliveryPhotosModal() {
             </div>
         </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
@@ -1663,13 +1796,13 @@ function showFullPhoto(photoUrl) {
             </div>
         </div>
     `;
-    
+
     // Remove existing modal if any
     const existingModal = document.getElementById('fullPhotoModal');
     if (existingModal) {
         existingModal.remove();
     }
-    
+
     document.body.insertAdjacentHTML('beforeend', fullPhotoHtml);
     new bootstrap.Modal(document.getElementById('fullPhotoModal')).show();
 }
@@ -1701,8 +1834,14 @@ function renderReturnsTable(returns) {
         const row = document.createElement('tr');
 
         row.innerHTML = `
-            <td><strong>#${ret.orderNumber || ret.orderId}</strong></td>
-            <td>${ret.customerName || 'Không rõ'}</td>
+            <td>
+                <i class="fas fa-clipboard text-secondary me-2"></i>
+                <strong>${ret.orderNumber || ret.orderId}</strong></td>
+            <td>
+                <span class="badge-glow badge-customer">
+                <i class="fas fa-user"></i> ${ret.customerName || 'Không rõ'}
+                </span>
+            </td>
             <td>${ret.productName || 'Không rõ'}</td>
             <td>${ret.reason || ''}</td>
             <td><span class="status-badge ${mapReturnStatusClass(ret.status)}">${mapReturnStatusLabel(ret.status)}</span></td>
@@ -1761,10 +1900,10 @@ function viewReturnDetail(returnId) {
 // Initialize real-time updates for staff
 function initStaffRealTimeUpdates() {
     console.log('🔄 Initializing real-time updates for Staff');
-    
+
     // Start real-time updates when page loads
     startStaffRealTimeUpdates();
-    
+
     // Handle page visibility changes
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
@@ -1775,7 +1914,7 @@ function initStaffRealTimeUpdates() {
             resumeStaffRealTimeUpdates();
         }
     });
-    
+
     // Handle window focus/blur
     window.addEventListener('focus', () => {
         console.log('🔍 Staff window focused - ensuring real-time updates');
@@ -1788,14 +1927,14 @@ function startStaffRealTimeUpdates() {
     if (staffRealTimeInterval) {
         clearInterval(staffRealTimeInterval);
     }
-    
+
     // Update every 12 seconds for staff (slightly less frequent than shipper)
     staffRealTimeInterval = setInterval(() => {
         if (isStaffRealTimeActive) {
             checkForStaffUpdates();
         }
     }, 12000);
-    
+
     console.log('✅ Staff real-time updates started (12s interval)');
 }
 
@@ -1806,9 +1945,9 @@ function checkForStaffUpdates() {
     if (!ordersTab || !ordersTab.classList.contains('active')) {
         return;
     }
-    
+
     const currentFilter = document.getElementById('order-status-filter')?.value || 'ALL';
-    
+
     fetch(`/api/orders?status=${currentFilter}`)
         .then(res => res.json())
         .then(newData => {
@@ -1829,24 +1968,24 @@ function hasStaffDataChanged(newData) {
     if (!currentOrdersData || currentOrdersData.length !== newData.length) {
         return true;
     }
-    
+
     // Check for status changes or new orders
     for (let i = 0; i < newData.length; i++) {
         const newOrder = newData[i];
         const existingOrder = currentOrdersData.find(o => o.id === newOrder.id);
-        
+
         if (!existingOrder || existingOrder.status !== newOrder.status) {
             return true;
         }
     }
-    
+
     return false;
 }
 
 // Update staff orders with animation
 function updateStaffOrdersRealTime(newData) {
     const previousOrders = [...currentOrdersData];
-    
+
     // Find changed orders for animation
     const changedOrders = [];
     newData.forEach(newOrder => {
@@ -1860,13 +1999,13 @@ function updateStaffOrdersRealTime(newData) {
             });
         }
     });
-    
+
     // Update current data
     currentOrdersData = newData;
-    
+
     // Re-render orders table
     renderStaffOrdersWithAnimation(newData, changedOrders);
-    
+
     // Update timestamp
     staffLastUpdateTimestamp = Date.now();
 }
@@ -1883,13 +2022,13 @@ function renderStaffOrdersWithAnimation(data, changedOrders) {
 
         const row = document.createElement('tr');
         row.setAttribute('data-order-id', o.id);
-        
+
         // Check if this order was changed
         const wasChanged = changedOrders.find(c => c.orderId === o.id);
         if (wasChanged) {
             row.classList.add('order-updated-staff');
         }
-        
+
         row.innerHTML = `
             <td><strong>#${o.orderNumber}</strong></td>
             <td>${o.shippingName}</td>
@@ -1921,7 +2060,7 @@ function renderStaffOrdersWithAnimation(data, changedOrders) {
         `;
         tbody.appendChild(row);
     });
-    
+
     // Remove animation class after 3 seconds
     setTimeout(() => {
         tbody.querySelectorAll('.order-updated-staff').forEach(row => {
@@ -1949,7 +2088,7 @@ function showStaffRealTimeNotification(message, type = 'info') {
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
     `;
-    
+
     notification.innerHTML = `
         <div class="d-flex align-items-center">
             <div class="flex-grow-1">
@@ -1959,20 +2098,20 @@ function showStaffRealTimeNotification(message, type = 'info') {
             <button type="button" class="btn-close ms-2" aria-label="Close"></button>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Show animation
     setTimeout(() => {
         notification.style.opacity = '1';
         notification.style.transform = 'translateX(0)';
     }, 10);
-    
+
     // Auto hide after 5 seconds
     setTimeout(() => {
         hideStaffNotification(notification);
     }, 5000);
-    
+
     // Manual close
     notification.querySelector('.btn-close').addEventListener('click', () => {
         hideStaffNotification(notification);
@@ -1983,7 +2122,7 @@ function showStaffRealTimeNotification(message, type = 'info') {
 function hideStaffNotification(notification) {
     notification.style.opacity = '0';
     notification.style.transform = 'translateX(100%)';
-    
+
     setTimeout(() => {
         if (notification.parentNode) {
             notification.parentNode.removeChild(notification);
@@ -2000,10 +2139,10 @@ function pauseStaffRealTimeUpdates() {
 // Resume staff real-time updates
 function resumeStaffRealTimeUpdates() {
     isStaffRealTimeActive = true;
-    
+
     // Immediately check for updates when resuming
     checkForStaffUpdates();
-    
+
     console.log('▶️ Staff real-time updates resumed');
 }
 
@@ -2037,3 +2176,37 @@ function loadDashboardStats() {
             console.error('❌ Lỗi khi load thống kê dashboard:', error);
         });
 }
+function showToast(message, type = "success") {
+    const container = document.getElementById("custom-toast-container");
+    const toastId = "toast_" + Date.now();
+    const toast = document.createElement("div");
+
+    toast.className = `toast align-items-center text-white bg-${type} border-0 show mb-2`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+    toast.setAttribute("id", toastId);
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        const el = document.getElementById(toastId);
+        if (el) el.remove();
+    }, 5000);
+}
+
+function showSuccessMessage(msg) {
+    showToast(msg, "success");
+}
+
+function showErrorMessage(msg) {
+    showToast(msg, "danger");
+}
+
+

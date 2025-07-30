@@ -7,6 +7,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Staff Dashboard - 43 Gundam Hobby</title>
+        <!-- Toast container -->
+        <div id="custom-toast-container" class="toast-container position-fixed top-0 start-50 translate-middle-x mt-4" style="z-index: 9999;"></div>
+
         <!-- CSS Files -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -307,10 +310,6 @@
                 <div class="staff-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5><i class="fas fa-boxes me-2 text-info"></i>Quản lý tồn kho</h5>
-                        <button class="btn btn-primary action-btn" data-bs-toggle="modal"
-                            data-bs-target="#inventoryModal">
-                            <i class="fas fa-plus me-2"></i>Cập nhật tồn kho
-                        </button>
                     </div>
 
                     <div class="row mb-4">
@@ -346,7 +345,7 @@
                                     <th>Tên sản phẩm</th>
                                     <th>SKU</th>
                                     <th>Danh mục</th>
-                                    <th>Tồn kho</th>
+                                    <th>Số lượng</th>
                                     <th>Trạng thái</th>
                                     <th>Giá</th>
                                     <th>Thao tác</th>
@@ -425,7 +424,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5><i class="fas fa-shopping-cart me-2 text-success"></i>Quản lý đơn hàng</h5>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-info" onclick="loadOrdersFromAPI()" title="Làm mới danh sách">
+                            <button class="btn btn-outline-info" onclick="loadOrdersFromAPI()"
+                                title="Làm mới danh sách">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                             <select id="order-status-filter" class="form-select auto-width"
@@ -497,7 +497,8 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header modal-header-gradient">
-                                <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart"></i>Chi tiết đơn hàng</h5>
+                                <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart"></i>Chi tiết
+                                    đơn hàng</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
@@ -801,75 +802,6 @@
             </div>
         </div>
 
-
-        <!-- Inventory Update Modal -->
-        <div class="modal fade modal-modern" id="inventoryModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Cập nhật tồn kho</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Sản phẩm</label>
-                                        <select class="form-select">
-                                            <option>Chọn sản phẩm...</option>
-                                            <option>RG Strike Freedom Gundam</option>
-                                            <option>MG Barbatos</option>
-                                            <option>PG Unicorn Gundam</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Loại cập nhật</label>
-                                        <select class="form-select">
-                                            <option>Nhập kho</option>
-                                            <option>Xuất kho</option>
-                                            <option>Điều chỉnh</option>
-                                            <option>Kiểm kê</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Số lượng</label>
-                                        <input type="number" class="form-control" placeholder="0">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Lý do</label>
-                                        <select class="form-select">
-                                            <option>Nhập hàng mới</option>
-                                            <option>Bán hàng</option>
-                                            <option>Hàng lỗi</option>
-                                            <option>Mất mát</option>
-                                            <option>Khác</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Ghi chú</label>
-                                        <textarea class="form-control" rows="3"
-                                            placeholder="Nhập ghi chú..."></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Ngày hiệu lực</label>
-                                        <input type="date" class="form-control" value="2024-03-15">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-primary">Cập nhật tồn kho</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
         <!-- Return Detail Modal -->
         <div class="modal fade modal-modern" id="returnModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
@@ -959,7 +891,8 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header modal-header-gradient">
-                            <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart me-2"></i>Chi tiết đơn hàng
+                            <h5 class="modal-title order-detail-title"><i class="fas fa-shopping-cart me-2"></i>Chi tiết
+                                đơn hàng
                                 #ORD001</h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
@@ -1772,23 +1705,23 @@
             // Staff logout function using enhanced logout system
             function logout() {
                 console.log('🚪 Staff logout initiated');
-                
+
                 // Use the enhanced logout from unified-navbar-manager.js
                 if (typeof handleLogout === 'function') {
                     handleLogout();
                 } else {
                     // Fallback if unified logout not available
                     console.log('⚠️ Unified logout not available, using fallback');
-                    
+
                     // Clear all client-side data
                     localStorage.clear();
                     sessionStorage.clear();
-                    
+
                     // Clear cookies
-                    document.cookie.split(";").forEach(function(c) { 
-                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                    document.cookie.split(";").forEach(function (c) {
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                     });
-                    
+
                     // Logout from server and redirect
                     fetch('<%=request.getContextPath()%>/logout', {
                         method: 'POST',
