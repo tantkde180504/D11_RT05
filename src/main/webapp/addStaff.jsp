@@ -62,6 +62,7 @@
         <form:option value="Hoạt động">Hoạt động</form:option>
         <form:option value="Ngưng hoạt động">Ngưng hoạt động</form:option>
     </form:select>
+    
 
     <br/>
     <button type="submit">Tạo nhân viên</button>

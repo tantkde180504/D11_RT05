@@ -91,7 +91,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#inventory" data-tab="inventory">
-                            <i class="fas fa-boxes me-2"></i>Tồn kho
+                            <i class="fas fa-boxes me-2"></i>Kho hàng
                         </a>
                     </li>
                     <li class="nav-item">
