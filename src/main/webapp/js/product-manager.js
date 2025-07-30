@@ -328,7 +328,7 @@ function addToCart(productId, buttonElement) {
                 button.innerHTML = originalHTML;
                 button.disabled = false;
             }
-            alert(data.message || 'Có lỗi xảy ra!');
+            showToast(data.message || 'Có lỗi xảy ra!', 'danger');
         }
         if (button) {
             setTimeout(() => {
@@ -348,6 +348,26 @@ function addToCart(productId, buttonElement) {
         }
         alert('Không thể thêm vào giỏ hàng. Vui lòng thử lại!');
     });
+}
+function showToast(message, type = 'danger') {
+    const icon = type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : '❌');
+    const toastId = `toast-${Date.now()}`;
+    const toastHTML = `
+        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${icon} ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    const container = document.getElementById('toast-container');
+    container.insertAdjacentHTML('beforeend', toastHTML);
+    setTimeout(() => {
+        const toast = document.getElementById(toastId);
+        if (toast) toast.remove();
+    }, 4000);
 }
 
 // Initialize when DOM is loaded

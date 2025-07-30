@@ -653,11 +653,10 @@ function loadInventoryFromAPI() {
                     </td>
                     <td>${p.id}</td>
                     <td>
-  <span class="badge-glow ${getCategoryClass(p.category)}">
-    ${getCategoryIcon(p.category)}${p.category}
-  </span>
-</td>
-
+                        <span class="badge-glow ${getCategoryClass(p.category)}">
+                        ${getCategoryIcon(p.category)}${p.category}
+                        </span>
+                    </td>
                     <td><strong>${p.stockQuantity}</strong></td>
                     <td><span class="status-badge ${getStockStatus(p.stockQuantity)}">${getStockLabel(p.stockQuantity)}</span></td>
                     <td>${formatCurrency(p.price)}</td>
@@ -696,6 +695,15 @@ function loadInventoryFromAPI() {
         });
 }
 
+// 🚀 Gọi lần đầu khi trang load
+document.addEventListener('DOMContentLoaded', function () {
+    loadInventoryFromAPI();
+});
+
+// 🔁 Cập nhật tồn kho mỗi 10 giây (10000 ms)
+setInterval(loadInventoryFromAPI, 10000);
+
+
 function getCategoryIcon(category) {
     switch (category) {
         case 'GUNDAM_BANDAI':
@@ -730,7 +738,7 @@ function getCategoryClass(category) {
 
 
 
-// COMPLAINTS KHIẾU NẠI
+/// COMPLAINTS KHIẾU NẠI
 function loadComplaintsFromAPI() {
     fetch('/api/complaints')
         .then(res => res.json())
@@ -780,6 +788,14 @@ function loadComplaintsFromAPI() {
             showErrorMessage('Không thể tải danh sách khiếu nại từ máy chủ.');
         });
 }
+
+// 🔄 Gọi lại mỗi 2 giây (2000 ms)
+setInterval(loadComplaintsFromAPI, 2000);
+
+// 👉 Nếu muốn load lần đầu khi trang mở:
+document.addEventListener('DOMContentLoaded', function () {
+    loadComplaintsFromAPI();
+});
 
 function mapComplaintStatusClass(status) {
     switch (status) {
@@ -1112,6 +1128,64 @@ function viewComplaintDetail(complaintCode) {
             showErrorMessage('Lỗi tải chi tiết khiếu nại');
         });
 }
+function handleComplaintUpdate(status) {
+    if (!window.currentComplaint || !window.currentComplaint.complaintCode) {
+        showErrorMessage("✖ Không tìm thấy dữ liệu khiếu nại hiện tại.");
+        return;
+    }
+
+    const complaintCode = window.currentComplaint.complaintCode;
+    const currentStatus = window.currentComplaint.status;
+    const solution = document.getElementById("complaint-solution").value;
+    const staffResponse = document.getElementById("complaint-staff-response").value;
+
+    // ✅ Chỉ xử lý nếu trạng thái hiện tại là PENDING
+    if (currentStatus !== "PENDING") {
+        showErrorMessage("✖ Chỉ được xử lý khi khiếu nại đang ở trạng thái 'Chờ xử lý'.");
+        return;
+    }
+
+    // Nếu phê duyệt → yêu cầu cả giải pháp và phản hồi
+    if (status === "PROCESSING") {
+        if (!solution || !staffResponse) {
+            showErrorMessage("✖ Vui lòng chọn giải pháp và nhập phản hồi.");
+            return;
+        }
+    }
+
+    // Nếu từ chối → chỉ cần phản hồi
+    if (status === "REJECTED" && !staffResponse) {
+        showErrorMessage("✖ Vui lòng nhập phản hồi khi từ chối.");
+        return;
+    }
+
+    fetch(`/api/complaints/${complaintCode}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            solution: solution,
+            staffResponse: staffResponse,
+            status: status
+        })
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Cập nhật thất bại");
+            return res.text();
+        })
+        .then(message => {
+            showSuccessMessage(message); // ✅ Hiển thị thông báo đẹp
+            loadComplaintsFromAPI();     // ✅ Load lại danh sách complaint
+
+            // ✅ Đóng modal nếu đang mở
+            const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+            if (modal) modal.hide();
+        })
+        .catch(err => {
+            console.error(err);
+            showErrorMessage("✖ Lỗi khi cập nhật khiếu nại!");
+        });
+}
+
 
 //xử lí hoàn thành khiếu nại
 function handleCompleteComplaint(complaintCode) {
@@ -2102,3 +2176,37 @@ function loadDashboardStats() {
             console.error('❌ Lỗi khi load thống kê dashboard:', error);
         });
 }
+function showToast(message, type = "success") {
+    const container = document.getElementById("custom-toast-container");
+    const toastId = "toast_" + Date.now();
+    const toast = document.createElement("div");
+
+    toast.className = `toast align-items-center text-white bg-${type} border-0 show mb-2`;
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
+    toast.setAttribute("id", toastId);
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        const el = document.getElementById(toastId);
+        if (el) el.remove();
+    }, 5000);
+}
+
+function showSuccessMessage(msg) {
+    showToast(msg, "success");
+}
+
+function showErrorMessage(msg) {
+    showToast(msg, "danger");
+}
+
+
